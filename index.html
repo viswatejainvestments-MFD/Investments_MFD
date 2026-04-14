@@ -1,33 +1,180 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Your wealth investments</title>
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            background-color: #0a192f;
-            color: white;
-        }
-        h1 {
-            margin-top: 100px;
-        }
-        button {
-            padding: 10px 20px;
-            background: #00bcd4;
-            border: none;
-            color: white;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Wealth Investments</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0a192f;
+    color: white;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background: #020c1b;
+}
+
+nav a {
+    color: white;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+.hero {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.btn {
+    padding: 12px 25px;
+    background: #00bcd4;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.section {
+    padding: 40px;
+    text-align: center;
+}
+
+input {
+    padding: 10px;
+    margin: 10px;
+    width: 200px;
+}
+
+.card {
+    background: #112240;
+    padding: 20px;
+    margin: 10px auto;
+    width: 300px;
+    border-radius: 10px;
+}
+</style>
 </head>
 
 <body>
-    <h1>Welcome to Your wealth investments</h1>
-    <p>We help you grow your wealth with data-driven strategies.</p>
 
-    <button onclick="alert('Book a free consultation')">
-        Speak to advisor
-    </button>
+<nav>
+<h2>Your Wealth</h2>
+<div>
+<a href="#tools">Calculators</a>
+<a href="#book">Book Advisor</a>
+</div>
+</nav>
+
+<section class="hero">
+<h1>Plan Your Financial Future</h1>
+<p>Smart tools + Expert advice</p>
+
+<button class="btn" onclick="window.location.href='https://wa.me/91XXXXXXXXXX'">
+Talk to Advisor
+</button>
+</section>
+
+<!-- CALCULATORS -->
+<section id="tools" class="section">
+<h2>Financial Calculators</h2>
+
+<div class="card">
+<h3>SIP Calculator</h3>
+<input id="sip" placeholder="Monthly Investment">
+<input id="rate" placeholder="Return %">
+<input id="time" placeholder="Years">
+<br>
+<button class="btn" onclick="calcSIP()">Calculate</button>
+<p id="sipResult"></p>
+</div>
+
+<div class="card">
+<h3>Loan EMI Calculator</h3>
+<input id="loan" placeholder="Loan Amount">
+<input id="interest" placeholder="Interest %">
+<input id="months" placeholder="Months">
+<br>
+<button class="btn" onclick="calcEMI()">Calculate</button>
+<p id="emiResult"></p>
+</div>
+
+<div class="card">
+<h3>Retirement Planner</h3>
+<input id="age" placeholder="Current Age">
+<input id="retire" placeholder="Retirement Age">
+<input id="expense" placeholder="Monthly Expense">
+<br>
+<button class="btn" onclick="calcRetirement()">Calculate</button>
+<p id="retResult"></p>
+</div>
+
+</section>
+
+<!-- BOOKING -->
+<section id="book" class="section">
+<h2>Book an Advisor</h2>
+
+<input id="name" placeholder="Your Name">
+<input id="phone" placeholder="Phone Number">
+<br>
+
+<button class="btn" onclick="bookNow()">Book Appointment</button>
+
+<p id="msg"></p>
+</section>
+
+<script>
+
+// SIP
+function calcSIP(){
+let P = document.getElementById("sip").value;
+let r = document.getElementById("rate").value/100/12;
+let n = document.getElementById("time").value*12;
+
+let result = P*((Math.pow(1+r,n)-1)/r)*(1+r);
+
+document.getElementById("sipResult").innerText = "Future Value: ₹" + Math.round(result);
+}
+
+// EMI
+function calcEMI(){
+let P = document.getElementById("loan").value;
+let r = document.getElementById("interest").value/100/12;
+let n = document.getElementById("months").value;
+
+let emi = (P*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+
+document.getElementById("emiResult").innerText = "EMI: ₹" + Math.round(emi);
+}
+
+// Retirement
+function calcRetirement(){
+let age = document.getElementById("age").value;
+let retire = document.getElementById("retire").value;
+let expense = document.getElementById("expense").value;
+
+let years = retire - age;
+let corpus = expense * 12 * 25;
+
+document.getElementById("retResult").innerText = "Required Corpus: ₹" + corpus;
+}
+
+// Booking
+function bookNow(){
+let name = document.getElementById("name").value;
+let phone = document.getElementById("phone").value;
+
+document.getElementById("msg").innerText = "Thanks " + name + "! We will contact you soon.";
+
+window.location.href = "https://wa.me/91XXXXXXXXXX?text=Hi, I want financial planning consultation";
+}
+
+</script>
+
 </body>
 </html>
