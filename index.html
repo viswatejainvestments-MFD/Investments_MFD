@@ -3,178 +3,865 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Wealth Investments</title>
-
+<title>Your Wealth — Financial Planning & Wealth Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #0a192f;
-    color: white;
-}
+  :root {
+    --cream: #F5F0E8;
+    --ivory: #FAF7F2;
+    --gold: #B8960C;
+    --gold-light: #D4AF37;
+    --gold-pale: #F0E6B8;
+    --charcoal: #1C1C1C;
+    --dark: #0D0D0D;
+    --mid: #3A3630;
+    --muted: #7A736A;
+    --border: rgba(184,150,12,0.2);
+  }
 
-nav {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    background: #020c1b;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-nav a {
-    color: white;
-    margin-left: 20px;
-    text-decoration: none;
-}
+  html { scroll-behavior: smooth; }
 
-.hero {
-    text-align: center;
-    padding: 80px 20px;
-}
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ivory);
+    color: var(--charcoal);
+    overflow-x: hidden;
+  }
 
-.btn {
-    padding: 12px 25px;
-    background: #00bcd4;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
-}
+  /* ---- NAV ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 60px;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    transition: padding 0.3s;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--charcoal); text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+    text-decoration: none; color: var(--mid);
+    position: relative; transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -3px; left: 0; right: 0;
+    height: 1px; background: var(--gold);
+    transform: scaleX(0); transition: transform 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-cta {
+    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 11px 26px; border: 1px solid var(--gold);
+    background: transparent; color: var(--gold);
+    cursor: pointer; text-decoration: none;
+    transition: all 0.3s;
+  }
+  .nav-cta:hover { background: var(--gold); color: white; }
 
-.section {
-    padding: 40px;
-    text-align: center;
-}
+  /* ---- HERO ---- */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 120px 60px 80px;
+    position: relative; overflow: hidden;
+    background: var(--ivory);
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 85% 50%, rgba(212,175,55,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 10% 80%, rgba(212,175,55,0.05) 0%, transparent 60%);
+  }
+  .hero-line-decor {
+    position: absolute; right: 0; top: 0; bottom: 0; width: 45%;
+    border-left: 1px solid var(--border);
+    pointer-events: none;
+  }
+  .hero-line-decor::before {
+    content: ''; position: absolute; left: 30%; top: 0; bottom: 0;
+    border-left: 1px solid rgba(184,150,12,0.08);
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 680px; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 32px;
+  }
+  .hero-tag::before {
+    content: ''; width: 32px; height: 1px; background: var(--gold);
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 6vw, 5.5rem);
+    font-weight: 300; line-height: 1.08;
+    color: var(--dark); margin-bottom: 28px;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero p {
+    font-size: 1.05rem; color: var(--muted);
+    line-height: 1.75; max-width: 480px; margin-bottom: 48px;
+    font-weight: 300;
+  }
+  .hero-actions { display: flex; gap: 20px; align-items: center; }
+  .btn-primary {
+    font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 16px 36px; background: var(--charcoal); color: var(--cream);
+    border: none; cursor: pointer; text-decoration: none;
+    transition: all 0.3s; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold); }
+  .btn-ghost {
+    font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--mid); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: color 0.3s;
+  }
+  .btn-ghost svg { transition: transform 0.3s; }
+  .btn-ghost:hover { color: var(--gold); }
+  .btn-ghost:hover svg { transform: translateX(4px); }
+  .hero-stats {
+    position: absolute; bottom: 60px; right: 60px;
+    display: flex; gap: 48px;
+  }
+  .hero-stat { text-align: right; }
+  .hero-stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem; font-weight: 300; color: var(--charcoal);
+    line-height: 1;
+  }
+  .hero-stat-num span { color: var(--gold); }
+  .hero-stat-label {
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); margin-top: 4px;
+  }
 
-input {
-    padding: 10px;
-    margin: 10px;
-    width: 200px;
-}
+  /* ---- MARQUEE ---- */
+  .marquee-strip {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--charcoal);
+    padding: 14px 0; overflow: hidden;
+  }
+  .marquee-inner {
+    display: flex; gap: 64px;
+    animation: marquee 22s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold-pale); opacity: 0.7;
+    display: flex; align-items: center; gap: 24px;
+  }
+  .marquee-item::after { content: '◆'; opacity: 0.4; font-size: 0.5rem; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-.card {
-    background: #112240;
-    padding: 20px;
-    margin: 10px auto;
-    width: 300px;
-    border-radius: 10px;
-}
+  /* ---- SECTION SHARED ---- */
+  section { padding: 100px 60px; }
+  .section-tag {
+    font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-tag::before { content: ''; width: 28px; height: 1px; background: var(--gold); }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 4vw, 3.6rem);
+    font-weight: 300; line-height: 1.15;
+    color: var(--dark); margin-bottom: 16px;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-sub {
+    font-size: 0.95rem; color: var(--muted);
+    line-height: 1.8; max-width: 520px; font-weight: 300;
+  }
+
+  /* ---- ABOUT ---- */
+  .about {
+    background: var(--cream);
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+  }
+  .about-visual {
+    position: relative; height: 480px;
+  }
+  .about-card {
+    position: absolute;
+    background: white;
+    border: 1px solid var(--border);
+    padding: 32px;
+  }
+  .about-card-main {
+    inset: 0 40px 40px 0;
+    background: var(--charcoal);
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 40px;
+    overflow: hidden;
+  }
+  .about-card-main::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,175,55,0.15), transparent 70%);
+  }
+  .about-card-main-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 300; color: white;
+    line-height: 1.2; margin-bottom: 12px;
+  }
+  .about-card-main-sub {
+    font-size: 0.8rem; color: rgba(255,255,255,0.5);
+    letter-spacing: 0.08em;
+  }
+  .about-card-badge {
+    position: absolute; right: 0; bottom: 0;
+    width: 160px; height: 160px;
+    background: var(--gold);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .badge-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem; font-weight: 300; color: white; line-height: 1;
+  }
+  .badge-label {
+    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: rgba(255,255,255,0.8); text-align: center;
+  }
+  .about-text { }
+  .about-features { margin-top: 40px; display: flex; flex-direction: column; gap: 24px; }
+  .about-feature { display: flex; gap: 20px; align-items: flex-start; }
+  .about-feature-icon {
+    width: 40px; height: 40px; border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: var(--gold); font-size: 1.1rem;
+  }
+  .about-feature-title {
+    font-size: 0.9rem; font-weight: 500; color: var(--charcoal);
+    margin-bottom: 4px; letter-spacing: 0.02em;
+  }
+  .about-feature-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+
+  /* ---- SERVICES ---- */
+  .services { background: var(--ivory); }
+  .services-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; }
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .service-card {
+    background: var(--cream); padding: 44px 36px;
+    border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    transition: all 0.4s; cursor: default;
+  }
+  .service-card::before {
+    content: ''; position: absolute;
+    bottom: 0; left: 0; right: 0; height: 3px;
+    background: var(--gold); transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+  .service-card:hover { background: white; transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem; font-weight: 300; color: var(--gold-pale);
+    line-height: 1; margin-bottom: 28px;
+    transition: color 0.4s;
+  }
+  .service-card:hover .service-num { color: rgba(212,175,55,0.25); }
+  .service-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 400; color: var(--charcoal);
+    margin-bottom: 16px; line-height: 1.2;
+  }
+  .service-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.75; }
+  .service-arrow {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 28px; font-size: 0.72rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); opacity: 0; transition: opacity 0.3s;
+  }
+  .service-card:hover .service-arrow { opacity: 1; }
+
+  /* ---- PROCESS ---- */
+  .process {
+    background: var(--charcoal);
+    position: relative; overflow: hidden;
+  }
+  .process::before {
+    content: '';
+    position: absolute; top: -100px; right: -100px;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,175,55,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .process .section-tag { color: var(--gold-light); }
+  .process .section-tag::before { background: var(--gold-light); }
+  .process .section-title { color: white; }
+  .process .section-sub { color: rgba(255,255,255,0.45); max-width: 400px; }
+  .process-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; margin-top: 60px; }
+  .process-steps { display: flex; flex-direction: column; gap: 0; }
+  .process-step {
+    display: flex; gap: 28px;
+    padding: 32px 0; border-bottom: 1px solid rgba(255,255,255,0.07);
+    position: relative;
+  }
+  .process-step:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem; font-weight: 300; color: rgba(212,175,55,0.25);
+    line-height: 1; flex-shrink: 0; width: 56px;
+  }
+  .step-content {}
+  .step-title { font-size: 1rem; font-weight: 500; color: white; margin-bottom: 8px; }
+  .step-desc { font-size: 0.82rem; color: rgba(255,255,255,0.45); line-height: 1.7; }
+  .process-visual {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,175,55,0.15);
+    padding: 48px; display: flex; flex-direction: column; gap: 28px;
+  }
+  .process-visual-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 300; color: rgba(255,255,255,0.7);
+    margin-bottom: 8px;
+  }
+  .mini-chart { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+  .chart-bar-row { display: flex; align-items: center; gap: 12px; }
+  .chart-label { font-size: 0.7rem; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); width: 88px; }
+  .chart-bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+  .chart-bar-fill { height: 100%; border-radius: 3px; background: var(--gold); }
+  .chart-val { font-size: 0.72rem; color: var(--gold-light); width: 36px; text-align: right; }
+  .divider { height: 1px; background: rgba(255,255,255,0.06); }
+  .process-note {
+    font-size: 0.78rem; color: rgba(255,255,255,0.35);
+    line-height: 1.7; font-style: italic;
+  }
+
+  /* ---- WHY US ---- */
+  .why {
+    background: var(--cream);
+    display: grid; grid-template-columns: 1fr 1.3fr;
+    gap: 80px; align-items: center;
+  }
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .why-card {
+    padding: 32px 28px; border: 1px solid var(--border);
+    background: white; position: relative;
+  }
+  .why-card-accent {
+    width: 28px; height: 2px; background: var(--gold); margin-bottom: 20px;
+  }
+  .why-card-title { font-size: 0.9rem; font-weight: 500; color: var(--charcoal); margin-bottom: 8px; }
+  .why-card-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.7; }
+  .why-card-big {
+    grid-column: span 2;
+    background: var(--charcoal); border-color: var(--charcoal);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .why-card-big .why-card-accent { background: var(--gold-light); }
+  .why-card-big .why-card-title { color: white; font-size: 1rem; }
+  .why-card-big .why-card-desc { color: rgba(255,255,255,0.5); }
+  .why-big-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem; font-weight: 300; color: rgba(212,175,55,0.2);
+    line-height: 1;
+  }
+
+  /* ---- TESTIMONIALS ---- */
+  .testimonials { background: var(--ivory); }
+  .testimonials-header { margin-bottom: 60px; }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .testi-card {
+    background: white; border: 1px solid var(--border);
+    padding: 40px 36px;
+  }
+  .testi-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem; color: var(--gold-pale); line-height: 0.7;
+    margin-bottom: 20px; font-weight: 300;
+  }
+  .testi-text {
+    font-size: 0.88rem; color: var(--mid);
+    line-height: 1.8; margin-bottom: 28px; font-style: italic;
+  }
+  .testi-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
+  .testi-name { font-size: 0.85rem; font-weight: 500; color: var(--charcoal); }
+  .testi-role { font-size: 0.72rem; letter-spacing: 0.1em; color: var(--muted); margin-top: 2px; text-transform: uppercase; }
+
+  /* ---- CTA STRIP ---- */
+  .cta-strip {
+    background: var(--gold);
+    padding: 70px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 40px;
+  }
+  .cta-strip-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 300; color: white; line-height: 1.15;
+  }
+  .cta-strip-title em { font-style: italic; opacity: 0.75; }
+  .btn-white {
+    font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 16px 36px; background: white; color: var(--gold);
+    border: none; cursor: pointer; text-decoration: none;
+    white-space: nowrap; transition: all 0.3s; display: inline-block;
+  }
+  .btn-white:hover { background: var(--charcoal); color: white; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    background: var(--dark);
+    padding: 70px 60px 40px;
+  }
+  .footer-top {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 60px; padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .footer-brand {}
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 600;
+    color: white; margin-bottom: 16px;
+    letter-spacing: 0.04em;
+  }
+  .footer-logo span { color: var(--gold); }
+  .footer-desc { font-size: 0.8rem; color: rgba(255,255,255,0.35); line-height: 1.75; max-width: 220px; }
+  .footer-col-title {
+    font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .footer-links a {
+    font-size: 0.8rem; color: rgba(255,255,255,0.4);
+    text-decoration: none; transition: color 0.3s;
+  }
+  .footer-links a:hover { color: white; }
+  .footer-bottom {
+    padding-top: 28px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-copy { font-size: 0.72rem; color: rgba(255,255,255,0.25); }
+  .footer-legal { display: flex; gap: 24px; }
+  .footer-legal a { font-size: 0.72rem; color: rgba(255,255,255,0.25); text-decoration: none; transition: color 0.3s; }
+  .footer-legal a:hover { color: rgba(255,255,255,0.6); }
+
+  /* ---- ANIMATIONS ---- */
+  .fade-up {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .delay-1 { transition-delay: 0.1s; }
+  .delay-2 { transition-delay: 0.2s; }
+  .delay-3 { transition-delay: 0.3s; }
+  .delay-4 { transition-delay: 0.4s; }
+
+  /* ---- HERO ANIMATION ---- */
+  .hero-content > * {
+    opacity: 0; transform: translateY(20px);
+    animation: heroReveal 0.8s forwards;
+  }
+  .hero-content .hero-tag { animation-delay: 0.2s; }
+  .hero-content h1 { animation-delay: 0.4s; }
+  .hero-content p { animation-delay: 0.6s; }
+  .hero-content .hero-actions { animation-delay: 0.8s; }
+  .hero-stats { opacity: 0; animation: heroReveal 0.8s 1s forwards; }
+  @keyframes heroReveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 900px) {
+    nav { padding: 20px 28px; }
+    .nav-links { display: none; }
+    section, .hero, .about, .why, .cta-strip, footer { padding-left: 28px; padding-right: 28px; }
+    .hero { padding-top: 100px; }
+    .hero-stats { position: static; margin-top: 48px; justify-content: flex-start; }
+    .about, .why { grid-template-columns: 1fr; }
+    .about-visual { height: 320px; }
+    .services-grid, .testimonials-grid { grid-template-columns: 1fr; }
+    .process-layout { grid-template-columns: 1fr; }
+    .services-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+    .cta-strip { flex-direction: column; text-align: center; }
+    .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  }
 </style>
 </head>
-
 <body>
 
+<!-- NAV -->
 <nav>
-<h2>Your Wealth</h2>
-<div>
-<a href="#tools">Calculators</a>
-<a href="#book">Book Advisor</a>
-</div>
+  <a href="#" class="nav-logo">Your<span>Wealth</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Our Process</a></li>
+    <li><a href="#why">Why Us</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Book a Consultation</a>
 </nav>
 
-<section class="hero">
-<h1>Plan Your Financial Future</h1>
-<p>Smart tools + Expert advice</p>
-
-<button class="btn" onclick="window.location.href='https://wa.me/91XXXXXXXXXX'">
-Talk to Advisor
-</button>
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-line-decor"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Wealth Management & Financial Planning</div>
+    <h1>Build Wealth.<br>Secure Your <em>Future.</em><br>On Your Terms.</h1>
+    <p>At Your Wealth, we don't just manage your money — we design a personalised financial journey that compounds over decades, so you can focus on living the life you've worked so hard to create.</p>
+    <div class="hero-actions">
+      <a href="#services" class="btn-primary">Explore Our Services</a>
+      <a href="#process" class="btn-ghost">
+        See How It Works
+        <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
+          <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">₹500<span>Cr+</span></div>
+      <div class="hero-stat-label">Assets Managed</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">1,200<span>+</span></div>
+      <div class="hero-stat-label">Families Served</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">15<span>Yrs</span></div>
+      <div class="hero-stat-label">Of Expertise</div>
+    </div>
+  </div>
 </section>
 
-<!-- CALCULATORS -->
-<section id="tools" class="section">
-<h2>Financial Calculators</h2>
-
-<div class="card">
-<h3>SIP Calculator</h3>
-<input id="sip" placeholder="Monthly Investment">
-<input id="rate" placeholder="Return %">
-<input id="time" placeholder="Years">
-<br>
-<button class="btn" onclick="calcSIP()">Calculate</button>
-<p id="sipResult"></p>
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <div class="marquee-item">Financial Planning</div>
+    <div class="marquee-item">Wealth Creation</div>
+    <div class="marquee-item">Portfolio Management</div>
+    <div class="marquee-item">Tax Optimisation</div>
+    <div class="marquee-item">Retirement Planning</div>
+    <div class="marquee-item">Estate Planning</div>
+    <div class="marquee-item">Risk Management</div>
+    <div class="marquee-item">Investment Advisory</div>
+    <!-- repeat -->
+    <div class="marquee-item">Financial Planning</div>
+    <div class="marquee-item">Wealth Creation</div>
+    <div class="marquee-item">Portfolio Management</div>
+    <div class="marquee-item">Tax Optimisation</div>
+    <div class="marquee-item">Retirement Planning</div>
+    <div class="marquee-item">Estate Planning</div>
+    <div class="marquee-item">Risk Management</div>
+    <div class="marquee-item">Investment Advisory</div>
+  </div>
 </div>
 
-<div class="card">
-<h3>Loan EMI Calculator</h3>
-<input id="loan" placeholder="Loan Amount">
-<input id="interest" placeholder="Interest %">
-<input id="months" placeholder="Months">
-<br>
-<button class="btn" onclick="calcEMI()">Calculate</button>
-<p id="emiResult"></p>
-</div>
-
-<div class="card">
-<h3>Retirement Planner</h3>
-<input id="age" placeholder="Current Age">
-<input id="retire" placeholder="Retirement Age">
-<input id="expense" placeholder="Monthly Expense">
-<br>
-<button class="btn" onclick="calcRetirement()">Calculate</button>
-<p id="retResult"></p>
-</div>
-
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-visual">
+    <div class="about-card about-card-main">
+      <div class="about-card-main-title">Wealth that works<br>while you rest.</div>
+      <div class="about-card-main-sub">Intelligent capital allocation — every rupee has a purpose</div>
+    </div>
+    <div class="about-card about-card-badge">
+      <div class="badge-num">15+</div>
+      <div class="badge-label">Years of<br>excellence</div>
+    </div>
+  </div>
+  <div class="about-text">
+    <div class="section-tag fade-up">Who We Are</div>
+    <h2 class="section-title fade-up delay-1">We are your <em>lifetime</em> financial partner.</h2>
+    <p class="section-sub fade-up delay-2">Your Wealth is a boutique wealth management firm founded on a simple belief: financial security is not a privilege — it's a right. We combine deep financial expertise with a deeply personal approach to help you build, protect, and grow what matters most.</p>
+    <div class="about-features">
+      <div class="about-feature fade-up delay-2">
+        <div class="about-feature-icon">◈</div>
+        <div>
+          <div class="about-feature-title">Independent & Unbiased Advice</div>
+          <div class="about-feature-desc">We are not tied to any product or institution. Our advice is driven purely by your goals, not commissions.</div>
+        </div>
+      </div>
+      <div class="about-feature fade-up delay-3">
+        <div class="about-feature-icon">◈</div>
+        <div>
+          <div class="about-feature-title">Holistic Financial Thinking</div>
+          <div class="about-feature-desc">We look at your complete financial picture — income, liabilities, aspirations, and risk appetite — before recommending anything.</div>
+        </div>
+      </div>
+      <div class="about-feature fade-up delay-4">
+        <div class="about-feature-icon">◈</div>
+        <div>
+          <div class="about-feature-title">Relationship Over Transaction</div>
+          <div class="about-feature-desc">You get a dedicated advisor who knows your story, not a rotating team that sees you as a portfolio number.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- BOOKING -->
-<section id="book" class="section">
-<h2>Book an Advisor</h2>
-
-<input id="name" placeholder="Your Name">
-<input id="phone" placeholder="Phone Number">
-<br>
-
-<button class="btn" onclick="bookNow()">Book Appointment</button>
-
-<p id="msg"></p>
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="services-header">
+    <div>
+      <div class="section-tag fade-up">What We Offer</div>
+      <h2 class="section-title fade-up delay-1">Services built around<br>your <em>financial life.</em></h2>
+    </div>
+    <p class="section-sub fade-up delay-2" style="margin-bottom:0">Every service is customised to your unique goals, time horizon, and risk profile — never off the shelf.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card fade-up">
+      <div class="service-num">01</div>
+      <div class="service-title">Financial Planning</div>
+      <div class="service-desc">A comprehensive roadmap for your finances — budgeting, savings goals, debt management, and milestone planning. We map where you are and architect where you want to be.</div>
+      <div class="service-arrow">Learn More →</div>
+    </div>
+    <div class="service-card fade-up delay-1">
+      <div class="service-num">02</div>
+      <div class="service-title">Investment Advisory</div>
+      <div class="service-desc">Research-backed investment strategies across equity, debt, mutual funds, and alternative assets. We build portfolios that grow intelligently over time while managing downside risk.</div>
+      <div class="service-arrow">Learn More →</div>
+    </div>
+    <div class="service-card fade-up delay-2">
+      <div class="service-num">03</div>
+      <div class="service-title">Retirement Planning</div>
+      <div class="service-desc">Whether retirement is 5 years or 25 years away, we create a plan that ensures you never outlive your money — and retire on your own terms, not someone else's timeline.</div>
+      <div class="service-arrow">Learn More →</div>
+    </div>
+    <div class="service-card fade-up">
+      <div class="service-num">04</div>
+      <div class="service-title">Tax Optimisation</div>
+      <div class="service-desc">Legal, smart strategies to reduce your tax burden and keep more of what you earn. From ELSS to NPS to efficient asset structuring, we ensure your money works harder post-tax.</div>
+      <div class="service-arrow">Learn More →</div>
+    </div>
+    <div class="service-card fade-up delay-1">
+      <div class="service-num">05</div>
+      <div class="service-title">Risk & Insurance Planning</div>
+      <div class="service-desc">Protecting wealth is as critical as building it. We assess your risk exposure — health, life, income, liability — and design the right coverage so life's uncertainties don't derail your plans.</div>
+      <div class="service-arrow">Learn More →</div>
+    </div>
+    <div class="service-card fade-up delay-2">
+      <div class="service-num">06</div>
+      <div class="service-title">Estate & Legacy Planning</div>
+      <div class="service-desc">Ensure your wealth transitions smoothly across generations. We help structure your assets, create wills, set up trusts, and design a legacy that reflects your values and wishes.</div>
+      <div class="service-arrow">Learn More →</div>
+    </div>
+  </div>
 </section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="section-tag">How It Works</div>
+  <h2 class="section-title">A clear, <em>structured</em> path<br>to financial clarity.</h2>
+  <p class="section-sub">No complexity. No jargon. Just a disciplined process that turns your financial goals into a concrete, actionable plan.</p>
+  <div class="process-layout">
+    <div class="process-steps">
+      <div class="process-step fade-up">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <div class="step-title">Discovery & Goal Setting</div>
+          <div class="step-desc">We begin with a deep-dive conversation to understand your current financial position, life goals, risk appetite, and what wealth means to you personally.</div>
+        </div>
+      </div>
+      <div class="process-step fade-up delay-1">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <div class="step-title">Financial Assessment</div>
+          <div class="step-desc">We analyse your income, expenses, assets, liabilities, tax situation, and insurance coverage to create a clear picture of where you stand today.</div>
+        </div>
+      </div>
+      <div class="process-step fade-up delay-2">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <div class="step-title">Bespoke Strategy Design</div>
+          <div class="step-desc">Your dedicated advisor crafts a personalised wealth plan — investments, savings, protection, and tax strategy — all aligned to your specific goals and timeline.</div>
+        </div>
+      </div>
+      <div class="process-step fade-up delay-3">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <div class="step-title">Ongoing Management & Review</div>
+          <div class="step-desc">Life changes, markets evolve. We review your portfolio regularly and adapt your plan so it stays perfectly aligned to your goals — every step of the journey.</div>
+        </div>
+      </div>
+    </div>
+    <div class="process-visual fade-up delay-2">
+      <div class="process-visual-title">Portfolio Growth Snapshot</div>
+      <div style="font-size:0.72rem; color:rgba(255,255,255,0.3); margin-bottom:20px;">Illustrative allocation returns — 10yr horizon</div>
+      <div class="mini-chart">
+        <div class="chart-bar-row">
+          <div class="chart-label">Equity Funds</div>
+          <div class="chart-bar-track"><div class="chart-bar-fill" style="width:82%"></div></div>
+          <div class="chart-val">14.2%</div>
+        </div>
+        <div class="chart-bar-row">
+          <div class="chart-label">Debt Funds</div>
+          <div class="chart-bar-track"><div class="chart-bar-fill" style="width:45%; opacity:0.6"></div></div>
+          <div class="chart-val">7.8%</div>
+        </div>
+        <div class="chart-bar-row">
+          <div class="chart-label">Gold / Intl.</div>
+          <div class="chart-bar-track"><div class="chart-bar-fill" style="width:38%; opacity:0.5"></div></div>
+          <div class="chart-val">6.5%</div>
+        </div>
+        <div class="chart-bar-row">
+          <div class="chart-label">Real Estate</div>
+          <div class="chart-bar-track"><div class="chart-bar-fill" style="width:52%; opacity:0.65"></div></div>
+          <div class="chart-val">9.1%</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="process-note">Returns shown are illustrative based on historical category averages. Actual returns depend on market conditions and individual allocation. Past performance is not indicative of future results.</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why" id="why">
+  <div>
+    <div class="section-tag fade-up">Why Choose Us</div>
+    <h2 class="section-title fade-up delay-1">The Your Wealth<br><em>difference.</em></h2>
+    <p class="section-sub fade-up delay-2">We've spent 15 years perfecting what it means to be a trusted financial partner — not just an advisor. Here's what sets us apart.</p>
+  </div>
+  <div class="why-grid">
+    <div class="why-card fade-up">
+      <div class="why-card-accent"></div>
+      <div class="why-card-title">SEBI-Registered Advisors</div>
+      <div class="why-card-desc">Fully regulated, fiduciary-first professionals who are legally bound to act in your best interest.</div>
+    </div>
+    <div class="why-card fade-up delay-1">
+      <div class="why-card-accent"></div>
+      <div class="why-card-title">Zero Commission Model</div>
+      <div class="why-card-desc">We earn from you, not from products. Transparent fee-only advisory ensures zero conflicts of interest.</div>
+    </div>
+    <div class="why-card fade-up delay-2">
+      <div class="why-card-accent"></div>
+      <div class="why-card-title">Technology-Backed Insights</div>
+      <div class="why-card-desc">Real-time dashboards and data-driven analysis keep you informed and in control at all times.</div>
+    </div>
+    <div class="why-card fade-up delay-3">
+      <div class="why-card-accent"></div>
+      <div class="why-card-title">Dedicated Advisor</div>
+      <div class="why-card-desc">One expert who knows your entire financial story. No handoffs, no confusion, no starting over.</div>
+    </div>
+    <div class="why-card why-card-big fade-up">
+      <div>
+        <div class="why-card-accent"></div>
+        <div class="why-card-title">98% Client Retention Rate</div>
+        <div class="why-card-desc">Our clients stay because they see results and feel genuinely cared for — not because of lock-ins.</div>
+      </div>
+      <div class="why-big-num">98%</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-header">
+    <div class="section-tag fade-up">Client Stories</div>
+    <h2 class="section-title fade-up delay-1">What our clients say.</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testi-card fade-up">
+      <div class="testi-quote">"</div>
+      <div class="testi-text">Your Wealth completely transformed how I think about money. I came in with no plan and left with a 20-year roadmap. Three years later, my portfolio has grown by 43% — but more importantly, I feel financially secure for the first time in my life.</div>
+      <div class="testi-divider"></div>
+      <div class="testi-name">Priya Nair</div>
+      <div class="testi-role">Software Engineer, Bengaluru</div>
+    </div>
+    <div class="testi-card fade-up delay-1">
+      <div class="testi-quote">"</div>
+      <div class="testi-text">As a business owner, my finances were always tangled between personal and professional. My advisor at Your Wealth untangled everything, optimised my taxes significantly, and set me on a clear retirement path. Genuinely life-changing.</div>
+      <div class="testi-divider"></div>
+      <div class="testi-name">Rajeev Sharma</div>
+      <div class="testi-role">Business Owner, Hyderabad</div>
+    </div>
+    <div class="testi-card fade-up delay-2">
+      <div class="testi-quote">"</div>
+      <div class="testi-text">What I appreciate most is that they never push products. Every recommendation comes with a clear explanation and a genuine rationale. It feels like having a brilliant, honest friend who happens to be a financial expert.</div>
+      <div class="testi-divider"></div>
+      <div class="testi-name">Ananya Krishnan</div>
+      <div class="testi-role">Senior Doctor, Chennai</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA STRIP -->
+<div class="cta-strip" id="contact">
+  <div class="cta-strip-title">Your financial future<br>starts with <em>one conversation.</em></div>
+  <a href="mailto:hello@yourwealth.in" class="btn-white">Book a Free Consultation</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">Your<span>Wealth</span></div>
+      <div class="footer-desc">Building and securing financial futures for individuals, families, and businesses across India since 2009.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <ul class="footer-links">
+        <li><a href="#">Financial Planning</a></li>
+        <li><a href="#">Investment Advisory</a></li>
+        <li><a href="#">Retirement Planning</a></li>
+        <li><a href="#">Tax Optimisation</a></li>
+        <li><a href="#">Estate Planning</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Our Team</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Media & Press</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <ul class="footer-links">
+        <li><a href="#">hello@yourwealth.in</a></li>
+        <li><a href="#">+91 98765 43210</a></li>
+        <li><a href="#">Hyderabad, Telangana</a></li>
+        <li><a href="#">Mumbai | Bengaluru</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Your Wealth. All rights reserved. SEBI Registered Investment Advisor.</div>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Disclaimer</a>
+    </div>
+  </div>
+</footer>
 
 <script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-// SIP
-function calcSIP(){
-let P = document.getElementById("sip").value;
-let r = document.getElementById("rate").value/100/12;
-let n = document.getElementById("time").value*12;
-
-let result = P*((Math.pow(1+r,n)-1)/r)*(1+r);
-
-document.getElementById("sipResult").innerText = "Future Value: ₹" + Math.round(result);
-}
-
-// EMI
-function calcEMI(){
-let P = document.getElementById("loan").value;
-let r = document.getElementById("interest").value/100/12;
-let n = document.getElementById("months").value;
-
-let emi = (P*r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
-
-document.getElementById("emiResult").innerText = "EMI: ₹" + Math.round(emi);
-}
-
-// Retirement
-function calcRetirement(){
-let age = document.getElementById("age").value;
-let retire = document.getElementById("retire").value;
-let expense = document.getElementById("expense").value;
-
-let years = retire - age;
-let corpus = expense * 12 * 25;
-
-document.getElementById("retResult").innerText = "Required Corpus: ₹" + corpus;
-}
-
-// Booking
-function bookNow(){
-let name = document.getElementById("name").value;
-let phone = document.getElementById("phone").value;
-
-document.getElementById("msg").innerText = "Thanks " + name + "! We will contact you soon.";
-
-window.location.href = "https://wa.me/91XXXXXXXXXX?text=Hi, I want financial planning consultation";
-}
-
+  // Nav shrink on scroll
+  window.addEventListener('scroll', () => {
+    document.querySelector('nav').style.padding =
+      window.scrollY > 60 ? '14px 60px' : '24px 60px';
+  });
 </script>
-
 </body>
 </html>
