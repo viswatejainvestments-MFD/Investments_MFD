@@ -116,12 +116,21 @@ body{
   color:var(--muted);
 }
 .form-group input,
-.form-group select{
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:10px;
-  font-size:14px;
-  background:white;
+.form-group select {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 14px;
+  background: white;
+  width: 100%;
+  outline: none;
+  transition: 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(184,150,12,0.15);
 }
 
 /* Buttons */
