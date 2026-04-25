@@ -677,79 +677,83 @@ function renderProjChart(r,sip,corpus,years){
 }
 
 function buildSummary(){
+
   const inc=(parseFloat(document.getElementById('inc-fixed').value)||0)+(parseFloat(document.getElementById('inc-var').value)||0);
   const exp=(parseFloat(document.getElementById('exp-ess').value)||0)+(parseFloat(document.getElementById('exp-disc').value)||0)+(parseFloat(document.getElementById('emi').value)||0);
   const surplus=inc-exp;
   const savRate=inc?((parseFloat(document.getElementById('savings').value)||0)/inc*100):0;
-  const riskEl=document.getElementById('risk-result');
-  const riskName=riskEl?.querySelector('.sc-val,.risk-box.selected .rl')?.textContent||'Not assessed';
-  const riskText=document.querySelector('#risk-result div div:nth-child(2)')?.textContent||'Not assessed';
-  const goalsHtml=goals.length?goals.map(g=>`<span class="tag">${g.name} — ${fmt(g.amount)}</span>`).join(''):'<span class="tag" style="color:var(--color-text-secondary)">No goals added</span>';
 
-  let reviewItems=[
-    'Set calendar reminders for quarterly portfolio review',
-    'Rebalance if any asset class drifts more than 5% from target',
-    'Review insurance cover annually or after major life events',
-    'Reassess goals and time horizons every 6 months',
-    'Track actual savings rate vs planned every month'
-  ];
+  const goalsHtml=goals.length
+    ? goals.map(g=>`<span class="tag">${g.name} — ${fmt(g.amount)}</span>`).join('')
+    : '<span class="tag" style="color:var(--muted)">No goals added</span>';
 
-  document.getElementById('final-summary').innerHTML=`
+  let funds = [];
+
+  if (window.userRisk === 'Conservative') {
+    funds = [
+      {name: "HDFC Corporate Bond Fund", type: "Debt", reason: "Stable returns with low volatility"},
+      {name: "ICICI Prudential Balanced Advantage Fund", type: "Hybrid", reason: "Dynamic allocation"},
+      {name: "SBI Magnum Medium Duration Fund", type: "Debt", reason: "Better than FD alternative"}
+    ];
+  }
+
+  else if (window.userRisk === 'Moderate') {
+    funds = [
+      {name: "Parag Parikh Flexi Cap Fund", type: "Flexi Cap", reason: "Diversified long-term growth"},
+      {name: "HDFC Balanced Advantage Fund", type: "Hybrid", reason: "Balanced risk-return"},
+      {name: "UTI Nifty 50 Index Fund", type: "Index", reason: "Low-cost wealth creation"}
+    ];
+  }
+
+  else {
+    funds = [
+      {name: "Axis Small Cap Fund", type: "Small Cap", reason: "High growth potential"},
+      {name: "Mirae Asset Large Cap Fund", type: "Large Cap", reason: "Consistent performer"},
+      {name: "Motilal Oswal Nasdaq 100 Fund", type: "International", reason: "Global exposure"}
+    ];
+  }
+
+  document.getElementById('final-summary').innerHTML = `
+
     <div class="card">
       <h2>Your financial snapshot</h2>
-      <div class="sub">A summary of everything you've told us.</div>
       <div class="summary-row">
         <div class="summary-card"><div class="sc-label">Monthly income</div><div class="sc-val">${fmt(inc)}</div></div>
         <div class="summary-card"><div class="sc-label">Monthly surplus</div><div class="sc-val">${fmt(surplus)}</div></div>
         <div class="summary-card"><div class="sc-label">Savings rate</div><div class="sc-val">${pct(savRate)}</div></div>
       </div>
     </div>
+
     <div class="card">
       <h2>Your goals</h2>
-      <div class="sub">Goals you've mapped to this plan.</div>
       <div style="margin-top:8px">${goalsHtml}</div>
     </div>
+
+    <!-- 🔥 THIS IS YOUR MAIN FEATURE -->
     <div class="card">
-      <h2>Monitoring & review framework</h2>
-      <div class="sub">A plan without tracking is useless. Here's your review checklist.</div>
-      <div class="checklist" style="margin-top:12px">
-        ${reviewItems.map(item=>`<div class="check-item"><div class="check-icon ok">✓</div><div class="check-text">${item}</div></div>`).join('')}
+      <h2>Recommended Mutual Funds</h2>
+      <div class="sub">Based on your risk profile: ${window.userRisk}</div>
+
+      <div style="margin-top:1rem;">
+        ${funds.map(f => `
+          <div style="padding:12px; border-bottom:1px solid var(--border-light)">
+            <div style="font-weight:500;">${f.name}</div>
+            <div style="font-size:12px; color:var(--muted);">${f.type}</div>
+            <div style="font-size:13px; margin-top:4px;">${f.reason}</div>
+          </div>
+        `).join('')}
       </div>
     </div>
+
     <div class="card">
-  <h2>Mutual Fund Investment Strategy</h2>
-  <div class="sub">Based on your inputs, here’s a simple mutual fund allocation strategy.</div>
+      <h2>Next step</h2>
+      <div class="sub">Want a fully personalised portfolio?</div>
 
-  <div class="summary-row">
-    <div class="summary-card">
-      <div class="sc-label">Equity Allocation</div>
-      <div class="sc-val">60–70%</div>
+      <button class="btn btn-primary" onclick="window.location.href='mailto:viswateja.investments@gmail.com'">
+        Get Personalised Plan →
+      </button>
     </div>
-    <div class="summary-card">
-      <div class="sc-label">Debt Allocation</div>
-      <div class="sc-val">20–30%</div>
-    </div>
-    <div class="summary-card">
-      <div class="sc-label">Gold / Others</div>
-      <div class="sc-val">5–10%</div>
-    </div>
-  </div>
 
-  <div style="margin-top:1rem; font-size:14px; color:var(--muted); line-height:1.7">
-    • Start a monthly SIP aligned with your surplus income.<br>
-    • Focus on large-cap and flexi-cap funds for stability.<br>
-    • Use index funds for long-term compounding.<br>
-    • Allocate a small portion to debt funds for stability.<br>
-    • Review and rebalance every 6 months.
-  </div>
-
-  <div style="margin-top:1.2rem;">
-    <button class="btn btn-primary" onclick="window.location.href='mailto:viswateja.investments@gmail.com'">
-      Get Personalised Mutual Fund Plan →
-    </button>
-  </div>
-</div>
-      <div class="sub" style="color:var(--color-text-info)">Ask Claude to build you a detailed, step-by-step personalised roadmap based on what you've entered.</div>
-    </div>`;
+  `;
 }
 </script>
