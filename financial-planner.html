@@ -715,8 +715,39 @@ function buildSummary(){
         ${reviewItems.map(item=>`<div class="check-item"><div class="check-icon ok">✓</div><div class="check-text">${item}</div></div>`).join('')}
       </div>
     </div>
-    <div class="card" style="border:1.5px solid var(--color-border-info);background:var(--color-background-info)">
-      <h2 style="color:var(--color-text-info)">Ready for a deeper plan?</h2>
+    <div class="card">
+  <h2>Mutual Fund Investment Strategy</h2>
+  <div class="sub">Based on your inputs, here’s a simple mutual fund allocation strategy.</div>
+
+  <div class="summary-row">
+    <div class="summary-card">
+      <div class="sc-label">Equity Allocation</div>
+      <div class="sc-val">60–70%</div>
+    </div>
+    <div class="summary-card">
+      <div class="sc-label">Debt Allocation</div>
+      <div class="sc-val">20–30%</div>
+    </div>
+    <div class="summary-card">
+      <div class="sc-label">Gold / Others</div>
+      <div class="sc-val">5–10%</div>
+    </div>
+  </div>
+
+  <div style="margin-top:1rem; font-size:14px; color:var(--muted); line-height:1.7">
+    • Start a monthly SIP aligned with your surplus income.<br>
+    • Focus on large-cap and flexi-cap funds for stability.<br>
+    • Use index funds for long-term compounding.<br>
+    • Allocate a small portion to debt funds for stability.<br>
+    • Review and rebalance every 6 months.
+  </div>
+
+  <div style="margin-top:1.2rem;">
+    <button class="btn btn-primary" onclick="window.location.href='mailto:viswateja.investments@gmail.com'">
+      Get Personalised Mutual Fund Plan →
+    </button>
+  </div>
+</div>
       <div class="sub" style="color:var(--color-text-info)">Ask Claude to build you a detailed, step-by-step personalised roadmap based on what you've entered.</div>
     </div>`;
 }
