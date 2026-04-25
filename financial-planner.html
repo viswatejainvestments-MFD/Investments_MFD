@@ -569,6 +569,7 @@ function calcRisk(){
     {min:9,max:10,name:'Aggressive',color:'#1d9e75',desc:'Maximum growth. High equity, comfortable with volatility.'},
   ];
   const p=profiles.find(x=>score>=x.min&&score<=x.max)||profiles[1];
+  window.userRisk = p.name;
   document.getElementById('risk-result').innerHTML=`
     <div style="padding:14px;border-left:3px solid ${p.color};background:var(--color-background-secondary);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0">
       <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:4px">Your risk profile</div>
