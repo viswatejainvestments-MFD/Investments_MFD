@@ -689,7 +689,7 @@ input[type=range]::-webkit-slider-thumb{
           <input type="number" id="g-years" placeholder="10" min="1" max="40">
         </div>
       </div>
-      <button class="btn btn-primary" onclick="saveGoal()" style="width:100%">Save this goal →</button>
+      <button class="btn btn-primary" onclick="saveGoal(); goTo(1);" style="width:100%">Save this goal →</button>
     </div>
 
     <div class="nav-row">
@@ -1237,7 +1237,7 @@ function calcRisk() {
      desc:'Maximum growth orientation. High conviction in equity markets, long horizon, and strong stomach for 30%+ drawdowns.'},
   ];
   const p = profiles.find(x=>score>=x.min&&score<=x.max)||profiles[1];
-  window.userRisk = p;
+  window.userRisk = p.name;
 
   // Auto-set sliders
   document.getElementById('sl-equity').value = p.eq;
