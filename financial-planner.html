@@ -678,49 +678,40 @@ function renderProjChart(r,sip,corpus,years){
 
 function buildSummary(){
 
-  const inc=(parseFloat(document.getElementById('inc-fixed').value)||0)+(parseFloat(document.getElementById('inc-var').value)||0);
-  const exp=(parseFloat(document.getElementById('exp-ess').value)||0)+(parseFloat(document.getElementById('exp-disc').value)||0)+(parseFloat(document.getElementById('emi').value)||0);
-  const surplus=inc-exp;
-  const savRate=inc?((parseFloat(document.getElementById('savings').value)||0)/inc*100):0;
+  const inc = (parseFloat(document.getElementById('inc-fixed').value)||0) + 
+              (parseFloat(document.getElementById('inc-var').value)||0);
 
-  const goalsHtml=goals.length
-    ? goals.map(g=>`<span class="tag">${g.name} — ${fmt(g.amount)}</span>`).join('')
+  const exp = (parseFloat(document.getElementById('exp-ess').value)||0) + 
+              (parseFloat(document.getElementById('exp-disc').value)||0) + 
+              (parseFloat(document.getElementById('emi').value)||0);
+
+  const surplus = inc - exp;
+
+  const savRate = inc 
+    ? ((parseFloat(document.getElementById('savings').value)||0) / inc * 100) 
+    : 0;
+
+  const goalsHtml = goals.length
+    ? goals.map(g => `<span class="tag">${g.name} — ${fmt(g.amount)}</span>`).join('')
     : '<span class="tag" style="color:var(--muted)">No goals added</span>';
-
-  let funds = [];
-
-  if (window.userRisk === 'Conservative') {
-    funds = [
-      {name: "HDFC Corporate Bond Fund", type: "Debt", reason: "Stable returns with low volatility"},
-      {name: "ICICI Prudential Balanced Advantage Fund", type: "Hybrid", reason: "Dynamic allocation"},
-      {name: "SBI Magnum Medium Duration Fund", type: "Debt", reason: "Better than FD alternative"}
-    ];
-  }
-
-  else if (window.userRisk === 'Moderate') {
-    funds = [
-      {name: "Parag Parikh Flexi Cap Fund", type: "Flexi Cap", reason: "Diversified long-term growth"},
-      {name: "HDFC Balanced Advantage Fund", type: "Hybrid", reason: "Balanced risk-return"},
-      {name: "UTI Nifty 50 Index Fund", type: "Index", reason: "Low-cost wealth creation"}
-    ];
-  }
-
-  else {
-    funds = [
-      {name: "Axis Small Cap Fund", type: "Small Cap", reason: "High growth potential"},
-      {name: "Mirae Asset Large Cap Fund", type: "Large Cap", reason: "Consistent performer"},
-      {name: "Motilal Oswal Nasdaq 100 Fund", type: "International", reason: "Global exposure"}
-    ];
-  }
 
   document.getElementById('final-summary').innerHTML = `
 
     <div class="card">
       <h2>Your financial snapshot</h2>
       <div class="summary-row">
-        <div class="summary-card"><div class="sc-label">Monthly income</div><div class="sc-val">${fmt(inc)}</div></div>
-        <div class="summary-card"><div class="sc-label">Monthly surplus</div><div class="sc-val">${fmt(surplus)}</div></div>
-        <div class="summary-card"><div class="sc-label">Savings rate</div><div class="sc-val">${pct(savRate)}</div></div>
+        <div class="summary-card">
+          <div class="sc-label">Monthly income</div>
+          <div class="sc-val">${fmt(inc)}</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-label">Monthly surplus</div>
+          <div class="sc-val">${fmt(surplus)}</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-label">Savings rate</div>
+          <div class="sc-val">${pct(savRate)}</div>
+        </div>
       </div>
     </div>
 
@@ -729,20 +720,16 @@ function buildSummary(){
       <div style="margin-top:8px">${goalsHtml}</div>
     </div>
 
-    <!-- 🔥 THIS IS YOUR MAIN FEATURE -->
+    <!-- 🔥 BUTTON-BASED INVESTMENT PLAN -->
     <div class="card">
-      <h2>Recommended Mutual Funds</h2>
-      <div class="sub">Based on your risk profile: ${window.userRisk}</div>
+      <h2>Investment Recommendation</h2>
+      <div class="sub">Click below to generate your personalised mutual fund plan.</div>
 
-      <div style="margin-top:1rem;">
-        ${funds.map(f => `
-          <div style="padding:12px; border-bottom:1px solid var(--border-light)">
-            <div style="font-weight:500;">${f.name}</div>
-            <div style="font-size:12px; color:var(--muted);">${f.type}</div>
-            <div style="font-size:13px; margin-top:4px;">${f.reason}</div>
-          </div>
-        `).join('')}
-      </div>
+      <button class="btn btn-primary" onclick="showInvestmentPlan()" style="margin-top:1rem;">
+        Get My Investment Plan →
+      </button>
+
+      <div id="investment-output" style="margin-top:1.5rem;"></div>
     </div>
 
     <div class="card">
@@ -756,4 +743,53 @@ function buildSummary(){
 
   `;
 }
-</script>
+  
+function showInvestmentPlan(){
+
+  let funds = [];
+
+  if (window.userRisk === 'Conservative') {
+    funds = [
+      {name: "HDFC Corporate Bond Fund", type: "Debt", alloc: 40},
+      {name: "ICICI Balanced Advantage Fund", type: "Hybrid", alloc: 40},
+      {name: "SBI Medium Duration Fund", type: "Debt", alloc: 20}
+    ];
+  }
+
+  else if (window.userRisk === 'Moderate') {
+    funds = [
+      {name: "Parag Parikh Flexi Cap Fund", type: "Flexi Cap", alloc: 40},
+      {name: "HDFC Balanced Advantage Fund", type: "Hybrid", alloc: 30},
+      {name: "UTI Nifty 50 Index Fund", type: "Index", alloc: 30}
+    ];
+  }
+
+  else {
+    funds = [
+      {name: "Axis Small Cap Fund", type: "Small Cap", alloc: 40},
+      {name: "Mirae Asset Large Cap Fund", type: "Large Cap", alloc: 30},
+      {name: "Motilal Oswal Nasdaq 100 Fund", type: "International", alloc: 30}
+    ];
+  }
+
+  const sip = parseFloat(document.getElementById('pr-sip').value) || 10000;
+
+  const output = `
+    <div class="card">
+      <h2>Your Investment Plan</h2>
+      <div class="sub">Recommended monthly SIP: ₹${sip.toLocaleString()}</div>
+
+      ${funds.map(f => `
+        <div style="padding:12px; border-bottom:1px solid var(--border-light)">
+          <div style="font-weight:500">${f.name}</div>
+          <div style="font-size:12px;color:var(--muted)">${f.type}</div>
+          <div style="font-size:13px;margin-top:4px;">
+            Invest ₹${Math.round(sip * f.alloc / 100).toLocaleString()} (${f.alloc}%)
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  document.getElementById('investment-output').innerHTML = output;
+}
