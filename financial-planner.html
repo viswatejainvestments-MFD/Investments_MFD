@@ -478,6 +478,13 @@ input[type=range]::-webkit-slider-thumb{
   line-height:1.5;margin-top:8px;
   padding-top:8px;border-top:1px solid var(--border-light);
 }
+.fund-goal-tag{
+  display:inline-block;margin-top:6px;
+  padding:2px 8px;border-radius:20px;
+  font-size:10px;font-family:'DM Mono',monospace;
+  background:rgba(50,102,173,0.08);color:#3266AD;
+  border:1px solid rgba(50,102,173,0.15);
+}
 
 /* ── SUMMARY ── */
 .summary-section{margin-bottom:1.2rem}
@@ -570,6 +577,41 @@ input[type=range]::-webkit-slider-thumb{
 .insight.ok{border-color:var(--success);background:var(--success-bg)}
 .insight.danger{border-color:var(--danger);background:var(--danger-bg)}
 
+/* ── COST OF DELAY BOX ── */
+.cost-of-delay{
+  padding:16px;
+  background:linear-gradient(135deg,rgba(192,57,43,0.06),rgba(192,57,43,0.03));
+  border:1px solid rgba(192,57,43,0.2);
+  border-radius:var(--radius-sm);
+  margin:10px 0;
+}
+.cost-of-delay .cod-title{
+  font-size:13px;font-weight:600;color:var(--danger);margin-bottom:6px;
+}
+.cost-of-delay .cod-body{font-size:12px;color:var(--muted);line-height:1.6}
+.cost-of-delay .cod-number{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:500;color:var(--danger);
+}
+
+/* ── CTA BOX ── */
+.cta-action{
+  padding:20px;
+  background:linear-gradient(135deg,var(--charcoal),#2A2A2A);
+  border-radius:var(--radius);
+  text-align:center;
+  margin:1.2rem 0;
+}
+.cta-action .cta-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;color:white;margin-bottom:6px;
+}
+.cta-action .cta-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px}
+.cta-action .cta-amount{
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;color:var(--gold-light);font-weight:300;
+}
+
 /* ── LOADING ── */
 .loading-shimmer{
   background:linear-gradient(90deg,var(--cream) 25%,#ede8df 50%,var(--cream) 75%);
@@ -610,21 +652,46 @@ input[type=range]::-webkit-slider-thumb{
   0%,80%,100%{transform:scale(0.6);opacity:0.4}
   40%{transform:scale(1);opacity:1}
 }
+
+/* ── GOAL-FUND MAP ── */
+.goal-fund-section{margin-bottom:1.2rem}
+.goal-fund-group{margin-bottom:1rem}
+.goal-fund-header{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;
+  background:var(--charcoal);border-radius:var(--radius-sm) var(--radius-sm) 0 0;
+  color:white;
+}
+.goal-fund-header .gf-name{font-size:14px;font-weight:500}
+.goal-fund-header .gf-amount{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--gold-light);margin-left:auto}
+.goal-fund-list{
+  border:1px solid var(--border-light);border-top:none;
+  border-radius:0 0 var(--radius-sm) var(--radius-sm);
+  overflow:hidden;
+}
+.goal-fund-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 14px;border-bottom:1px solid var(--border-light);
+  background:white;
+}
+.goal-fund-row:last-child{border-bottom:none}
+.gfr-name{font-size:13px;color:var(--charcoal)}
+.gfr-sip{font-size:12px;font-family:'DM Mono',monospace;color:var(--gold);font-weight:500}
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="#" class="nav-logo">Your<span>Wealth</span></a>
+  <a href="index.html" class="nav-logo">Your<span>Wealth</span></a>
   <div class="nav-progress" id="nav-progress">Step 1 of 8</div>
 </nav>
 
 <div class="fp-wrap">
 
   <div class="hero">
-    <div class="hero-eyebrow">Holistic Financial Planning</div>
-    <h1>Build your <em>complete</em><br>financial blueprint</h1>
-    <p>Answer 8 sections to receive a personalised financial health score, goal roadmap, and specific mutual fund investment plan.</p>
+    <div class="hero-eyebrow">Goal-Based Financial Planning</div>
+    <h1>Your money. Your goals.<br><em>Your roadmap.</em></h1>
+    <p>Answer 8 simple sections and receive a personalised financial health score, goal-wise investment plan, and specific mutual fund recommendations — all crafted around your life.</p>
   </div>
 
   <div class="progress-bar" id="pills"></div>
@@ -633,14 +700,14 @@ input[type=range]::-webkit-slider-thumb{
   <div class="section visible" id="sec-0">
     <div class="section-header">
       <h2>Define your financial goals</h2>
-      <p>Specific, time-bound goals create clarity and purpose in your investment strategy.</p>
+      <p>Great wealth starts with clear, specific goals. Add everything you're working towards — retirement, education, a home, travel, or anything else that matters to you.</p>
     </div>
 
     <div class="card">
       <div class="card-header">
         <div>
           <div class="card-title">Your goals</div>
-          <div class="card-sub">Add all major financial milestones you're working towards</div>
+          <div class="card-sub">Each goal gets its own dedicated investment plan and SIP recommendation</div>
         </div>
         <div class="card-icon">🎯</div>
       </div>
@@ -653,7 +720,7 @@ input[type=range]::-webkit-slider-thumb{
       <div class="card-header">
         <div>
           <div class="card-title">Add a goal</div>
-          <div class="card-sub">Be specific — vague goals get vague results</div>
+          <div class="card-sub">Be specific — "daughter's IIT education" beats "education fund"</div>
         </div>
         <div class="card-icon">➕</div>
       </div>
@@ -663,7 +730,7 @@ input[type=range]::-webkit-slider-thumb{
           <input type="text" id="g-name" placeholder="e.g. Daughter's higher education">
         </div>
         <div class="form-group">
-          <label>Target amount (₹)</label>
+          <label>Target amount today (₹)</label>
           <div class="input-prefix"><span>₹</span><input type="number" id="g-amount" placeholder="2500000"></div>
         </div>
       </div>
@@ -689,7 +756,18 @@ input[type=range]::-webkit-slider-thumb{
           <input type="number" id="g-years" placeholder="10" min="1" max="40">
         </div>
       </div>
-      <button class="btn btn-primary" onclick="saveGoal(); goTo(1);" style="width:100%">Save this goal →</button>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Inflation adjustment (%)</label>
+          <input type="number" id="g-inflation" placeholder="6" min="0" max="15">
+        </div>
+        <div class="form-group">
+          <label>Lumpsum already saved (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="g-lumpsum" placeholder="0"></div>
+        </div>
+      </div>
+      <div id="goal-preview" style="margin-bottom:12px"></div>
+      <button class="btn btn-primary" onclick="saveGoal()" style="width:100%">Save this goal →</button>
     </div>
 
     <div class="nav-row">
@@ -702,12 +780,12 @@ input[type=range]::-webkit-slider-thumb{
   <div class="section" id="sec-1">
     <div class="section-header">
       <h2>Income & cash flow</h2>
-      <p>The foundation of every financial plan. Understanding your flow determines your investing power.</p>
+      <p>Your investable surplus is the engine of wealth creation. Let's find exactly how much you can put to work each month.</p>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Monthly income sources</div><div class="card-sub">Enter monthly take-home figures</div></div>
+        <div><div class="card-title">Monthly income sources</div><div class="card-sub">Enter monthly take-home (post-tax) figures</div></div>
         <div class="card-icon">💰</div>
       </div>
       <div class="form-row">
@@ -734,16 +812,16 @@ input[type=range]::-webkit-slider-thumb{
 
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Monthly outflows</div><div class="card-sub">Be realistic — every rupee matters</div></div>
+        <div><div class="card-title">Monthly outflows</div><div class="card-sub">Be realistic — every rupee accounted for = every rupee invested intentionally</div></div>
         <div class="card-icon">📊</div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Essential expenses (₹)</label>
+          <label>Essential expenses (rent, food, bills) (₹)</label>
           <div class="input-prefix"><span>₹</span><input type="number" id="exp-ess" placeholder="50000" oninput="calcCashflow()"></div>
         </div>
         <div class="form-group">
-          <label>Discretionary expenses (₹)</label>
+          <label>Discretionary expenses (dining, OTT, etc.) (₹)</label>
           <div class="input-prefix"><span>₹</span><input type="number" id="exp-disc" placeholder="20000" oninput="calcCashflow()"></div>
         </div>
       </div>
@@ -753,7 +831,7 @@ input[type=range]::-webkit-slider-thumb{
           <div class="input-prefix"><span>₹</span><input type="number" id="emi" placeholder="10000" oninput="calcCashflow()"></div>
         </div>
         <div class="form-group">
-          <label>Current monthly savings (₹)</label>
+          <label>Current monthly savings / SIPs (₹)</label>
           <div class="input-prefix"><span>₹</span><input type="number" id="savings" placeholder="15000" oninput="calcCashflow()"></div>
         </div>
       </div>
@@ -761,7 +839,7 @@ input[type=range]::-webkit-slider-thumb{
 
     <div class="card" id="cashflow-card" style="display:none">
       <div class="card-header">
-        <div><div class="card-title">Cash flow analysis</div></div>
+        <div><div class="card-title">Your cash flow snapshot</div></div>
         <div class="card-icon">📈</div>
       </div>
       <div class="metric-grid" id="cashflow-metrics">
@@ -783,12 +861,12 @@ input[type=range]::-webkit-slider-thumb{
   <div class="section" id="sec-2">
     <div class="section-header">
       <h2>Net worth & portfolio</h2>
-      <p>Your current wealth position — assets you own and liabilities you owe.</p>
+      <p>Understanding what you own and what you owe gives us a true picture of your starting point — and how far you've already come.</p>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Investment assets</div><div class="card-sub">Enter current market value</div></div>
+        <div><div class="card-title">Investment assets</div><div class="card-sub">Enter current market value of each asset class</div></div>
         <div class="card-icon">🏦</div>
       </div>
       <div class="form-row three">
@@ -810,7 +888,7 @@ input[type=range]::-webkit-slider-thumb{
 
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Liabilities</div><div class="card-sub">Outstanding obligations reduce your investable capacity</div></div>
+        <div><div class="card-title">Liabilities</div><div class="card-sub">Your outstanding obligations — we factor these into your investment capacity</div></div>
         <div class="card-icon">⚖️</div>
       </div>
       <div class="form-row three">
@@ -831,12 +909,12 @@ input[type=range]::-webkit-slider-thumb{
   <div class="section" id="sec-3">
     <div class="section-header">
       <h2>Risk profiling</h2>
-      <p>Your true risk profile combines psychological tolerance, financial capacity, and goal requirements.</p>
+      <p>We combine your psychology, financial capacity, and goal requirements to find your true risk profile — not just what sounds good on paper.</p>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Behavioural assessment</div><div class="card-sub">How you've reacted to market stress reveals your true risk tolerance</div></div>
+        <div><div class="card-title">Behavioural assessment</div><div class="card-sub">Answer honestly — this shapes the funds we recommend</div></div>
         <div class="card-icon">🧠</div>
       </div>
       <div class="section-label">How did you react during the 2020 crash (Sensex -38% in 40 days)?</div>
@@ -892,12 +970,12 @@ input[type=range]::-webkit-slider-thumb{
   <div class="section" id="sec-4">
     <div class="section-header">
       <h2>Insurance & protection</h2>
-      <p>Protecting your downside is the foundation. You can't build wealth on a foundation that can collapse.</p>
+      <p>One medical emergency or untimely death without adequate cover can erase years of wealth. We check your safety net before building your portfolio.</p>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Protection inputs</div><div class="card-sub">Used to calculate adequacy of your coverage</div></div>
+        <div><div class="card-title">Protection inputs</div><div class="card-sub">We use this to audit your insurance adequacy</div></div>
         <div class="card-icon">🛡️</div>
       </div>
       <div class="form-row">
@@ -930,12 +1008,12 @@ input[type=range]::-webkit-slider-thumb{
   <div class="section" id="sec-5">
     <div class="section-header">
       <h2>Investment strategy</h2>
-      <p>Asset allocation is responsible for over 90% of long-term portfolio returns. Get this right first.</p>
+      <p>Asset allocation drives over 90% of long-term returns. This is where we set the foundation for every rupee you invest.</p>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Target asset allocation</div><div class="card-sub">Drag sliders to set your ideal allocation mix</div></div>
+        <div><div class="card-title">Target asset allocation</div><div class="card-sub">Adjust to set your ideal mix — or let your risk profile guide you</div></div>
         <div class="card-icon">⚖️</div>
       </div>
       <div class="slider-row">
@@ -993,12 +1071,8 @@ input[type=range]::-webkit-slider-thumb{
           </select>
         </div>
         <div class="form-group">
-          <label>Rebalancing frequency</label>
-          <select id="rebalance">
-            <option value="quarterly">Quarterly</option>
-            <option value="half-yearly" selected>Half-yearly</option>
-            <option value="annual">Annual</option>
-          </select>
+          <label>Annual SIP step-up (%)</label>
+          <input type="number" id="annual-stepup" placeholder="10" min="0" max="30">
         </div>
       </div>
     </div>
@@ -1013,12 +1087,12 @@ input[type=range]::-webkit-slider-thumb{
   <div class="section" id="sec-6">
     <div class="section-header">
       <h2>Goal projections</h2>
-      <p>See your financial future across three market scenarios, mapped against your goals.</p>
+      <p>See your financial future across three market scenarios, mapped against each of your goals. This is where the plan becomes real.</p>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Projection inputs</div><div class="card-sub">Fine-tune these numbers for accuracy</div></div>
+        <div><div class="card-title">Projection inputs</div><div class="card-sub">Fine-tune these for accuracy</div></div>
         <div class="card-icon">🔮</div>
       </div>
       <div class="form-row">
@@ -1056,7 +1130,7 @@ input[type=range]::-webkit-slider-thumb{
     <div id="final-summary"></div>
     <div class="nav-row" style="justify-content:center;gap:12px;flex-wrap:wrap">
       <button class="btn" onclick="goTo(0)">Start over</button>
-      <button class="btn btn-gold btn-lg" onclick="sendPrompt('Based on my financial plan, give me a detailed personalised 90-day action plan with specific steps, fund names, and amounts to invest.')">Get AI-powered action plan ↗</button>
+      <button class="btn btn-gold btn-lg" onclick="window.location.href='mailto:viswateja.investments@gmail.com?subject=I want to start my SIP plan'">📩 Start my SIP — Contact Viswateja</button>
     </div>
   </div>
 
@@ -1095,20 +1169,54 @@ function crores(n) {
   if(n>=100000) return '₹'+(n/100000).toFixed(1)+'L';
   return fmt(n);
 }
+function inflationAdjusted(amount, years, rate) {
+  return amount * Math.pow(1 + rate/100, years);
+}
 
 /* ── GOALS ── */
+// Live preview
+['g-amount','g-years','g-inflation','g-lumpsum'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', previewGoal);
+});
+function previewGoal() {
+  const amount = parseFloat(document.getElementById('g-amount').value)||0;
+  const years = parseInt(document.getElementById('g-years').value)||5;
+  const inflation = parseFloat(document.getElementById('g-inflation').value)||6;
+  const lumpsum = parseFloat(document.getElementById('g-lumpsum').value)||0;
+  if(!amount) { document.getElementById('goal-preview').innerHTML=''; return; }
+  const futureVal = inflationAdjusted(amount, years, inflation);
+  const lumpsumFV = lumpsum * Math.pow(1.12, years);
+  const gap = Math.max(0, futureVal - lumpsumFV);
+  const sipNeeded = calcSIPNeeded(gap, years, 12);
+  document.getElementById('goal-preview').innerHTML=`
+    <div class="insight">
+      <strong>Inflation-adjusted target:</strong> ${crores(futureVal)} in ${years} years at ${inflation}% inflation.
+      Monthly SIP needed: <strong>${fmt(sipNeeded)}</strong>
+      ${lumpsum>0?` (lumpsum of ${fmt(lumpsum)} covers ${crores(lumpsumFV)} of that)`:''}
+    </div>`;
+}
+
 function saveGoal() {
   const name = document.getElementById('g-name').value.trim();
   const amount = parseFloat(document.getElementById('g-amount').value)||0;
   const horizon = document.getElementById('g-horizon').value;
   const priority = document.getElementById('g-priority').value;
   const years = parseInt(document.getElementById('g-years').value)||5;
+  const inflation = parseFloat(document.getElementById('g-inflation').value)||6;
+  const lumpsum = parseFloat(document.getElementById('g-lumpsum').value)||0;
   if(!name) { alert('Please enter a goal name.'); return; }
-  goals.push({name,amount,horizon,priority,years});
+  const futureVal = inflationAdjusted(amount, years, inflation);
+  const lumpsumFV = lumpsum * Math.pow(1.12, years);
+  const gap = Math.max(0, futureVal - lumpsumFV);
+  goals.push({name, amount, futureVal, horizon, priority, years, inflation, lumpsum, gap});
   renderGoals();
   document.getElementById('g-name').value='';
   document.getElementById('g-amount').value='';
   document.getElementById('g-years').value='';
+  document.getElementById('g-inflation').value='';
+  document.getElementById('g-lumpsum').value='';
+  document.getElementById('goal-preview').innerHTML='';
 }
 function removeGoal(i) { goals.splice(i,1); renderGoals(); }
 function renderGoals() {
@@ -1123,7 +1231,7 @@ function renderGoals() {
     <div class="goal-item">
       <div>
         <div class="goal-name">${g.name}</div>
-        <div class="goal-detail">${fmt(g.amount)} · ${g.years} years · Monthly SIP needed: ${fmt(calcSIPNeeded(g.amount,g.years,12))}</div>
+        <div class="goal-detail">Today: ${fmt(g.amount)} → Future: ${crores(g.futureVal)} · ${g.years} years · SIP needed: ${fmt(calcSIPNeeded(g.gap, g.years, 12))}/mo</div>
       </div>
       <div class="goal-badges">
         <span class="badge ${hMap[g.horizon].c}">${hMap[g.horizon].l}</span>
@@ -1132,10 +1240,11 @@ function renderGoals() {
       </div>
     </div>`).join('');
 }
-function calcSIPNeeded(target,years,rate) {
+function calcSIPNeeded(target, years, rate) {
   const mr = rate/12/100;
   const n = years*12;
   if(mr===0) return target/n;
+  if(target<=0) return 0;
   return target * mr / ((Math.pow(1+mr,n)-1) * (1+mr));
 }
 
@@ -1160,10 +1269,10 @@ function calcCashflow() {
 
   let insight='';
   if(total>0) {
-    if(savRate<10) insight=`<div class="insight warn"><strong>⚠ Low savings rate.</strong> You're saving ${pct(savRate)} of income. Target: 20%+. Consider cutting discretionary expenses by ₹${Math.round((total*0.2-sav)/1000)*1000}/month.</div>`;
-    else if(savRate>=30) insight=`<div class="insight ok"><strong>✓ Strong savings discipline.</strong> ${pct(savRate)} savings rate puts you in the top 10% of savers. Ensure this flows into productive investments.</div>`;
-    else insight=`<div class="insight"><strong>Good progress.</strong> ${pct(savRate)} savings rate. Pushing to 25%+ would significantly accelerate Yours Wealth journey.</div>`;
-    if(emiBurden>40) insight+=`<div class="insight danger" style="margin-top:8px"><strong>⚠ High EMI burden.</strong> ${pct(emiBurden)} of income goes to EMIs (limit: 40%). This limits your investment capacity and emergency resilience.</div>`;
+    if(savRate<10) insight=`<div class="insight warn"><strong>⚠ Low savings rate.</strong> You're saving ${pct(savRate)} of income. Target: 20%+. Reducing discretionary spend by ₹${Math.round((total*0.2-sav)/1000)*1000}/month unlocks a significant SIP increase.</div>`;
+    else if(savRate>=30) insight=`<div class="insight ok"><strong>✓ Exceptional savings discipline.</strong> ${pct(savRate)} savings rate puts you in the top 10%. Ensure this is flowing into productive goal-based investments — not just lying in savings accounts.</div>`;
+    else insight=`<div class="insight"><strong>Good progress.</strong> ${pct(savRate)} savings rate. Pushing to 25%+ would dramatically accelerate your wealth journey and goal achievement.</div>`;
+    if(emiBurden>40) insight+=`<div class="insight danger" style="margin-top:8px"><strong>⚠ High EMI burden.</strong> ${pct(emiBurden)} of income goes to EMIs (recommended limit: 40%). This compresses your investment capacity. Prioritise debt repayment to unlock more investable surplus.</div>`;
   }
   document.getElementById('cashflow-insight').innerHTML = insight;
 }
@@ -1213,7 +1322,7 @@ function calcNetWorth() {
       <div class="metric"><div class="lbl">Total liabilities</div><div class="val">${crores(totalLiab)}</div></div>
       <div class="metric ${netWorth>0?'gold-metric':''}"><div class="lbl">Net worth</div><div class="val">${crores(netWorth)}</div></div>
     </div>
-    ${debtRatio>50?`<div class="insight danger" style="margin-top:10px"><strong>⚠ High debt ratio.</strong> Liabilities are ${pct(debtRatio)} of your total assets. Focus on debt reduction before aggressive investing.</div>`:''}`;
+    ${debtRatio>50?`<div class="insight danger" style="margin-top:10px"><strong>⚠ High debt ratio.</strong> Liabilities are ${pct(debtRatio)} of your total assets. A debt-reduction plan before aggressive equity investing will protect your financial foundation.</div>`:''}`;
   window._netWorth = netWorth;
   window._totalLiab = totalLiab;
 }
@@ -1228,18 +1337,18 @@ function calcRisk() {
   const score = react + loss + stab + (2-dep) + inv_exp;
   const profiles = [
     {min:2,max:6,name:'Conservative',score:25,color:'#D85A30',eq:25,debt:60,gold:10,intl:5,
-     desc:'Capital preservation is your priority. You value stability over high returns and get anxious during market volatility.'},
+     desc:'Capital preservation is your priority. You value stability and peace of mind over aggressive returns. A conservative mix protects your principal while still generating inflation-beating returns over time.'},
     {min:7,max:10,name:'Moderate',score:50,color:'#BA7517',eq:50,debt:35,gold:10,intl:5,
-     desc:'You seek balanced growth. Comfortable with some volatility but prefer a mix of equity and debt for steady compounding.'},
+     desc:'You seek balanced growth. Comfortable with some market volatility, you prefer a diversified mix that grows steadily without dramatic swings. This is the most common and effective long-term profile.'},
     {min:11,max:13,name:'Moderately Aggressive',score:75,color:'#3266AD',eq:65,debt:20,gold:10,intl:5,
-     desc:'Growth-focused. You can handle market swings and are comfortable with higher equity exposure for better long-term returns.'},
+     desc:'Growth-focused with strong conviction in equity markets. You can handle market dips without panic, and you understand that short-term pain leads to significant long-term gain.'},
     {min:14,max:16,name:'Aggressive',score:95,color:'#1D9E75',eq:80,debt:10,gold:5,intl:5,
-     desc:'Maximum growth orientation. High conviction in equity markets, long horizon, and strong stomach for 30%+ drawdowns.'},
+     desc:'Maximum growth orientation. High conviction in India\'s equity story, long investment horizon, and the stomach to hold through 30%+ drawdowns. Every rupee works hard for maximum compounding.'},
   ];
   const p = profiles.find(x=>score>=x.min&&score<=x.max)||profiles[1];
-  window.userRisk = p.name;
+  window.userRisk = p;
 
-  // Auto-set sliders
+  // Auto-set strategy sliders
   document.getElementById('sl-equity').value = p.eq;
   document.getElementById('sl-debt').value = p.debt;
   document.getElementById('sl-gold').value = p.gold;
@@ -1248,6 +1357,7 @@ function calcRisk() {
   document.getElementById('debt-val').textContent = p.debt+'%';
   document.getElementById('gold-val').textContent = p.gold+'%';
   document.getElementById('intl-val').textContent = p.intl+'%';
+  updateStrategy();
 
   const circumference = 2*Math.PI*40;
   const dashArray = (p.score/100)*circumference;
@@ -1267,7 +1377,7 @@ function calcRisk() {
         </div>
       </div>
       <div class="risk-info">
-        <h3>${p.name}</h3>
+        <h3>${p.name} Investor</h3>
         <p>${p.desc}</p>
         <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
           <span class="badge badge-info">Equity ${p.eq}%</span>
@@ -1276,7 +1386,8 @@ function calcRisk() {
           ${p.intl?`<span class="badge" style="background:rgba(123,94,167,0.1);color:#7B5EA7">Intl ${p.intl}%</span>`:''}
         </div>
       </div>
-    </div>`;
+    </div>
+    <div class="insight ok" style="margin-top:10px"><strong>✓ Allocation pre-set.</strong> Your strategy sliders on the next page have been automatically configured to match your ${p.name} profile.</div>`;
 }
 
 /* ── PROTECTION ── */
@@ -1292,7 +1403,6 @@ function calcProtection() {
 
   if(!income && !exp) { document.getElementById('protection-output').innerHTML=''; return; }
 
-  const yearsToRetire = Math.max(0, 60-age);
   const lifeNeeded = (income * 15) + loans + (exp * 12 * Math.max(0,dep) * 5);
   const lifeGap = Math.max(0, lifeNeeded-lifeExisting);
   const healthRec = dep>0 ? Math.max(1000000, dep*500000) : 500000;
@@ -1309,29 +1419,29 @@ function calcProtection() {
       ok:lifeOk, warn:lifeWarn,
       label:'Life insurance (term cover)',
       detail: lifeOk
-        ? `Your cover of ${fmt(lifeExisting)} appears adequate. Recommended: ${crores(lifeNeeded)}.`
-        : `Recommended cover: ${crores(lifeNeeded)}. Current gap: ${crores(lifeGap)}. Get a pure term plan immediately.`
+        ? `Your cover of ${fmt(lifeExisting)} is adequate. Recommended: ${crores(lifeNeeded)}. Review annually as income grows.`
+        : `Recommended cover: ${crores(lifeNeeded)}. Current gap: ${crores(lifeGap)}. A pure term plan for this cover costs roughly ₹${Math.round(lifeGap/10000000*8000)}/year — a small price for total peace of mind.`
     },
     {
       ok:healthOk, warn:healthWarn,
       label:'Health insurance (family floater)',
       detail: healthOk
-        ? `Cover of ${fmt(health)} is sufficient. Review annually as medical costs rise 12–15% p.a.`
-        : `Recommended: ₹${(healthRec/100000).toFixed(0)}L+. With ${dep} dependent(s), you need comprehensive coverage.`
+        ? `Cover of ${fmt(health)} is sufficient today. Review annually — medical costs rise 12–15% p.a.`
+        : `Recommended: ₹${(healthRec/100000).toFixed(0)}L+ with ${dep} dependent(s). A single hospitalisation can otherwise wipe out an entire year of savings.`
     },
     {
       ok:emergencyOk, warn:!emergencyOk&&emergency>0,
       label:'Emergency fund (liquid)',
       detail: emergencyOk
-        ? `${emergency} months covered. Excellent. Keep this in a liquid fund or high-yield savings account.`
-        : `Currently ${emergency} months. Build to 6 months (${fmt(emergencyNeeded)}) in liquid assets before investing aggressively.`
+        ? `${emergency} months of expenses secured. Keep this in a liquid mutual fund or high-yield savings account — not in a fixed deposit.`
+        : `Currently ${emergency} months. Build to 6 months (${fmt(emergencyNeeded)}) in liquid assets before increasing SIP amounts. This is your financial firewall.`
     },
   ];
 
   document.getElementById('protection-output').innerHTML=`
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Protection audit</div><div class="card-sub">Your insurance adequacy assessment</div></div>
+        <div><div class="card-title">Protection audit</div><div class="card-sub">Your insurance and safety-net assessment</div></div>
         <div class="card-icon">📋</div>
       </div>
       <div class="checklist">${items.map(x=>`
@@ -1340,7 +1450,7 @@ function calcProtection() {
           <div><div class="check-text">${x.label}</div><div class="check-sub">${x.detail}</div></div>
         </div>`).join('')}
       </div>
-      ${!emergencyOk?`<div class="insight warn" style="margin-top:1rem"><strong>Priority:</strong> Build emergency fund to 6 months before maximising SIP contributions. This is your financial firewall.</div>`:''}
+      ${!emergencyOk?`<div class="insight warn" style="margin-top:1rem"><strong>Priority before investing:</strong> Build your emergency fund to 6 months of expenses (${fmt(emergencyNeeded)}). Use a liquid mutual fund for this — instant access, better returns than savings accounts.</div>`:''}
     </div>`;
 }
 
@@ -1355,7 +1465,6 @@ function updateStrategy() {
   document.getElementById('gold-val').textContent = gold+'%';
   document.getElementById('intl-val').textContent = intl+'%';
 
-  // Update slider backgrounds
   ['sl-equity','sl-debt','sl-gold','sl-intl'].forEach(id=>{
     const el = document.getElementById(id);
     el.style.background = `linear-gradient(to right,var(--gold) 0%,var(--gold) ${el.value}%,var(--cream) ${el.value}%)`;
@@ -1379,8 +1488,8 @@ function updateStrategy() {
     </div>`;
   const ok = total===100;
   document.getElementById('strategy-verdict').innerHTML = ok
-    ? `<div class="insight ok" style="margin-top:8px"><strong>✓ Allocation sums to 100%.</strong> Your strategy is ready to map to specific funds.</div>`
-    : `<div class="insight warn" style="margin-top:8px"><strong>Remaining ${rem>0?rem+'% unallocated':Math.abs(rem)+'% over-allocated'}.</strong> Adjust sliders to reach exactly 100%.</div>`;
+    ? `<div class="insight ok" style="margin-top:8px"><strong>✓ Allocation sums to 100%.</strong> Your strategy is locked in and ready to map to specific funds.</div>`
+    : `<div class="insight warn" style="margin-top:8px"><strong>${rem>0?rem+'% unallocated — adjust sliders to reach 100%.':Math.abs(rem)+'% over-allocated — reduce one category.'}</strong></div>`;
 }
 updateStrategy();
 
@@ -1395,28 +1504,29 @@ function calcProjections() {
   if(!sip && !corpus) return;
 
   function fvWithStepup(rate, monthSIP, existCorpus, yrs, annualStepup) {
-    let corpus2 = existCorpus;
-    let currentSIP = monthSIP;
+    let c = existCorpus, s = monthSIP;
     const mr = rate/12/100;
     for(let y=0;y<yrs;y++) {
-      for(let m=0;m<12;m++) {
-        corpus2 = corpus2*(1+mr) + currentSIP;
-      }
-      currentSIP *= (1+annualStepup/100);
+      for(let m=0;m<12;m++) { c = c*(1+mr) + s; }
+      s *= (1+annualStepup/100);
     }
-    return corpus2;
+    return c;
   }
 
   const best = fvWithStepup(r+3, sip, corpus, years, stepup);
   const expected = fvWithStepup(r, sip, corpus, years, stepup);
   const stress = fvWithStepup(Math.max(r-4,2), sip, corpus, years, stepup);
   const inflationAdj = expected / Math.pow(1+inflation/100, years);
-  const totalInvested = corpus + sip * 12 * years * (1 + stepup/100 * years/2);
+  const totalInvested = corpus + sip*12*years*(1+stepup/100*years/2);
+
+  // Cost of delay — what if someone waits 1 year?
+  const delayedExpected = fvWithStepup(r, sip, corpus, years-1, stepup);
+  const costOfDelay = expected - delayedExpected;
 
   document.getElementById('projection-out').innerHTML=`
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Wealth scenarios at ${years} years</div><div class="card-sub">With ₹${sip.toLocaleString()} SIP, ${stepup}% annual step-up, ${r}% base return</div></div>
+        <div><div class="card-title">Wealth at ${years} years — 3 scenarios</div><div class="card-sub">₹${sip.toLocaleString()} SIP · ${stepup}% annual step-up · ${r}% base return</div></div>
         <div class="card-icon">📊</div>
       </div>
       <div class="scenario-grid">
@@ -1426,12 +1536,16 @@ function calcProjections() {
       </div>
       <div class="metric-grid" style="grid-template-columns:repeat(2,1fr);margin-top:10px">
         <div class="metric"><div class="lbl">Total invested</div><div class="val">${crores(totalInvested)}</div><div class="hint">across ${years} years</div></div>
-        <div class="metric gold-metric"><div class="lbl">Real value (inflation-adj)</div><div class="val">${crores(inflationAdj)}</div><div class="hint">in today's purchasing power</div></div>
+        <div class="metric gold-metric"><div class="lbl">Real value (today's money)</div><div class="val">${crores(inflationAdj)}</div><div class="hint">inflation-adjusted</div></div>
+      </div>
+      <div class="cost-of-delay" style="margin-top:12px">
+        <div class="cod-title">⏰ What if you wait just 1 year to start?</div>
+        <div class="cod-body">Delaying by 12 months costs you approximately <span class="cod-number">${crores(costOfDelay)}</span> in final wealth. The best time to start was yesterday. The next best time is today.</div>
       </div>
     </div>`;
 
   renderProjChart(r, sip, corpus, years, stepup);
-  renderGoalMapping(expected);
+  renderGoalMapping(expected, r, sip);
 }
 
 function renderProjChart(r, sip, corpus, years, stepup) {
@@ -1453,8 +1567,7 @@ function renderProjChart(r, sip, corpus, years, stepup) {
     bestData.push(+(fvAt(r+3,sip,corpus,y,stepup)/100000).toFixed(1));
     expData.push(+(fvAt(r,sip,corpus,y,stepup)/100000).toFixed(1));
     stressData.push(+(fvAt(Math.max(r-4,2),sip,corpus,y,stepup)/100000).toFixed(1));
-    let inv = corpus;
-    let s2 = sip;
+    let inv = corpus, s2 = sip;
     for(let i=0;i<y;i++){inv+=s2*12;s2*=(1+stepup/100);}
     investedData.push(+(inv/100000).toFixed(1));
   }
@@ -1491,111 +1604,130 @@ function renderProjChart(r, sip, corpus, years, stepup) {
   });
 }
 
-function renderGoalMapping(expected) {
+function renderGoalMapping(expected, r, sip) {
   if(!goals.length) return;
-  const sip = parseFloat(document.getElementById('pr-sip').value)||0;
-  const r = parseFloat(document.getElementById('pr-return').value)||12;
   const items = goals.map(g=>{
-    const needed = calcSIPNeeded(g.amount, g.years, r);
+    const needed = calcSIPNeeded(g.gap, g.years, r||12);
+    const allocation = sip>0 ? (needed/sip*100).toFixed(0) : 0;
     const canFund = sip >= needed*0.8;
+    const shortfall = Math.max(0, needed - sip);
     return `<div class="check-item">
       <div class="check-icon ${canFund?'ok':'warn'}">${canFund?'✓':'!'}</div>
       <div>
-        <div class="check-text">${g.name} — ${fmt(g.amount)} in ${g.years} yrs</div>
-        <div class="check-sub">SIP needed: ${fmt(needed)}/mo · ${canFund?'On track with current SIP':'Requires additional ₹'+fmt(needed-sip)+'/mo allocation'}</div>
+        <div class="check-text">${g.name} — ${crores(g.futureVal)} in ${g.years} yrs</div>
+        <div class="check-sub">
+          SIP needed: <strong>${fmt(needed)}/mo</strong> · 
+          ${canFund
+            ? `On track with your current SIP.`
+            : `You need ₹${fmt(shortfall)} more per month to fully fund this goal.`}
+        </div>
       </div>
     </div>`;
   }).join('');
+  const totalSIPNeeded = goals.reduce((s,g)=>s+calcSIPNeeded(g.gap,g.years,r||12),0);
   document.getElementById('goal-mapping').innerHTML=`
     <div class="card">
-      <div class="card-header"><div><div class="card-title">Goal feasibility check</div><div class="card-sub">Can your current SIP fund your goals?</div></div><div class="card-icon">🗺️</div></div>
+      <div class="card-header"><div><div class="card-title">Goal-by-goal feasibility</div><div class="card-sub">Can your current SIP fund every goal?</div></div><div class="card-icon">🗺️</div></div>
       <div class="checklist">${items}</div>
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+        <span style="color:var(--muted)">Total SIP needed for all goals</span>
+        <strong style="font-family:'Cormorant Garamond',serif;font-size:20px">${fmt(totalSIPNeeded)}/mo</strong>
+      </div>
+      ${sip < totalSIPNeeded ? `<div class="insight warn" style="margin-top:10px"><strong>Gap of ${fmt(totalSIPNeeded - sip)}/month.</strong> Consider increasing your SIP with a 10% annual step-up or prioritising your most critical goals first.</div>` : `<div class="insight ok" style="margin-top:10px"><strong>✓ Your SIP covers all goals.</strong> Stay consistent and review annually.</div>`}
     </div>`;
+  window._totalSIPNeeded = totalSIPNeeded;
 }
 
 /* ══════════════════════════════════════════
    MUTUAL FUND RECOMMENDATION ENGINE
 ══════════════════════════════════════════ */
-function getMFPlan(riskProfile, sip, taxSlab, invStyle, eq, debt, gold, intl) {
+function getMFPlan(riskProfile, sip, taxSlab, invStyle) {
   const rn = riskProfile ? riskProfile.name : 'Moderate';
 
   const fundUniverse = {
     // LARGE CAP / INDEX
-    nifty50:   {name:'UTI Nifty 50 Index Fund',        cat:'Large Cap Index',  type:'equity',  aum:'₹22,000Cr',  rating:5, er:'0.17%', min:500},
-    hdfc_lc:   {name:'HDFC Top 100 Fund',              cat:'Large Cap Active', type:'equity',  aum:'₹32,000Cr',  rating:5, er:'1.58%', min:100},
+    nifty50:   {name:'UTI Nifty 50 Index Fund',            cat:'Large Cap Index',     type:'equity', aum:'₹22,000Cr', rating:5, er:'0.17%', min:500,  why:'equity'},
+    hdfc_lc:   {name:'HDFC Top 100 Fund',                  cat:'Large Cap Active',    type:'equity', aum:'₹32,000Cr', rating:5, er:'1.58%', min:100,  why:'equity'},
     // FLEXI CAP
-    ppfas:     {name:'Parag Parikh Flexi Cap Fund',    cat:'Flexi Cap',        type:'equity',  aum:'₹85,000Cr',  rating:5, er:'0.63%', min:1000},
-    axis_fc:   {name:'Axis Flexi Cap Fund',            cat:'Flexi Cap',        type:'equity',  aum:'₹12,000Cr',  rating:4, er:'1.64%', min:500},
+    ppfas:     {name:'Parag Parikh Flexi Cap Fund',        cat:'Flexi Cap',           type:'equity', aum:'₹85,000Cr', rating:5, er:'0.63%', min:1000, why:'equity'},
+    axis_fc:   {name:'Axis Flexi Cap Fund',                cat:'Flexi Cap',           type:'equity', aum:'₹12,000Cr', rating:4, er:'1.64%', min:500,  why:'equity'},
     // MID CAP
-    kotak_mid: {name:'Kotak Emerging Equity Fund',     cat:'Mid Cap',          type:'equity',  aum:'₹48,000Cr',  rating:5, er:'1.52%', min:1000},
-    motilal_mc:{name:'Motilal Oswal Midcap Fund',      cat:'Mid Cap',          type:'equity',  aum:'₹22,000Cr',  rating:4, er:'1.64%', min:500},
+    kotak_mid: {name:'Kotak Emerging Equity Fund',         cat:'Mid Cap',             type:'equity', aum:'₹48,000Cr', rating:5, er:'1.52%', min:1000, why:'equity'},
+    motilal_mc:{name:'Motilal Oswal Midcap Fund',          cat:'Mid Cap',             type:'equity', aum:'₹22,000Cr', rating:4, er:'1.64%', min:500,  why:'equity'},
     // SMALL CAP
-    nippon_sc: {name:'Nippon India Small Cap Fund',    cat:'Small Cap',        type:'equity',  aum:'₹60,000Cr',  rating:5, er:'1.55%', min:100},
-    quant_sc:  {name:'Quant Small Cap Fund',           cat:'Small Cap',        type:'equity',  aum:'₹28,000Cr',  rating:5, er:'1.68%', min:1000},
+    nippon_sc: {name:'Nippon India Small Cap Fund',        cat:'Small Cap',           type:'equity', aum:'₹60,000Cr', rating:5, er:'1.55%', min:100,  why:'equity'},
+    quant_sc:  {name:'Quant Small Cap Fund',               cat:'Small Cap',           type:'equity', aum:'₹28,000Cr', rating:5, er:'1.68%', min:1000, why:'equity'},
     // HYBRID
-    hdfc_baf:  {name:'HDFC Balanced Advantage Fund',  cat:'BAF / Hybrid',     type:'hybrid',  aum:'₹92,000Cr',  rating:5, er:'1.52%', min:100},
-    icici_baf: {name:'ICICI Pru Balanced Advantage',  cat:'BAF / Hybrid',     type:'hybrid',  aum:'₹60,000Cr',  rating:5, er:'1.51%', min:100},
+    hdfc_baf:  {name:'HDFC Balanced Advantage Fund',      cat:'BAF / Hybrid',        type:'hybrid', aum:'₹92,000Cr', rating:5, er:'1.52%', min:100,  why:'hybrid'},
+    icici_baf: {name:'ICICI Pru Balanced Advantage',      cat:'BAF / Hybrid',        type:'hybrid', aum:'₹60,000Cr', rating:5, er:'1.51%', min:100,  why:'hybrid'},
+    // ELSS (Tax Saving)
+    mirae_elss:{name:'Mirae Asset ELSS Tax Saver Fund',   cat:'ELSS (Tax Saving)',   type:'equity', aum:'₹25,000Cr', rating:5, er:'1.58%', min:500,  why:'equity'},
+    axis_elss: {name:'Axis Long Term Equity Fund',         cat:'ELSS (Tax Saving)',   type:'equity', aum:'₹33,000Cr', rating:4, er:'1.63%', min:500,  why:'equity'},
     // DEBT
-    hdfc_corp: {name:'HDFC Corporate Bond Fund',      cat:'Corporate Bond',   type:'debt',    aum:'₹32,000Cr',  rating:5, er:'0.36%', min:100},
-    sbi_short: {name:'SBI Short Duration Fund',       cat:'Short Duration',   type:'debt',    aum:'₹18,000Cr',  rating:4, er:'0.62%', min:5000},
-    icici_liq: {name:'ICICI Pru Liquid Fund',         cat:'Liquid Fund',      type:'debt',    aum:'₹50,000Cr',  rating:5, er:'0.19%', min:100},
+    hdfc_corp: {name:'HDFC Corporate Bond Fund',          cat:'Corporate Bond',      type:'debt',   aum:'₹32,000Cr', rating:5, er:'0.36%', min:100,  why:'debt'},
+    sbi_short: {name:'SBI Short Duration Fund',           cat:'Short Duration',      type:'debt',   aum:'₹18,000Cr', rating:4, er:'0.62%', min:5000, why:'debt'},
+    icici_liq: {name:'ICICI Pru Liquid Fund',             cat:'Liquid Fund',         type:'debt',   aum:'₹50,000Cr', rating:5, er:'0.19%', min:100,  why:'debt'},
     // GOLD
-    sbi_gold:  {name:'SBI Gold Fund',                 cat:'Gold ETF FoF',     type:'gold',    aum:'₹2,800Cr',   rating:4, er:'0.56%', min:500},
-    hdfc_gold: {name:'HDFC Gold Fund',                cat:'Gold ETF FoF',     type:'gold',    aum:'₹2,200Cr',   rating:4, er:'0.54%', min:100},
+    sbi_gold:  {name:'SBI Gold Fund',                     cat:'Gold ETF FoF',        type:'gold',   aum:'₹2,800Cr',  rating:4, er:'0.56%', min:500,  why:'gold'},
+    hdfc_gold: {name:'HDFC Gold Fund',                    cat:'Gold ETF FoF',        type:'gold',   aum:'₹2,200Cr',  rating:4, er:'0.54%', min:100,  why:'gold'},
     // INTERNATIONAL
-    motilal_n: {name:'Motilal Oswal Nasdaq 100 FOF',  cat:'International',    type:'intl',    aum:'₹6,000Cr',   rating:4, er:'0.31%', min:500},
-    edelweiss_us:{name:'Edelweiss US Tech FoF',       cat:'International',    type:'intl',    aum:'₹2,200Cr',   rating:4, er:'0.25%', min:100},
+    motilal_n: {name:'Motilal Oswal Nasdaq 100 FOF',      cat:'International',       type:'intl',   aum:'₹6,000Cr',  rating:4, er:'0.31%', min:500,  why:'intl'},
+    edelweiss_us:{name:'Edelweiss US Technology Fund',    cat:'International',       type:'intl',   aum:'₹2,200Cr',  rating:4, er:'0.25%', min:100,  why:'intl'},
   };
 
   let portfolio = [];
+  const taxSl = parseInt(taxSlab)||20;
   const sipAmt = sip || 10000;
 
   if(rn === 'Conservative') {
     portfolio = [
-      {...fundUniverse.icici_baf,  alloc:40, rationale:'Dynamic equity-debt allocation shields from downside while participating in moderate market gains.'},
-      {...fundUniverse.hdfc_corp,  alloc:30, rationale:'High-quality corporate bonds offer predictable 7–8% p.a. with lower volatility than equities.'},
-      {...fundUniverse.sbi_short,  alloc:15, rationale:'2–3 year duration provides better yield than FDs with minimal interest rate risk.'},
-      {...fundUniverse.hdfc_gold,  alloc:10, rationale:'Gold acts as a portfolio hedge against inflation and currency depreciation.'},
-      {...fundUniverse.icici_liq,  alloc:5,  rationale:'Liquid fund for 1–3 month tactical reserve with instant redemption.'},
+      {...fundUniverse.icici_baf,  alloc:40, rationale:'Dynamic equity-debt balance (30–80% equity) that automatically shifts based on market valuations — protects your downside while participating in upside.'},
+      {...fundUniverse.hdfc_corp,  alloc:30, rationale:'High-quality corporate bonds from AAA-rated companies. Predictable 7–8% returns with significantly lower volatility than equities.'},
+      {...fundUniverse.sbi_short,  alloc:15, rationale:'2–3 year duration debt provides better yield than FDs with minimal interest rate risk. Suitable for your medium-term stability needs.'},
+      {...fundUniverse.hdfc_gold,  alloc:10, rationale:'Gold acts as a natural hedge during equity market stress — historically moves opposite to equities, protecting your overall portfolio.'},
+      {...fundUniverse.icici_liq,  alloc:5,  rationale:'Instant-access emergency reserve. Better returns than savings accounts with T+1 redemption. Your financial safety valve.'},
     ];
   } else if(rn === 'Moderate') {
     portfolio = [
-      {...fundUniverse.nifty50,    alloc:30, rationale:'Core large-cap exposure via passive index. Low cost, broad market returns with minimal manager risk.'},
-      {...fundUniverse.ppfas,      alloc:25, rationale:'Quality-focused flexi cap with ~20–25% overseas allocation — built-in international diversification.'},
-      {...fundUniverse.hdfc_baf,   alloc:20, rationale:'Dynamic asset allocation that moves equity from 30–80% based on valuations — reduces timing risk.'},
-      {...fundUniverse.hdfc_corp,  alloc:15, rationale:'Steady corporate bond exposure provides income stability and portfolio ballast.'},
-      {...fundUniverse.hdfc_gold,  alloc:10, rationale:'Gold as strategic hedge against equity drawdowns and rupee depreciation.'},
+      {...fundUniverse.nifty50,    alloc:25, rationale:'Passive large-cap core. Captures India\'s top 50 companies at just 0.17% cost. No manager risk, broad market exposure — the backbone of every sensible portfolio.'},
+      {...fundUniverse.ppfas,      alloc:25, rationale:'The only Indian fund that systematically invests in world-class global businesses. Built-in international diversification at low cost.'},
+      {...fundUniverse.hdfc_baf,   alloc:20, rationale:'Dynamic allocation that shifts equity from 30–80% based on market valuations — reduces your timing risk while still delivering equity-like long-term returns.'},
+      {...fundUniverse.hdfc_corp,  alloc:15, rationale:'Steady income from high-quality corporate bonds. Acts as ballast during equity market volatility and provides rebalancing capital.'},
+      {...fundUniverse.hdfc_gold,  alloc:10, rationale:'Gold as a strategic hedge. Has historically protected purchasing power during inflation and currency depreciation — essential for Indian investors.'},
+      ...(taxSl>=20?[{...fundUniverse.mirae_elss, alloc:5, rationale:'ELSS for 80C tax savings — reduce tax by up to ₹46,800/year while building long-term equity wealth. 3-year lock-in aligns with disciplined investing.'}]:[]),
     ];
+    if(taxSl>=20) { portfolio[0].alloc=20; } // Adjust for ELSS
   } else if(rn === 'Moderately Aggressive') {
     portfolio = [
-      {...fundUniverse.nifty50,    alloc:25, rationale:'Passive large-cap core ensures you capture broad market returns without manager risk.'},
-      {...fundUniverse.ppfas,      alloc:20, rationale:'Global quality portfolio. Only Indian fund systematically investing in US tech at low cost.'},
-      {...fundUniverse.kotak_mid,  alloc:20, rationale:'Mid-cap allocation captures India growth story at reasonable valuations vs. large caps.'},
-      {...fundUniverse.nippon_sc,  alloc:15, rationale:'Small cap for long-term alpha generation. This fund has a 15+ year track record across cycles.'},
-      {...fundUniverse.sbi_short,  alloc:10, rationale:'Debt buffer provides rebalancing pool and liquidity during equity drawdowns.'},
-      {...fundUniverse.hdfc_gold,  alloc:10, rationale:'Gold as counter-cyclical hedge in high-equity portfolios.'},
+      {...fundUniverse.nifty50,    alloc:25, rationale:'Passive large-cap anchor. Guarantees you capture broad market returns without paying for underperforming active management.'},
+      {...fundUniverse.ppfas,      alloc:20, rationale:'Quality global portfolio. Invests in Google, Meta, and other world leaders alongside Indian gems — genuine global diversification.'},
+      {...fundUniverse.kotak_mid,  alloc:20, rationale:'Mid-cap powerhouse. India\'s growth story lives in mid-caps — companies becoming tomorrow\'s large-caps. Superior long-term alpha vs. large caps.'},
+      {...fundUniverse.nippon_sc,  alloc:15, rationale:'India\'s most trusted small-cap fund with a 15+ year track record across multiple market cycles. High reward for patient investors.'},
+      {...fundUniverse.sbi_short,  alloc:10, rationale:'Debt buffer for opportunistic rebalancing — buy more equity during market dips without disrupting your overall plan.'},
+      {...fundUniverse.hdfc_gold,  alloc:10, rationale:'Counter-cyclical gold hedge. In a high-equity portfolio, gold acts as insurance against correlated equity drawdowns.'},
     ];
   } else { // Aggressive
     portfolio = [
-      {...fundUniverse.nifty50,    alloc:20, rationale:'Index core as portfolio anchor. Ensures benchmark returns while satellites aim for alpha.'},
-      {...fundUniverse.ppfas,      alloc:20, rationale:'Best risk-adjusted global equity exposure among Indian funds over a 10-year horizon.'},
-      {...fundUniverse.kotak_mid,  alloc:20, rationale:'India\'s mid-cap growth compounders — identified well before they become large caps.'},
-      {...fundUniverse.nippon_sc,  alloc:15, rationale:'High-conviction small cap allocation for maximum long-term wealth creation potential.'},
-      {...fundUniverse.motilal_n,  alloc:15, rationale:'Direct US tech exposure via Nasdaq 100. Diversifies beyond India equity concentration.'},
-      {...fundUniverse.sbi_gold,   alloc:5,  rationale:'Minimal gold allocation as insurance against systemic risk.'},
-      {...fundUniverse.sbi_short,  alloc:5,  rationale:'Small debt buffer for opportunistic rebalancing into equities during crashes.'},
+      {...fundUniverse.nifty50,    alloc:20, rationale:'Index core as the unshakeable foundation. Ensures you always capture the broader market while your active satellites aim for additional alpha.'},
+      {...fundUniverse.ppfas,      alloc:20, rationale:'Best risk-adjusted global equity exposure among Indian funds. 10-year track record of outperforming with global quality names.'},
+      {...fundUniverse.kotak_mid,  alloc:20, rationale:'Identifies India\'s compounders early — before they become expensive large-caps. The sweet spot of the India growth story.'},
+      {...fundUniverse.nippon_sc,  alloc:15, rationale:'Maximum long-term wealth creation potential. High conviction small-cap alpha for investors with 10+ year horizon and the patience to hold.'},
+      {...fundUniverse.motilal_n,  alloc:15, rationale:'Direct Nasdaq 100 exposure — US tech giants (Apple, Microsoft, Nvidia) in rupees. Diversifies beyond India and captures global tech growth.'},
+      {...fundUniverse.sbi_gold,   alloc:5,  rationale:'Minimal gold insurance. Even the most aggressive portfolios benefit from a small systemic-risk hedge.'},
+      {...fundUniverse.sbi_short,  alloc:5,  rationale:'A small debt buffer to opportunistically buy equities during market crashes — the investor who has dry powder wins.'},
     ];
   }
 
-  // Adjust if passive-only style
+  // Passive-only override
   if(invStyle === 'passive') {
     portfolio = portfolio.map(f => {
-      if(f.cat.includes('Active') || (!f.cat.includes('Index')&&!f.cat.includes('Gold')&&!f.cat.includes('International')&&!f.cat.includes('Liquid')&&f.type==='equity')) {
-        return {...fundUniverse.nifty50, alloc: f.alloc, rationale:'Passive equivalent — replaced active fund with index to minimise expense ratio and manager risk.'};
+      if(f.type==='equity' && !f.cat.includes('Index') && !f.cat.includes('ELSS') && !f.cat.includes('Gold') && !f.cat.includes('International')) {
+        return {...fundUniverse.nifty50, alloc: f.alloc, rationale:'Replaced with passive index — minimises expense ratio and eliminates manager risk. In the long run, most active funds underperform their index.'};
       }
       return f;
     });
-    // Deduplicate and merge
+    // Deduplicate
     const merged = [];
     portfolio.forEach(f=>{
       const ex = merged.find(x=>x.name===f.name);
@@ -1608,12 +1740,59 @@ function getMFPlan(riskProfile, sip, taxSlab, invStyle, eq, debt, gold, intl) {
   return portfolio.map(f => ({...f, amount: Math.round(sipAmt * f.alloc/100 / 100)*100}));
 }
 
+/* ── GOAL → FUND MAPPING ── */
+function buildGoalFundMap(mfPortfolio, sip) {
+  if(!goals.length) return '';
+  const r = parseFloat(document.getElementById('pr-return').value)||12;
+  const equityFunds = mfPortfolio.filter(f=>f.type==='equity'||f.type==='hybrid');
+  const debtFunds = mfPortfolio.filter(f=>f.type==='debt');
+  const goldFunds = mfPortfolio.filter(f=>f.type==='gold');
+  const intlFunds = mfPortfolio.filter(f=>f.type==='intl');
+
+  const groups = goals.map(g=>{
+    const needed = calcSIPNeeded(g.gap, g.years, r);
+    // Assign funds based on horizon
+    let assignedFunds = [];
+    if(g.horizon==='short') {
+      assignedFunds = debtFunds.length ? [debtFunds[0]] : equityFunds.slice(0,1);
+    } else if(g.horizon==='medium') {
+      assignedFunds = [...equityFunds.slice(0,1), ...(debtFunds.slice(0,1))];
+    } else {
+      assignedFunds = equityFunds.slice(0,2);
+      if(intlFunds.length) assignedFunds.push(intlFunds[0]);
+    }
+    const splitSIP = Math.round(needed / assignedFunds.length / 100)*100;
+    return `
+      <div class="goal-fund-group">
+        <div class="goal-fund-header">
+          <span>🎯</span>
+          <span class="gf-name">${g.name}</span>
+          <span class="gf-amount">${crores(g.futureVal)} in ${g.years} yrs · SIP needed: ${fmt(needed)}/mo</span>
+        </div>
+        <div class="goal-fund-list">
+          ${assignedFunds.map(f=>`
+            <div class="goal-fund-row">
+              <div class="gfr-name">${f.name} <span style="font-size:10px;color:var(--muted)">(${f.cat})</span></div>
+              <div class="gfr-sip">${fmt(splitSIP)}/mo</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Goal-to-fund allocation map</div><div class="card-sub">Which fund serves which goal — your personalised roadmap</div></div>
+        <div class="card-icon">🗺️</div>
+      </div>
+      <div class="insight" style="margin-bottom:12px"><strong>How this works:</strong> Each goal is matched to appropriate funds based on time horizon. Short-term goals use debt for capital protection; long-term goals use equity for maximum growth.</div>
+      ${groups}
+    </div>`;
+}
+
 /* ── FINANCIAL HEALTH SCORE ── */
 function calcHealthScore() {
   let score = 0;
-  const max = 100;
-
-  // Savings rate (25pts)
   const fi = parseFloat(document.getElementById('inc-fixed').value)||0;
   const vi = parseFloat(document.getElementById('inc-var').value)||0;
   const total = fi+vi;
@@ -1624,13 +1803,11 @@ function calcHealthScore() {
   else if(savRate>=10) score+=12;
   else if(savRate>0) score+=5;
 
-  // Emergency fund (20pts)
   const emg = parseFloat(document.getElementById('p-emergency').value)||0;
   if(emg>=6) score+=20;
   else if(emg>=3) score+=12;
   else if(emg>0) score+=5;
 
-  // Insurance (20pts)
   const life = parseFloat(document.getElementById('p-life').value)||0;
   const health = parseFloat(document.getElementById('p-health').value)||0;
   const income = parseFloat(document.getElementById('p-income').value)||0;
@@ -1639,7 +1816,6 @@ function calcHealthScore() {
   if(health>=500000) score+=10;
   else if(health>0) score+=5;
 
-  // Debt management (15pts)
   const emi = parseFloat(document.getElementById('emi').value)||0;
   const emiBurden = total ? emi/total*100 : 0;
   if(emiBurden===0) score+=15;
@@ -1647,11 +1823,9 @@ function calcHealthScore() {
   else if(emiBurden<=35) score+=7;
   else if(emiBurden<=50) score+=3;
 
-  // Goals (10pts)
   if(goals.length>=3) score+=10;
   else if(goals.length>=1) score+=6;
 
-  // Investments (10pts)
   const corpus = (parseFloat(document.getElementById('a-equity').value)||0) +
                  (parseFloat(document.getElementById('a-mf').value)||0);
   if(corpus >= total*12) score+=10;
@@ -1674,29 +1848,40 @@ function buildSummary() {
   const savRate = total ? sav/total*100 : 0;
   const emiBurden = total ? emi/total*100 : 0;
   const sip = parseFloat(document.getElementById('pr-sip').value)||0;
+  const corpus = parseFloat(document.getElementById('pr-corpus').value)||0;
   const r = parseFloat(document.getElementById('pr-return').value)||12;
   const years = parseInt(document.getElementById('pr-years').value)||20;
+  const stepup = parseFloat(document.getElementById('pr-stepup').value)||10;
   const taxSlab = document.getElementById('tax-slab').value;
   const invStyle = document.getElementById('inv-style').value;
-  const eq = parseInt(document.getElementById('sl-equity').value)||0;
-  const debt = parseInt(document.getElementById('sl-debt').value)||0;
-  const gold = parseInt(document.getElementById('sl-gold').value)||0;
-  const intl = parseInt(document.getElementById('sl-intl').value)||0;
+  const sipDate = document.getElementById('sip-date').value;
 
   const healthScore = calcHealthScore();
   const riskProfile = window.userRisk;
-  const mfPortfolio = getMFPlan(riskProfile, sip, taxSlab, invStyle, eq, debt, gold, intl);
+  const mfPortfolio = getMFPlan(riskProfile, sip, taxSlab, invStyle);
+  const goalFundMap = buildGoalFundMap(mfPortfolio, sip);
+
+  // Final corpus
+  function fvFinal(rate, s, c, y, su) {
+    let cv = c, sv = s, mr = rate/12/100;
+    for(let yr=0;yr<y;yr++){for(let m=0;m<12;m++){cv=cv*(1+mr)+sv;}sv*=(1+su/100);}
+    return cv;
+  }
+  const finalCorpus = fvFinal(r, sip, corpus, years, stepup);
+  const totalInvested = corpus + sip*12*years*(1+stepup/100*years/2);
+  const wealthMultiple = totalInvested ? (finalCorpus/totalInvested).toFixed(1) : '—';
 
   const scoreLabel = healthScore>=80?'Excellent':healthScore>=60?'Good':healthScore>=40?'Fair':'Needs Attention';
   const scoreDesc = healthScore>=80
-    ? 'Your financial foundation is strong. Focus on optimising and growing Yours Wealth.'
+    ? 'Your financial foundation is strong. Now it\'s time to optimise and accelerate your wealth compounding.'
     : healthScore>=60
-    ? 'You\'re on track but there are gaps to address. Prioritise insurance and emergency fund.'
+    ? 'You\'re on the right track, but there are critical gaps to close. Address insurance and emergency fund before pushing SIPs higher.'
     : healthScore>=40
-    ? 'Your finances need attention. Start with protection, then build investments.'
-    : 'Focus immediately on building an emergency fund and adequate insurance before investing.';
+    ? 'Your finances need attention. Start with protection and emergency fund — then build your investment portfolio on a solid base.'
+    : 'Focus immediately on emergency fund and adequate insurance. These protect everything you build. Then start investing, even if small.';
 
   const catColors = {equity:'cat-equity',debt:'cat-debt',hybrid:'cat-hybrid',intl:'cat-intl',gold:'cat-gold'};
+  const invStyleLabel = invStyle==='passive'?'Passive (Index only)':invStyle==='active'?'Active (Fund manager picks)':'Blend (Core passive + satellite active)';
 
   const fundsHtml = mfPortfolio.map(f=>`
     <div class="fund-card ${catColors[f.type]||'cat-equity'}">
@@ -1707,7 +1892,7 @@ function buildSummary() {
         </div>
         <div class="fund-alloc-pill">${f.alloc}%</div>
       </div>
-      <div class="fund-amount">${fmt(f.amount)}<span style="font-size:13px;color:var(--muted);font-weight:400"> / month</span></div>
+      <div class="fund-amount">${fmt(f.amount)}<span style="font-size:13px;color:var(--muted);font-weight:400"> / month SIP</span></div>
       <div class="fund-stats">
         <div class="fund-stat">AUM <strong>${f.aum}</strong></div>
         <div class="fund-stat">Expense ratio <strong>${f.er}</strong></div>
@@ -1717,22 +1902,26 @@ function buildSummary() {
     </div>`).join('');
 
   const goalsHtml = goals.length
-    ? goals.map(g=>`<span class="tag">${g.name}: ${fmt(g.amount)} in ${g.years}y</span>`).join('')
-    : '<span class="tag" style="color:var(--muted)">No goals added</span>';
+    ? goals.map(g=>`<span class="tag">🎯 ${g.name}: ${crores(g.futureVal)} in ${g.years}y</span>`).join('')
+    : '<span class="tag" style="color:var(--muted)">No goals defined</span>';
 
+  // Priority actions
   const priorities = [];
-  if((parseFloat(document.getElementById('p-emergency').value)||0)<6) priorities.push('Build emergency fund to 6 months of expenses first');
+  if((parseFloat(document.getElementById('p-emergency').value)||0)<6) priorities.push('🔐 Build emergency fund to 6 months of expenses first. Use ICICI Pru Liquid Fund — instant redemption, better returns than savings.');
   const lifeGapVal = (parseFloat(document.getElementById('p-income').value)||0)*15 - (parseFloat(document.getElementById('p-life').value)||0);
-  if(lifeGapVal>0) priorities.push(`Close life insurance gap of ${crores(lifeGapVal)} with a term plan`);
-  if(savRate<20) priorities.push(`Increase savings rate from ${pct(savRate)} to 20%+ by reducing discretionary spending`);
-  if(sip>0) priorities.push(`Start SIP of ${fmt(sip)} split across recommended funds on the ${document.getElementById('sip-date').value}th`);
-  if(goals.length>0) priorities.push(`Set calendar reminder to review progress vs goals every 6 months`);
-  priorities.push('File taxes early and maximise Section 80C limit (₹1.5L) via ELSS or PPF');
+  if(lifeGapVal>0) priorities.push(`🛡️ Close life insurance gap of ${crores(lifeGapVal)} with a pure term plan. Costs as little as ₹8,000–12,000/year for crore-level cover.`);
+  if(savRate<20) priorities.push(`💡 Increase savings rate from ${pct(savRate)} to 20%+ — even small cuts in discretionary spending translate to significant SIP increases.`);
+  if(sip>0) priorities.push(`🚀 Start your SIP of ${fmt(sip)} split across recommended funds on the ${sipDate}th of each month. Set up auto-debit so it runs without you thinking about it.`);
+  if(goals.length>0) priorities.push(`📅 Set a 6-monthly calendar reminder to review your portfolio and goal progress. Markets change, life changes — your plan should too.`);
+  if(parseInt(taxSlab)>=20) priorities.push(`💰 Maximise Section 80C (₹1.5L) via ELSS — saves ₹${parseInt(taxSlab)===30?46800:30000} in tax annually while building equity wealth.`);
+  priorities.push(`📈 Step up your SIP by 10% every April (salary hike time). This single habit transforms a good plan into a great one.`);
+
+  const sipText = sip>0?`Start SIP of ${fmt(sip)}/month today`:'Define your monthly SIP to begin';
 
   document.getElementById('final-summary').innerHTML = `
 
     <div class="health-score-wrap">
-      <div class="health-score-label">Financial health score</div>
+      <div class="health-score-label">Your financial health score</div>
       <div class="health-score-num">${healthScore}</div>
       <div style="font-size:20px;font-family:'Cormorant Garamond',serif;color:white;margin:8px 0">${scoreLabel}</div>
       <div class="health-score-text">${scoreDesc}</div>
@@ -1740,32 +1929,60 @@ function buildSummary() {
 
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Financial snapshot</div><div class="card-sub">Your complete picture at a glance</div></div>
+        <div><div class="card-title">Your financial snapshot</div><div class="card-sub">Complete picture — where you are today</div></div>
         <div class="card-icon">📋</div>
       </div>
       <div class="summary-grid">
         <div class="summary-card"><div class="sc-label">Monthly income</div><div class="sc-val">${fmt(total)}</div></div>
-        <div class="summary-card"><div class="sc-label">Monthly surplus</div><div class="sc-val">${fmt(surplus)}</div></div>
-        <div class="summary-card"><div class="sc-label">Savings rate</div><div class="sc-val">${pct(savRate)}</div></div>
+        <div class="summary-card"><div class="sc-label">Monthly surplus</div><div class="sc-val">${fmt(surplus)}</div><div class="sc-sub">investable capacity</div></div>
+        <div class="summary-card"><div class="sc-label">Savings rate</div><div class="sc-val">${pct(savRate)}</div><div class="sc-sub">${savRate>=20?'✓ Healthy':'Aim for 20%+'}</div></div>
         <div class="summary-card"><div class="sc-label">EMI burden</div><div class="sc-val">${pct(emiBurden)}</div><div class="sc-sub">${emiBurden>40?'⚠ High':'✓ Healthy'}</div></div>
         <div class="summary-card"><div class="sc-label">Risk profile</div><div class="sc-val" style="font-size:16px">${riskProfile?riskProfile.name:'—'}</div></div>
         <div class="summary-card"><div class="sc-label">Investment horizon</div><div class="sc-val">${years} years</div></div>
       </div>
     </div>
 
+    ${finalCorpus>0?`
+    <div class="card" style="background:linear-gradient(135deg,var(--charcoal),#2A2A2A);color:white;border-color:rgba(255,255,255,0.05)">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="color:white;font-size:22px">If you start today…</div>
+          <div class="card-sub" style="color:rgba(255,255,255,0.4)">${fmt(sip)}/month SIP · ${years} years · ${r}% p.a. · ${stepup}% annual step-up</div>
+        </div>
+        <div class="card-icon" style="background:rgba(212,175,55,0.15)">🏆</div>
+      </div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center">
+        <div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:4px">You invest</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:rgba(255,255,255,0.7)">${crores(totalInvested)}</div>
+        </div>
+        <div style="font-size:28px;color:var(--gold)">→</div>
+        <div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:4px">You receive</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:44px;color:var(--gold-light);font-weight:300">${crores(finalCorpus)}</div>
+        </div>
+        <div style="background:rgba(184,150,12,0.15);border:1px solid rgba(184,150,12,0.3);border-radius:8px;padding:12px 16px;text-align:center">
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:4px">Wealth multiple</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gold-light)">${wealthMultiple}×</div>
+        </div>
+      </div>
+    </div>`:''}
+
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Your goals</div><div class="card-sub">${goals.length} goal(s) defined</div></div>
+        <div><div class="card-title">Your goals</div><div class="card-sub">${goals.length} goal(s) with inflation-adjusted targets</div></div>
         <div class="card-icon">🎯</div>
       </div>
       <div style="margin-top:4px">${goalsHtml}</div>
     </div>
 
+    ${goalFundMap}
+
     <div class="card">
       <div class="card-header">
         <div>
-          <div class="card-title">Personalised mutual fund portfolio</div>
-          <div class="card-sub">Based on your ${riskProfile?riskProfile.name:'—'} risk profile · Monthly SIP: ${fmt(sip)} · ${invStyle==='passive'?'Passive':'invStyle==="active"?'Active':'Blend'} approach · ${taxSlab}% tax slab</div>
+          <div class="card-title">Your personalised mutual fund portfolio</div>
+          <div class="card-sub">${riskProfile?riskProfile.name:''} profile · ${invStyleLabel} · Tax slab: ${taxSlab}% · SIP on ${sipDate}th of month</div>
         </div>
         <div class="card-icon">💼</div>
       </div>
@@ -1777,13 +1994,13 @@ function buildSummary() {
       </div>
       ${fundsHtml}
       <div class="insight" style="margin-top:1rem">
-        <strong>Tax-efficient note:</strong> For the ${taxSlab}% slab — hold equity funds for 12+ months (10% LTCG, ₹1L exempt annually). Debt funds held 24+ months attract indexation benefit. ELSS funds qualify for 80C deduction.
+        <strong>Tax efficiency note (${taxSlab}% slab):</strong> Hold equity funds 12+ months for 10% LTCG (₹1L exempt annually). Debt funds benefit from indexation after 24 months. ${parseInt(taxSlab)>=20?'Use ELSS to save up to ₹46,800 in tax every year under Section 80C.':''}
       </div>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <div><div class="card-title">Priority action list</div><div class="card-sub">Your next steps, in order of importance</div></div>
+        <div><div class="card-title">Your action plan</div><div class="card-sub">Steps in order of impact — do these first</div></div>
         <div class="card-icon">📌</div>
       </div>
       <ul class="priority-list">
@@ -1791,17 +2008,32 @@ function buildSummary() {
       </ul>
     </div>
 
+    <div class="cta-action">
+      <div class="cta-title">Ready to make this real?</div>
+      <div class="cta-sub">Your plan is built. The only step left is to start.</div>
+      <div class="cta-amount">${sipText}</div>
+      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-gold btn-lg" onclick="window.location.href='mailto:viswateja.investments@gmail.com?subject=I want to start my SIP — Financial Plan Submitted&body=Hi Viswateja, I completed the financial planner and want to get started.'">
+          📩 Start my SIP — Email Viswateja
+        </button>
+        <button class="btn btn-lg" style="background:white;color:var(--charcoal)" onclick="window.open('https://wa.me/917095858488?text=Hi+Viswateja,+I+completed+the+Yours+Wealth+financial+plan+and+want+to+get+started','_blank')">
+          💬 WhatsApp me the plan
+        </button>
+      </div>
+    </div>
+
     <div class="card" style="background:var(--charcoal);color:white;border-color:rgba(255,255,255,0.1)">
       <div class="card-header">
         <div>
-          <div class="card-title" style="color:white">Want a fully bespoke plan?</div>
-          <div class="card-sub" style="color:rgba(255,255,255,0.5)">Speak to a SEBI-registered fee-only advisor for tax-optimised, personalised advice</div>
+          <div class="card-title" style="color:white">Want a fully bespoke, 1-on-1 plan?</div>
+          <div class="card-sub" style="color:rgba(255,255,255,0.5)">Book a free consultation with Viswateja Poreddy — AMFI-registered Mutual Fund Distributor. Get your plan reviewed, goals refined, and SIPs activated in a single 30-minute call.</div>
         </div>
         <div class="card-icon" style="background:rgba(255,255,255,0.1)">🤝</div>
       </div>
-      <button class="btn btn-gold" onclick="window.location.href='mailto:viswateja.investments@gmail.com'" style="margin-top:0.5rem">
-        Schedule consultation →
-      </button>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:0.5rem">
+        <button class="btn btn-gold" onclick="window.location.href='mailto:viswateja.investments@gmail.com'">Schedule free consultation →</button>
+        <button class="btn" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.15)" onclick="window.location.href='tel:+917095858488'">📞 +91 70958 58488</button>
+      </div>
     </div>
   `;
 }
