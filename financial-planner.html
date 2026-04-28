@@ -1162,7 +1162,7 @@ function calcCashflow() {
   if(total>0) {
     if(savRate<10) insight=`<div class="insight warn"><strong>⚠ Low savings rate.</strong> You're saving ${pct(savRate)} of income. Target: 20%+. Consider cutting discretionary expenses by ₹${Math.round((total*0.2-sav)/1000)*1000}/month.</div>`;
     else if(savRate>=30) insight=`<div class="insight ok"><strong>✓ Strong savings discipline.</strong> ${pct(savRate)} savings rate puts you in the top 10% of savers. Ensure this flows into productive investments.</div>`;
-    else insight=`<div class="insight"><strong>Good progress.</strong> ${pct(savRate)} savings rate. Pushing to 25%+ would significantly accelerate your wealth journey.</div>`;
+    else insight=`<div class="insight"><strong>Good progress.</strong> ${pct(savRate)} savings rate. Pushing to 25%+ would significantly accelerate Yours Wealth journey.</div>`;
     if(emiBurden>40) insight+=`<div class="insight danger" style="margin-top:8px"><strong>⚠ High EMI burden.</strong> ${pct(emiBurden)} of income goes to EMIs (limit: 40%). This limits your investment capacity and emergency resilience.</div>`;
   }
   document.getElementById('cashflow-insight').innerHTML = insight;
@@ -1689,7 +1689,7 @@ function buildSummary() {
 
   const scoreLabel = healthScore>=80?'Excellent':healthScore>=60?'Good':healthScore>=40?'Fair':'Needs Attention';
   const scoreDesc = healthScore>=80
-    ? 'Your financial foundation is strong. Focus on optimising and growing your wealth.'
+    ? 'Your financial foundation is strong. Focus on optimising and growing Yours Wealth.'
     : healthScore>=60
     ? 'You\'re on track but there are gaps to address. Prioritise insurance and emergency fund.'
     : healthScore>=40
