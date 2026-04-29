@@ -474,9 +474,12 @@ input[type=range]::-webkit-slider-thumb{
 .fund-stat{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
 .fund-stat strong{color:var(--charcoal);font-weight:500}
 .fund-rationale{
-  font-size:12px;color:var(--muted);
-  line-height:1.5;margin-top:8px;
-  padding-top:8px;border-top:1px solid var(--border-light);
+  font-size:12.5px;color:var(--charcoal);
+  line-height:1.65;margin-top:10px;
+  padding:10px 12px;
+  background:var(--cream);
+  border-radius:var(--radius-sm);
+  border-left:3px solid var(--gold);
 }
 .fund-goal-tag{
   display:inline-block;margin-top:6px;
@@ -1641,102 +1644,165 @@ function renderGoalMapping(expected, r, sip) {
 
 /* ══════════════════════════════════════════
    MUTUAL FUND RECOMMENDATION ENGINE
+   ─ Goal-driven · Max 4 funds ─
+   Logic:
+   1. Detect dominant goal horizon from goals[]
+      short  (≤3 yrs) → capital safety mode
+      medium (3–10)   → balanced mode
+      long   (10+)    → equity compounding mode
+   2. Map [risk profile × horizon] to 4 specific funds
+   3. Rationale is personalised to WHY for this client
+   4. ELSS swapped in for 20%+ tax slab on long/medium
+   5. Passive style → active equity → index fund
 ══════════════════════════════════════════ */
 function getMFPlan(riskProfile, sip, taxSlab, invStyle) {
   const rn = riskProfile ? riskProfile.name : 'Moderate';
-
-  const fundUniverse = {
-    // LARGE CAP / INDEX
-    nifty50:   {name:'UTI Nifty 50 Index Fund',            cat:'Large Cap Index',     type:'equity', aum:'₹22,000Cr', rating:5, er:'0.17%', min:500,  why:'equity'},
-    hdfc_lc:   {name:'HDFC Top 100 Fund',                  cat:'Large Cap Active',    type:'equity', aum:'₹32,000Cr', rating:5, er:'1.58%', min:100,  why:'equity'},
-    // FLEXI CAP
-    ppfas:     {name:'Parag Parikh Flexi Cap Fund',        cat:'Flexi Cap',           type:'equity', aum:'₹85,000Cr', rating:5, er:'0.63%', min:1000, why:'equity'},
-    axis_fc:   {name:'Axis Flexi Cap Fund',                cat:'Flexi Cap',           type:'equity', aum:'₹12,000Cr', rating:4, er:'1.64%', min:500,  why:'equity'},
-    // MID CAP
-    kotak_mid: {name:'Kotak Emerging Equity Fund',         cat:'Mid Cap',             type:'equity', aum:'₹48,000Cr', rating:5, er:'1.52%', min:1000, why:'equity'},
-    motilal_mc:{name:'Motilal Oswal Midcap Fund',          cat:'Mid Cap',             type:'equity', aum:'₹22,000Cr', rating:4, er:'1.64%', min:500,  why:'equity'},
-    // SMALL CAP
-    nippon_sc: {name:'Nippon India Small Cap Fund',        cat:'Small Cap',           type:'equity', aum:'₹60,000Cr', rating:5, er:'1.55%', min:100,  why:'equity'},
-    quant_sc:  {name:'Quant Small Cap Fund',               cat:'Small Cap',           type:'equity', aum:'₹28,000Cr', rating:5, er:'1.68%', min:1000, why:'equity'},
-    // HYBRID
-    hdfc_baf:  {name:'HDFC Balanced Advantage Fund',      cat:'BAF / Hybrid',        type:'hybrid', aum:'₹92,000Cr', rating:5, er:'1.52%', min:100,  why:'hybrid'},
-    icici_baf: {name:'ICICI Pru Balanced Advantage',      cat:'BAF / Hybrid',        type:'hybrid', aum:'₹60,000Cr', rating:5, er:'1.51%', min:100,  why:'hybrid'},
-    // ELSS (Tax Saving)
-    mirae_elss:{name:'Mirae Asset ELSS Tax Saver Fund',   cat:'ELSS (Tax Saving)',   type:'equity', aum:'₹25,000Cr', rating:5, er:'1.58%', min:500,  why:'equity'},
-    axis_elss: {name:'Axis Long Term Equity Fund',         cat:'ELSS (Tax Saving)',   type:'equity', aum:'₹33,000Cr', rating:4, er:'1.63%', min:500,  why:'equity'},
-    // DEBT
-    hdfc_corp: {name:'HDFC Corporate Bond Fund',          cat:'Corporate Bond',      type:'debt',   aum:'₹32,000Cr', rating:5, er:'0.36%', min:100,  why:'debt'},
-    sbi_short: {name:'SBI Short Duration Fund',           cat:'Short Duration',      type:'debt',   aum:'₹18,000Cr', rating:4, er:'0.62%', min:5000, why:'debt'},
-    icici_liq: {name:'ICICI Pru Liquid Fund',             cat:'Liquid Fund',         type:'debt',   aum:'₹50,000Cr', rating:5, er:'0.19%', min:100,  why:'debt'},
-    // GOLD
-    sbi_gold:  {name:'SBI Gold Fund',                     cat:'Gold ETF FoF',        type:'gold',   aum:'₹2,800Cr',  rating:4, er:'0.56%', min:500,  why:'gold'},
-    hdfc_gold: {name:'HDFC Gold Fund',                    cat:'Gold ETF FoF',        type:'gold',   aum:'₹2,200Cr',  rating:4, er:'0.54%', min:100,  why:'gold'},
-    // INTERNATIONAL
-    motilal_n: {name:'Motilal Oswal Nasdaq 100 FOF',      cat:'International',       type:'intl',   aum:'₹6,000Cr',  rating:4, er:'0.31%', min:500,  why:'intl'},
-    edelweiss_us:{name:'Edelweiss US Technology Fund',    cat:'International',       type:'intl',   aum:'₹2,200Cr',  rating:4, er:'0.25%', min:100,  why:'intl'},
-  };
-
-  let portfolio = [];
   const taxSl = parseInt(taxSlab)||20;
   const sipAmt = sip || 10000;
 
-  if(rn === 'Conservative') {
-    portfolio = [
-      {...fundUniverse.icici_baf,  alloc:40, rationale:'Dynamic equity-debt balance (30–80% equity) that automatically shifts based on market valuations — protects your downside while participating in upside.'},
-      {...fundUniverse.hdfc_corp,  alloc:30, rationale:'High-quality corporate bonds from AAA-rated companies. Predictable 7–8% returns with significantly lower volatility than equities.'},
-      {...fundUniverse.sbi_short,  alloc:15, rationale:'2–3 year duration debt provides better yield than FDs with minimal interest rate risk. Suitable for your medium-term stability needs.'},
-      {...fundUniverse.hdfc_gold,  alloc:10, rationale:'Gold acts as a natural hedge during equity market stress — historically moves opposite to equities, protecting your overall portfolio.'},
-      {...fundUniverse.icici_liq,  alloc:5,  rationale:'Instant-access emergency reserve. Better returns than savings accounts with T+1 redemption. Your financial safety valve.'},
-    ];
-  } else if(rn === 'Moderate') {
-    portfolio = [
-      {...fundUniverse.nifty50,    alloc:25, rationale:'Passive large-cap core. Captures India\'s top 50 companies at just 0.17% cost. No manager risk, broad market exposure — the backbone of every sensible portfolio.'},
-      {...fundUniverse.ppfas,      alloc:25, rationale:'The only Indian fund that systematically invests in world-class global businesses. Built-in international diversification at low cost.'},
-      {...fundUniverse.hdfc_baf,   alloc:20, rationale:'Dynamic allocation that shifts equity from 30–80% based on market valuations — reduces your timing risk while still delivering equity-like long-term returns.'},
-      {...fundUniverse.hdfc_corp,  alloc:15, rationale:'Steady income from high-quality corporate bonds. Acts as ballast during equity market volatility and provides rebalancing capital.'},
-      {...fundUniverse.hdfc_gold,  alloc:10, rationale:'Gold as a strategic hedge. Has historically protected purchasing power during inflation and currency depreciation — essential for Indian investors.'},
-      ...(taxSl>=20?[{...fundUniverse.mirae_elss, alloc:5, rationale:'ELSS for 80C tax savings — reduce tax by up to ₹46,800/year while building long-term equity wealth. 3-year lock-in aligns with disciplined investing.'}]:[]),
-    ];
-    if(taxSl>=20) { portfolio[0].alloc=20; } // Adjust for ELSS
-  } else if(rn === 'Moderately Aggressive') {
-    portfolio = [
-      {...fundUniverse.nifty50,    alloc:25, rationale:'Passive large-cap anchor. Guarantees you capture broad market returns without paying for underperforming active management.'},
-      {...fundUniverse.ppfas,      alloc:20, rationale:'Quality global portfolio. Invests in Google, Meta, and other world leaders alongside Indian gems — genuine global diversification.'},
-      {...fundUniverse.kotak_mid,  alloc:20, rationale:'Mid-cap powerhouse. India\'s growth story lives in mid-caps — companies becoming tomorrow\'s large-caps. Superior long-term alpha vs. large caps.'},
-      {...fundUniverse.nippon_sc,  alloc:15, rationale:'India\'s most trusted small-cap fund with a 15+ year track record across multiple market cycles. High reward for patient investors.'},
-      {...fundUniverse.sbi_short,  alloc:10, rationale:'Debt buffer for opportunistic rebalancing — buy more equity during market dips without disrupting your overall plan.'},
-      {...fundUniverse.hdfc_gold,  alloc:10, rationale:'Counter-cyclical gold hedge. In a high-equity portfolio, gold acts as insurance against correlated equity drawdowns.'},
-    ];
-  } else { // Aggressive
-    portfolio = [
-      {...fundUniverse.nifty50,    alloc:20, rationale:'Index core as the unshakeable foundation. Ensures you always capture the broader market while your active satellites aim for additional alpha.'},
-      {...fundUniverse.ppfas,      alloc:20, rationale:'Best risk-adjusted global equity exposure among Indian funds. 10-year track record of outperforming with global quality names.'},
-      {...fundUniverse.kotak_mid,  alloc:20, rationale:'Identifies India\'s compounders early — before they become expensive large-caps. The sweet spot of the India growth story.'},
-      {...fundUniverse.nippon_sc,  alloc:15, rationale:'Maximum long-term wealth creation potential. High conviction small-cap alpha for investors with 10+ year horizon and the patience to hold.'},
-      {...fundUniverse.motilal_n,  alloc:15, rationale:'Direct Nasdaq 100 exposure — US tech giants (Apple, Microsoft, Nvidia) in rupees. Diversifies beyond India and captures global tech growth.'},
-      {...fundUniverse.sbi_gold,   alloc:5,  rationale:'Minimal gold insurance. Even the most aggressive portfolios benefit from a small systemic-risk hedge.'},
-      {...fundUniverse.sbi_short,  alloc:5,  rationale:'A small debt buffer to opportunistically buy equities during market crashes — the investor who has dry powder wins.'},
-    ];
+  // Step 1: Detect dominant goal horizon
+  let horizon = 'long';
+  if(goals.length > 0) {
+    const w = {short:0, medium:0, long:0};
+    goals.forEach(g => {
+      const weight = g.priority==='critical' ? 3 : g.priority==='high' ? 2 : 1;
+      w[g.horizon] = (w[g.horizon]||0) + weight;
+    });
+    horizon = Object.keys(w).reduce((a,b) => w[a]>=w[b] ? a : b);
   }
 
-  // Passive-only override
+  // Step 2: Fund universe
+  const F = {
+    nifty50:    {name:'UTI Nifty 50 Index Fund',         cat:'Large Cap Index',   type:'equity', aum:'₹22,000Cr', er:'0.17%', min:500},
+    ppfas:      {name:'Parag Parikh Flexi Cap Fund',     cat:'Flexi Cap',         type:'equity', aum:'₹85,000Cr', er:'0.63%', min:1000},
+    kotak_mid:  {name:'Kotak Emerging Equity Fund',      cat:'Mid Cap',           type:'equity', aum:'₹48,000Cr', er:'1.52%', min:1000},
+    nippon_sc:  {name:'Nippon India Small Cap Fund',     cat:'Small Cap',         type:'equity', aum:'₹60,000Cr', er:'1.55%', min:100},
+    hdfc_baf:   {name:'HDFC Balanced Advantage Fund',   cat:'BAF / Hybrid',      type:'hybrid', aum:'₹92,000Cr', er:'1.52%', min:100},
+    icici_baf:  {name:'ICICI Pru Balanced Advantage',   cat:'BAF / Hybrid',      type:'hybrid', aum:'₹60,000Cr', er:'1.51%', min:100},
+    mirae_elss: {name:'Mirae Asset ELSS Tax Saver Fund', cat:'ELSS (Tax Saving)', type:'equity', aum:'₹25,000Cr', er:'1.58%', min:500},
+    hdfc_corp:  {name:'HDFC Corporate Bond Fund',       cat:'Corporate Bond',    type:'debt',   aum:'₹32,000Cr', er:'0.36%', min:100},
+    sbi_short:  {name:'SBI Short Duration Fund',        cat:'Short Duration',    type:'debt',   aum:'₹18,000Cr', er:'0.62%', min:5000},
+    icici_liq:  {name:'ICICI Pru Liquid Fund',          cat:'Liquid Fund',       type:'debt',   aum:'₹50,000Cr', er:'0.19%', min:100},
+    hdfc_gold:  {name:'HDFC Gold Fund',                 cat:'Gold ETF FoF',      type:'gold',   aum:'₹2,200Cr',  er:'0.54%', min:100},
+    motilal_n:  {name:'Motilal Oswal Nasdaq 100 FOF',   cat:'International',     type:'intl',   aum:'₹6,000Cr',  er:'0.31%', min:500},
+  };
+
+  // Step 3: Blueprint table — exactly 4 funds per [profile][horizon]
+  const B = {
+    Conservative: {
+      short: [
+        {...F.icici_liq,  alloc:40, rationale:'Your goal is close — capital safety comes first. This liquid fund earns 6–7% with instant redemption, far better than a savings account with zero market risk.'},
+        {...F.sbi_short,  alloc:30, rationale:'Short-duration bonds match your 1–3 year timeline perfectly. You get FD-beating returns without locking up money or taking equity risk.'},
+        {...F.icici_baf,  alloc:20, rationale:'A small dynamic allocation adds just enough equity to beat inflation, with an automatic safety mechanism that reduces equity when markets are expensive.'},
+        {...F.hdfc_gold,  alloc:10, rationale:'Near-term gold hedge — when short-term economic shocks hit, gold typically rises, protecting the real value of your corpus while you wait to deploy it.'},
+      ],
+      medium: [
+        {...F.icici_baf,  alloc:40, rationale:'The backbone for a medium-term conservative plan. Shifts equity dynamically between 30–80% based on valuations — upside without panic-inducing crashes.'},
+        {...F.hdfc_corp,  alloc:35, rationale:'AAA corporate bonds deliver 7–8% predictable returns. Over your 3–10 year horizon, this compounds quietly without any equity volatility.'},
+        {...F.hdfc_gold,  alloc:15, rationale:'Inflation protection over the medium term. Gold has averaged 10%+ over any 5-year rolling period in India — essential in a conservative portfolio.'},
+        {...F.icici_liq,  alloc:10, rationale:'A small liquid buffer keeps your SIP auto-debit running and acts as a cushion for unexpected needs — no need to break your investments.'},
+      ],
+      long: [
+        {...F.hdfc_baf,   alloc:40, rationale:'Even long-term conservative investors benefit here — the fund automatically shifts equity up during market dips and reduces equity at peaks, protecting wealth across cycles.'},
+        {...F.hdfc_corp,  alloc:30, rationale:'Long-term corporate bonds compound quietly. At 7–8% for 10+ years, a ₹5,000/month SIP here alone grows to over ₹11L — pure, low-risk compounding.'},
+        {...F.ppfas,      alloc:20, rationale:'A carefully selected flexi cap with global businesses reduces dependence on India-only returns. Lower volatility than pure equity due to its quality-stock global philosophy.'},
+        {...F.hdfc_gold,  alloc:10, rationale:'Over 10+ years, gold protects purchasing power during inflationary decades while diversifying away from both equity and debt.'},
+      ],
+    },
+    Moderate: {
+      short: [
+        {...F.icici_baf,  alloc:45, rationale:'For your near-term goal, a balanced advantage fund is the smartest choice — it won\'t crash 40% like pure equity, yet beats debt significantly over 2–3 years.'},
+        {...F.sbi_short,  alloc:30, rationale:'Predictable short-duration debt that matures in line with your goal timeline. Better than FDs with similar safety and no lock-in.'},
+        {...F.hdfc_gold,  alloc:15, rationale:'Short-term gold protects your corpus if equity markets dip near your goal date — a timing hedge that has saved many investors from shortfalls.'},
+        {...F.icici_liq,  alloc:10, rationale:'Liquid reserve to park surplus before deploying — and to cover SIP debits without any strain on your monthly budget.'},
+      ],
+      medium: [
+        {...F.nifty50,    alloc:35, rationale:'India\'s top 50 companies at just 0.17% cost. No active manager has consistently beaten this index net of fees over 10 years. The most reliable foundation for a moderate 3–10 year plan.'},
+        {...F.ppfas,      alloc:30, rationale:'Flexi cap with a global quality tilt. Holds Google, Meta, and top Indian businesses together — the only Indian fund that systematically diversifies globally within equity.'},
+        {...F.hdfc_corp,  alloc:20, rationale:'As your goal approaches, debt allocation grows in importance. This corporate bond fund provides steady 7–8% returns to preserve gains made by your equity funds.'},
+        {...F.hdfc_gold,  alloc:15, rationale:'Gold smooths the journey — in years equity falls, gold often rises. For a 5–7 year plan, this 15% allocation meaningfully reduces portfolio drawdowns.'},
+      ],
+      long: [
+        {...F.nifty50,    alloc:35, rationale:'Your long-horizon plan deserves a solid passive core. This fund has delivered 12–13% CAGR over 15 years at near-zero cost. It\'s the engine that does the heavy lifting.'},
+        {...F.ppfas,      alloc:30, rationale:'The perfect satellite to your index core — quality global businesses that compound over decades. Parag Parikh has outperformed Nifty 50 by 3–4% annually since inception.'},
+        {...F.kotak_mid,  alloc:25, rationale:'Mid-cap exposure unlocks India\'s growth story. Companies like Trent and Cholamandalam were mid-caps before becoming large-caps. Your 10+ year horizon captures this journey.'},
+        {...F.hdfc_gold,  alloc:10, rationale:'Even long-term moderate portfolios need a gold anchor. Over two decades, gold protects against rupee depreciation and acts as a rebalancing asset when equity is overvalued.'},
+      ],
+    },
+    'Moderately Aggressive': {
+      short: [
+        {...F.icici_baf,  alloc:50, rationale:'Even growth-oriented investors must protect short-term goals. The BAF\'s dynamic model has never generated negative returns over any 3-year period — your capital is safe.'},
+        {...F.sbi_short,  alloc:25, rationale:'Debt anchor for your near-term goal. Short duration means minimal interest-rate sensitivity — your money is safe and steadily growing.'},
+        {...F.nifty50,    alloc:15, rationale:'A small passive equity component adds upside potential. If markets cooperate in the next 2 years, this boosts your final corpus at near-zero cost.'},
+        {...F.hdfc_gold,  alloc:10, rationale:'Tail-risk hedge — gold tends to surge when equity markets correct, providing a natural buffer right at your goal maturity date.'},
+      ],
+      medium: [
+        {...F.nifty50,    alloc:30, rationale:'Passive large-cap core. At 0.17% expense ratio, you capture the full market return without paying a premium for active management that often fails to outperform.'},
+        {...F.ppfas,      alloc:30, rationale:'Actively managed global quality fund. The 20–25% overseas allocation means you\'re automatically diversified across US tech, European pharma, and Indian leaders simultaneously.'},
+        {...F.kotak_mid,  alloc:25, rationale:'Mid-caps have historically outperformed large-caps by 3–4% annually over 7–10 year periods. With your risk appetite, this is where meaningful alpha is generated.'},
+        {...F.hdfc_gold,  alloc:15, rationale:'Strategic gold that grows as markets become expensive. Over 5–10 years, this 15% position will likely outperform debt while reducing correlation to equity.'},
+      ],
+      long: [
+        {...F.nifty50,    alloc:30, rationale:'Passive backbone. In the long run, index funds outperform 80% of active large-cap funds. Let your aggressive satellites take risks — your core should not.'},
+        {...F.kotak_mid,  alloc:30, rationale:'Your primary growth engine. Mid-cap companies growing into large-caps is the most powerful wealth-creation story in India\'s economy — 10+ years is precisely the horizon needed.'},
+        {...F.nippon_sc,  alloc:25, rationale:'Small-cap alpha for patient investors. Nippon India Small Cap has delivered 20%+ CAGR over 10 years. At your horizon, consistent SIPs here transform into substantial wealth.'},
+        {...F.hdfc_gold,  alloc:15, rationale:'In a high-equity portfolio, gold is not optional — it\'s essential. During 2008, 2020, and 2022 equity crashes, gold rose 20–30%, giving rebalancing capital to buy equity cheaply.'},
+      ],
+    },
+    Aggressive: {
+      short: [
+        {...F.icici_baf,  alloc:45, rationale:'Even aggressive investors must protect short-term goals. The BAF\'s dynamic model has never generated negative returns over any 3-year period — your corpus is protected.'},
+        {...F.nifty50,    alloc:30, rationale:'Low-cost equity for near-term goals where you want market participation without the volatility of mid or small cap funds that can swing 30–40%.'},
+        {...F.sbi_short,  alloc:15, rationale:'A small debt layer ensures your corpus doesn\'t take a 20% hit right before you need it. Liquidity and safety matter more than returns near a goal date.'},
+        {...F.hdfc_gold,  alloc:10, rationale:'Downside hedge at goal maturity — if markets correct in the final year, gold typically compensates, protecting your targeted corpus amount.'},
+      ],
+      medium: [
+        {...F.nifty50,    alloc:30, rationale:'Passive anchor ensuring full India equity return at minimum cost. In any 5-year period, this fund has never delivered less than 10% annualised — a reliable base.'},
+        {...F.ppfas,      alloc:25, rationale:'Global quality equity adds return uncorrelated to Nifty. When Indian markets struggle, Google and Amazon often don\'t — this is your geographic and sector hedge.'},
+        {...F.kotak_mid,  alloc:25, rationale:'Mid-caps are the sweet spot for a 5–7 year aggressive investor — enough time for the growth story to play out, while delivering meaningful alpha over large-caps.'},
+        {...F.motilal_n,  alloc:20, rationale:'Direct Nasdaq 100 exposure — the world\'s best technology companies in your portfolio. Over 5+ years, US tech has consistently generated 15%+ USD returns, even more in rupees.'},
+      ],
+      long: [
+        {...F.ppfas,      alloc:30, rationale:'Your primary long-term compounder. PPFAS has delivered 18%+ CAGR since 2013 — investing in high-quality businesses globally. For a 10+ year aggressive investor, this is the finest single fund.'},
+        {...F.kotak_mid,  alloc:30, rationale:'The Indian mid-cap story over 10+ years is one of the most powerful wealth creation opportunities in any emerging market. This fund identifies tomorrow\'s large-caps today.'},
+        {...F.nippon_sc,  alloc:25, rationale:'Small-cap wealth creation at its finest. At your 10+ year horizon, a consistent ₹5,000/month here could realistically become ₹50L+. The risk is real — but so is the reward.'},
+        {...F.motilal_n,  alloc:15, rationale:'Nasdaq 100 as a long-term compounder. Apple, Microsoft, Nvidia, Google — the most profitable businesses in history. Over 15+ years, this return stream is hard to match with Indian assets alone.'},
+      ],
+    },
+  };
+
+  const profile = B[rn] || B['Moderate'];
+  let portfolio = (profile[horizon] || profile['long']).map(f => ({...f}));
+
+  // Step 4: ELSS override for 20%+ tax slab on medium/long
+  if(taxSl >= 20 && horizon !== 'short') {
+    const eqIdx = portfolio.findIndex(f => f.type==='equity' && !f.cat.includes('ELSS') && !f.cat.includes('Index'));
+    if(eqIdx !== -1) {
+      portfolio[eqIdx] = {
+        ...F.mirae_elss,
+        alloc: portfolio[eqIdx].alloc,
+        rationale: `Tax-saving powerhouse — identical equity returns as a regular fund, but saves you ₹${taxSl===30?'46,800':'30,000'} in tax every year under Section 80C. The 3-year lock-in enforces exactly the discipline long-term investors need.`
+      };
+    }
+  }
+
+  // Step 5: Passive override
   if(invStyle === 'passive') {
     portfolio = portfolio.map(f => {
-      if(f.type==='equity' && !f.cat.includes('Index') && !f.cat.includes('ELSS') && !f.cat.includes('Gold') && !f.cat.includes('International')) {
-        return {...fundUniverse.nifty50, alloc: f.alloc, rationale:'Replaced with passive index — minimises expense ratio and eliminates manager risk. In the long run, most active funds underperform their index.'};
+      if(f.type==='equity' && !f.cat.includes('Index') && !f.cat.includes('ELSS')) {
+        return {...F.nifty50, alloc:f.alloc, rationale:'Passive index at 0.17% expense ratio — versus 1.5%+ for active. That cost saving alone compounds into lakhs over 15 years, kept in your pocket, not the fund house\'s.'};
       }
       return f;
     });
-    // Deduplicate
     const merged = [];
-    portfolio.forEach(f=>{
-      const ex = merged.find(x=>x.name===f.name);
-      if(ex) ex.alloc += f.alloc;
-      else merged.push({...f});
-    });
+    portfolio.forEach(f=>{ const ex=merged.find(x=>x.name===f.name); if(ex) ex.alloc+=f.alloc; else merged.push({...f}); });
     portfolio = merged;
+    const tot = portfolio.reduce((s,f)=>s+f.alloc,0);
+    if(tot!==100) portfolio.forEach(f=>{ f.alloc=Math.round(f.alloc/tot*100); });
   }
 
+  // Always cap at 4
+  portfolio = portfolio.slice(0, 4);
   return portfolio.map(f => ({...f, amount: Math.round(sipAmt * f.alloc/100 / 100)*100}));
 }
 
@@ -1883,6 +1949,8 @@ function buildSummary() {
   const catColors = {equity:'cat-equity',debt:'cat-debt',hybrid:'cat-hybrid',intl:'cat-intl',gold:'cat-gold'};
   const invStyleLabel = invStyle==='passive'?'Passive (Index only)':invStyle==='active'?'Active (Fund manager picks)':'Blend (Core passive + satellite active)';
 
+  const horizonLabel = goals.length===0 ? 'Long-term' : goals.some(g=>g.horizon==='long') ? 'Long-term goals' : goals.some(g=>g.horizon==='medium') ? 'Medium-term goals' : 'Short-term goals';
+
   const fundsHtml = mfPortfolio.map(f=>`
     <div class="fund-card ${catColors[f.type]||'cat-equity'}">
       <div class="fund-header">
@@ -1898,7 +1966,10 @@ function buildSummary() {
         <div class="fund-stat">Expense ratio <strong>${f.er}</strong></div>
         <div class="fund-stat">Min SIP <strong>₹${f.min}</strong></div>
       </div>
-      <div class="fund-rationale">${f.rationale}</div>
+      <div style="margin-top:10px;padding:10px 12px;background:linear-gradient(135deg,rgba(184,150,12,0.06),rgba(184,150,12,0.02));border-radius:var(--radius-sm);border-left:3px solid var(--gold)">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);font-family:'DM Mono',monospace;margin-bottom:4px">Why we recommend this</div>
+        <div style="font-size:12px;color:var(--charcoal);line-height:1.6">${f.rationale}</div>
+      </div>
     </div>`).join('');
 
   const goalsHtml = goals.length
@@ -1981,8 +2052,8 @@ function buildSummary() {
     <div class="card">
       <div class="card-header">
         <div>
-          <div class="card-title">Your personalised mutual fund portfolio</div>
-          <div class="card-sub">${riskProfile?riskProfile.name:''} profile · ${invStyleLabel} · Tax slab: ${taxSlab}% · SIP on ${sipDate}th of month</div>
+          <div class="card-title">Recommended mutual funds</div>
+          <div class="card-sub">${goals.length>0?`Matched to your ${goals.length} goal(s)`:''} · ${riskProfile?riskProfile.name+' profile':''} · SIP on ${sipDate}th of month</div>
         </div>
         <div class="card-icon">💼</div>
       </div>
