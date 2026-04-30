@@ -1,1 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Planning | Yours Wealth</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #FAF7F2;
+  color: #1C1C1C;
+  margin: 0;
+}
+
+/* HERO */
+.hero {
+  padding: 120px 60px;
+  background: linear-gradient(135deg, #FAF7F2, #F5F0E8);
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem;
+}
+.hero p {
+  max-width: 500px;
+  color: #7A736A;
+}
+
+/* SECTIONS */
+.section {
+  padding: 80px 60px;
+}
+.section h2 {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* CARDS */
+.card {
+  background: white;
+  padding: 30px;
+  border: 1px solid rgba(184,150,12,0.2);
+  margin-bottom: 20px;
+  transition: 0.3s;
+}
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* CALCULATOR */
+.calculator {
+  background: #fff;
+  padding: 40px;
+  border: 1px solid rgba(184,150,12,0.2);
+}
+.calculator input {
+  display: block;
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 12px;
+}
+button {
+  padding: 12px 20px;
+  background: #1C1C1C;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.result {
+  margin-top: 20px;
+  font-size: 1.4rem;
+  color: #B8960C;
+}
+
+/* CTA */
+.cta {
+  background: #B8960C;
+  color: white;
+  text-align: center;
+  padding: 80px 20px;
+}
+.cta a {
+  background: white;
+  color: #B8960C;
+  padding: 15px 30px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Bring clarity to your <em>financial life</em></h1>
+  <p>A structured plan that aligns your income, investments, and goals into one powerful strategy.</p>
+</section>
+
+<!-- PROBLEM -->
+<section class="section">
+  <h2>Why most people fail at managing money</h2>
+  
+  <div class="card">No clear financial goals</div>
+  <div class="card">Random investments without strategy</div>
+  <div class="card">No tracking or review system</div>
+</section>
+
+<!-- SOLUTION -->
+<section class="section">
+  <h2>Our approach to financial planning</h2>
+  
+  <div class="card">Step 1: Understand your income, expenses & goals</div>
+  <div class="card">Step 2: Build a structured investment roadmap</div>
+  <div class="card">Step 3: Monitor, review & optimise continuously</div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="section">
+  <h2>See how your wealth can grow</h2>
+
+  <div class="calculator">
+    <input type="number" id="sip" placeholder="Monthly Investment (₹)">
+    <input type="number" id="rate" placeholder="Expected Return (%)">
+    <input type="number" id="years" placeholder="Years">
+
+    <button onclick="calculateSIP()">Calculate</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <p style="margin-top:10px;color:#7A736A;">
+    This is a simulation. Get your personalised plan for accurate insights.
+  </p>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Get Your Personalised Financial Plan</h2>
+  <p>Speak with an expert. No cost. No obligation.</p>
+
+  <a href="#">Book Free Consultation</a>
+</section>
+
+<script>
+function calculateSIP() {
+  let P = document.getElementById("sip").value;
+  let r = document.getElementById("rate").value / 100 / 12;
+  let n = document.getElementById("years").value * 12;
+
+  let FV = P * (((Math.pow(1 + r, n)) - 1) / r) * (1 + r);
+
+  document.getElementById("result").innerText =
+    "Future Value: ₹" + Math.round(FV);
+}
+</script>
+
+</body>
+</html>
