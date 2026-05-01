@@ -1,1 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk & Insurance Planning — Yours Wealth</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F5F0E8;--ivory:#FAF7F2;--gold:#B8960C;--gold-light:#D4AF37;--charcoal:#1C1C1C;--dark:#0D0D0D;--mid:#3A3630;--muted:#7A736A;--border:rgba(184,150,12,0.18);--border-light:rgba(184,150,12,0.08);--easing:cubic-bezier(0.16,1,0.3,1);--easing-back:cubic-bezier(0.34,1.56,0.64,1);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--charcoal);overflow-x:hidden;cursor:none;}
+#cursor-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:multiply;transition:width .3s,height .3s,background .3s;}
+#cursor-ring{width:36px;height:36px;border:1px solid rgba(184,150,12,0.5);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .4s,height .4s,border-color .3s;}
+body:has(a:hover) #cursor-dot,body:has(button:hover) #cursor-dot{width:10px;height:10px;background:var(--gold-light);}
+body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:56px;height:56px;border-color:var(--gold);}
+#particle-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.5;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:28px 60px;transition:padding .4s var(--easing),background .4s,box-shadow .4s;}
+nav.scrolled{padding:16px 60px;background:rgba(250,247,242,0.94);backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--border-light),0 8px 32px rgba(0,0,0,0.04);}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;letter-spacing:0.04em;color:var(--charcoal);text-decoration:none;position:relative;}
+.nav-logo span{color:var(--gold);}
+.nav-logo::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s var(--easing);}
+.nav-logo:hover::after{transform:scaleX(1);}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{font-size:0.75rem;letter-spacing:0.14em;text-transform:uppercase;text-decoration:none;color:var(--mid);position:relative;padding:4px 0;}
+.nav-links a::before{content:attr(data-text);position:absolute;top:0;left:0;color:var(--gold);clip-path:inset(0 100% 0 0);transition:clip-path .4s var(--easing);white-space:nowrap;}
+.nav-links a:hover::before{clip-path:inset(0 0% 0 0);}
+.nav-actions{display:flex;gap:12px;align-items:center;}
+.nav-cta{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;padding:10px 22px;border:1px solid var(--gold);background:transparent;color:var(--gold);text-decoration:none;position:relative;overflow:hidden;cursor:none;transition:color .3s;}
+.nav-cta::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .35s var(--easing);z-index:-1;}
+.nav-cta:hover::before{transform:translateX(0);}
+.nav-cta:hover{color:white;}
+.nav-cta.solid{background:var(--charcoal);color:var(--cream);border-color:var(--charcoal);}
+.nav-cta.solid::before{background:var(--gold);}
+.nav-cta.solid:hover{color:white;}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s var(--easing),transform .8s var(--easing);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .8s var(--easing),transform .8s var(--easing);}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}.d4{transition-delay:.4s;}
+.section-tag{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:14px;}
+.section-tag::before{content:'';width:28px;height:1px;background:var(--gold);}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,4.5vw,3.8rem);font-weight:300;line-height:1.12;color:var(--dark);margin-bottom:18px;}
+.section-title em{font-style:italic;color:var(--gold);}
+.section-sub{font-size:0.95rem;color:var(--muted);line-height:1.85;max-width:520px;font-weight:300;}
+.sp-hero{min-height:82vh;display:flex;align-items:center;padding:140px 60px 80px;position:relative;overflow:hidden;background:var(--dark);}
+.sp-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 80% 40%,rgba(212,175,55,0.09),transparent 60%),radial-gradient(ellipse 40% 60% at 10% 90%,rgba(212,175,55,0.05),transparent 55%);}
+.sp-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(184,150,12,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,12,0.05) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);animation:gridDrift 20s linear infinite;}
+@keyframes gridDrift{from{background-position:0 0,0 0}to{background-position:80px 80px,80px 80px}}
+.sp-hero-content{position:relative;z-index:2;max-width:760px;}
+.sp-hero-back{display:inline-flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-decoration:none;margin-bottom:40px;transition:color .3s;cursor:none;}
+.sp-hero-back:hover{color:var(--gold-light);}
+.sp-hero-back svg{transition:transform .3s;}
+.sp-hero-back:hover svg{transform:translateX(-5px);}
+.sp-hero-tag{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-light);display:flex;align-items:center;gap:14px;margin-bottom:28px;opacity:0;animation:fadeIn .8s .4s forwards;}
+.sp-hero-tag::before{content:'';width:28px;height:1px;background:var(--gold-light);}
+.sp-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,6vw,5.5rem);font-weight:300;line-height:1.06;color:white;margin-bottom:28px;letter-spacing:-0.015em;opacity:0;animation:fadeUp .8s .6s forwards;}
+.sp-hero h1 em{font-style:italic;color:var(--gold-light);}
+.sp-hero-desc{font-size:1rem;color:rgba(255,255,255,0.52);line-height:1.85;max-width:520px;font-weight:300;margin-bottom:44px;opacity:0;animation:fadeUp .8s .8s forwards;}
+.sp-hero-actions{display:flex;gap:20px;align-items:center;opacity:0;animation:fadeUp .8s 1s forwards;}
+.sp-hero-stats{display:flex;gap:44px;margin-top:64px;opacity:0;animation:fadeUp .8s 1.2s forwards;}
+.sp-stat-item{border-left:1px solid rgba(212,175,55,0.25);padding-left:20px;}
+.sp-stat-num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:white;line-height:1;}
+.sp-stat-num span{color:var(--gold-light);}
+.sp-stat-label{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:4px;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.btn-primary{font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;padding:16px 38px;background:var(--charcoal);color:var(--cream);border:none;cursor:none;text-decoration:none;display:inline-flex;align-items:center;gap:10px;position:relative;overflow:hidden;transition:color .35s;}
+.btn-primary::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .4s var(--easing);}
+.btn-primary:hover::before{transform:translateX(0);}
+.btn-primary:hover{color:white;}
+.btn-primary span,.btn-primary svg{position:relative;z-index:1;}
+.btn-primary svg{transition:transform .3s var(--easing);}
+.btn-primary:hover svg{transform:translateX(5px);}
+.btn-outline{font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;padding:15px 36px;border:1px solid var(--gold);color:var(--gold);background:transparent;text-decoration:none;display:inline-flex;align-items:center;gap:10px;position:relative;overflow:hidden;transition:color .35s;cursor:none;}
+.btn-outline::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .4s var(--easing);}
+.btn-outline:hover::before{transform:translateX(0);}
+.btn-outline:hover{color:white;}
+.btn-outline span{position:relative;z-index:1;}
+.btn-white{font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;padding:18px 40px;background:white;color:var(--gold);border:none;cursor:none;text-decoration:none;white-space:nowrap;display:inline-block;position:relative;overflow:hidden;transition:color .35s;}
+.btn-white::before{content:'';position:absolute;inset:0;background:var(--charcoal);transform:translateY(101%);transition:transform .4s var(--easing);}
+.btn-white:hover::before{transform:translateY(0);}
+.btn-white:hover{color:white;}
+.btn-white span{position:relative;z-index:1;}
+#sticky-cta{position:fixed;bottom:28px;right:28px;z-index:200;display:flex;flex-direction:column;gap:10px;align-items:flex-end;opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s;}
+#sticky-cta.visible{opacity:1;transform:translateY(0);}
+.sticky-btn{display:flex;align-items:center;gap:10px;padding:12px 20px;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;cursor:none;transition:transform .3s,box-shadow .3s;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;overflow:hidden;}
+.sticky-btn-primary{background:var(--charcoal);color:var(--cream);}
+.sticky-btn-primary::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .35s var(--easing);}
+.sticky-btn-primary:hover::before{transform:translateX(0);}
+.sticky-btn-primary:hover{color:white;transform:translateY(-2px);}
+.sticky-btn-wa{background:#25D366;color:white;}
+.sticky-btn-wa:hover{transform:translateY(-2px);}
+.sticky-btn span,.sticky-btn svg{position:relative;z-index:1;}
+.pain-section{background:var(--cream);padding:90px 60px;}
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;}
+.pain-card{padding:36px 32px;background:white;border:1px solid var(--border);position:relative;overflow:hidden;transition:transform .4s var(--easing),box-shadow .4s,border-color .3s;}
+.pain-card:hover{transform:translateY(-5px);box-shadow:0 20px 60px rgba(0,0,0,0.08);border-color:rgba(184,150,12,0.3);}
+.pain-icon{font-size:1.8rem;margin-bottom:20px;display:block;transition:transform .4s var(--easing-back);}
+.pain-card:hover .pain-icon{transform:scale(1.15);}
+.pain-title{font-size:0.92rem;font-weight:500;color:var(--charcoal);margin-bottom:10px;}
+.pain-desc{font-size:0.8rem;color:var(--muted);line-height:1.75;}
+.pain-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .4s var(--easing);}
+.pain-card:hover::before{transform:scaleX(1);}
+/* COVERAGE TYPES */
+.coverage-section{background:var(--ivory);padding:90px 60px;}
+.coverage-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:52px;}
+.coverage-card{background:white;border:1px solid var(--border);padding:36px;position:relative;overflow:hidden;transition:transform .4s var(--easing),box-shadow .4s;cursor:default;}
+.coverage-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,0.08);}
+.coverage-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--gold);transform:scaleY(0);transform-origin:top;transition:transform .4s var(--easing);}
+.coverage-card:hover::before{transform:scaleY(1);}
+.coverage-type{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.coverage-name{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:var(--charcoal);margin-bottom:12px;}
+.coverage-desc{font-size:0.8rem;color:var(--muted);line-height:1.75;margin-bottom:16px;}
+.coverage-rule{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--cream);border-left:2px solid var(--gold);}
+.coverage-rule-label{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--charcoal);font-weight:500;}
+/* CALCULATOR */
+.calc-section{background:var(--dark);padding:90px 60px;position:relative;overflow:hidden;}
+.calc-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 50% 50%,rgba(212,175,55,0.07),transparent 70%);}
+.calc-section .section-tag{color:var(--gold-light);}
+.calc-section .section-tag::before{background:var(--gold-light);}
+.calc-section .section-title{color:white;}
+.calc-section .section-sub{color:rgba(255,255,255,0.42);}
+.calc-container{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:52px;position:relative;z-index:1;}
+.calc-panel{background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.15);padding:44px;transition:border-color .3s;}
+.calc-panel:hover{border-color:rgba(212,175,55,0.3);}
+.calc-panel-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:white;margin-bottom:28px;}
+.calc-group{margin-bottom:24px;}
+.calc-label{display:flex;justify-content:space-between;align-items:center;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px;}
+.calc-label-val{color:var(--gold-light);font-size:0.75rem;}
+.calc-input{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:rgba(255,255,255,0.08);border-radius:2px;outline:none;cursor:none;}
+.calc-input::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--gold);border-radius:50%;cursor:none;box-shadow:0 0 0 4px rgba(184,150,12,0.15);}
+.calc-input::-moz-range-thumb{width:16px;height:16px;background:var(--gold);border-radius:50%;border:none;}
+.result-main-box{background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(212,175,55,0.04));border:1px solid rgba(212,175,55,0.2);padding:32px;margin-bottom:20px;position:relative;}
+.result-main-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold));}
+.result-label{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;}
+.result-value{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;color:white;line-height:1;}
+.result-sub{font-size:0.75rem;color:rgba(255,255,255,0.3);margin-top:8px;}
+.result-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.result-item{padding:18px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);}
+.result-item-label{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;}
+.result-item-val{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:rgba(255,255,255,0.8);}
+/* Gap indicator */
+.gap-box{padding:20px;border:1px solid rgba(255,80,80,0.2);background:rgba(255,80,80,0.05);margin-bottom:16px;position:relative;}
+.gap-box.ok{border-color:rgba(80,200,120,0.2);background:rgba(80,200,120,0.05);}
+.gap-label{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,80,80,0.7);margin-bottom:6px;}
+.gap-box.ok .gap-label{color:rgba(80,200,120,0.8);}
+.gap-val{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:rgba(255,100,100,0.9);font-weight:300;}
+.gap-box.ok .gap-val{color:rgba(80,200,120,0.9);}
+.gap-sub{font-size:0.75rem;color:rgba(255,255,255,0.3);margin-top:4px;}
+.calc-disclaimer{font-size:0.72rem;color:rgba(255,255,255,0.22);line-height:1.7;font-style:italic;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);margin-top:4px;}
+.calc-cta-row{margin-top:20px;}
+/* INSIGHTS */
+.insights-section{background:var(--cream);padding:90px 60px;}
+.insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:52px;}
+.insight-card{background:white;border:1px solid var(--border);padding:40px;position:relative;overflow:hidden;transition:transform .4s var(--easing),box-shadow .4s;}
+.insight-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.08);}
+.insight-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .5s var(--easing);}
+.insight-card:hover::before{transform:scaleX(1);}
+.insight-card-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--charcoal);margin-bottom:6px;}
+.insight-card-sub{font-size:0.78rem;color:var(--muted);margin-bottom:24px;}
+.ib-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.ib-label{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);width:90px;}
+.ib-track{flex:1;height:5px;background:rgba(184,150,12,0.08);border-radius:3px;overflow:hidden;}
+.ib-fill{height:100%;border-radius:3px;background:var(--gold);width:0;transition:width 1.2s var(--easing);}
+.ib-val{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--gold);width:56px;text-align:right;}
+.sp-cta{background:var(--gold);padding:90px 60px;display:flex;justify-content:space-between;align-items:center;gap:40px;position:relative;overflow:hidden;}
+.sp-cta::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.06),transparent);}
+.sp-cta-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3.2rem);font-weight:300;color:white;line-height:1.15;position:relative;}
+.sp-cta-title em{font-style:italic;opacity:0.75;}
+.marquee-strip{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--charcoal);padding:16px 0;overflow:hidden;}
+.marquee-inner{display:flex;gap:72px;animation:marquee 28s linear infinite;white-space:nowrap;}
+.marquee-strip:hover .marquee-inner{animation-play-state:paused;}
+.marquee-item{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.28em;text-transform:uppercase;color:rgba(240,230,184,0.5);display:flex;align-items:center;gap:28px;transition:color .3s;}
+.marquee-item:hover{color:var(--gold-light);}
+.marquee-item::after{content:'◆';opacity:0.3;font-size:0.4rem;}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+footer{background:var(--dark);padding:80px 60px 48px;position:relative;}
+footer::before{content:'';position:absolute;top:0;left:60px;right:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(184,150,12,0.3),transparent);}
+.footer-top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:60px;padding-bottom:52px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:white;margin-bottom:18px;letter-spacing:0.04em;display:inline-block;}
+.footer-logo span{color:var(--gold);}
+.footer-desc{font-size:0.78rem;color:rgba(255,255,255,0.3);line-height:1.8;max-width:220px;}
+.footer-col-title{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:22px;}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.footer-links a{font-size:0.78rem;color:rgba(255,255,255,0.35);text-decoration:none;transition:color .3s,padding-left .3s;display:inline-block;}
+.footer-links a:hover{color:rgba(255,255,255,0.85);padding-left:6px;}
+.footer-bottom{padding-top:32px;display:flex;justify-content:space-between;align-items:center;}
+.footer-copy{font-family:'DM Mono',monospace;font-size:0.65rem;color:rgba(255,255,255,0.2);}
+.footer-legal{display:flex;gap:24px;}
+.footer-legal a{font-family:'DM Mono',monospace;font-size:0.65rem;color:rgba(255,255,255,0.2);text-decoration:none;transition:color .3s;}
+.footer-legal a:hover{color:rgba(255,255,255,0.6);}
+@media(max-width:960px){body{cursor:auto;}#cursor-dot,#cursor-ring{display:none;}nav{padding:18px 28px;}nav.scrolled{padding:14px 28px;}.nav-links{display:none;}.sp-hero,.pain-section,.coverage-section,.calc-section,.insights-section,.sp-cta{padding-left:28px;padding-right:28px;}.sp-hero{padding-top:100px;}.sp-hero-stats{flex-wrap:wrap;gap:24px;}.pain-grid,.coverage-grid,.insights-grid{grid-template-columns:1fr;}.calc-container{grid-template-columns:1fr;}.footer-top{grid-template-columns:1fr 1fr;gap:36px;}.sp-cta{flex-direction:column;text-align:center;}.footer-bottom{flex-direction:column;gap:12px;text-align:center;}.nav-actions{gap:8px;}.nav-cta{padding:8px 14px;font-size:0.65rem;}#sticky-cta{bottom:16px;right:16px;}}
+</style>
+</head>
+<body>
+<div id="cursor-dot"></div><div id="cursor-ring"></div>
+<canvas id="particle-canvas"></canvas>
+<div id="sticky-cta">
+  <a href="https://wa.me/917095858488?text=Hi%2C%20I%27m%20interested%20in%20Risk%20%26%20Insurance%20Planning." class="sticky-btn sticky-btn-wa" target="_blank">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.528 5.855L.057 23.885l6.162-1.615A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.815 9.815 0 01-5.003-1.368l-.36-.213-3.66.96.976-3.565-.234-.375A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+    <span>WhatsApp Us</span>
+  </a>
+  <a href="mailto:viswateja.investments@gmail.com" class="sticky-btn sticky-btn-primary">
+    <svg width="14" height="14" viewBox="0 0 16 10" fill="none"><path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span>Review My Coverage</span>
+  </a>
+</div>
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">Yours<span>Wealth</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#about" data-text="About">About</a></li>
+    <li><a href="index.html#services" data-text="Services">Services</a></li>
+    <li><a href="index.html#process" data-text="Our Process">Our Process</a></li>
+    <li><a href="index.html#why" data-text="Why Us">Why Us</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="index.html#services" class="nav-cta">All Services</a>
+    <a href="mailto:viswateja.investments@gmail.com" class="nav-cta solid">Book Consultation</a>
+  </div>
+</nav>
 
+<section class="sp-hero">
+  <div class="sp-hero-bg"></div><div class="sp-hero-grid"></div>
+  <div class="sp-hero-content">
+    <a href="index.html#services" class="sp-hero-back"><svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M15 5H1M6 1L1 5l5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Back to Services</a>
+    <div class="sp-hero-tag">Risk & Insurance Planning</div>
+    <h1>Protect everything you've<br>built. <em>Before life decides to test it.</em></h1>
+    <p class="sp-hero-desc">Building wealth without protecting it is building on sand. One health crisis, one premature death, one accident — and years of investment unravel overnight. We ensure it never happens to you.</p>
+    <div class="sp-hero-actions">
+      <a href="#calculator" class="btn-primary"><span>Check My Coverage Gap</span><svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>
+      <a href="mailto:viswateja.investments@gmail.com" class="btn-outline"><span>Book Free Review</span></a>
+    </div>
+    <div class="sp-hero-stats">
+      <div class="sp-stat-item"><div class="sp-stat-num">85<span>%</span></div><div class="sp-stat-label">Of Indians are underinsured</div></div>
+      <div class="sp-stat-item"><div class="sp-stat-num">₹50<span>L+</span></div><div class="sp-stat-label">Avg. undercoverage found</div></div>
+      <div class="sp-stat-item"><div class="sp-stat-num">300<span>+</span></div><div class="sp-stat-label">Risk audits completed</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-strip"><div class="marquee-inner">
+  <div class="marquee-item">Term Life Cover</div><div class="marquee-item">Health Insurance</div><div class="marquee-item">Critical Illness</div><div class="marquee-item">Income Protection</div><div class="marquee-item">Disability Cover</div><div class="marquee-item">Personal Accident</div><div class="marquee-item">Risk Audit</div><div class="marquee-item">Super Top-Up</div>
+  <div class="marquee-item">Term Life Cover</div><div class="marquee-item">Health Insurance</div><div class="marquee-item">Critical Illness</div><div class="marquee-item">Income Protection</div><div class="marquee-item">Disability Cover</div><div class="marquee-item">Personal Accident</div><div class="marquee-item">Risk Audit</div><div class="marquee-item">Super Top-Up</div>
+</div></div>
+
+<section class="pain-section">
+  <div class="section-tag reveal">The Problem</div>
+  <h2 class="section-title reveal d1">Why India's middle class<br>is one crisis <em>away from ruin.</em></h2>
+  <p class="section-sub reveal d2">Insurance in India is widely misunderstood, massively underused, and often bought for the wrong reasons. Here is the reality.</p>
+  <div class="pain-grid">
+    <div class="pain-card reveal"><span class="pain-icon">💀</span><div class="pain-title">Critically underinsured life cover</div><div class="pain-desc">The rule of thumb: life cover should be 15–20× your annual income. Most Indians have cover worth less than 3×. If you earn ₹15L/year, you need ₹2.25–3 Cr in term cover — not ₹50L.</div></div>
+    <div class="pain-card reveal d1"><span class="pain-icon">🏥</span><div class="pain-title">Corporate cover is not enough</div><div class="pain-desc">A ₹3L group health policy feels adequate — until a serious illness hits. Cancer, cardiac surgery, or organ transplant can cost ₹15–40L. Your corporate cover vanishes within days.</div></div>
+    <div class="pain-card reveal d2"><span class="pain-icon">📋</span><div class="pain-title">ULIPs and endowment plans</div><div class="pain-desc">Millions of Indians hold insurance-investment combo products that give terrible returns AND inadequate cover. We identify and help you restructure these efficiently.</div></div>
+    <div class="pain-card reveal d1"><span class="pain-icon">🦽</span><div class="pain-title">No disability or CI cover</div><div class="pain-desc">A critical illness or permanent disability can be financially more devastating than death — you're still alive, still incurring expenses, but your income has stopped. Almost nobody covers for this.</div></div>
+    <div class="pain-card reveal d2"><span class="pain-icon">👨‍👩‍👧</span><div class="pain-title">Dependants fully exposed</div><div class="pain-desc">If you are the primary earner and something happens to you, what happens to your family? Without adequate life and income cover, they are entirely vulnerable.</div></div>
+    <div class="pain-card reveal d3"><span class="pain-icon">🔍</span><div class="pain-title">No holistic risk audit</div><div class="pain-desc">Most people buy policies in isolation — one policy here, another there — with no systematic assessment of total risk exposure vs. total coverage. The gaps are invisible until disaster strikes.</div></div>
+  </div>
+</section>
+
+<section class="coverage-section">
+  <div class="section-tag reveal">What We Cover</div>
+  <h2 class="section-title reveal d1">A complete shield for<br>everything that <em>matters.</em></h2>
+  <p class="section-sub reveal d2">We design a layered protection architecture — not a collection of random policies. Every risk is identified, every gap is filled.</p>
+  <div class="coverage-grid">
+    <div class="coverage-card reveal">
+      <div class="coverage-type">Life Protection</div>
+      <div class="coverage-name">Term Life Insurance</div>
+      <div class="coverage-desc">Pure protection at the lowest premium. We help you select the right cover amount, term length, premium payment structure, and rider add-ons. No unnecessary endowment or ULIP products.</div>
+      <div class="coverage-rule"><span class="coverage-rule-label">Rule of thumb: 15–20× Annual Income</span></div>
+    </div>
+    <div class="coverage-card reveal d1">
+      <div class="coverage-type">Health Protection</div>
+      <div class="coverage-name">Health Insurance + Super Top-Up</div>
+      <div class="coverage-desc">We audit your existing corporate and personal health covers, identify gaps, and design a layered structure — base policy + super top-up — that delivers ₹25–50L in coverage at optimal cost.</div>
+      <div class="coverage-rule"><span class="coverage-rule-label">Minimum: ₹10L individual + ₹25L top-up</span></div>
+    </div>
+    <div class="coverage-card reveal d2">
+      <div class="coverage-type">Critical Illness</div>
+      <div class="coverage-name">Critical Illness Lump-Sum Cover</div>
+      <div class="coverage-desc">Pays a lump sum on diagnosis of 40+ specified critical conditions — cancer, heart attack, stroke, kidney failure, and more. Covers income loss and treatment gaps that health insurance doesn't.</div>
+      <div class="coverage-rule"><span class="coverage-rule-label">Recommended: ₹25–50L CI cover</span></div>
+    </div>
+    <div class="coverage-card reveal d3">
+      <div class="coverage-type">Income Protection</div>
+      <div class="coverage-name">Disability & Accident Cover</div>
+      <div class="coverage-desc">Personal Accident + Disability cover that replaces your income if you are unable to work due to injury or disability. Often the most overlooked and most needed protection for working professionals.</div>
+      <div class="coverage-rule"><span class="coverage-rule-label">Cover: 5–10× Annual Income</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="calc-section" id="calculator">
+  <div class="section-tag reveal">Coverage Gap Analyser</div>
+  <h2 class="section-title reveal d1">Are you carrying a<br><em>dangerous coverage gap?</em></h2>
+  <p class="section-sub reveal d2">Enter your details to instantly see your ideal coverage across all risk types, compared against what you likely have. This is your risk audit in 60 seconds.</p>
+  <div class="calc-container">
+    <div class="calc-panel reveal">
+      <div class="calc-panel-title">Your Risk Profile</div>
+      <div class="calc-group"><div class="calc-label">Annual Income <span class="calc-label-val" id="inc-val">₹15 L</span></div><input type="range" class="calc-input" id="ann-income" min="500000" max="10000000" step="100000" value="1500000"></div>
+      <div class="calc-group"><div class="calc-label">Number of Dependants <span class="calc-label-val" id="dep-val">2</span></div><input type="range" class="calc-input" id="dependants" min="0" max="6" step="1" value="2"></div>
+      <div class="calc-group"><div class="calc-label">Outstanding Loans / Liabilities <span class="calc-label-val" id="loan-val">₹40 L</span></div><input type="range" class="calc-input" id="loans" min="0" max="10000000" step="100000" value="4000000"></div>
+      <div class="calc-group"><div class="calc-label">Existing Life Cover <span class="calc-label-val" id="life-val">₹50 L</span></div><input type="range" class="calc-input" id="exist-life" min="0" max="20000000" step="500000" value="5000000"></div>
+      <div class="calc-group"><div class="calc-label">Existing Health Cover <span class="calc-label-val" id="health-val">₹5 L</span></div><input type="range" class="calc-input" id="exist-health" min="0" max="5000000" step="100000" value="500000"></div>
+      <div class="calc-group"><div class="calc-label">Existing Critical Illness Cover <span class="calc-label-val" id="ci-val">₹0</span></div><input type="range" class="calc-input" id="exist-ci" min="0" max="5000000" step="100000" value="0"></div>
+    </div>
+    <div class="calc-results reveal d2">
+      <div class="result-main-box">
+        <div class="result-label">Total Recommended Coverage</div>
+        <div class="result-value" id="total-cover">₹5.5 Cr</div>
+        <div class="result-sub">across all risk categories for your profile</div>
+      </div>
+      <div class="result-breakdown">
+        <div class="result-item"><div class="result-item-label">Required Life Cover</div><div class="result-item-val" id="req-life">₹3 Cr</div></div>
+        <div class="result-item"><div class="result-item-label">Required Health Cover</div><div class="result-item-val" id="req-health">₹25 L</div></div>
+        <div class="result-item"><div class="result-item-label">Critical Illness Needed</div><div class="result-item-val" id="req-ci">₹50 L</div></div>
+        <div class="result-item"><div class="result-item-label">Disability Cover</div><div class="result-item-val" id="req-dis">₹1.5 Cr</div></div>
+      </div>
+      <!-- Gap Indicator -->
+      <div class="gap-box" id="gap-box">
+        <div class="gap-label" id="gap-label">⚠ Life Insurance Gap</div>
+        <div class="gap-val" id="life-gap-val">₹2.5 Cr under-covered</div>
+        <div class="gap-sub" id="gap-sub">Your family is exposed to significant financial risk</div>
+      </div>
+      <div class="calc-disclaimer">⚠ Illustrative calculation based on standard risk multipliers. Actual coverage requirements depend on your specific financial situation, dependants' needs, and lifestyle. Consult your advisor.</div>
+      <div class="calc-cta-row">
+        <a href="mailto:viswateja.investments@gmail.com?subject=Insurance Coverage Review Request" class="btn-primary"><span>Get Full Risk Audit</span><svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="insights-section">
+  <div class="section-tag reveal">Why It Matters</div>
+  <h2 class="section-title reveal d1">The true cost of<br>being <em>underinsured.</em></h2>
+  <div class="insights-grid">
+    <div class="insight-card reveal">
+      <div class="insight-card-title">India's Insurance Reality</div>
+      <div class="insight-card-sub">How underinsured different population segments are</div>
+      <div class="ib-row"><div class="ib-label">Self-employed</div><div class="ib-track"><div class="ib-fill" data-w="92"></div></div><div class="ib-val">92% gap</div></div>
+      <div class="ib-row"><div class="ib-label">Salaried (pvt)</div><div class="ib-track"><div class="ib-fill" data-w="78"></div></div><div class="ib-val">78% gap</div></div>
+      <div class="ib-row"><div class="ib-label">Salaried (govt)</div><div class="ib-track"><div class="ib-fill" data-w="65"></div></div><div class="ib-val">65% gap</div></div>
+      <div class="ib-row"><div class="ib-label">HNI Segment</div><div class="ib-track"><div class="ib-fill" data-w="55"></div></div><div class="ib-val">55% gap</div></div>
+    </div>
+    <div class="insight-card reveal d1">
+      <div class="insight-card-title">What Serious Illness Actually Costs</div>
+      <div class="insight-card-sub">Average treatment costs in India (2024)</div>
+      <div class="ib-row"><div class="ib-label">Bypass surgery</div><div class="ib-track"><div class="ib-fill" data-w="50"></div></div><div class="ib-val">₹5–8 L</div></div>
+      <div class="ib-row"><div class="ib-label">Cancer (stage 3+)</div><div class="ib-track"><div class="ib-fill" data-w="80"></div></div><div class="ib-val">₹15–40 L</div></div>
+      <div class="ib-row"><div class="ib-label">Kidney transplant</div><div class="ib-track"><div class="ib-fill" data-w="70"></div></div><div class="ib-val">₹10–15 L</div></div>
+      <div class="ib-row"><div class="ib-label">ICU (30 days)</div><div class="ib-track"><div class="ib-fill" data-w="40"></div></div><div class="ib-val">₹4–6 L</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="sp-cta">
+  <div class="sp-cta-title reveal-left">Don't wait for a crisis<br>to <em>discover your gaps.</em></div>
+  <a href="mailto:viswateja.investments@gmail.com?subject=Book Risk & Insurance Planning Consultation" class="btn-white reveal d2"><span>Get My Risk Audit</span></a>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div><div class="footer-logo">Yours<span>Wealth</span></div><div class="footer-desc">AMFI-registered Mutual Fund Distributor. Boutique wealth management built on trust. — Viswateja Poreddy.</div></div>
+    <div><div class="footer-col-title">Services</div><ul class="footer-links"><li><a href="financial-planning.html">Financial Planning</a></li><li><a href="investment-advisory.html">Investment Advisory</a></li><li><a href="retirement-planning.html">Retirement Planning</a></li><li><a href="tax-optimisation.html">Tax Optimisation</a></li><li><a href="risk-insurance.html">Risk & Insurance</a></li><li><a href="estate-planning.html">Estate Planning</a></li></ul></div>
+    <div><div class="footer-col-title">Company</div><ul class="footer-links"><li><a href="index.html#about">About Us</a></li><li><a href="index.html#process">Our Process</a></li><li><a href="index.html#why">Why Us</a></li></ul></div>
+    <div><div class="footer-col-title">Contact</div><ul class="footer-links"><li><a href="mailto:viswateja.investments@gmail.com">viswateja.investments@gmail.com</a></li><li><a href="tel:+917095858488">+91 70958 58488</a></li><li><a href="#">Hyderabad | Bengaluru</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><div class="footer-copy">© 2025 Yours Wealth. All rights reserved.</div><div class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Disclaimer</a></div></div>
+</footer>
+
+<script>
+const dot=document.getElementById('cursor-dot'),ring=document.getElementById('cursor-ring');let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function ac(){rx+=(mx-rx)*0.18;ry+=(my-ry)*0.18;dot.style.left=mx+'px';dot.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(ac);})();
+const canvas=document.getElementById('particle-canvas'),ctx=canvas.getContext('2d');let W,H,parts=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}resize();window.addEventListener('resize',resize);
+class P{constructor(){this.reset();}reset(){this.x=Math.random()*W;this.y=Math.random()*H;this.size=Math.random()*1.2+0.3;this.sx=(Math.random()-.5)*0.25;this.sy=-Math.random()*0.35-.08;this.op=Math.random()*0.35+0.08;this.life=0;this.ml=Math.random()*300+200;}update(){this.x+=this.sx;this.y+=this.sy;this.life++;if(this.life>this.ml||this.y<-10)this.reset();}draw(){const t=this.life/this.ml,a=this.op*(t<0.1?t*10:t>0.8?(1-t)*5:1);ctx.globalAlpha=a;ctx.fillStyle='rgba(212,175,55,1)';ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();}}
+for(let i=0;i<70;i++){const p=new P();p.life=Math.random()*p.ml;parts.push(p);}
+(function ap(){ctx.clearRect(0,0,W,H);parts.forEach(p=>{p.update();p.draw();});ctx.globalAlpha=1;requestAnimationFrame(ap);})();
+const nav=document.getElementById('main-nav');window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>60));
+const scta=document.getElementById('sticky-cta');window.addEventListener('scroll',()=>scta.classList.toggle('visible',window.scrollY>400));
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+document.querySelectorAll('.reveal,.reveal-left').forEach(el=>obs.observe(el));
+const bObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.ib-fill').forEach((b,i)=>setTimeout(()=>b.style.width=b.dataset.w+'%',i*150));bObs.unobserve(e.target);}});},{threshold:0.3});
+document.querySelectorAll('.insight-card').forEach(el=>bObs.observe(el));
+document.querySelectorAll('.btn-primary,.btn-white,.nav-cta,.sticky-btn').forEach(btn=>{btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();btn.style.transform=`translate(${(e.clientX-r.left-r.width/2)*0.22}px,${(e.clientY-r.top-r.height/2)*0.22}px)`;});btn.addEventListener('mouseleave',()=>btn.style.transform='');});
+function updateFill(el){const pct=((el.value-el.min)/(el.max-el.min))*100;el.style.background=`linear-gradient(to right,#B8960C ${pct}%,rgba(255,255,255,0.1) ${pct}%)`;}
+document.querySelectorAll('.calc-input').forEach(i=>{updateFill(i);i.addEventListener('input',()=>updateFill(i));});
+function fmtINR(n){if(n>=1e7)return'₹'+(n/1e7).toFixed(1)+' Cr';if(n>=1e5)return'₹'+(n/1e5).toFixed(0)+' L';return'₹'+Math.round(n).toLocaleString('en-IN');}
+function calcCoverage(){
+  const income=+document.getElementById('ann-income').value;
+  const deps=+document.getElementById('dependants').value;
+  const loans=+document.getElementById('loans').value;
+  const existLife=+document.getElementById('exist-life').value;
+  const existHealth=+document.getElementById('exist-health').value;
+  const existCI=+document.getElementById('exist-ci').value;
+  // Recommended amounts
+  const reqLife=income*(15+deps*2)+loans;
+  const reqHealth=Math.max(2500000,income*1.5); // ₹25L min
+  const reqCI=Math.max(5000000,income*3);
+  const reqDis=income*10;
+  const total=reqLife+reqHealth+reqCI+reqDis;
+  document.getElementById('total-cover').textContent=fmtINR(total);
+  document.getElementById('req-life').textContent=fmtINR(reqLife);
+  document.getElementById('req-health').textContent=fmtINR(reqHealth);
+  document.getElementById('req-ci').textContent=fmtINR(reqCI);
+  document.getElementById('req-dis').textContent=fmtINR(reqDis);
+  const lifeGap=reqLife-existLife;
+  const healthGap=reqHealth-existHealth;
+  const ciGap=reqCI-existCI;
+  const box=document.getElementById('gap-box');
+  const gapLbl=document.getElementById('gap-label');
+  const gapVal=document.getElementById('life-gap-val');
+  const gapSub=document.getElementById('gap-sub');
+  if(lifeGap>0){
+    box.className='gap-box';
+    gapLbl.textContent='⚠ Life Insurance Gap';
+    gapVal.textContent=fmtINR(lifeGap)+' under-covered';
+    gapSub.textContent='Your family is exposed to significant financial risk';
+  } else if(healthGap>0){
+    box.className='gap-box';
+    gapLbl.textContent='⚠ Health Insurance Gap';
+    gapVal.textContent=fmtINR(healthGap)+' additional cover needed';
+    gapSub.textContent='One serious illness could deplete your savings';
+  } else if(ciGap>0){
+    box.className='gap-box';
+    gapLbl.textContent='⚠ Critical Illness Gap';
+    gapVal.textContent=fmtINR(ciGap)+' CI cover missing';
+    gapSub.textContent='Diagnosis without income replacement is devastating';
+  } else {
+    box.className='gap-box ok';
+    gapLbl.textContent='✓ Coverage Looks Adequate';
+    gapVal.textContent='Good foundation in place';
+    gapSub.textContent='Let us do a full audit to verify and optimise your protection';
+  }
+}
+const sliderIds=['ann-income','dependants','loans','exist-life','exist-health','exist-ci'];
+const labelIds=['inc-val','dep-val','loan-val','life-val','health-val','ci-val'];
+const formatters=[v=>fmtINR(+v),v=>v,v=>fmtINR(+v),v=>fmtINR(+v),v=>fmtINR(+v),v=>fmtINR(+v)];
+sliderIds.forEach((id,i)=>{document.getElementById(id).addEventListener('input',function(){document.getElementById(labelIds[i]).textContent=formatters[i](this.value);calcCoverage();});});
+calcCoverage();
+</script>
+</body>
+</html>
