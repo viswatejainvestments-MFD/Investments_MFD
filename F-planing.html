@@ -3,160 +3,689 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Financial Planning | Yours Wealth</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
+<title>Financial Planning — Yours Wealth</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: #FAF7F2;
-  color: #1C1C1C;
-  margin: 0;
+/* ── ROOT & RESET ── */
+:root {
+  --cream:#F5F0E8;--ivory:#FAF7F2;--gold:#B8960C;--gold-light:#D4AF37;
+  --gold-pale:#F0E6B8;--charcoal:#1C1C1C;--dark:#0D0D0D;--mid:#3A3630;
+  --muted:#7A736A;--border:rgba(184,150,12,0.18);--border-light:rgba(184,150,12,0.08);
+  --easing:cubic-bezier(0.16,1,0.3,1);--easing-back:cubic-bezier(0.34,1.56,0.64,1);
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--charcoal);overflow-x:hidden;cursor:none;}
 
-/* HERO */
-.hero {
-  padding: 120px 60px;
-  background: linear-gradient(135deg, #FAF7F2, #F5F0E8);
-}
-.hero h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3.5rem;
-}
-.hero p {
-  max-width: 500px;
-  color: #7A736A;
-}
+/* ── CURSOR ── */
+#cursor-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s var(--easing),height .3s var(--easing),background .3s;mix-blend-mode:multiply;}
+#cursor-ring{width:36px;height:36px;border:1px solid rgba(184,150,12,0.5);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .4s var(--easing),height .4s var(--easing),opacity .3s,border-color .3s;}
+body:has(a:hover) #cursor-dot,body:has(button:hover) #cursor-dot{width:10px;height:10px;background:var(--gold-light);}
+body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:56px;height:56px;border-color:var(--gold);}
 
-/* SECTIONS */
-.section {
-  padding: 80px 60px;
-}
-.section h2 {
-  font-family: 'Cormorant Garamond', serif;
-}
+/* ── PARTICLES ── */
+#particle-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.5;}
 
-/* CARDS */
-.card {
-  background: white;
-  padding: 30px;
-  border: 1px solid rgba(184,150,12,0.2);
-  margin-bottom: 20px;
-  transition: 0.3s;
-}
-.card:hover {
-  transform: translateY(-5px);
-}
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:28px 60px;transition:padding .4s var(--easing),background .4s,box-shadow .4s;}
+nav.scrolled{padding:16px 60px;background:rgba(250,247,242,0.94);backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--border-light),0 8px 32px rgba(0,0,0,0.04);}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;letter-spacing:0.04em;color:var(--charcoal);text-decoration:none;position:relative;}
+.nav-logo span{color:var(--gold);}
+.nav-logo::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s var(--easing);}
+.nav-logo:hover::after{transform:scaleX(1);}
+.nav-links{display:flex;gap:36px;list-style:none;}
+.nav-links a{font-size:0.75rem;letter-spacing:0.14em;text-transform:uppercase;text-decoration:none;color:var(--mid);position:relative;transition:color .3s;padding:4px 0;}
+.nav-links a::before{content:attr(data-text);position:absolute;top:0;left:0;color:var(--gold);clip-path:inset(0 100% 0 0);transition:clip-path .4s var(--easing);white-space:nowrap;}
+.nav-links a:hover::before{clip-path:inset(0 0% 0 0);}
+.nav-actions{display:flex;gap:12px;align-items:center;}
+.nav-cta{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;padding:10px 22px;border:1px solid var(--gold);background:transparent;color:var(--gold);text-decoration:none;transition:all .35s var(--easing);position:relative;overflow:hidden;cursor:none;}
+.nav-cta::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .35s var(--easing);z-index:-1;}
+.nav-cta:hover::before{transform:translateX(0);}
+.nav-cta:hover{color:white;}
+.nav-cta.solid{background:var(--charcoal);color:var(--cream);border-color:var(--charcoal);}
+.nav-cta.solid::before{background:var(--gold);}
+.nav-cta.solid:hover{color:white;}
 
-/* CALCULATOR */
-.calculator {
-  background: #fff;
-  padding: 40px;
-  border: 1px solid rgba(184,150,12,0.2);
-}
-.calculator input {
-  display: block;
-  width: 100%;
-  margin-bottom: 15px;
-  padding: 12px;
-}
-button {
-  padding: 12px 20px;
-  background: #1C1C1C;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-.result {
-  margin-top: 20px;
-  font-size: 1.4rem;
-  color: #B8960C;
-}
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s var(--easing),transform .8s var(--easing);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .8s var(--easing),transform .8s var(--easing);}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}.d4{transition-delay:.4s;}
 
-/* CTA */
-.cta {
-  background: #B8960C;
-  color: white;
-  text-align: center;
-  padding: 80px 20px;
-}
-.cta a {
-  background: white;
-  color: #B8960C;
-  padding: 15px 30px;
-  text-decoration: none;
-  display: inline-block;
-  margin-top: 20px;
+/* ── SECTION SHARED ── */
+.section-tag{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:14px;}
+.section-tag::before{content:'';width:28px;height:1px;background:var(--gold);}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,4.5vw,3.8rem);font-weight:300;line-height:1.12;color:var(--dark);margin-bottom:18px;}
+.section-title em{font-style:italic;color:var(--gold);}
+.section-sub{font-size:0.95rem;color:var(--muted);line-height:1.85;max-width:520px;font-weight:300;}
+
+/* ── HERO ── */
+.sp-hero{min-height:82vh;display:flex;align-items:center;padding:140px 60px 80px;position:relative;overflow:hidden;background:var(--dark);}
+.sp-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 80% 40%,rgba(212,175,55,0.09),transparent 60%),radial-gradient(ellipse 40% 60% at 10% 90%,rgba(212,175,55,0.05),transparent 55%);}
+.sp-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(184,150,12,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,12,0.05) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);animation:gridDrift 20s linear infinite;}
+@keyframes gridDrift{from{background-position:0 0,0 0}to{background-position:80px 80px,80px 80px}}
+.sp-hero-content{position:relative;z-index:2;max-width:760px;}
+.sp-hero-back{display:inline-flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-decoration:none;margin-bottom:40px;transition:color .3s;cursor:none;}
+.sp-hero-back:hover{color:var(--gold-light);}
+.sp-hero-back svg{transition:transform .3s var(--easing);}
+.sp-hero-back:hover svg{transform:translateX(-5px);}
+.sp-hero-tag{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-light);display:flex;align-items:center;gap:14px;margin-bottom:28px;opacity:0;animation:fadeIn .8s .4s var(--easing) forwards;}
+.sp-hero-tag::before{content:'';width:28px;height:1px;background:var(--gold-light);}
+.sp-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,6vw,5.5rem);font-weight:300;line-height:1.06;color:white;margin-bottom:28px;letter-spacing:-0.015em;opacity:0;animation:fadeUp .8s .6s var(--easing) forwards;}
+.sp-hero h1 em{font-style:italic;color:var(--gold-light);}
+.sp-hero-desc{font-size:1rem;color:rgba(255,255,255,0.52);line-height:1.85;max-width:520px;font-weight:300;margin-bottom:44px;opacity:0;animation:fadeUp .8s .8s var(--easing) forwards;}
+.sp-hero-actions{display:flex;gap:20px;align-items:center;opacity:0;animation:fadeUp .8s 1s var(--easing) forwards;}
+.sp-hero-stats{display:flex;gap:44px;margin-top:64px;opacity:0;animation:fadeUp .8s 1.2s var(--easing) forwards;}
+.sp-stat-item{border-left:1px solid rgba(212,175,55,0.25);padding-left:20px;}
+.sp-stat-num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:white;line-height:1;}
+.sp-stat-num span{color:var(--gold-light);}
+.sp-stat-label{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:4px;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── BUTTONS ── */
+.btn-primary{font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;padding:16px 38px;background:var(--charcoal);color:var(--cream);border:none;cursor:none;text-decoration:none;display:inline-flex;align-items:center;gap:10px;position:relative;overflow:hidden;transition:color .35s;}
+.btn-primary::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .4s var(--easing);}
+.btn-primary:hover::before{transform:translateX(0);}
+.btn-primary:hover{color:white;}
+.btn-primary span,.btn-primary svg{position:relative;z-index:1;}
+.btn-primary svg{transition:transform .3s var(--easing);}
+.btn-primary:hover svg{transform:translateX(5px);}
+.btn-outline{font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;padding:15px 36px;border:1px solid var(--gold);color:var(--gold);background:transparent;text-decoration:none;display:inline-flex;align-items:center;gap:10px;position:relative;overflow:hidden;transition:color .35s;cursor:none;}
+.btn-outline::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .4s var(--easing);}
+.btn-outline:hover::before{transform:translateX(0);}
+.btn-outline:hover{color:white;}
+.btn-outline span{position:relative;z-index:1;}
+.btn-white{font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;padding:18px 40px;background:white;color:var(--gold);border:none;cursor:none;text-decoration:none;white-space:nowrap;display:inline-block;position:relative;overflow:hidden;transition:color .35s;}
+.btn-white::before{content:'';position:absolute;inset:0;background:var(--charcoal);transform:translateY(101%);transition:transform .4s var(--easing);}
+.btn-white:hover::before{transform:translateY(0);}
+.btn-white:hover{color:white;}
+.btn-white span{position:relative;z-index:1;}
+
+/* ── STICKY CTA ── */
+#sticky-cta{position:fixed;bottom:28px;right:28px;z-index:200;display:flex;flex-direction:column;gap:10px;align-items:flex-end;opacity:0;transform:translateY(20px);transition:opacity .5s var(--easing),transform .5s var(--easing);}
+#sticky-cta.visible{opacity:1;transform:translateY(0);}
+.sticky-btn{display:flex;align-items:center;gap:10px;padding:12px 20px;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;cursor:none;transition:transform .3s var(--easing),box-shadow .3s;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;overflow:hidden;}
+.sticky-btn-primary{background:var(--charcoal);color:var(--cream);}
+.sticky-btn-primary::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .35s var(--easing);}
+.sticky-btn-primary:hover::before{transform:translateX(0);}
+.sticky-btn-primary:hover{color:white;transform:translateY(-2px);box-shadow:0 16px 48px rgba(0,0,0,0.25);}
+.sticky-btn-wa{background:#25D366;color:white;}
+.sticky-btn-wa:hover{transform:translateY(-2px);box-shadow:0 16px 48px rgba(37,211,102,0.35);}
+.sticky-btn span,.sticky-btn svg{position:relative;z-index:1;}
+
+/* ── PAIN SECTION ── */
+.pain-section{background:var(--cream);padding:90px 60px;}
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;}
+.pain-card{padding:36px 32px;background:white;border:1px solid var(--border);position:relative;overflow:hidden;transition:transform .4s var(--easing),box-shadow .4s,border-color .3s;}
+.pain-card:hover{transform:translateY(-5px);box-shadow:0 20px 60px rgba(0,0,0,0.08);border-color:rgba(184,150,12,0.3);}
+.pain-icon{font-size:1.8rem;margin-bottom:20px;display:block;transition:transform .4s var(--easing-back);}
+.pain-card:hover .pain-icon{transform:scale(1.15);}
+.pain-title{font-size:0.92rem;font-weight:500;color:var(--charcoal);margin-bottom:10px;}
+.pain-desc{font-size:0.8rem;color:var(--muted);line-height:1.75;}
+.pain-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .4s var(--easing);}
+.pain-card:hover::before{transform:scaleX(1);}
+
+/* ── APPROACH SECTION ── */
+.approach-section{background:var(--ivory);padding:90px 60px;}
+.approach-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:56px;}
+.approach-steps{display:flex;flex-direction:column;}
+.approach-step{display:flex;gap:24px;padding:28px 0;border-bottom:1px solid var(--border-light);cursor:default;transition:padding-left .3s var(--easing);position:relative;}
+.approach-step:last-child{border-bottom:none;}
+.approach-step:hover{padding-left:10px;}
+.approach-step::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold);transform:scaleY(0);transform-origin:top;transition:transform .4s var(--easing);}
+.approach-step:hover::before{transform:scaleY(1);}
+.approach-num{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:rgba(184,150,12,0.2);line-height:1;flex-shrink:0;width:48px;transition:color .3s;}
+.approach-step:hover .approach-num{color:rgba(184,150,12,0.45);}
+.approach-step-title{font-size:0.9rem;font-weight:500;color:var(--charcoal);margin-bottom:6px;}
+.approach-step-desc{font-size:0.8rem;color:var(--muted);line-height:1.72;}
+.approach-visual{background:var(--charcoal);padding:48px;position:relative;overflow:hidden;}
+.approach-visual-orb{position:absolute;top:-60px;right:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.12),transparent 70%);}
+.approach-visual-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:white;margin-bottom:32px;position:relative;}
+.approach-items{display:flex;flex-direction:column;gap:20px;}
+.approach-item{display:flex;align-items:center;gap:16px;padding:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.1);transition:background .3s,border-color .3s;}
+.approach-item:hover{background:rgba(212,175,55,0.05);border-color:rgba(212,175,55,0.25);}
+.approach-item-icon{width:36px;height:36px;border:1px solid rgba(212,175,55,0.25);display:flex;align-items:center;justify-content:center;color:var(--gold-light);font-size:0.9rem;flex-shrink:0;}
+.approach-item-text{font-size:0.82rem;color:rgba(255,255,255,0.65);}
+.approach-item-text strong{display:block;color:rgba(255,255,255,0.85);font-weight:500;margin-bottom:2px;font-size:0.85rem;}
+
+/* ── CALCULATOR SECTION ── */
+.calc-section{background:var(--dark);padding:90px 60px;position:relative;overflow:hidden;}
+.calc-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 50% 50%,rgba(212,175,55,0.07),transparent 70%);}
+.calc-section .section-tag{color:var(--gold-light);}
+.calc-section .section-tag::before{background:var(--gold-light);}
+.calc-section .section-title{color:white;}
+.calc-section .section-sub{color:rgba(255,255,255,0.42);}
+.calc-container{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:52px;position:relative;z-index:1;}
+.calc-panel{background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.15);padding:44px;transition:border-color .3s;}
+.calc-panel:hover{border-color:rgba(212,175,55,0.3);}
+.calc-panel-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:white;margin-bottom:32px;}
+.calc-group{margin-bottom:28px;}
+.calc-label{display:flex;justify-content:space-between;align-items:center;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px;}
+.calc-label-val{color:var(--gold-light);font-size:0.75rem;}
+.calc-input{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:rgba(255,255,255,0.08);border-radius:2px;outline:none;cursor:none;}
+.calc-input::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--gold);border-radius:50%;cursor:none;transition:transform .2s var(--easing-back),box-shadow .2s;box-shadow:0 0 0 4px rgba(184,150,12,0.15);}
+.calc-input::-webkit-slider-thumb:hover{transform:scale(1.3);}
+.calc-input::-moz-range-thumb{width:16px;height:16px;background:var(--gold);border-radius:50%;border:none;box-shadow:0 0 0 4px rgba(184,150,12,0.15);}
+.calc-results{display:flex;flex-direction:column;}
+.result-main-box{background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(212,175,55,0.04));border:1px solid rgba(212,175,55,0.2);padding:32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.result-main-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold));}
+.result-label{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;}
+.result-value{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:white;line-height:1;}
+.result-value span{color:var(--gold-light);}
+.result-sub{font-size:0.75rem;color:rgba(255,255,255,0.3);margin-top:8px;}
+.result-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.result-item{padding:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);}
+.result-item-label{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;}
+.result-item-val{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:rgba(255,255,255,0.8);}
+.calc-disclaimer{font-size:0.72rem;color:rgba(255,255,255,0.22);line-height:1.7;font-style:italic;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05);margin-top:16px;}
+.calc-cta-row{margin-top:20px;}
+
+/* ── GROWTH CHART VISUAL ── */
+.chart-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(212,175,55,0.1);padding:32px;margin-top:32px;}
+.chart-title{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:20px;}
+#sip-chart-svg{width:100%;overflow:visible;}
+
+/* ── INSIGHTS SECTION ── */
+.insights-section{background:var(--cream);padding:90px 60px;}
+.insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:52px;}
+.insight-card{background:white;border:1px solid var(--border);padding:40px;position:relative;overflow:hidden;transition:transform .4s var(--easing),box-shadow .4s;}
+.insight-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.08);}
+.insight-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .5s var(--easing);}
+.insight-card:hover::before{transform:scaleX(1);}
+.insight-card-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--charcoal);margin-bottom:6px;}
+.insight-card-sub{font-size:0.78rem;color:var(--muted);margin-bottom:24px;}
+.insight-bar-chart{display:flex;flex-direction:column;gap:12px;}
+.ib-row{display:flex;align-items:center;gap:12px;}
+.ib-label{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);width:76px;}
+.ib-track{flex:1;height:5px;background:rgba(184,150,12,0.08);border-radius:3px;overflow:hidden;}
+.ib-fill{height:100%;border-radius:3px;background:var(--gold);width:0;transition:width 1.2s var(--easing);}
+.ib-val{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--gold);width:40px;text-align:right;}
+.insight-milestone{display:flex;flex-direction:column;gap:16px;}
+.milestone-row{display:flex;align-items:flex-start;gap:16px;padding:16px;border:1px solid var(--border);transition:border-color .3s,background .3s;}
+.milestone-row:hover{border-color:rgba(184,150,12,0.3);background:var(--ivory);}
+.milestone-yr{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--gold);line-height:1;flex-shrink:0;width:52px;}
+.milestone-info-title{font-size:0.82rem;font-weight:500;color:var(--charcoal);margin-bottom:2px;}
+.milestone-info-sub{font-size:0.75rem;color:var(--muted);}
+
+/* ── CTA SECTION ── */
+.sp-cta{background:var(--gold);padding:90px 60px;display:flex;justify-content:space-between;align-items:center;gap:40px;position:relative;overflow:hidden;}
+.sp-cta::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.06),transparent);}
+.sp-cta-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3.2rem);font-weight:300;color:white;line-height:1.15;position:relative;}
+.sp-cta-title em{font-style:italic;opacity:0.75;}
+
+/* ── MARQUEE ── */
+.marquee-strip{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--charcoal);padding:16px 0;overflow:hidden;position:relative;z-index:2;}
+.marquee-inner{display:flex;gap:72px;animation:marquee 28s linear infinite;white-space:nowrap;}
+.marquee-strip:hover .marquee-inner{animation-play-state:paused;}
+.marquee-item{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.28em;text-transform:uppercase;color:rgba(240,230,184,0.5);display:flex;align-items:center;gap:28px;transition:color .3s;}
+.marquee-item:hover{color:var(--gold-light);}
+.marquee-item::after{content:'◆';opacity:0.3;font-size:0.4rem;}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── FOOTER ── */
+footer{background:var(--dark);padding:80px 60px 48px;position:relative;}
+footer::before{content:'';position:absolute;top:0;left:60px;right:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(184,150,12,0.3),transparent);}
+.footer-top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:60px;padding-bottom:52px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:white;margin-bottom:18px;letter-spacing:0.04em;display:inline-block;}
+.footer-logo span{color:var(--gold);}
+.footer-desc{font-size:0.78rem;color:rgba(255,255,255,0.3);line-height:1.8;max-width:220px;}
+.footer-col-title{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:22px;}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:12px;}
+.footer-links a{font-size:0.78rem;color:rgba(255,255,255,0.35);text-decoration:none;transition:color .3s,padding-left .3s var(--easing);display:inline-block;}
+.footer-links a:hover{color:rgba(255,255,255,0.85);padding-left:6px;}
+.footer-bottom{padding-top:32px;display:flex;justify-content:space-between;align-items:center;}
+.footer-copy{font-family:'DM Mono',monospace;font-size:0.65rem;color:rgba(255,255,255,0.2);}
+.footer-legal{display:flex;gap:24px;}
+.footer-legal a{font-family:'DM Mono',monospace;font-size:0.65rem;color:rgba(255,255,255,0.2);text-decoration:none;transition:color .3s;}
+.footer-legal a:hover{color:rgba(255,255,255,0.6);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  body{cursor:auto;}
+  #cursor-dot,#cursor-ring{display:none;}
+  nav{padding:18px 28px;}
+  nav.scrolled{padding:14px 28px;}
+  .nav-links{display:none;}
+  .sp-hero,.pain-section,.approach-section,.calc-section,.insights-section,.sp-cta{padding-left:28px;padding-right:28px;}
+  .sp-hero{padding-top:100px;}
+  .sp-hero-stats{flex-wrap:wrap;gap:24px;}
+  .pain-grid,.insights-grid{grid-template-columns:1fr;}
+  .approach-layout,.calc-container{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;gap:36px;}
+  .sp-cta{flex-direction:column;text-align:center;}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center;}
+  .nav-actions{gap:8px;}
+  .nav-cta{padding:8px 14px;font-size:0.65rem;}
+  #sticky-cta{bottom:16px;right:16px;}
 }
 </style>
 </head>
-
 <body>
 
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<canvas id="particle-canvas"></canvas>
+
+<!-- STICKY CTA -->
+<div id="sticky-cta">
+  <a href="https://wa.me/917095858488?text=Hi%2C%20I%27m%20interested%20in%20Financial%20Planning%20services." class="sticky-btn sticky-btn-wa" target="_blank">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.528 5.855L.057 23.885l6.162-1.615A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.815 9.815 0 01-5.003-1.368l-.36-.213-3.66.96.976-3.565-.234-.375A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+    <span>WhatsApp Us</span>
+  </a>
+  <a href="mailto:viswateja.investments@gmail.com?subject=Free Financial Plan Request" class="sticky-btn sticky-btn-primary">
+    <svg width="14" height="14" viewBox="0 0 16 10" fill="none"><path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span>Get Free Plan</span>
+  </a>
+</div>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">Yours<span>Wealth</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#about" data-text="About">About</a></li>
+    <li><a href="index.html#services" data-text="Services">Services</a></li>
+    <li><a href="index.html#process" data-text="Our Process">Our Process</a></li>
+    <li><a href="index.html#why" data-text="Why Us">Why Us</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="index.html#services" class="nav-cta">All Services</a>
+    <a href="mailto:viswateja.investments@gmail.com" class="nav-cta solid">Book Consultation</a>
+  </div>
+</nav>
+
 <!-- HERO -->
-<section class="hero">
-  <h1>Bring clarity to your <em>financial life</em></h1>
-  <p>A structured plan that aligns your income, investments, and goals into one powerful strategy.</p>
+<section class="sp-hero">
+  <div class="sp-hero-bg"></div>
+  <div class="sp-hero-grid"></div>
+  <div class="sp-hero-content">
+    <a href="index.html#services" class="sp-hero-back">
+      <svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M15 5H1M6 1L1 5l5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Back to Services
+    </a>
+    <div class="sp-hero-tag">Financial Planning</div>
+    <h1>Your money, finally<br>working with a <em>purpose.</em></h1>
+    <p class="sp-hero-desc">Most people earn well but never build wealth — because they have no plan. We create a clear, actionable financial roadmap that turns your income into lasting prosperity.</p>
+    <div class="sp-hero-actions">
+      <a href="#calculator" class="btn-primary">
+        <span>Try SIP Calculator</span>
+        <svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a href="mailto:viswateja.investments@gmail.com" class="btn-outline"><span>Book Free Consultation</span></a>
+    </div>
+    <div class="sp-hero-stats">
+      <div class="sp-stat-item"><div class="sp-stat-num">₹2<span>Cr+</span></div><div class="sp-stat-label">Avg. wealth built per client</div></div>
+      <div class="sp-stat-item"><div class="sp-stat-num">15<span>+</span></div><div class="sp-stat-label">Years of expertise</div></div>
+      <div class="sp-stat-item"><div class="sp-stat-num">500<span>+</span></div><div class="sp-stat-label">Plans delivered</div></div>
+    </div>
+  </div>
 </section>
 
-<!-- PROBLEM -->
-<section class="section">
-  <h2>Why most people fail at managing money</h2>
-  
-  <div class="card">No clear financial goals</div>
-  <div class="card">Random investments without strategy</div>
-  <div class="card">No tracking or review system</div>
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <div class="marquee-item">Budgeting & Cash Flow</div><div class="marquee-item">Goal Mapping</div><div class="marquee-item">Debt Management</div><div class="marquee-item">Emergency Fund</div><div class="marquee-item">SIP Planning</div><div class="marquee-item">Milestone Planning</div><div class="marquee-item">Financial Health Score</div><div class="marquee-item">Net Worth Tracking</div>
+    <div class="marquee-item">Budgeting & Cash Flow</div><div class="marquee-item">Goal Mapping</div><div class="marquee-item">Debt Management</div><div class="marquee-item">Emergency Fund</div><div class="marquee-item">SIP Planning</div><div class="marquee-item">Milestone Planning</div><div class="marquee-item">Financial Health Score</div><div class="marquee-item">Net Worth Tracking</div>
+  </div>
+</div>
+
+<!-- PAIN POINTS -->
+<section class="pain-section">
+  <div class="section-tag reveal">The Problem</div>
+  <h2 class="section-title reveal d1">Why most people never<br>build real <em>wealth.</em></h2>
+  <p class="section-sub reveal d2">It's rarely about income. It's always about the absence of a plan. Here's what keeps most people financially stuck.</p>
+  <div class="pain-grid">
+    <div class="pain-card reveal">
+      <span class="pain-icon">💸</span>
+      <div class="pain-title">Income without direction</div>
+      <div class="pain-desc">You earn well, spend reasonably, yet every year-end feels the same. Without a structured allocation plan, money disappears into lifestyle inflation.</div>
+    </div>
+    <div class="pain-card reveal d1">
+      <span class="pain-icon">🎯</span>
+      <div class="pain-title">Goals exist only in your head</div>
+      <div class="pain-desc">Home, children's education, early retirement — these are dreams, not plans. Without timelines and SIP targets, they remain perpetually "someday."</div>
+    </div>
+    <div class="pain-card reveal d2">
+      <span class="pain-icon">📊</span>
+      <div class="pain-title">Random investments, no strategy</div>
+      <div class="pain-desc">Buying funds because someone recommended them, without knowing if they fit your timeline or risk appetite, creates a portfolio of confusion — not wealth.</div>
+    </div>
+    <div class="pain-card reveal d1">
+      <span class="pain-icon">🏦</span>
+      <div class="pain-title">Debt eating your growth</div>
+      <div class="pain-desc">EMIs compounding on the wrong side of the ledger. Without a structured debt repayment plan, you invest while simultaneously losing to high-interest liabilities.</div>
+    </div>
+    <div class="pain-card reveal d2">
+      <span class="pain-icon">🛡️</span>
+      <div class="pain-title">No emergency buffer</div>
+      <div class="pain-desc">One medical crisis, one job loss — and years of investment get redeemed. The absence of a liquid emergency fund is the silent killer of wealth plans.</div>
+    </div>
+    <div class="pain-card reveal d3">
+      <span class="pain-icon">🔄</span>
+      <div class="pain-title">Reactive, not proactive</div>
+      <div class="pain-desc">Most financial decisions happen in reaction to life events rather than in anticipation of them. That reactivity is expensive — financially and emotionally.</div>
+    </div>
+  </div>
 </section>
 
-<!-- SOLUTION -->
-<section class="section">
-  <h2>Our approach to financial planning</h2>
-  
-  <div class="card">Step 1: Understand your income, expenses & goals</div>
-  <div class="card">Step 2: Build a structured investment roadmap</div>
-  <div class="card">Step 3: Monitor, review & optimise continuously</div>
+<!-- APPROACH -->
+<section class="approach-section">
+  <div class="section-tag reveal">Our Approach</div>
+  <h2 class="section-title reveal d1">A plan that evolves<br>as your <em>life does.</em></h2>
+  <p class="section-sub reveal d2">We don't hand you a PDF and disappear. We build a living financial plan that adapts to your milestones, setbacks, and evolving ambitions.</p>
+  <div class="approach-layout">
+    <div class="approach-steps">
+      <div class="approach-step reveal">
+        <div class="approach-num">01</div>
+        <div>
+          <div class="approach-step-title">360° Financial Discovery</div>
+          <div class="approach-step-desc">We map your complete financial picture — income, expenses, assets, liabilities, insurance, and tax — before writing a single word of your plan.</div>
+        </div>
+      </div>
+      <div class="approach-step reveal d1">
+        <div class="approach-num">02</div>
+        <div>
+          <div class="approach-step-title">Goal Prioritisation & Timeline</div>
+          <div class="approach-step-desc">We convert your life goals into specific rupee targets with defined timelines — home in 5 years, child's education in 12, retirement in 20.</div>
+        </div>
+      </div>
+      <div class="approach-step reveal d2">
+        <div class="approach-num">03</div>
+        <div>
+          <div class="approach-step-title">Monthly SIP Architecture</div>
+          <div class="approach-step-desc">Each goal gets its own SIP basket — fund selection, step-up schedule, and asset allocation calibrated to the goal horizon and your risk profile.</div>
+        </div>
+      </div>
+      <div class="approach-step reveal d3">
+        <div class="approach-num">04</div>
+        <div>
+          <div class="approach-step-title">Quarterly Review & Rebalancing</div>
+          <div class="approach-step-desc">Life changes. Markets change. We review your plan every quarter and rebalance your portfolio so it stays aligned to your goals — not to our convenience.</div>
+        </div>
+      </div>
+    </div>
+    <div class="approach-visual reveal d2">
+      <div class="approach-visual-orb"></div>
+      <div class="approach-visual-title">What your plan covers</div>
+      <div class="approach-items">
+        <div class="approach-item">
+          <div class="approach-item-icon">◈</div>
+          <div class="approach-item-text"><strong>Cash Flow Engineering</strong>How much to spend, save, and invest every month — and in what ratio.</div>
+        </div>
+        <div class="approach-item">
+          <div class="approach-item-icon">◈</div>
+          <div class="approach-item-text"><strong>Goal-Linked SIP Baskets</strong>Separate, dedicated investments for each of your life goals.</div>
+        </div>
+        <div class="approach-item">
+          <div class="approach-item-icon">◈</div>
+          <div class="approach-item-text"><strong>Debt Demolition Schedule</strong>A structured EMI paydown plan that accelerates your path to financial freedom.</div>
+        </div>
+        <div class="approach-item">
+          <div class="approach-item-icon">◈</div>
+          <div class="approach-item-text"><strong>Emergency Fund Blueprint</strong>6-month liquid corpus strategy — protected, accessible, earmarked.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- CALCULATOR -->
-<section class="section">
-  <h2>See how your wealth can grow</h2>
-
-  <div class="calculator">
-    <input type="number" id="sip" placeholder="Monthly Investment (₹)">
-    <input type="number" id="rate" placeholder="Expected Return (%)">
-    <input type="number" id="years" placeholder="Years">
-
-    <button onclick="calculateSIP()">Calculate</button>
-
-    <div class="result" id="result"></div>
+<section class="calc-section" id="calculator">
+  <div class="section-tag reveal">SIP Calculator</div>
+  <h2 class="section-title reveal d1">See your wealth<br><em>compound in real time.</em></h2>
+  <p class="section-sub reveal d2">Adjust the sliders to model your SIP journey. This is a simulation — your actual plan will be more precise and personalised.</p>
+  <div class="calc-container">
+    <!-- INPUT PANEL -->
+    <div class="calc-panel reveal">
+      <div class="calc-panel-title">Set Your SIP Parameters</div>
+      <div class="calc-group">
+        <div class="calc-label">Monthly SIP Amount <span class="calc-label-val" id="sip-val">₹25,000</span></div>
+        <input type="range" class="calc-input" id="sip-amount" min="1000" max="200000" step="1000" value="25000">
+      </div>
+      <div class="calc-group">
+        <div class="calc-label">Expected Annual Return <span class="calc-label-val" id="return-val">12%</span></div>
+        <input type="range" class="calc-input" id="sip-return" min="6" max="20" step="0.5" value="12">
+      </div>
+      <div class="calc-group">
+        <div class="calc-label">Investment Duration <span class="calc-label-val" id="years-val">15 yrs</span></div>
+        <input type="range" class="calc-input" id="sip-years" min="1" max="40" step="1" value="15">
+      </div>
+      <div class="calc-group">
+        <div class="calc-label">Annual Step-Up <span class="calc-label-val" id="stepup-val">10%</span></div>
+        <input type="range" class="calc-input" id="sip-stepup" min="0" max="25" step="1" value="10">
+      </div>
+      <!-- SVG Chart -->
+      <div class="chart-wrap">
+        <div class="chart-title">Wealth Growth Projection</div>
+        <svg id="sip-chart-svg" viewBox="0 0 380 140" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(212,175,55,0.35)"/>
+              <stop offset="100%" stop-color="rgba(212,175,55,0)"/>
+            </linearGradient>
+          </defs>
+          <path id="chart-area" fill="url(#goldGrad)"/>
+          <path id="chart-line" fill="none" stroke="#D4AF37" stroke-width="1.5"/>
+          <path id="chart-invested" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="4,4"/>
+        </svg>
+      </div>
+    </div>
+    <!-- RESULT PANEL -->
+    <div class="calc-results reveal d2">
+      <div class="result-main-box">
+        <div class="result-label">Projected Corpus</div>
+        <div class="result-value" id="corpus-val">₹<span id="corpus-num">1.89 Cr</span></div>
+        <div class="result-sub">at the end of your investment period</div>
+      </div>
+      <div class="result-breakdown">
+        <div class="result-item">
+          <div class="result-item-label">Total Invested</div>
+          <div class="result-item-val" id="invested-val">₹54 L</div>
+        </div>
+        <div class="result-item">
+          <div class="result-item-label">Wealth Gained</div>
+          <div class="result-item-val" id="gains-val">₹1.35 Cr</div>
+        </div>
+        <div class="result-item">
+          <div class="result-item-label">Return Multiple</div>
+          <div class="result-item-val" id="multiple-val">3.5x</div>
+        </div>
+        <div class="result-item">
+          <div class="result-item-label">CAGR (effective)</div>
+          <div class="result-item-val" id="cagr-val">12%</div>
+        </div>
+      </div>
+      <div class="calc-disclaimer">
+        ⚠ This is a simulation using illustrative return assumptions. Actual returns depend on fund performance, market conditions, and your specific plan. This is not investment advice.
+        <br><br><strong style="color:rgba(255,255,255,0.45)">Get your personalised SIP plan — tailored to your exact goals and risk appetite.</strong>
+      </div>
+      <div class="calc-cta-row">
+        <a href="mailto:viswateja.investments@gmail.com?subject=I want a personalised Financial Plan" class="btn-primary">
+          <span>Get My Free Plan</span>
+          <svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </div>
   </div>
+</section>
 
-  <p style="margin-top:10px;color:#7A736A;">
-    This is a simulation. Get your personalised plan for accurate insights.
-  </p>
+<!-- INSIGHTS -->
+<section class="insights-section">
+  <div class="section-tag reveal">Why It Matters</div>
+  <h2 class="section-title reveal d1">Numbers that make<br>the case for <em>planning early.</em></h2>
+  <div class="insights-grid">
+    <div class="insight-card reveal">
+      <div class="insight-card-title">Rupee Cost Averaging</div>
+      <div class="insight-card-sub">How SIPs smooth market volatility over time</div>
+      <div class="insight-bar-chart">
+        <div class="ib-row"><div class="ib-label">Year 1</div><div class="ib-track"><div class="ib-fill" data-w="22"></div></div><div class="ib-val">+22%</div></div>
+        <div class="ib-row"><div class="ib-label">Year 3</div><div class="ib-track"><div class="ib-fill" data-w="58"></div></div><div class="ib-val">+58%</div></div>
+        <div class="ib-row"><div class="ib-label">Year 5</div><div class="ib-track"><div class="ib-fill" data-w="74"></div></div><div class="ib-val">+74%</div></div>
+        <div class="ib-row"><div class="ib-label">Year 10</div><div class="ib-track"><div class="ib-fill" data-w="88"></div></div><div class="ib-val">+188%</div></div>
+        <div class="ib-row"><div class="ib-label">Year 15</div><div class="ib-track"><div class="ib-fill" data-w="96"></div></div><div class="ib-val">+350%</div></div>
+      </div>
+    </div>
+    <div class="insight-card reveal d1">
+      <div class="insight-card-title">Milestone Planning Timeline</div>
+      <div class="insight-card-sub">Sample goal roadmap for a 32-year-old earning ₹2L/month</div>
+      <div class="insight-milestone">
+        <div class="milestone-row"><div class="milestone-yr">2027</div><div><div class="milestone-info-title">Emergency Fund Complete</div><div class="milestone-info-sub">₹12L liquid buffer — fully funded</div></div></div>
+        <div class="milestone-row"><div class="milestone-yr">2029</div><div><div class="milestone-info-title">Home Down Payment</div><div class="milestone-info-sub">₹30L accumulated for 3BHK</div></div></div>
+        <div class="milestone-row"><div class="milestone-yr">2037</div><div><div class="milestone-info-title">Child's Education Fund</div><div class="milestone-info-sub">₹60L corpus for higher education</div></div></div>
+        <div class="milestone-row"><div class="milestone-yr">2047</div><div><div class="milestone-info-title">Financial Independence</div><div class="milestone-info-sub">₹5 Cr retirement corpus achieved</div></div></div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- CTA -->
-<section class="cta">
-  <h2>Get Your Personalised Financial Plan</h2>
-  <p>Speak with an expert. No cost. No obligation.</p>
+<div class="sp-cta">
+  <div class="sp-cta-title reveal-left">Stop drifting.<br>Start <em>building.</em></div>
+  <a href="mailto:viswateja.investments@gmail.com?subject=Book Free Consultation - Financial Planning" class="btn-white reveal d2"><span>Book Your Free Consultation</span></a>
+</div>
 
-  <a href="#">Book Free Consultation</a>
-</section>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">Yours<span>Wealth</span></div>
+      <div class="footer-desc">AMFI-registered Mutual Fund Distributor. Boutique wealth management built on trust and transparency. — Viswateja Poreddy.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <ul class="footer-links">
+        <li><a href="financial-planning.html">Financial Planning</a></li>
+        <li><a href="investment-advisory.html">Investment Advisory</a></li>
+        <li><a href="retirement-planning.html">Retirement Planning</a></li>
+        <li><a href="tax-optimisation.html">Tax Optimisation</a></li>
+        <li><a href="risk-insurance.html">Risk & Insurance</a></li>
+        <li><a href="estate-planning.html">Estate Planning</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="index.html#about">About Us</a></li>
+        <li><a href="index.html#process">Our Process</a></li>
+        <li><a href="index.html#why">Why Us</a></li>
+        <li><a href="index.html#partners">Partners</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <ul class="footer-links">
+        <li><a href="mailto:viswateja.investments@gmail.com">viswateja.investments@gmail.com</a></li>
+        <li><a href="tel:+917095858488">+91 70958 58488</a></li>
+        <li><a href="#">Hyderabad | Bengaluru</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Yours Wealth. All rights reserved.</div>
+    <div class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Disclaimer</a></div>
+  </div>
+</footer>
 
 <script>
-function calculateSIP() {
-  let P = document.getElementById("sip").value;
-  let r = document.getElementById("rate").value / 100 / 12;
-  let n = document.getElementById("years").value * 12;
+/* ── CURSOR ── */
+const dot=document.getElementById('cursor-dot'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function animC(){rx+=(mx-rx)*0.18;ry+=(my-ry)*0.18;dot.style.left=mx+'px';dot.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animC);})();
 
-  let FV = P * (((Math.pow(1 + r, n)) - 1) / r) * (1 + r);
+/* ── PARTICLES ── */
+const canvas=document.getElementById('particle-canvas'),ctx=canvas.getContext('2d');
+let W,H,parts=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+class P{constructor(){this.reset();}reset(){this.x=Math.random()*W;this.y=Math.random()*H;this.size=Math.random()*1.2+0.3;this.sx=(Math.random()-.5)*0.25;this.sy=-Math.random()*0.35-.08;this.op=Math.random()*0.35+0.08;this.life=0;this.ml=Math.random()*300+200;}update(){this.x+=this.sx;this.y+=this.sy;this.life++;if(this.life>this.ml||this.y<-10)this.reset();}draw(){const t=this.life/this.ml;const a=this.op*(t<0.1?t*10:t>0.8?(1-t)*5:1);ctx.globalAlpha=a;ctx.fillStyle='rgba(212,175,55,1)';ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();}}
+for(let i=0;i<70;i++){const p=new P();p.life=Math.random()*p.ml;parts.push(p);}
+(function animP(){ctx.clearRect(0,0,W,H);parts.forEach(p=>{p.update();p.draw();});ctx.globalAlpha=1;requestAnimationFrame(animP);})();
 
-  document.getElementById("result").innerText =
-    "Future Value: ₹" + Math.round(FV);
+/* ── NAV ── */
+const nav=document.getElementById('main-nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>60));
+
+/* ── STICKY CTA ── */
+const scta=document.getElementById('sticky-cta');
+window.addEventListener('scroll',()=>scta.classList.toggle('visible',window.scrollY>400));
+
+/* ── REVEAL ── */
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
+document.querySelectorAll('.reveal,.reveal-left').forEach(el=>obs.observe(el));
+
+/* ── INSIGHT BARS ── */
+const bObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.ib-fill').forEach((b,i)=>setTimeout(()=>b.style.width=b.dataset.w+'%',i*150));bObs.unobserve(e.target);}});},{threshold:0.3});
+document.querySelectorAll('.insight-card').forEach(el=>bObs.observe(el));
+
+/* ── MAGNETIC BUTTONS ── */
+document.querySelectorAll('.btn-primary,.btn-white,.nav-cta,.sticky-btn').forEach(btn=>{
+  btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();btn.style.transform=`translate(${(e.clientX-r.left-r.width/2)*0.22}px,${(e.clientY-r.top-r.height/2)*0.22}px)`;});
+  btn.addEventListener('mouseleave',()=>btn.style.transform='');
+});
+
+/* ── SLIDER FILL ── */
+function updateFill(el){const pct=((el.value-el.min)/(el.max-el.min))*100;el.style.background=`linear-gradient(to right,#B8960C ${pct}%,rgba(255,255,255,0.1) ${pct}%)`;}
+document.querySelectorAll('.calc-input').forEach(i=>{updateFill(i);i.addEventListener('input',()=>updateFill(i));});
+
+/* ── SIP CALCULATOR ── */
+function fmtINR(n){if(n>=1e7)return'₹'+(n/1e7).toFixed(2)+' Cr';if(n>=1e5)return'₹'+(n/1e5).toFixed(1)+' L';return'₹'+Math.round(n).toLocaleString('en-IN');}
+
+function calcSIP(){
+  const monthly=+document.getElementById('sip-amount').value;
+  const annualRate=+document.getElementById('sip-return').value/100;
+  const years=+document.getElementById('sip-years').value;
+  const stepup=+document.getElementById('sip-stepup').value/100;
+  const r=annualRate/12;
+  let corpus=0,invested=0,m=monthly;
+  const yearlyCorpus=[],yearlyInvested=[];
+  for(let y=1;y<=years;y++){
+    for(let mo=0;mo<12;mo++){corpus=(corpus+m)*(1+r);invested+=m;}
+    yearlyCorpus.push(corpus);yearlyInvested.push(invested);
+    if(stepup>0)m=monthly*Math.pow(1+stepup,y);
+  }
+  const gains=corpus-invested;
+  document.getElementById('corpus-num').textContent=fmtINR(corpus).replace('₹','');
+  document.getElementById('corpus-val').innerHTML=fmtINR(corpus).replace('₹','₹<span id="corpus-num">')+' </span>';
+  document.getElementById('corpus-val').textContent=fmtINR(corpus);
+  document.getElementById('invested-val').textContent=fmtINR(invested);
+  document.getElementById('gains-val').textContent=fmtINR(gains);
+  document.getElementById('multiple-val').textContent=(corpus/invested).toFixed(1)+'x';
+  document.getElementById('cagr-val').textContent=document.getElementById('sip-return').value+'%';
+  drawChart(yearlyCorpus,yearlyInvested,years);
 }
-</script>
 
+function drawChart(corpus,invested,years){
+  const svg=document.getElementById('sip-chart-svg');
+  const W=380,H=140,pad=10;
+  const maxV=Math.max(...corpus);
+  function px(i){return pad+(i/(years-1||1))*(W-pad*2);}
+  function py(v){return H-pad-(v/maxV)*(H-pad*2);}
+  let lineD='',areaD='',iLineD='';
+  corpus.forEach((v,i)=>{
+    const x=px(i),y=py(v);
+    lineD+=(i===0?`M${x},${y}`:`L${x},${y}`);
+    areaD+=(i===0?`M${px(0)},${H-pad}L${x},${y}`:`L${x},${y}`);
+  });
+  areaD+=`L${px(years-1)},${H-pad}Z`;
+  invested.forEach((v,i)=>{iLineD+=(i===0?`M${px(i)},${py(v)}`:`L${px(i)},${py(v)}`);});
+  document.getElementById('chart-line').setAttribute('d',lineD);
+  document.getElementById('chart-area').setAttribute('d',areaD);
+  document.getElementById('chart-invested').setAttribute('d',iLineD);
+}
+
+/* Label updaters */
+document.getElementById('sip-amount').addEventListener('input',function(){
+  const v=+this.value;document.getElementById('sip-val').textContent='₹'+v.toLocaleString('en-IN');calcSIP();});
+document.getElementById('sip-return').addEventListener('input',function(){
+  document.getElementById('return-val').textContent=this.value+'%';calcSIP();});
+document.getElementById('sip-years').addEventListener('input',function(){
+  document.getElementById('years-val').textContent=this.value+' yrs';calcSIP();});
+document.getElementById('sip-stepup').addEventListener('input',function(){
+  document.getElementById('stepup-val').textContent=this.value+'%';calcSIP();});
+
+calcSIP();
+</script>
 </body>
 </html>
