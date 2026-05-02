@@ -3,180 +3,1044 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yours Wealth — Begin Your Journey</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<title>Yours Wealth — Financial Planning & Wealth Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════
+/* ─────────────────────────────────────────
    ROOT & RESET
-═══════════════════════════════════════ */
+───────────────────────────────────────── */
 :root {
-  --black:       #080808;
-  --dark:        #0D0D0D;
-  --charcoal:    #141414;
-  --panel:       #181818;
-  --gold:        #B8960C;
-  --gold-light:  #D4AF37;
-  --gold-pale:   rgba(212,175,55,0.12);
-  --gold-glow:   rgba(212,175,55,0.18);
-  --gold-border: rgba(212,175,55,0.22);
-  --cream:       #F5F0E8;
-  --muted:       rgba(255,255,255,0.32);
-  --muted2:      rgba(255,255,255,0.15);
-  --error:       #E07070;
-  --success:     #6FBF8E;
-  --easing:      cubic-bezier(0.16, 1, 0.3, 1);
+  --cream: #F5F0E8;
+  --ivory: #FAF7F2;
+  --gold: #B8960C;
+  --gold-light: #D4AF37;
+  --gold-pale: #F0E6B8;
+  --gold-glow: rgba(212,175,55,0.15);
+  --charcoal: #1C1C1C;
+  --dark: #0D0D0D;
+  --mid: #3A3630;
+  --muted: #7A736A;
+  --border: rgba(184,150,12,0.18);
+  --border-light: rgba(184,150,12,0.08);
+  --easing: cubic-bezier(0.16, 1, 0.3, 1);
   --easing-back: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; }
+html { scroll-behavior: smooth; }
 body {
   font-family: 'DM Sans', sans-serif;
-  background: var(--black);
-  color: white;
-  min-height: 100%;
+  background: var(--ivory);
+  color: var(--charcoal);
   overflow-x: hidden;
   cursor: none;
 }
 
-/* ═══════════════════════════════════════
+/* ─────────────────────────────────────────
    CUSTOM CURSOR
-═══════════════════════════════════════ */
-#c-dot {
-  width: 5px; height: 5px;
+───────────────────────────────────────── */
+#cursor-dot {
+  width: 6px; height: 6px;
   background: var(--gold);
   border-radius: 50%;
   position: fixed; top: 0; left: 0;
   pointer-events: none; z-index: 9999;
   transform: translate(-50%, -50%);
-  mix-blend-mode: screen;
-  transition: width .2s var(--easing), height .2s var(--easing), background .2s;
+  transition: transform 0.1s var(--easing), width 0.3s var(--easing), height 0.3s var(--easing), background 0.3s;
+  mix-blend-mode: multiply;
 }
-#c-ring {
-  width: 32px; height: 32px;
-  border: 1px solid rgba(184,150,12,0.45);
+#cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(184,150,12,0.5);
   border-radius: 50%;
   position: fixed; top: 0; left: 0;
   pointer-events: none; z-index: 9998;
   transform: translate(-50%, -50%);
-  transition: width .35s var(--easing), height .35s var(--easing), border-color .3s;
+  transition: transform 0.18s var(--easing), width 0.4s var(--easing), height 0.4s var(--easing), opacity 0.3s, border-color 0.3s;
 }
-body:has(input:hover) #c-dot,
-body:has(button:hover) #c-dot { width: 9px; height: 9px; background: var(--gold-light); }
-body:has(input:hover) #c-ring,
-body:has(button:hover) #c-ring { width: 50px; height: 50px; border-color: var(--gold); }
+body:has(a:hover) #cursor-dot,
+body:has(button:hover) #cursor-dot { width: 10px; height: 10px; background: var(--gold-light); }
+body:has(a:hover) #cursor-ring,
+body:has(button:hover) #cursor-ring { width: 56px; height: 56px; border-color: var(--gold); }
 
-/* ═══════════════════════════════════════
-   CANVAS
-═══════════════════════════════════════ */
-#bg-canvas {
+/* ─────────────────────────────────────────
+   CANVAS PARTICLES
+───────────────────────────────────────── */
+#particle-canvas {
   position: fixed; inset: 0;
   pointer-events: none; z-index: 0;
+  opacity: 0.6;
 }
 
-/* ═══════════════════════════════════════
-   BACKGROUND — GRID + RADIAL GLOW
-═══════════════════════════════════════ */
-.bg-grid {
-  position: fixed; inset: 0; z-index: 0;
-  background-image:
-    linear-gradient(rgba(184,150,12,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(184,150,12,0.03) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
-  animation: gridPan 30s linear infinite;
-}
-@keyframes gridPan {
-  from { background-position: 0 0, 0 0; }
-  to   { background-position: 64px 64px, 64px 64px; }
-}
-.bg-glow {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background:
-    radial-gradient(ellipse 60% 70% at 15% 25%, rgba(212,175,55,0.06) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 60% at 85% 75%, rgba(212,175,55,0.05) 0%, transparent 65%),
-    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(212,175,55,0.03) 0%, transparent 60%);
-  animation: glowPulse 8s ease-in-out infinite alternate;
-}
-@keyframes glowPulse {
-  from { opacity: 0.7; }
-  to   { opacity: 1; }
-}
-
-/* ═══════════════════════════════════════
-   BRAND MARK — TOP LEFT
-═══════════════════════════════════════ */
-.brand-mark {
-  position: fixed; top: 32px; left: 44px; z-index: 10;
-  opacity: 0; animation: fadeIn .8s .2s var(--easing) forwards;
-}
-.brand-mark-logo {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3rem; font-weight: 600; letter-spacing: 0.04em;
-  color: rgba(255,255,255,0.85); text-decoration: none;
-  display: flex; align-items: center; gap: 2px;
-}
-.brand-mark-logo span { color: var(--gold); }
-.brand-mark-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.57rem; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--muted); margin-top: 3px;
-}
-
-/* Step indicator */
-.step-mark {
-  position: fixed; top: 40px; right: 44px; z-index: 10;
-  display: flex; align-items: center; gap: 10px;
-  opacity: 0; animation: fadeIn .8s .3s var(--easing) forwards;
-}
-.step-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--muted2);
-  transition: background .4s, transform .4s var(--easing-back);
-}
-.step-dot.active { background: var(--gold); transform: scale(1.4); }
-.step-dot.done { background: rgba(212,175,55,0.35); }
-.step-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--muted); margin-left: 6px;
-}
-
-/* ═══════════════════════════════════════
-   LAYOUT
-═══════════════════════════════════════ */
-.page-wrap {
-  position: relative; z-index: 2;
-  min-height: 100vh;
+/* ─────────────────────────────────────────
+   PAGE LOADER
+───────────────────────────────────────── */
+#loader {
+  position: fixed; inset: 0; z-index: 10000;
+  background: var(--dark);
   display: flex; align-items: center; justify-content: center;
-  padding: 100px 24px 60px;
+  flex-direction: column; gap: 20px;
 }
-
-/* ═══════════════════════════════════════
-   CARD
-═══════════════════════════════════════ */
-.card {
-  width: 100%; max-width: 500px;
-  position: relative;
-  opacity: 0; transform: translateY(36px);
-  animation: cardUp 1s .5s var(--easing) forwards;
+.loader-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem; font-weight: 300;
+  color: rgba(255,255,255,0.15);
+  letter-spacing: 0.08em;
+  overflow: hidden;
 }
-@keyframes cardUp {
-  to { opacity: 1; transform: translateY(0); }
+.loader-logo-fill {
+  color: white;
+  clip-path: inset(0 100% 0 0);
+  animation: fillText 1.4s 0.3s var(--easing) forwards;
 }
-@keyframes fadeIn { to { opacity: 1; } }
-
-/* Glass panel */
-.card-glass {
-  background: rgba(20, 18, 14, 0.82);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
-  border: 1px solid var(--gold-border);
-  padding: 56px 52px 48px;
+.loader-logo-fill span { color: var(--gold-light); }
+@keyframes fillText { to { clip-path: inset(0 0% 0 0); } }
+.loader-bar-track {
+  width: 180px; height: 1px;
+  background: rgba(255,255,255,0.08);
   position: relative; overflow: hidden;
 }
-/* Ambient inner glow */
-.card-glass::before {
+.loader-bar-fill {
+  height: 100%; background: var(--gold);
+  animation: barFill 1.6s var(--easing) forwards;
+  width: 0;
+}
+@keyframes barFill { to { width: 100%; } }
+#loader.exit {
+  animation: loaderExit 0.8s 0.2s var(--easing) forwards;
+}
+@keyframes loaderExit {
+  to { opacity: 0; transform: translateY(-100%); pointer-events: none; }
+}
+
+/* ─────────────────────────────────────────
+   NAV
+───────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28px 60px;
+  transition: padding 0.4s var(--easing), background 0.4s, box-shadow 0.4s;
+}
+nav.scrolled {
+  padding: 16px 60px;
+  background: rgba(250,247,242,0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 1px 0 var(--border-light), 0 8px 32px rgba(0,0,0,0.04);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--charcoal); text-decoration: none;
+  position: relative;
+}
+.nav-logo span { color: var(--gold); }
+.nav-logo::after {
+  content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+  height: 1px; background: var(--gold);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s var(--easing);
+}
+.nav-logo:hover::after { transform: scaleX(1); }
+
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  text-decoration: none; color: var(--mid);
+  position: relative; transition: color 0.3s;
+  padding: 4px 0;
+}
+.nav-links a::before {
+  content: attr(data-text);
+  position: absolute; top: 0; left: 0;
+  color: var(--gold);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.4s var(--easing);
+  white-space: nowrap;
+}
+.nav-links a:hover::before { clip-path: inset(0 0% 0 0); }
+
+.nav-actions { display: flex; gap: 12px; align-items: center; }
+.nav-cta {
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 10px 22px; border: 1px solid var(--gold);
+  background: transparent; color: var(--gold);
+  text-decoration: none; cursor: none;
+  transition: all 0.35s var(--easing);
+  position: relative; overflow: hidden;
+}
+.nav-cta::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--gold);
+  transform: translateX(-101%);
+  transition: transform 0.35s var(--easing);
+  z-index: -1;
+}
+.nav-cta:hover::before { transform: translateX(0); }
+.nav-cta:hover { color: white; }
+.nav-cta.solid { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); }
+.nav-cta.solid::before { background: var(--gold); }
+.nav-cta.solid:hover { color: white; }
+
+/* ─────────────────────────────────────────
+   HERO
+───────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 140px 60px 100px;
+  position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 90% at 88% 45%, rgba(212,175,55,0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 50% at 5% 85%, rgba(212,175,55,0.05) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(184,150,12,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,150,12,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+  animation: gridDrift 20s linear infinite;
+}
+@keyframes gridDrift {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: 80px 80px, 80px 80px; }
+}
+.hero-line { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border-light); }
+.hero-line:nth-child(1) { right: 45%; animation: lineFade 3s 0.5s both; }
+.hero-line:nth-child(2) { right: 32%; animation: lineFade 3s 0.8s both; }
+@keyframes lineFade { from { opacity: 0; transform: scaleY(0); transform-origin: top; } to { opacity: 1; transform: scaleY(1); } }
+
+.hero-content { position: relative; z-index: 2; max-width: 700px; }
+
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 36px;
+  opacity: 0; animation: slideRight 0.8s 0.6s var(--easing) forwards;
+}
+.hero-tag::before {
+  content: ''; width: 0; height: 1px; background: var(--gold);
+  animation: lineGrow 0.6s 0.9s var(--easing) forwards;
+}
+@keyframes lineGrow { to { width: 36px; } }
+@keyframes slideRight { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.4rem, 6.5vw, 6rem);
+  font-weight: 300; line-height: 1.06;
+  color: var(--dark); margin-bottom: 32px;
+  letter-spacing: -0.015em;
+}
+.hero h1 em { font-style: italic; color: var(--gold); }
+.hero h1 .word {
+  display: inline-block;
+  opacity: 0; transform: translateY(40px);
+  animation: wordUp 0.7s var(--easing) forwards;
+}
+.hero p {
+  font-size: 1.05rem; color: var(--muted);
+  line-height: 1.8; max-width: 480px; margin-bottom: 52px;
+  font-weight: 300;
+  opacity: 0; animation: fadeUp 0.8s 1.2s var(--easing) forwards;
+}
+.hero-actions {
+  display: flex; gap: 20px; align-items: center;
+  opacity: 0; animation: fadeUp 0.8s 1.4s var(--easing) forwards;
+}
+@keyframes wordUp { to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+.btn-primary {
+  font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 16px 38px; background: var(--charcoal); color: var(--cream);
+  border: none; cursor: none; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 10px;
+  position: relative; overflow: hidden;
+  transition: color 0.35s;
+}
+.btn-primary::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--gold);
+  transform: translateX(-101%);
+  transition: transform 0.4s var(--easing);
+}
+.btn-primary:hover::before { transform: translateX(0); }
+.btn-primary:hover { color: white; }
+.btn-primary span { position: relative; z-index: 1; }
+.btn-primary svg { position: relative; z-index: 1; transition: transform 0.3s var(--easing); }
+.btn-primary:hover svg { transform: translateX(5px); }
+
+.btn-ghost {
+  font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--mid); text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+  transition: color 0.3s; cursor: none;
+}
+.btn-ghost svg { transition: transform 0.3s var(--easing); }
+.btn-ghost:hover { color: var(--gold); }
+.btn-ghost:hover svg { transform: translateX(6px); }
+
+.hero-stats {
+  position: absolute; bottom: 64px; right: 60px;
+  display: flex; gap: 40px;
+  opacity: 0; animation: fadeUp 0.8s 1.6s var(--easing) forwards;
+}
+.hero-stat {
+  text-align: right;
+  padding: 16px 20px; background: white;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+  position: relative; overflow: hidden;
+  transition: transform 0.3s var(--easing), box-shadow 0.3s;
+}
+.hero-stat:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.1); }
+.hero-stat::before {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  transform: scaleX(0); transition: transform 0.4s var(--easing);
+}
+.hero-stat:hover::before { transform: scaleX(1); }
+.hero-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem; font-weight: 300; color: var(--charcoal);
+  line-height: 1;
+}
+.hero-stat-num span { color: var(--gold); }
+.hero-stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); margin-top: 4px;
+}
+
+.scroll-hint {
+  position: absolute; bottom: 32px; left: 60px;
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0; animation: fadeUp 0.8s 2s var(--easing) forwards;
+}
+.scroll-line {
+  width: 1px; height: 40px; background: var(--border);
+  position: relative; overflow: hidden;
+}
+.scroll-line::after {
+  content: ''; position: absolute; top: -100%;
+  width: 100%; height: 100%; background: var(--gold);
+  animation: scrollDrop 1.5s 2.2s var(--easing) infinite;
+}
+@keyframes scrollDrop {
+  0% { top: -100%; } 60% { top: 100%; } 100% { top: 100%; }
+}
+
+/* ─────────────────────────────────────────
+   MARQUEE
+───────────────────────────────────────── */
+.marquee-strip {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--charcoal);
+  padding: 16px 0; overflow: hidden;
+  position: relative; z-index: 2;
+}
+.marquee-inner {
+  display: flex; gap: 72px;
+  animation: marquee 28s linear infinite;
+  white-space: nowrap;
+}
+.marquee-strip:hover .marquee-inner { animation-play-state: paused; }
+.marquee-item {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(240,230,184,0.5);
+  display: flex; align-items: center; gap: 28px;
+  transition: color 0.3s;
+}
+.marquee-item:hover { color: var(--gold-light); }
+.marquee-item::after { content: '◆'; opacity: 0.3; font-size: 0.4rem; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ─────────────────────────────────────────
+   SHARED SECTION STYLES
+───────────────────────────────────────── */
+.section-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.section-tag::before { content: ''; width: 28px; height: 1px; background: var(--gold); }
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+  font-weight: 300; line-height: 1.12;
+  color: var(--dark); margin-bottom: 18px;
+}
+.section-title em { font-style: italic; color: var(--gold); }
+.section-sub {
+  font-size: 0.95rem; color: var(--muted);
+  line-height: 1.85; max-width: 520px; font-weight: 300;
+}
+
+.reveal {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity 0.8s var(--easing), transform 0.8s var(--easing);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.8s var(--easing), transform 0.8s var(--easing); }
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-scale { opacity: 0; transform: scale(0.92); transition: opacity 0.8s var(--easing), transform 0.8s var(--easing); }
+.reveal-scale.visible { opacity: 1; transform: scale(1); }
+.d1 { transition-delay: 0.1s; }
+.d2 { transition-delay: 0.2s; }
+.d3 { transition-delay: 0.3s; }
+.d4 { transition-delay: 0.4s; }
+.d5 { transition-delay: 0.5s; }
+
+/* ─────────────────────────────────────────
+   ABOUT
+───────────────────────────────────────── */
+.about {
+  background: var(--cream);
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+  padding: 100px 60px;
+  position: relative; overflow: hidden;
+}
+.about::before {
+  content: ''; position: absolute;
+  top: -120px; left: -120px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(184,150,12,0.06), transparent 70%);
+  pointer-events: none;
+}
+.about-visual { position: relative; height: 500px; }
+.about-card-main {
+  position: absolute; inset: 0 50px 50px 0;
+  background: var(--charcoal);
+  overflow: hidden;
+  transition: transform 0.5s var(--easing), box-shadow 0.5s;
+}
+.about-card-main:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0 var(--gold); }
+.about-card-main-inner {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 40px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+}
+.about-orb {
+  position: absolute; top: 20%; left: 40%;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,175,55,0.18), transparent 70%);
+  animation: orbFloat 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, -30px) scale(1.1); }
+  66% { transform: translate(-15px, 20px) scale(0.9); }
+}
+.about-card-main-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 300; color: white;
+  line-height: 1.2; margin-bottom: 10px;
+}
+.about-card-main-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem; color: rgba(255,255,255,0.45); letter-spacing: 0.1em;
+}
+.about-badge {
+  position: absolute; right: 0; bottom: 0;
+  width: 160px; height: 160px;
+  background: var(--gold);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: transform 0.4s var(--easing-back);
+}
+.about-badge:hover { transform: scale(1.06) rotate(-3deg); }
+.badge-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.2rem; font-weight: 300; color: white; line-height: 1;
+}
+.badge-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(255,255,255,0.8); text-align: center;
+}
+.about-float-card {
+  position: absolute; top: 30px; right: 20px;
+  background: white; border: 1px solid var(--border);
+  padding: 14px 18px; width: 150px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  animation: floatCard 4s ease-in-out infinite;
+}
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.float-card-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; color: var(--gold); font-weight: 300;
+}
+.float-card-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.12em; color: var(--muted);
+  text-transform: uppercase; margin-top: 3px;
+}
+.about-features { margin-top: 40px; display: flex; flex-direction: column; gap: 24px; }
+.about-feature {
+  display: flex; gap: 20px; align-items: flex-start;
+  padding: 20px; background: white;
+  border: 1px solid transparent;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s var(--easing);
+}
+.about-feature:hover {
+  border-color: var(--border);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  transform: translateX(6px);
+}
+.about-feature-icon {
+  width: 42px; height: 42px; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: var(--gold); font-size: 1.1rem;
+  transition: background 0.3s, color 0.3s;
+}
+.about-feature:hover .about-feature-icon {
+  background: var(--charcoal); color: var(--gold-light); border-color: var(--charcoal);
+}
+.about-feature-title { font-size: 0.88rem; font-weight: 500; color: var(--charcoal); margin-bottom: 4px; }
+.about-feature-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.7; }
+
+/* ─────────────────────────────────────────
+   STATS BAND
+───────────────────────────────────────── */
+.stats-band {
+  background: var(--dark);
+  padding: 60px;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 2px; position: relative; overflow: hidden;
+}
+.stats-band::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(212,175,55,0.05), transparent 70%);
+}
+.stat-item {
+  padding: 36px 28px; border: 1px solid rgba(255,255,255,0.04);
+  text-align: center;
+  position: relative; overflow: hidden;
+  transition: background 0.4s;
+  cursor: default;
+}
+.stat-item::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--gold);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.5s var(--easing);
+}
+.stat-item:hover::before { transform: scaleX(1); }
+.stat-item:hover { background: rgba(212,175,55,0.04); }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.4rem; font-weight: 300;
+  color: white; line-height: 1;
+  margin-bottom: 8px;
+}
+.stat-num .accent { color: var(--gold-light); }
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+
+/* ─────────────────────────────────────────
+   SERVICES
+───────────────────────────────────────── */
+.services { background: var(--ivory); padding: 100px 60px; position: relative; }
+.services-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 60px;
+}
+.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; }
+.service-card {
+  background: var(--cream); padding: 48px 40px;
+  border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+  cursor: default;
+  transition: background 0.4s, transform 0.4s var(--easing);
+}
+.service-card::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  transform: scaleX(0);
+  transition: transform 0.5s var(--easing);
+}
+.service-card:hover::after { transform: scaleX(1); }
+.service-card:hover { background: white; transform: translateY(-6px); box-shadow: 0 24px 64px rgba(0,0,0,0.08); }
+.service-card-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(184,150,12,0.04), transparent);
+  opacity: 0; transition: opacity 0.4s;
+}
+.service-card:hover .service-card-bg { opacity: 1; }
+.service-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4.5rem; font-weight: 300; color: rgba(240,230,184,0.5);
+  line-height: 1; margin-bottom: 28px;
+  transition: color 0.4s, transform 0.4s var(--easing);
+}
+.service-card:hover .service-num { color: rgba(212,175,55,0.2); transform: scale(1.1) translateX(4px); }
+.service-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 400; color: var(--charcoal);
+  margin-bottom: 16px; line-height: 1.2;
+  transition: color 0.3s;
+}
+.service-card:hover .service-title { color: var(--mid); }
+.service-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.78; }
+.service-arrow {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 32px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold); text-decoration: none;
+  transform: translateX(-10px); opacity: 0;
+  transition: opacity 0.3s, transform 0.4s var(--easing);
+}
+.service-arrow svg { transition: transform 0.3s var(--easing); }
+.service-card:hover .service-arrow { opacity: 1; transform: translateX(0); }
+.service-card:hover .service-arrow svg { transform: translateX(4px); }
+
+/* ─────────────────────────────────────────
+   PROCESS
+───────────────────────────────────────── */
+.process {
+  background: var(--charcoal);
+  padding: 100px 60px;
+  position: relative; overflow: hidden;
+}
+.process::before {
+  content: ''; position: absolute; top: -150px; right: -150px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,175,55,0.07), transparent 70%);
+  animation: orbFloat 10s ease-in-out infinite;
+}
+.process::after {
+  content: ''; position: absolute; bottom: -100px; left: -100px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,175,55,0.04), transparent 70%);
+  animation: orbFloat 14s 3s ease-in-out infinite;
+}
+.process .section-tag { color: var(--gold-light); }
+.process .section-tag::before { background: var(--gold-light); }
+.process .section-title { color: white; }
+.process .section-sub { color: rgba(255,255,255,0.42); }
+.process-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: start; margin-top: 64px;
+}
+.process-steps { display: flex; flex-direction: column; }
+.process-step {
+  display: flex; gap: 28px;
+  padding: 32px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: relative; cursor: default;
+  transition: padding-left 0.3s var(--easing);
+}
+.process-step:last-child { border-bottom: none; }
+.process-step:hover { padding-left: 12px; }
+.process-step::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px; background: var(--gold);
+  transform: scaleY(0); transform-origin: top;
+  transition: transform 0.4s var(--easing);
+}
+.process-step:hover::before { transform: scaleY(1); }
+.step-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem; font-weight: 300; color: rgba(212,175,55,0.2);
+  line-height: 1; flex-shrink: 0; width: 56px;
+  transition: color 0.3s;
+}
+.process-step:hover .step-num { color: rgba(212,175,55,0.5); }
+.step-title { font-size: 1rem; font-weight: 500; color: white; margin-bottom: 8px; }
+.step-desc { font-size: 0.82rem; color: rgba(255,255,255,0.42); line-height: 1.72; }
+.process-visual {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(212,175,55,0.12);
+  padding: 48px; display: flex; flex-direction: column; gap: 24px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.3s;
+}
+.process-visual:hover { border-color: rgba(212,175,55,0.25); }
+.process-visual::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(212,175,55,0.03), transparent);
+  opacity: 0; transition: opacity 0.4s;
+}
+.process-visual:hover::before { opacity: 1; }
+.process-visual-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 300; color: rgba(255,255,255,0.65);
+}
+.mini-chart { display: flex; flex-direction: column; gap: 14px; }
+.chart-bar-row { display: flex; align-items: center; gap: 14px; }
+.chart-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.08em; color: rgba(255,255,255,0.38); width: 90px;
+}
+.chart-bar-track {
+  flex: 1; height: 5px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;
+}
+.chart-bar-fill {
+  height: 100%; border-radius: 3px; background: var(--gold);
+  width: 0; transition: width 1.2s var(--easing);
+}
+.chart-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem; color: var(--gold-light); width: 38px; text-align: right;
+}
+.vis-divider { height: 1px; background: rgba(255,255,255,0.05); }
+.process-note {
+  font-size: 0.75rem; color: rgba(255,255,255,0.28);
+  line-height: 1.75; font-style: italic;
+}
+
+/* ─────────────────────────────────────────
+   WHY US
+───────────────────────────────────────── */
+.why {
+  background: var(--cream);
+  display: grid; grid-template-columns: 1fr 1.3fr;
+  gap: 80px; align-items: center;
+  padding: 100px 60px;
+}
+.why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.why-card {
+  padding: 32px 28px; border: 1px solid var(--border);
+  background: white; position: relative; overflow: hidden;
+  transition: transform 0.4s var(--easing), box-shadow 0.4s, border-color 0.3s;
+}
+.why-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.08);
+  border-color: rgba(184,150,12,0.35);
+}
+.why-card::after {
+  content: ''; position: absolute; top: 0; right: 0;
+  width: 0; height: 0;
+  border-top: 28px solid rgba(184,150,12,0.08);
+  border-left: 28px solid transparent;
+  transition: border-top-width 0.3s, border-left-width 0.3s;
+}
+.why-card:hover::after { border-top-width: 40px; border-left-width: 40px; }
+.why-card-accent { width: 28px; height: 2px; background: var(--gold); margin-bottom: 20px; transition: width 0.4s var(--easing); }
+.why-card:hover .why-card-accent { width: 44px; }
+.why-card-title { font-size: 0.88rem; font-weight: 500; color: var(--charcoal); margin-bottom: 8px; }
+.why-card-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.72; }
+.why-card-big {
+  grid-column: span 2;
+  background: var(--charcoal); border-color: var(--charcoal);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.why-card-big:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+.why-card-big .why-card-accent { background: var(--gold-light); }
+.why-card-big .why-card-title { color: white; font-size: 1rem; }
+.why-card-big .why-card-desc { color: rgba(255,255,255,0.48); }
+.why-big-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 5rem; font-weight: 300; color: rgba(212,175,55,0.18);
+  line-height: 1; transition: color 0.4s;
+}
+.why-card-big:hover .why-big-num { color: rgba(212,175,55,0.35); }
+
+/* ─────────────────────────────────────────
+   TESTIMONIALS
+───────────────────────────────────────── */
+.testimonials { background: var(--ivory); padding: 100px 60px; }
+.testimonials-header { margin-bottom: 64px; }
+.testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.testi-card {
+  background: white; border: 1px solid var(--border);
+  padding: 44px 38px;
+  position: relative; overflow: hidden;
+  transition: transform 0.4s var(--easing), box-shadow 0.4s;
+}
+.testi-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 72px rgba(0,0,0,0.08);
+}
+.testi-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold-pale), var(--gold), var(--gold-pale));
+  transform: scaleX(0); transition: transform 0.5s var(--easing);
+}
+.testi-card:hover::before { transform: scaleX(1); }
+.testi-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem; color: var(--gold-pale); line-height: 0.7;
+  margin-bottom: 22px; font-weight: 300;
+  transition: color 0.3s;
+}
+.testi-card:hover .testi-quote { color: rgba(184,150,12,0.25); }
+.testi-text {
+  font-size: 0.87rem; color: var(--mid);
+  line-height: 1.82; margin-bottom: 28px; font-style: italic;
+}
+.testi-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
+.testi-name { font-size: 0.85rem; font-weight: 500; color: var(--charcoal); }
+.testi-role {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.1em; color: var(--muted); margin-top: 2px; text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────
+   AMC EMPANELMENT
+───────────────────────────────────────── */
+.amc-section {
+  background: var(--charcoal);
+  padding: 100px 60px;
+  position: relative; overflow: hidden;
+}
+.amc-section::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 60% at 80% 20%, rgba(212,175,55,0.07), transparent 65%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(212,175,55,0.04), transparent 60%);
+  pointer-events: none;
+}
+.amc-section::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(184,150,12,0.02) 0px,
+    rgba(184,150,12,0.02) 1px,
+    transparent 1px,
+    transparent 40px
+  );
+  pointer-events: none;
+}
+.amc-inner { position: relative; z-index: 1; }
+.amc-section .section-tag { color: var(--gold-light); }
+.amc-section .section-tag::before { background: var(--gold-light); }
+.amc-section .section-title { color: white; }
+.amc-section .section-sub { color: rgba(255,255,255,0.42); margin-bottom: 56px; }
+.amc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 52px;
+}
+.amc-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(212,175,55,0.12);
+  padding: 28px 24px;
+  position: relative; overflow: hidden;
+  cursor: default;
+  transition: background 0.4s var(--easing), border-color 0.4s, transform 0.4s var(--easing), box-shadow 0.4s;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
+}
+.amc-card:hover {
+  background: rgba(212,175,55,0.07);
+  border-color: rgba(212,175,55,0.35);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(212,175,55,0.2);
+}
+.amc-card-glow {
+  position: absolute; inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(212,175,55,0.06) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 0.7s var(--easing);
+  pointer-events: none;
+}
+.amc-card:hover .amc-card-glow { transform: translateX(100%); }
+.amc-card::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  height: 2px; width: 0;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  transition: width 0.5s var(--easing);
+}
+.amc-card:hover::before { width: 100%; }
+.amc-icon {
+  width: 44px; height: 44px;
+  color: var(--gold);
+  opacity: 0.7;
+  transition: opacity 0.3s, transform 0.4s var(--easing-back);
+  flex-shrink: 0;
+}
+.amc-icon svg { width: 100%; height: 100%; }
+.amc-card:hover .amc-icon { opacity: 1; transform: scale(1.1) rotate(-5deg); }
+.amc-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 400;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.2;
+  transition: color 0.3s;
+}
+.amc-card:hover .amc-name { color: white; }
+.amc-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(212,175,55,0.5);
+  padding: 3px 8px;
+  border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 2px;
+  transition: color 0.3s, border-color 0.3s;
+}
+.amc-card:hover .amc-tag { color: var(--gold-light); border-color: rgba(212,175,55,0.35); }
+.amc-footer-note {
+  display: flex; align-items: center; gap: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  margin-top: 8px;
+}
+.amc-note-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184,150,12,0.2), transparent);
+}
+
+/* ─────────────────────────────────────────
+   CTA STRIP
+───────────────────────────────────────── */
+.cta-strip {
+  background: var(--gold);
+  padding: 80px 60px;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 40px; position: relative; overflow: hidden;
+}
+.cta-strip::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+}
+.cta-strip-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  font-weight: 300; color: white; line-height: 1.15;
+  position: relative;
+}
+.cta-strip-title em { font-style: italic; opacity: 0.75; }
+.btn-white {
+  font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 18px 40px; background: white; color: var(--gold);
+  border: none; cursor: none; text-decoration: none;
+  white-space: nowrap; display: inline-block;
+  position: relative; overflow: hidden;
+  transition: color 0.35s;
+}
+.btn-white::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--charcoal);
+  transform: translateY(101%);
+  transition: transform 0.4s var(--easing);
+}
+.btn-white:hover::before { transform: translateY(0); }
+.btn-white:hover { color: white; }
+.btn-white span { position: relative; z-index: 1; }
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+footer {
+  background: var(--dark);
+  padding: 80px 60px 48px;
+  position: relative;
+}
+footer::before {
+  content: ''; position: absolute; top: 0; left: 60px; right: 60px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184,150,12,0.3), transparent);
+}
+.footer-top {
+  display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 60px; padding-bottom: 52px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.footer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600;
+  color: white; margin-bottom: 18px; letter-spacing: 0.04em;
+  display: inline-block;
+}
+.footer-logo span { color: var(--gold); }
+.footer-desc {
+  font-size: 0.78rem; color: rgba(255,255,255,0.3); line-height: 1.8; max-width: 220px;
+}
+.footer-col-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 22px;
+}
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-links a {
+  font-size: 0.78rem; color: rgba(255,255,255,0.35);
+  text-decoration: none; transition: color 0.3s, padding-left 0.3s var(--easing);
+  display: inline-block;
+}
+.footer-links a:hover { color: rgba(255,255,255,0.85); padding-left: 6px; }
+.footer-bottom {
+  padding-top: 32px; display: flex; justify-content: space-between; align-items: center;
+}
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; color: rgba(255,255,255,0.2);
+}
+.footer-legal { display: flex; gap: 24px; }
+.footer-legal a {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; color: rgba(255,255,255,0.2); text-decoration: none; transition: color 0.3s;
+}
+.footer-legal a:hover { color: rgba(255,255,255,0.6); }
+
+/* ═══════════════════════════════════════════════
+   CONSULTATION POPUP MODAL
+═══════════════════════════════════════════════ */
+#consultation-modal {
+  position: fixed; inset: 0; z-index: 50000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s var(--easing);
+}
+#consultation-modal.open {
+  opacity: 1; pointer-events: all;
+}
+
+/* Backdrop */
+.modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(8,8,8,0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: none;
+}
+
+/* Modal card */
+.modal-card {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 480px;
+  transform: translateY(32px) scale(0.97);
+  transition: transform 0.5s var(--easing);
+}
+#consultation-modal.open .modal-card {
+  transform: translateY(0) scale(1);
+}
+
+.modal-glass {
+  background: rgba(18, 16, 12, 0.92);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(212,175,55,0.22);
+  padding: 52px 48px 44px;
+  position: relative; overflow: hidden;
+}
+
+/* Ambient orb inside modal */
+.modal-glass::before {
   content: '';
   position: absolute; top: -60px; left: -60px;
   width: 240px; height: 240px; border-radius: 50%;
@@ -184,7 +1048,7 @@ body:has(button:hover) #c-ring { width: 50px; height: 50px; border-color: var(--
   pointer-events: none;
   animation: orbDrift 12s ease-in-out infinite;
 }
-.card-glass::after {
+.modal-glass::after {
   content: '';
   position: absolute; bottom: -60px; right: -40px;
   width: 180px; height: 180px; border-radius: 50%;
@@ -198,78 +1062,80 @@ body:has(button:hover) #c-ring { width: 50px; height: 50px; border-color: var(--
 }
 
 /* Top accent bar */
-.card-accent-bar {
+.modal-accent-bar {
   position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-light) 60%, transparent 100%);
   transform: scaleX(0); transform-origin: left;
-  animation: barGrow 1s 1.2s var(--easing) forwards;
+  transition: transform 0.8s 0.1s var(--easing);
 }
-@keyframes barGrow { to { transform: scaleX(1); } }
+#consultation-modal.open .modal-accent-bar { transform: scaleX(1); }
 
-/* ═══════════════════════════════════════
-   CARD HEADER
-═══════════════════════════════════════ */
-.card-eyebrow {
+/* Close button */
+.modal-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(212,175,55,0.2);
+  background: transparent; cursor: none;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.4);
+  transition: border-color 0.3s, color 0.3s, background 0.3s;
+  z-index: 2;
+}
+.modal-close:hover {
+  border-color: rgba(212,175,55,0.5);
+  color: var(--gold-light);
+  background: rgba(212,175,55,0.06);
+}
+
+/* Modal header */
+.modal-eyebrow {
   font-family: 'DM Mono', monospace;
   font-size: 0.62rem; letter-spacing: 0.26em; text-transform: uppercase;
   color: var(--gold);
   display: flex; align-items: center; gap: 12px;
-  margin-bottom: 22px;
-  opacity: 0; animation: fadeIn .6s 1s var(--easing) forwards;
+  margin-bottom: 18px; position: relative;
 }
-.card-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+.modal-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
 
-.card-title {
+.modal-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 2.4rem; font-weight: 300; line-height: 1.12;
-  color: white; margin-bottom: 10px;
-  opacity: 0; animation: fadeUp .7s 1.1s var(--easing) forwards;
+  font-size: 2.2rem; font-weight: 300; line-height: 1.12;
+  color: white; margin-bottom: 8px; position: relative;
 }
-.card-title em { font-style: italic; color: var(--gold-light); }
+.modal-title em { font-style: italic; color: var(--gold-light); }
 
-.card-sub {
-  font-size: 0.82rem; color: var(--muted);
-  line-height: 1.75; margin-bottom: 40px; font-weight: 300;
-  opacity: 0; animation: fadeUp .7s 1.2s var(--easing) forwards;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+.modal-sub {
+  font-size: 0.8rem; color: rgba(255,255,255,0.35);
+  line-height: 1.75; margin-bottom: 32px; font-weight: 300;
+  position: relative;
 }
 
-/* ═══════════════════════════════════════
-   PROGRESS BAR
-═══════════════════════════════════════ */
-.progress-wrap {
-  margin-bottom: 34px;
-  opacity: 0; animation: fadeIn .6s 1.3s var(--easing) forwards;
-}
-.progress-labels {
+/* Progress bar */
+.modal-progress-wrap { margin-bottom: 28px; }
+.modal-progress-labels {
   display: flex; justify-content: space-between;
   margin-bottom: 8px;
 }
-.prog-label {
+.m-prog-label {
   font-family: 'DM Mono', monospace;
   font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--muted2);
-  transition: color .3s;
+  color: rgba(255,255,255,0.15);
+  transition: color 0.3s;
 }
-.prog-label.active { color: var(--gold); }
-.prog-label.done { color: rgba(212,175,55,0.45); }
-
-.progress-track {
+.m-prog-label.active { color: var(--gold); }
+.m-prog-label.done { color: rgba(212,175,55,0.4); }
+.modal-progress-track {
   height: 2px; background: rgba(255,255,255,0.07);
   position: relative; overflow: hidden; border-radius: 2px;
 }
-.progress-fill {
+.modal-progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--gold), var(--gold-light));
   width: 33%; border-radius: 2px;
-  transition: width .6s var(--easing);
+  transition: width 0.6s var(--easing);
   position: relative;
 }
-.progress-fill::after {
+.modal-progress-fill::after {
   content: '';
   position: absolute; right: -1px; top: -3px;
   width: 8px; height: 8px; border-radius: 50%;
@@ -277,66 +1143,77 @@ body:has(button:hover) #c-ring { width: 50px; height: 50px; border-color: var(--
   box-shadow: 0 0 8px var(--gold);
 }
 
-/* ═══════════════════════════════════════
-   FORM
-═══════════════════════════════════════ */
-.form-body {
-  opacity: 0; animation: fadeUp .7s 1.35s var(--easing) forwards;
-}
-
-.field-group { display: flex; flex-direction: column; gap: 18px; margin-bottom: 24px; }
-
-/* Floating label field */
-.field {
-  position: relative;
-}
-.field-label {
-  position: absolute; top: 50%; left: 18px;
+/* Form fields */
+.m-field-group { display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px; }
+.m-field { position: relative; }
+.m-field-label {
+  position: absolute; top: 50%; left: 16px;
   transform: translateY(-50%);
-  font-size: 0.8rem; color: rgba(255,255,255,0.3);
+  font-size: 0.78rem; color: rgba(255,255,255,0.28);
   pointer-events: none;
   transition: top .25s var(--easing), font-size .25s, color .25s, letter-spacing .25s;
   z-index: 1;
 }
-.field-input {
+.m-field-input {
   width: 100%;
   background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.09);
   color: white;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem; font-weight: 300;
-  padding: 22px 18px 10px;
+  font-size: 0.88rem; font-weight: 300;
+  padding: 20px 16px 8px;
   outline: none;
   transition: border-color .3s, background .3s, box-shadow .3s;
   cursor: none;
   border-radius: 0;
   appearance: none;
-  -webkit-appearance: none;
 }
-.field-input::placeholder { color: transparent; }
-.field-input:focus,
-.field-input:not(:placeholder-shown) {
-  border-color: var(--gold-border);
+.m-field-input::placeholder { color: transparent; }
+.m-field-input:focus,
+.m-field-input:not(:placeholder-shown) {
+  border-color: rgba(212,175,55,0.22);
   background: rgba(212,175,55,0.03);
-  box-shadow: 0 0 0 4px rgba(212,175,55,0.05), inset 0 1px 0 rgba(212,175,55,0.04);
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.04), inset 0 1px 0 rgba(212,175,55,0.04);
 }
-.field-input:focus ~ .field-label,
-.field-input:not(:placeholder-shown) ~ .field-label {
-  top: 12px; font-size: 0.62rem;
+.m-field-input:focus ~ .m-field-label,
+.m-field-input:not(:placeholder-shown) ~ .m-field-label {
+  top: 10px; font-size: 0.6rem;
   letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--gold);
 }
-.field-input:focus { border-color: rgba(212,175,55,0.5); }
+.m-field-input:focus { border-color: rgba(212,175,55,0.5); }
 
-/* Select field */
-.field-select {
+/* Phone prefix */
+.m-phone-wrap { position: relative; display: flex; }
+.m-phone-prefix {
+  display: flex; align-items: center;
+  padding: 14px 12px 8px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-right: none;
+  font-size: 0.82rem; color: rgba(255,255,255,0.4);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.06em;
+  transition: border-color .3s, background .3s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.m-phone-wrap:has(.m-field-input:focus) .m-phone-prefix {
+  border-color: rgba(212,175,55,0.5);
+  background: rgba(212,175,55,0.03);
+  color: rgba(255,255,255,0.65);
+}
+.m-phone-wrap .m-field-input { padding-left: 12px; }
+.m-phone-wrap .m-field-label { left: calc(56px + 12px); }
+
+/* Select */
+.m-field-select {
   width: 100%;
   background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: rgba(255,255,255,0.28);
   font-family: 'DM Sans', sans-serif;
   font-size: 0.85rem; font-weight: 300;
-  padding: 16px 18px;
+  padding: 15px 16px;
   outline: none;
   cursor: none;
   border-radius: 0;
@@ -345,126 +1222,82 @@ body:has(button:hover) #c-ring { width: 50px; height: 50px; border-color: var(--
   transition: border-color .3s, background .3s, color .3s, box-shadow .3s;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8960C' stroke-width='1.3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 18px center;
+  background-position: right 16px center;
+  background-size: 12px;
 }
-.field-select:focus {
+.m-field-select:focus {
   border-color: rgba(212,175,55,0.5);
   background-color: rgba(212,175,55,0.03);
   color: white;
-  box-shadow: 0 0 0 4px rgba(212,175,55,0.05);
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.04);
 }
-.field-select.has-value {
-  color: white;
-  border-color: var(--gold-border);
-}
-.field-select option { background: #1a1a16; color: white; }
-.field-select option:first-child { color: rgba(255,255,255,0.3); }
+.m-field-select.has-value { color: white; border-color: rgba(212,175,55,0.22); }
+.m-field-select option { background: #1a1a16; color: white; }
 
-/* Field icons */
-.field-icon {
-  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
-  color: rgba(255,255,255,0.2); pointer-events: none;
-  transition: color .3s, opacity .3s;
-  font-size: 0.9rem;
-}
-.field:has(.field-input:focus) .field-icon { color: var(--gold); opacity: 0.6; }
-.field:has(.field-input:not(:placeholder-shown)) .field-icon { opacity: 0; }
-
-/* Validation states */
-.field.valid .field-input { border-color: rgba(111,191,142,0.4); }
-.field.valid .field-icon { color: var(--success); opacity: 1; }
-.field.error .field-input { border-color: rgba(224,112,112,0.5); box-shadow: 0 0 0 4px rgba(224,112,112,0.06); }
-
-.field-error {
+/* Validation */
+.m-field.valid .m-field-input { border-color: rgba(111,191,142,0.35); }
+.m-field.error .m-field-input { border-color: rgba(224,112,112,0.5); box-shadow: 0 0 0 4px rgba(224,112,112,0.05); }
+.m-field-error {
   font-family: 'DM Mono', monospace;
-  font-size: 0.6rem; letter-spacing: 0.1em;
-  color: var(--error);
-  margin-top: 6px; padding-left: 2px;
-  height: 0; overflow: hidden;
-  opacity: 0;
+  font-size: 0.58rem; letter-spacing: 0.1em;
+  color: #E07070;
+  margin-top: 5px; padding-left: 2px;
+  height: 0; overflow: hidden; opacity: 0;
   transition: height .3s var(--easing), opacity .3s;
 }
-.field.error .field-error { height: 18px; opacity: 1; }
+.m-field.error .m-field-error { height: 16px; opacity: 1; }
 
-/* Phone prefix */
-.phone-wrap { position: relative; display: flex; }
-.phone-prefix {
-  display: flex; align-items: center;
-  padding: 16px 14px 10px 18px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-right: none;
-  font-size: 0.85rem; color: rgba(255,255,255,0.45);
-  font-family: 'DM Mono', monospace;
-  letter-spacing: 0.06em;
-  transition: border-color .3s, background .3s;
-  white-space: nowrap;
-  flex-shrink: 0;
+/* Consent */
+.m-consent-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 24px;
 }
-.phone-wrap:has(.field-input:focus) .phone-prefix {
-  border-color: rgba(212,175,55,0.5);
-  background: rgba(212,175,55,0.03);
-  color: rgba(255,255,255,0.7);
-}
-.phone-wrap .field-input { padding-left: 14px; }
-.phone-wrap .field-label { left: calc(58px + 14px); }
-
-/* ═══════════════════════════════════════
-   CONSENT
-═══════════════════════════════════════ */
-.consent-row {
-  display: flex; align-items: flex-start; gap: 14px;
-  margin-bottom: 32px;
-}
-.consent-check {
-  width: 18px; height: 18px; flex-shrink: 0;
-  border: 1px solid var(--gold-border);
+.m-consent-check {
+  width: 17px; height: 17px; flex-shrink: 0;
+  border: 1px solid rgba(212,175,55,0.22);
   background: rgba(255,255,255,0.03);
   cursor: none;
   display: flex; align-items: center; justify-content: center;
   margin-top: 2px;
   transition: background .3s, border-color .3s, box-shadow .3s;
-  position: relative;
 }
-.consent-check.checked {
+.m-consent-check.checked {
   background: var(--gold);
   border-color: var(--gold);
-  box-shadow: 0 0 12px rgba(212,175,55,0.3);
+  box-shadow: 0 0 10px rgba(212,175,55,0.28);
 }
-.consent-check::after {
+.m-consent-check::after {
   content: '';
-  width: 5px; height: 9px;
-  border-right: 2px solid white;
-  border-bottom: 2px solid white;
+  width: 4px; height: 8px;
+  border-right: 1.5px solid white;
+  border-bottom: 1.5px solid white;
   transform: rotate(45deg) translateY(-1px);
   opacity: 0; transition: opacity .2s;
 }
-.consent-check.checked::after { opacity: 1; }
-.consent-text {
-  font-size: 0.75rem; color: var(--muted);
-  line-height: 1.72; cursor: none;
+.m-consent-check.checked::after { opacity: 1; }
+.m-consent-text {
+  font-size: 0.72rem; color: rgba(255,255,255,0.28);
+  line-height: 1.7; cursor: none;
 }
-.consent-text a { color: var(--gold); text-decoration: none; }
-.consent-text a:hover { text-decoration: underline; }
+.m-consent-text a { color: var(--gold); text-decoration: none; }
+.m-consent-text a:hover { text-decoration: underline; }
 
-/* ═══════════════════════════════════════
-   SUBMIT BUTTON
-═══════════════════════════════════════ */
-.submit-btn {
+/* Submit button */
+.m-submit-btn {
   width: 100%;
   background: transparent;
   border: 1px solid var(--gold);
   color: var(--gold);
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.72rem; font-weight: 500;
+  font-size: 0.7rem; font-weight: 500;
   letter-spacing: 0.18em; text-transform: uppercase;
-  padding: 18px 24px;
+  padding: 17px 24px;
   cursor: none;
   display: flex; align-items: center; justify-content: center; gap: 12px;
   position: relative; overflow: hidden;
   transition: color .35s, box-shadow .35s;
 }
-.submit-btn::before {
+.m-submit-btn::before {
   content: '';
   position: absolute; inset: 0;
   background: var(--gold);
@@ -472,16 +1305,14 @@ body:has(button:hover) #c-ring { width: 50px; height: 50px; border-color: var(--
   transition: transform .4s var(--easing);
   z-index: 0;
 }
-.submit-btn:hover::before { transform: translateX(0); }
-.submit-btn:hover { color: var(--dark); box-shadow: 0 0 24px rgba(212,175,55,0.25); }
-.submit-btn:disabled { opacity: 0.5; pointer-events: none; }
-.submit-btn-text { position: relative; z-index: 1; }
-.submit-btn-icon { position: relative; z-index: 1; transition: transform .3s var(--easing); }
-.submit-btn:hover .submit-btn-icon { transform: translateX(6px); }
-
-/* Spinner */
-.spinner {
-  width: 16px; height: 16px;
+.m-submit-btn:hover::before { transform: translateX(0); }
+.m-submit-btn:hover { color: var(--dark); box-shadow: 0 0 24px rgba(212,175,55,0.22); }
+.m-submit-btn:disabled { opacity: 0.5; pointer-events: none; }
+.m-submit-btn-text, .m-submit-btn-icon { position: relative; z-index: 1; }
+.m-submit-btn-icon { transition: transform .3s var(--easing); }
+.m-submit-btn:hover .m-submit-btn-icon { transform: translateX(6px); }
+.m-spinner {
+  width: 15px; height: 15px;
   border: 1.5px solid rgba(212,175,55,0.3);
   border-top-color: var(--gold);
   border-radius: 50%;
@@ -489,32 +1320,29 @@ body:has(button:hover) #c-ring { width: 50px; height: 50px; border-color: var(--
   display: none; position: relative; z-index: 1;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loading .submit-btn-text,
-.loading .submit-btn-icon { display: none; }
-.loading .spinner { display: block; }
+.m-loading .m-submit-btn-text,
+.m-loading .m-submit-btn-icon { display: none; }
+.m-loading .m-spinner { display: block; }
 
-/* ═══════════════════════════════════════
-   SUCCESS STATE
-═══════════════════════════════════════ */
-.success-overlay {
+/* Success overlay */
+.modal-success {
   position: absolute; inset: 0;
-  background: rgba(20,18,14,0.97);
+  background: rgba(18,16,12,0.97);
   backdrop-filter: blur(20px);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 20px; z-index: 10;
+  gap: 18px; z-index: 10;
   opacity: 0; pointer-events: none;
   transition: opacity .5s var(--easing);
 }
-.success-overlay.show { opacity: 1; pointer-events: all; }
-
-.success-ring {
-  width: 72px; height: 72px;
+.modal-success.show { opacity: 1; pointer-events: all; }
+.modal-success-ring {
+  width: 68px; height: 68px;
   border: 1px solid rgba(212,175,55,0.2);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   position: relative;
 }
-.success-ring::before {
+.modal-success-ring::before {
   content: '';
   position: absolute; inset: -6px;
   border: 1px solid rgba(212,175,55,0.1);
@@ -525,471 +1353,894 @@ body:has(button:hover) #c-ring { width: 50px; height: 50px; border-color: var(--
   0%, 100% { transform: scale(1); opacity: 0.6; }
   50% { transform: scale(1.15); opacity: 0.2; }
 }
-
-/* Animated checkmark */
-.check-svg { width: 32px; height: 32px; }
-.check-path {
+.modal-check-svg { width: 30px; height: 30px; }
+.modal-check-path {
   stroke: var(--gold-light);
-  stroke-width: 2;
-  fill: none;
-  stroke-dasharray: 50;
-  stroke-dashoffset: 50;
+  stroke-width: 2; fill: none;
+  stroke-dasharray: 50; stroke-dashoffset: 50;
   stroke-linecap: round;
   transition: stroke-dashoffset .6s .2s var(--easing);
 }
-.success-overlay.show .check-path { stroke-dashoffset: 0; }
-
-.success-title {
+.modal-success.show .modal-check-path { stroke-dashoffset: 0; }
+.modal-success-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem; font-weight: 300; color: white;
+  font-size: 1.7rem; font-weight: 300; color: white;
   text-align: center; line-height: 1.2;
 }
-.success-title em { color: var(--gold-light); font-style: italic; }
-.success-sub {
+.modal-success-title em { color: var(--gold-light); font-style: italic; }
+.modal-success-sub {
   font-family: 'DM Mono', monospace;
-  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--muted); text-align: center;
+  font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.25); text-align: center;
 }
-.success-bar-wrap { width: 180px; }
-.success-bar-track { height: 1px; background: rgba(255,255,255,0.08); }
-.success-bar-fill {
+.modal-success-bar { width: 160px; height: 1px; background: rgba(255,255,255,0.07); }
+.modal-success-bar-fill {
   height: 100%; width: 0;
   background: linear-gradient(90deg, var(--gold), var(--gold-light));
   transition: width 2.5s linear;
 }
-.success-overlay.show .success-bar-fill { width: 100%; }
+.modal-success.show .modal-success-bar-fill { width: 100%; }
 
-/* ═══════════════════════════════════════
-   FOOTER NOTE
-═══════════════════════════════════════ */
-.card-footer {
-  margin-top: 28px;
-  display: flex; align-items: center; gap: 12px;
-  opacity: 0; animation: fadeIn .6s 1.5s var(--easing) forwards;
+/* Step indicators in modal */
+.modal-step-dots {
+  position: absolute; top: 22px; right: 56px;
+  display: flex; align-items: center; gap: 8px;
 }
-.footer-line { flex: 1; height: 1px; background: rgba(255,255,255,0.05); }
-.footer-note {
+.m-step-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  transition: background .4s, transform .4s var(--easing-back);
+}
+.m-step-dot.active { background: var(--gold); transform: scale(1.4); }
+.m-step-dot.done { background: rgba(212,175,55,0.3); }
+
+/* Modal footer note */
+.modal-card-footer {
+  margin-top: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.modal-footer-line { flex: 1; height: 1px; background: rgba(255,255,255,0.05); }
+.modal-footer-note {
   font-family: 'DM Mono', monospace;
-  font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(255,255,255,0.16);
+  font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.14);
   white-space: nowrap;
 }
 
-/* Right decorative column */
-.side-deco {
-  position: fixed; right: 0; top: 0; bottom: 0; width: 4px;
-  background: linear-gradient(to bottom, transparent, rgba(212,175,55,0.2) 30%, rgba(212,175,55,0.4) 50%, rgba(212,175,55,0.2) 70%, transparent);
-  opacity: 0; animation: fadeIn 1s 1.8s forwards;
-}
-.side-deco-left {
-  left: 0; right: auto;
-  background: linear-gradient(to bottom, transparent, rgba(212,175,55,0.08) 50%, transparent);
-}
-
-/* ═══════════════════════════════════════
+/* ─────────────────────────────────────────
    RESPONSIVE
-═══════════════════════════════════════ */
-@media (max-width: 640px) {
+───────────────────────────────────────── */
+@media (max-width: 960px) {
   body { cursor: auto; }
-  #c-dot, #c-ring { display: none; }
-  .brand-mark { left: 20px; top: 20px; }
-  .step-mark { right: 20px; top: 26px; }
-  .card-glass { padding: 44px 28px 36px; }
-  .card-title { font-size: 2rem; }
-  .side-deco, .side-deco-left { display: none; }
+  #cursor-dot, #cursor-ring { display: none; }
+  nav { padding: 18px 28px; }
+  nav.scrolled { padding: 14px 28px; }
+  .nav-links, .scroll-hint { display: none; }
+  .hero, .about, .why, .services, .testimonials, .process, .cta-strip { padding-left: 28px; padding-right: 28px; }
+  .hero { padding-top: 100px; }
+  .hero-stats { position: static; margin-top: 40px; justify-content: flex-start; }
+  .hero-grid { display: none; }
+  .about, .why { grid-template-columns: 1fr; }
+  .about-visual { height: 340px; }
+  .services-grid, .testimonials-grid { grid-template-columns: 1fr; }
+  .amc-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .amc-section { padding-left: 28px; padding-right: 28px; }
+  .process-layout { grid-template-columns: 1fr; }
+  .stats-band { grid-template-columns: 1fr 1fr; }
+  .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .cta-strip { flex-direction: column; text-align: center; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  .nav-actions { gap: 8px; }
+  .nav-cta { padding: 8px 14px; font-size: 0.65rem; }
+  .modal-glass { padding: 44px 24px 36px; }
+  .modal-title { font-size: 1.9rem; }
 }
 </style>
 </head>
 <body>
 
 <!-- Cursor -->
-<div id="c-dot"></div>
-<div id="c-ring"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
 
-<!-- Background -->
-<canvas id="bg-canvas"></canvas>
-<div class="bg-grid"></div>
-<div class="bg-glow"></div>
+<!-- Particle canvas -->
+<canvas id="particle-canvas"></canvas>
 
-<!-- Decorative side lines -->
-<div class="side-deco"></div>
-<div class="side-deco side-deco-left"></div>
-
-<!-- Brand mark -->
-<div class="brand-mark">
-  <a href="#" class="brand-mark-logo">Yours<span>Wealth</span></a>
-  <div class="brand-mark-tag">AMFI-Registered MFD</div>
+<!-- Page loader -->
+<div id="loader">
+  <div class="loader-logo">
+    <div class="loader-logo-fill">Yours<span>Wealth</span></div>
+  </div>
+  <div class="loader-bar-track">
+    <div class="loader-bar-fill"></div>
+  </div>
 </div>
 
-<!-- Step indicator -->
-<div class="step-mark">
-  <div class="step-dot active" id="sd1"></div>
-  <div class="step-dot" id="sd2"></div>
-  <div class="step-dot" id="sd3"></div>
-  <span class="step-label" id="step-label-text">Step 1 of 3</span>
-</div>
+<!-- ═══════════════════════════════════════════
+     CONSULTATION POPUP MODAL
+═══════════════════════════════════════════ -->
+<div id="consultation-modal" role="dialog" aria-modal="true" aria-label="Book Free Consultation">
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+  <div class="modal-card">
+    <div class="modal-glass">
+      <div class="modal-accent-bar"></div>
 
-<!-- Page -->
-<div class="page-wrap">
-  <div class="card">
-    <div class="card-glass">
-      <div class="card-accent-bar"></div>
+      <!-- Step dots -->
+      <div class="modal-step-dots">
+        <div class="m-step-dot active" id="msd1"></div>
+        <div class="m-step-dot" id="msd2"></div>
+        <div class="m-step-dot" id="msd3"></div>
+      </div>
+
+      <!-- Close -->
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
 
       <!-- Header -->
-      <div class="card-eyebrow">Begin Your Journey</div>
-      <h1 class="card-title">Your wealth story<br>starts <em>here.</em></h1>
-      <p class="card-sub">Tell us a little about yourself, and we'll craft a personalised financial plan at no cost — no obligations, just clarity.</p>
+      <div class="modal-eyebrow">Begin Your Journey</div>
+      <h2 class="modal-title">Your wealth story<br>starts <em>here.</em></h2>
+      <p class="modal-sub">Tell us a little about yourself — we'll craft a personalised financial plan at no cost, no obligations.</p>
 
       <!-- Progress -->
-      <div class="progress-wrap">
-        <div class="progress-labels">
-          <span class="prog-label active" id="pl1">Details</span>
-          <span class="prog-label" id="pl2">Goals</span>
-          <span class="prog-label" id="pl3">Done</span>
+      <div class="modal-progress-wrap">
+        <div class="modal-progress-labels">
+          <span class="m-prog-label active" id="mpl1">Details</span>
+          <span class="m-prog-label" id="mpl2">Goals</span>
+          <span class="m-prog-label" id="mpl3">Done</span>
         </div>
-        <div class="progress-track">
-          <div class="progress-fill" id="prog-fill"></div>
+        <div class="modal-progress-track">
+          <div class="modal-progress-fill" id="m-prog-fill"></div>
         </div>
       </div>
 
       <!-- Form -->
-      <div class="form-body">
-        <form id="lead-form" novalidate>
+      <form id="modal-lead-form" novalidate>
 
-          <!-- Step 1: Personal Details -->
-          <div id="step-1">
-            <div class="field-group">
+        <!-- Step 1 -->
+        <div id="m-step-1">
+          <div class="m-field-group">
 
-              <!-- Full Name -->
-              <div class="field" id="f-name">
-                <input type="text" class="field-input" id="inp-name" placeholder="Full Name" autocomplete="name">
-                <label class="field-label" for="inp-name">Full Name</label>
-                <span class="field-icon">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 13c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-                </span>
-                <div class="field-error" id="err-name">Please enter your full name</div>
-              </div>
-
-              <!-- Email -->
-              <div class="field" id="f-email">
-                <input type="email" class="field-input" id="inp-email" placeholder="Email Address" autocomplete="email">
-                <label class="field-label" for="inp-email">Email Address</label>
-                <span class="field-icon">
-                  <svg width="14" height="12" viewBox="0 0 14 12" fill="none"><rect x="1" y="1" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1 3l6 4 6-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-                </span>
-                <div class="field-error" id="err-email">Please enter a valid email address</div>
-              </div>
-
-              <!-- Mobile -->
-              <div class="field phone-wrap" id="f-phone">
-                <div class="phone-prefix">+91</div>
-                <input type="tel" class="field-input" id="inp-phone" placeholder="Mobile Number" autocomplete="tel" maxlength="10">
-                <label class="field-label" for="inp-phone">Mobile Number</label>
-                <span class="field-icon" style="right:18px">
-                  <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><rect x="1" y="1" width="10" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/><circle cx="6" cy="11" r="0.8" fill="currentColor"/></svg>
-                </span>
-                <div class="field-error" id="err-phone">Please enter a valid 10-digit mobile number</div>
-              </div>
-
+            <div class="m-field" id="mf-name">
+              <input type="text" class="m-field-input" id="m-inp-name" placeholder="Full Name" autocomplete="name">
+              <label class="m-field-label" for="m-inp-name">Full Name</label>
+              <div class="m-field-error" id="merr-name">Please enter your full name</div>
             </div>
 
-            <!-- Step 1 → 2 -->
-            <button type="button" class="submit-btn" id="next-btn-1">
-              <span class="submit-btn-text">Continue</span>
-              <svg class="submit-btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
-                <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-              <div class="spinner"></div>
-            </button>
+            <div class="m-field" id="mf-email">
+              <input type="email" class="m-field-input" id="m-inp-email" placeholder="Email Address" autocomplete="email">
+              <label class="m-field-label" for="m-inp-email">Email Address</label>
+              <div class="m-field-error" id="merr-email">Please enter a valid email</div>
+            </div>
+
+            <div class="m-field m-phone-wrap" id="mf-phone">
+              <div class="m-phone-prefix">+91</div>
+              <input type="tel" class="m-field-input" id="m-inp-phone" placeholder="Mobile Number" autocomplete="tel" maxlength="10">
+              <label class="m-field-label" for="m-inp-phone">Mobile Number</label>
+              <div class="m-field-error" id="merr-phone">Please enter a valid 10-digit number</div>
+            </div>
+
           </div>
 
-          <!-- Step 2: Goal -->
-          <div id="step-2" style="display:none">
-            <div class="field-group">
-              <div class="field" id="f-goal">
-                <select class="field-select" id="inp-goal">
-                  <option value="" disabled selected hidden>Select your primary goal</option>
-                  <option value="wealth">Wealth Creation</option>
-                  <option value="retirement">Retirement Planning</option>
-                  <option value="tax">Tax Saving</option>
-                  <option value="child">Child's Education / Marriage</option>
-                  <option value="home">Home Purchase</option>
-                  <option value="emergency">Emergency Fund Building</option>
-                  <option value="other">Something else</option>
-                </select>
-                <div class="field-error" id="err-goal">Please select an investment goal</div>
-              </div>
-            </div>
+          <button type="button" class="m-submit-btn" id="m-next-btn">
+            <span class="m-submit-btn-text">Continue</span>
+            <svg class="m-submit-btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
+              <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="m-spinner"></div>
+          </button>
+        </div>
 
-            <!-- Consent -->
-            <div class="consent-row">
-              <div class="consent-check" id="consent-box" role="checkbox" aria-checked="false" tabindex="0"></div>
-              <p class="consent-text" id="consent-label">I agree to be contacted by Yours Wealth regarding my financial goals. I have read and accept the <a href="#">Privacy Policy</a> and <a href="#">Terms of Use</a>.</p>
+        <!-- Step 2 -->
+        <div id="m-step-2" style="display:none">
+          <div class="m-field-group">
+            <div class="m-field" id="mf-goal">
+              <select class="m-field-select" id="m-inp-goal">
+                <option value="" disabled selected hidden>Select your primary goal</option>
+                <option value="wealth">Wealth Creation</option>
+                <option value="retirement">Retirement Planning</option>
+                <option value="tax">Tax Saving</option>
+                <option value="child">Child's Education / Marriage</option>
+                <option value="home">Home Purchase</option>
+                <option value="emergency">Emergency Fund Building</option>
+                <option value="other">Something else</option>
+              </select>
+              <div class="m-field-error" id="merr-goal">Please select an investment goal</div>
             </div>
-
-            <!-- Submit -->
-            <button type="submit" class="submit-btn" id="submit-btn">
-              <span class="submit-btn-text">Get My Financial Plan</span>
-              <svg class="submit-btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
-                <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-              <div class="spinner"></div>
-            </button>
           </div>
 
-        </form>
-      </div>
+          <div class="m-consent-row">
+            <div class="m-consent-check" id="m-consent-box" role="checkbox" aria-checked="false" tabindex="0"></div>
+            <p class="m-consent-text" id="m-consent-label">I agree to be contacted by Yours Wealth regarding my financial goals. I accept the <a href="#">Privacy Policy</a> and <a href="#">Terms of Use</a>.</p>
+          </div>
+
+          <button type="submit" class="m-submit-btn" id="m-submit-btn">
+            <span class="m-submit-btn-text">Get My Free Plan</span>
+            <svg class="m-submit-btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
+              <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="m-spinner"></div>
+          </button>
+        </div>
+
+      </form>
 
       <!-- Success overlay -->
-      <div class="success-overlay" id="success-overlay">
-        <div class="success-ring">
-          <svg class="check-svg" viewBox="0 0 32 32">
-            <path class="check-path" d="M8 17l6 6 10-12"/>
+      <div class="modal-success" id="modal-success">
+        <div class="modal-success-ring">
+          <svg class="modal-check-svg" viewBox="0 0 32 32">
+            <path class="modal-check-path" d="M8 17l6 6 10-12"/>
           </svg>
         </div>
-        <div class="success-title">Welcome to<br><em>Yours Wealth.</em></div>
-        <div class="success-sub">Preparing your experience</div>
-        <div class="success-bar-wrap">
-          <div class="success-bar-track">
-            <div class="success-bar-fill" id="success-bar"></div>
-          </div>
+        <div class="modal-success-title">Welcome to<br><em>Yours Wealth.</em></div>
+        <div class="modal-success-sub">We'll be in touch shortly</div>
+        <div class="modal-success-bar">
+          <div class="modal-success-bar-fill" id="m-success-bar"></div>
         </div>
       </div>
+
     </div>
 
-    <div class="card-footer">
-      <div class="footer-line"></div>
-      <div class="footer-note">256-bit encrypted · AMFI registered</div>
-      <div class="footer-line"></div>
+    <div class="modal-card-footer">
+      <div class="modal-footer-line"></div>
+      <div class="modal-footer-note">256-bit encrypted · AMFI registered</div>
+      <div class="modal-footer-line"></div>
     </div>
   </div>
 </div>
 
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav id="main-nav">
+  <a href="#" class="nav-logo">Yours<span>Wealth</span></a>
+  <ul class="nav-links">
+    <li><a href="#about" data-text="About">About</a></li>
+    <li><a href="#services" data-text="Services">Services</a></li>
+    <li><a href="#process" data-text="Our Process">Our Process</a></li>
+    <li><a href="#why" data-text="Why Us">Why Us</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="financial-planner.html" class="nav-cta">Get Your Goal Plan</a>
+    <button class="nav-cta solid open-modal-btn">Book Consultation</button>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-line"></div>
+  <div class="hero-line"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Wealth Management & Financial Planning</div>
+    <h1 id="hero-heading"></h1>
+    <p>At Yours Wealth, we don't just manage your money — we design a personalised financial journey that compounds over decades, so you can focus on living the life you've worked so hard to create.</p>
+    <div class="hero-actions">
+      <a href="#services" class="btn-primary">
+        <span>Explore Our Services</span>
+        <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
+          <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </a>
+      <a href="#process" class="btn-ghost">
+        See How It Works
+        <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
+          <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ MARQUEE ═══════════════ -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <div class="marquee-item">Financial Planning</div>
+    <div class="marquee-item">Wealth Creation</div>
+    <div class="marquee-item">Portfolio Management</div>
+    <div class="marquee-item">Tax Optimisation</div>
+    <div class="marquee-item">Retirement Planning</div>
+    <div class="marquee-item">Estate Planning</div>
+    <div class="marquee-item">Risk Management</div>
+    <div class="marquee-item">Investment Advisory</div>
+    <div class="marquee-item">Financial Planning</div>
+    <div class="marquee-item">Wealth Creation</div>
+    <div class="marquee-item">Portfolio Management</div>
+    <div class="marquee-item">Tax Optimisation</div>
+    <div class="marquee-item">Retirement Planning</div>
+    <div class="marquee-item">Estate Planning</div>
+    <div class="marquee-item">Risk Management</div>
+    <div class="marquee-item">Investment Advisory</div>
+  </div>
+</div>
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<section class="about" id="about">
+  <div class="about-visual reveal-left">
+    <div class="about-card-main">
+      <div class="about-orb"></div>
+      <div class="about-card-main-inner">
+        <div class="about-card-main-title">Wealth that works<br>while you rest.</div>
+        <div class="about-card-main-sub">Intelligent capital allocation — every rupee has a purpose</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-text">
+    <div class="section-tag reveal">Who We Are</div>
+    <h2 class="section-title reveal d1">We are your <em>lifetime</em> financial partner.</h2>
+    <p class="section-sub reveal d2">Yours Wealth is a boutique wealth management firm founded on a simple belief: financial security is not a privilege — it's a right. We combine deep financial expertise with a deeply personal approach to help you build, protect, and grow what matters most.</p>
+    <div class="about-features">
+      <div class="about-feature reveal d2">
+        <div class="about-feature-icon">◈</div>
+        <div>
+          <div class="about-feature-title">Independent & Unbiased Advice</div>
+          <div class="about-feature-desc">We are not tied to any product or institution. Our advice is driven purely by your goals, not commissions.</div>
+        </div>
+      </div>
+      <div class="about-feature reveal d3">
+        <div class="about-feature-icon">◈</div>
+        <div>
+          <div class="about-feature-title">Holistic Financial Thinking</div>
+          <div class="about-feature-desc">We look at your complete financial picture — income, liabilities, aspirations, and risk appetite — before recommending anything.</div>
+        </div>
+      </div>
+      <div class="about-feature reveal d4">
+        <div class="about-feature-icon">◈</div>
+        <div>
+          <div class="about-feature-title">Relationship Over Transaction</div>
+          <div class="about-feature-desc">You get a dedicated advisor who knows your story, not a rotating team that sees you as a portfolio number.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SERVICES ═══════════════ -->
+<section class="services" id="services">
+  <div class="services-header">
+    <div>
+      <div class="section-tag reveal">What We Offer</div>
+      <h2 class="section-title reveal d1">Services built around<br>your <em>financial life.</em></h2>
+    </div>
+    <p class="section-sub reveal d2" style="margin-bottom:0">Every service is customised to your unique goals, time horizon, and risk profile — never off the shelf.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="service-card-bg"></div>
+      <div class="service-num">01</div>
+      <div class="service-title">Financial Planning</div>
+      <div class="service-desc">A comprehensive roadmap for your finances — budgeting, savings goals, debt management, and milestone planning. We map where you are and architect where you want to be.</div>
+      <a href="financial-planning.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+    <div class="service-card reveal d1">
+      <div class="service-card-bg"></div>
+      <div class="service-num">02</div>
+      <div class="service-title">Investment Advisory</div>
+      <div class="service-desc">Research-backed investment strategies across equity, debt, mutual funds, and alternative assets. We build portfolios that grow intelligently over time while managing downside risk.</div>
+      <a href="investment-advisory.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+    <div class="service-card reveal d2">
+      <div class="service-card-bg"></div>
+      <div class="service-num">03</div>
+      <div class="service-title">Retirement Planning</div>
+      <div class="service-desc">Whether retirement is 5 years or 25 years away, we create a plan that ensures you never outlive your money — and retire on your own terms, not someone else's timeline.</div>
+      <a href="retirement-planning.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+    <div class="service-card reveal d1">
+      <div class="service-card-bg"></div>
+      <div class="service-num">04</div>
+      <div class="service-title">Tax Optimisation</div>
+      <div class="service-desc">Legal, smart strategies to reduce your tax burden and keep more of what you earn. From ELSS to NPS to efficient asset structuring, we ensure your money works harder post-tax.</div>
+      <a href="tax-optimisation.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+    <div class="service-card reveal d2">
+      <div class="service-card-bg"></div>
+      <div class="service-num">05</div>
+      <div class="service-title">Risk & Insurance Planning</div>
+      <div class="service-desc">Protecting wealth is as critical as building it. We assess your risk exposure — health, life, income, liability — and design the right coverage so life's uncertainties don't derail your plans.</div>
+      <a href="risk-insurance.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+    <div class="service-card reveal d3">
+      <div class="service-card-bg"></div>
+      <div class="service-num">06</div>
+      <div class="service-title">Estate & Legacy Planning</div>
+      <div class="service-desc">Ensure your wealth transitions smoothly across generations. We help structure your assets, create wills, set up trusts, and design a legacy that reflects your values and wishes.</div>
+      <a href="estate-planning.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PROCESS ═══════════════ -->
+<section class="process" id="process">
+  <div class="section-tag">How It Works</div>
+  <h2 class="section-title">A clear, <em>structured</em> path<br>to financial clarity.</h2>
+  <p class="section-sub">No complexity. No jargon. Just a disciplined process that turns your financial goals into a concrete, actionable plan.</p>
+  <div class="process-layout">
+    <div class="process-steps">
+      <div class="process-step reveal">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <div class="step-title">Discovery & Goal Setting</div>
+          <div class="step-desc">We begin with a deep-dive conversation to understand your current financial position, life goals, risk appetite, and what wealth means to you personally.</div>
+        </div>
+      </div>
+      <div class="process-step reveal d1">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <div class="step-title">Financial Assessment</div>
+          <div class="step-desc">We analyse your income, expenses, assets, liabilities, tax situation, and insurance coverage to create a clear picture of where you stand today.</div>
+        </div>
+      </div>
+      <div class="process-step reveal d2">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <div class="step-title">Bespoke Strategy Design</div>
+          <div class="step-desc">Your dedicated advisor crafts a personalised wealth plan — investments, savings, protection, and tax strategy — all aligned to your specific goals and timeline.</div>
+        </div>
+      </div>
+      <div class="process-step reveal d3">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <div class="step-title">Ongoing Management & Review</div>
+          <div class="step-desc">Life changes, markets evolve. We review your portfolio regularly and adapt your plan so it stays perfectly aligned to your goals — every step of the journey.</div>
+        </div>
+      </div>
+    </div>
+    <div class="process-visual reveal d2" id="proc-visual">
+      <div class="process-visual-title">Portfolio Growth Snapshot</div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.65rem; color:rgba(255,255,255,0.25); margin-bottom:4px;">Illustrative — 10yr horizon</div>
+      <div class="mini-chart">
+        <div class="chart-bar-row">
+          <div class="chart-label">Equity Funds</div>
+          <div class="chart-bar-track"><div class="chart-bar-fill" data-w="82"></div></div>
+          <div class="chart-val">14.2%</div>
+        </div>
+        <div class="chart-bar-row">
+          <div class="chart-label">Debt Funds</div>
+          <div class="chart-bar-track"><div class="chart-bar-fill" data-w="45" style="opacity:0.65"></div></div>
+          <div class="chart-val">7.8%</div>
+        </div>
+        <div class="chart-bar-row">
+          <div class="chart-label">Gold / Intl.</div>
+          <div class="chart-bar-track"><div class="chart-bar-fill" data-w="38" style="opacity:0.55"></div></div>
+          <div class="chart-val">6.5%</div>
+        </div>
+        <div class="chart-bar-row">
+          <div class="chart-label">Real Estate</div>
+          <div class="chart-bar-track"><div class="chart-bar-fill" data-w="52" style="opacity:0.7"></div></div>
+          <div class="chart-val">9.1%</div>
+        </div>
+      </div>
+      <div class="vis-divider"></div>
+      <div class="process-note">Returns are illustrative based on historical category averages. Past performance is not indicative of future results.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ WHY US ═══════════════ -->
+<section class="why" id="why">
+  <div>
+    <div class="section-tag reveal">Why Choose Us</div>
+    <h2 class="section-title reveal d1">The Yours Wealth<br><em>difference.</em></h2>
+    <p class="section-sub reveal d2">We've spent 15 years perfecting what it means to be a trusted financial partner — not just an advisor. Here's what sets us apart.</p>
+  </div>
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <div class="why-card-accent"></div>
+      <div class="why-card-title">Solutions Built Around You</div>
+      <div class="why-card-desc">Not one-size-fits-all solutions — because your financial journey is unique, we design strategies that align specifically with your goals, risk profile, and life priorities.</div>
+    </div>
+    <div class="why-card reveal d1">
+      <div class="why-card-accent"></div>
+      <div class="why-card-title">Zero Commission Model</div>
+      <div class="why-card-desc">We earn from you, not from products. Transparent fee-only advisory ensures zero conflicts of interest.</div>
+    </div>
+    <div class="why-card reveal d2">
+      <div class="why-card-accent"></div>
+      <div class="why-card-title">Technology-Backed Insights</div>
+      <div class="why-card-desc">Real-time dashboards and data-driven analysis keep you informed and in control at all times.</div>
+    </div>
+    <div class="why-card reveal d3">
+      <div class="why-card-accent"></div>
+      <div class="why-card-title">Dedicated Advisor</div>
+      <div class="why-card-desc">One expert who knows your entire financial story. No handoffs, no confusion, no starting over.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ AMC EMPANELMENT ═══════════════ -->
+<section class="amc-section" id="partners">
+  <div class="amc-inner">
+    <div class="section-tag reveal">Our Partners</div>
+    <h2 class="section-title reveal d1">Empanelled with India's<br><em>leading fund houses.</em></h2>
+    <p class="section-sub reveal d2">We are an AMFI-registered Mutual Fund Distributor, officially empanelled with the best AMCs in the country — giving you access to a curated universe of top-performing funds.</p>
+    <div class="amc-grid">
+      <div class="amc-card reveal"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.2"/><path d="M12 26l4-12 4 8 4-8 4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="amc-name">HDFC Mutual Fund</div><div class="amc-tag">Equity · Debt · Hybrid</div></div>
+      <div class="amc-card reveal d1"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="8" stroke="currentColor" stroke-width="1.2"/><path d="M13 20h14M20 13v14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="amc-name">ICICI Prudential</div><div class="amc-tag">BAF · Index · Debt</div></div>
+      <div class="amc-card reveal d2"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><polygon points="20,4 36,30 4,30" stroke="currentColor" stroke-width="1.2" fill="none"/><line x1="20" y1="14" x2="20" y2="24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="amc-name">Nippon India MF</div><div class="amc-tag">Equity · Debt · Index</div></div>
+      <div class="amc-card reveal d3"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="16" stroke="currentColor" stroke-width="1.2"/><path d="M15 20c0-2.76 2.24-5 5-5s5 2.24 5 5-2.24 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="amc-name">Kotak Mahindra MF</div><div class="amc-tag">Equity · Debt</div></div>
+      <div class="amc-card reveal d1"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M8 32V16l12-8 12 8v16H8z" stroke="currentColor" stroke-width="1.2"/><rect x="15" y="22" width="10" height="10" stroke="currentColor" stroke-width="1.2"/></svg></div><div class="amc-name">Parag Parikh MF</div><div class="amc-tag">Flexi Cap · Global</div></div>
+      <div class="amc-card reveal d2"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M6 34l7-14 7 6 7-16 7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="amc-name">Edelweiss MF</div><div class="amc-tag">International · ELSS</div></div>
+      <div class="amc-card reveal d3"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M20 6l4 8h8l-6.5 5.5 2.5 8.5L20 23l-8 5 2.5-8.5L8 14h8z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg></div><div class="amc-name">Quant Mutual Fund</div><div class="amc-tag">Equity</div></div>
+      <div class="amc-card reveal d1"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="14" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 34c0-6.63 5.37-12 12-12s12 5.37 12 12" stroke="currentColor" stroke-width="1.2"/></svg></div><div class="amc-name">Bajaj Finserv MF</div><div class="amc-tag">Equity · Debt</div></div>
+      <div class="amc-card reveal d2"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><rect x="6" y="18" width="28" height="16" rx="3" stroke="currentColor" stroke-width="1.2"/><path d="M14 18V12a6 6 0 0112 0v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="amc-name">Mahindra Manulife</div><div class="amc-tag">Equity · Debt</div></div>
+      <div class="amc-card reveal d3"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M10 30V16M20 30V10M30 30V20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6 34h28" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="amc-name">Capitalmind MF</div><div class="amc-tag">Multi asset · Flexi</div></div>
+      <div class="amc-card reveal d1"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M20 6C12.27 6 6 12.27 6 20s6.27 14 14 14 14-6.27 14-14S27.73 6 20 6z" stroke="currentColor" stroke-width="1.2"/><path d="M20 13v7l5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="amc-name">Axis Mutual Fund</div><div class="amc-tag">ELSS · Large Cap</div></div>
+      <div class="amc-card reveal d2"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M8 20h8l4-10 4 20 4-10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="amc-name">Aditya Birla SL MF</div><div class="amc-tag">Index · Debt · Hybrid</div></div>
+    </div>
+    <div class="amc-footer-note reveal">
+      <div class="amc-note-line"></div>
+      <span>AMFI-registered Mutual Fund Distributor · ARN empanelled</span>
+      <div class="amc-note-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CTA STRIP ═══════════════ -->
+<div class="cta-strip" id="contact">
+  <div class="cta-strip-title reveal-left">Your financial future<br>starts with <em>one conversation.</em></div>
+  <button class="btn-white open-modal-btn reveal d2"><span>Book a Free Consultation</span></button>
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">Yours<span>Wealth</span></div>
+      <div class="footer-desc">"Yours Wealth" helps you turn goals into reality. We don't just manage investments — we celebrate your milestones. AMFI-registered Mutual Fund Distributor. — Viswateja Poreddy.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <ul class="footer-links">
+        <li><a href="financial-planning.html">Financial Planning</a></li>
+        <li><a href="investment-advisory.html">Investment Advisory</a></li>
+        <li><a href="retirement-planning.html">Retirement Planning</a></li>
+        <li><a href="tax-optimisation.html">Tax Optimisation</a></li>
+        <li><a href="estate-planning.html">Estate Planning</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Our Team</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Media & Press</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <ul class="footer-links">
+        <li><a href="mailto:viswateja.investments@gmail.com">viswateja.investments@gmail.com</a></li>
+        <li><a href="tel:+917095858488">+91 70958 58488</a></li>
+        <li><a href="#">Hyderabad, Telangana</a></li>
+        <li><a href="#">Hyderabad | Bengaluru</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Yours Wealth. All rights reserved.</div>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Disclaimer</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════ SCRIPTS ═══════════════ -->
 <script>
-/* ═══════════════════════════════════════
-   CURSOR
-═══════════════════════════════════════ */
-const dot = document.getElementById('c-dot');
-const ring = document.getElementById('c-ring');
+/* ── LOADER ── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('exit');
+    setTimeout(() => document.getElementById('loader').style.display = 'none', 1000);
+  }, 1800);
+});
+
+/* ── CUSTOM CURSOR ── */
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
 document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-(function tick() {
+function animCursor() {
   rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
-  if(dot){ dot.style.left = mx+'px'; dot.style.top = my+'px'; }
-  if(ring){ ring.style.left = rx+'px'; ring.style.top = ry+'px'; }
-  requestAnimationFrame(tick);
-})();
+  if(dot) { dot.style.left = mx + 'px'; dot.style.top = my + 'px'; }
+  if(ring) { ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; }
+  requestAnimationFrame(animCursor);
+}
+animCursor();
 
-/* ═══════════════════════════════════════
-   PARTICLES (gold dust)
-═══════════════════════════════════════ */
-const canvas = document.getElementById('bg-canvas');
+/* ── PARTICLES ── */
+const canvas = document.getElementById('particle-canvas');
 const ctx = canvas.getContext('2d');
-let W, H, parts = [];
-function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+let W, H, particles = [];
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 resize(); window.addEventListener('resize', resize);
-class P {
-  constructor(){ this.reset(true); }
-  reset(init){
-    this.x = Math.random() * W;
-    this.y = init ? Math.random() * H : H + 4;
-    this.r = Math.random() * 1.2 + 0.2;
-    this.vx = (Math.random()-.5)*.25;
-    this.vy = -(Math.random()*.35+.08);
-    this.life = 0; this.max = Math.random()*400+200;
-    this.op = Math.random()*.35+.06;
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W; this.y = Math.random() * H;
+    this.size = Math.random() * 1.5 + 0.3;
+    this.speedX = (Math.random() - 0.5) * 0.3;
+    this.speedY = -Math.random() * 0.4 - 0.1;
+    this.opacity = Math.random() * 0.4 + 0.1;
+    this.life = 0; this.maxLife = Math.random() * 300 + 200;
   }
-  draw(){
-    const t = this.life/this.max;
-    const a = this.op * (t<.12?t*8.3:t>.75?(1-t)*4:1);
-    ctx.globalAlpha = Math.max(0,a);
-    ctx.fillStyle='rgba(212,175,55,1)';
-    ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fill();
+  update() { this.x += this.speedX; this.y += this.speedY; this.life++; if(this.life > this.maxLife || this.y < -10) this.reset(); }
+  draw() {
+    const t = this.life / this.maxLife;
+    const alpha = this.opacity * (t < 0.1 ? t*10 : t > 0.8 ? (1-t)*5 : 1);
+    ctx.globalAlpha = alpha; ctx.fillStyle = 'rgba(212,175,55,1)';
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
   }
-  update(){ this.x+=this.vx; this.y+=this.vy; this.life++; if(this.life>this.max||this.y<-5) this.reset(false); }
 }
-for(let i=0;i<70;i++){ const p=new P(); p.life=Math.random()*p.max; parts.push(p); }
-(function loop(){ ctx.clearRect(0,0,W,H); parts.forEach(p=>{p.update();p.draw();}); ctx.globalAlpha=1; requestAnimationFrame(loop); })();
+for(let i = 0; i < 80; i++) { const p = new Particle(); p.life = Math.random() * p.maxLife; particles.push(p); }
+function animParticles() { ctx.clearRect(0, 0, W, H); particles.forEach(p => { p.update(); p.draw(); }); ctx.globalAlpha = 1; requestAnimationFrame(animParticles); }
+animParticles();
 
-/* ═══════════════════════════════════════
-   STEP MANAGEMENT
-═══════════════════════════════════════ */
-let currentStep = 1;
-
-function goToStep(n) {
-  document.getElementById('step-1').style.display = n===1 ? 'block' : 'none';
-  document.getElementById('step-2').style.display = n===2 ? 'block' : 'none';
-  currentStep = n;
-
-  // Progress bar
-  const fill = document.getElementById('prog-fill');
-  fill.style.width = n===1 ? '33%' : n===2 ? '66%' : '100%';
-
-  // Step dots
-  ['sd1','sd2','sd3'].forEach((id,i)=>{
-    const el = document.getElementById(id);
-    el.className = 'step-dot' + (i===n-1 ? ' active' : i<n-1 ? ' done' : '');
+/* ── HERO HEADING ── */
+const heroLines = ['Build Wealth.', 'Secure Your', '<em>Future.</em>', 'On Your Terms.'];
+const heroEl = document.getElementById('hero-heading');
+let delay = 0.8;
+heroLines.forEach((line, li) => {
+  const words = line.split(' ');
+  words.forEach((w, wi) => {
+    const span = document.createElement('span');
+    span.className = 'word'; span.innerHTML = w + (wi < words.length - 1 ? ' ' : '');
+    span.style.animationDelay = delay + 's'; delay += 0.08;
+    heroEl.appendChild(span);
   });
+  if(li < heroLines.length - 1) heroEl.appendChild(document.createElement('br'));
+});
 
-  // Labels
-  const labels = ['Details','Goals','Done'];
-  ['pl1','pl2','pl3'].forEach((id,i)=>{
-    const el = document.getElementById(id);
-    el.className = 'prog-label' + (i===n-1 ? ' active' : i<n-1 ? ' done' : '');
+/* ── NAV SCROLL ── */
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 60); });
+
+/* ── SCROLL REVEAL ── */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-scale').forEach(el => revealObs.observe(el));
+
+/* ── CHART BARS ── */
+const chartObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      e.target.querySelectorAll('.chart-bar-fill').forEach((bar, i) => { setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, i * 150); });
+      chartObs.unobserve(e.target);
+    }
   });
-  document.getElementById('step-label-text').textContent = `Step ${n} of 3`;
+}, { threshold: 0.4 });
+const pv = document.getElementById('proc-visual');
+if(pv) chartObs.observe(pv);
 
+/* ── MAGNETIC HOVER ── */
+document.querySelectorAll('.btn-primary, .btn-white, .nav-cta').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const r = btn.getBoundingClientRect();
+    btn.style.transform = `translate(${(e.clientX - r.left - r.width/2) * 0.25}px, ${(e.clientY - r.top - r.height/2) * 0.25}px)`;
+  });
+  btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+});
+
+/* ── SERVICE CARD TILT ── */
+document.querySelectorAll('.service-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transform = `translateY(-6px) rotateX(${-y * 4}deg) rotateY(${x * 4}deg)`;
+  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+
+/* ═══════════════════════════════════════════
+   CONSULTATION MODAL
+═══════════════════════════════════════════ */
+const modal = document.getElementById('consultation-modal');
+let mCurrentStep = 1;
+let mConsentChecked = false;
+
+function openModal() {
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  // Reset to step 1 each time
+  resetModal();
+}
+
+function closeModal() {
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function resetModal() {
+  mCurrentStep = 1;
+  mConsentChecked = false;
+  document.getElementById('m-step-1').style.display = 'block';
+  document.getElementById('m-step-2').style.display = 'none';
+  document.getElementById('modal-success').classList.remove('show');
+  document.getElementById('m-prog-fill').style.width = '33%';
+  // Reset step dots
+  ['msd1','msd2','msd3'].forEach((id,i) => {
+    document.getElementById(id).className = 'm-step-dot' + (i===0?' active':'');
+  });
+  // Reset progress labels
+  ['mpl1','mpl2','mpl3'].forEach((id,i) => {
+    document.getElementById(id).className = 'm-prog-label' + (i===0?' active':'');
+  });
+  // Reset form fields
+  document.getElementById('m-inp-name').value = '';
+  document.getElementById('m-inp-email').value = '';
+  document.getElementById('m-inp-phone').value = '';
+  document.getElementById('m-inp-goal').value = '';
+  document.getElementById('m-inp-goal').classList.remove('has-value');
+  document.getElementById('m-consent-box').classList.remove('checked');
+  document.getElementById('m-consent-box').setAttribute('aria-checked','false');
+  document.getElementById('m-consent-label').style.color = '';
+  ['mf-name','mf-email','mf-phone','mf-goal'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.remove('valid','error');
+  });
+  // Reset next button
+  const nb = document.getElementById('m-next-btn');
+  nb.classList.remove('m-loading'); nb.disabled = false;
+  const sb = document.getElementById('m-submit-btn');
+  sb.classList.remove('m-loading'); sb.disabled = false;
+}
+
+function goToModalStep(n) {
+  document.getElementById('m-step-1').style.display = n===1?'block':'none';
+  document.getElementById('m-step-2').style.display = n===2?'block':'none';
+  mCurrentStep = n;
+  document.getElementById('m-prog-fill').style.width = n===1?'33%':n===2?'66%':'100%';
+  ['msd1','msd2','msd3'].forEach((id,i) => {
+    document.getElementById(id).className = 'm-step-dot' + (i===n-1?' active':i<n-1?' done':'');
+  });
+  ['mpl1','mpl2','mpl3'].forEach((id,i) => {
+    document.getElementById(id).className = 'm-prog-label' + (i===n-1?' active':i<n-1?' done':'');
+  });
   // Fade in new step
-  const stepEl = document.getElementById('step-'+n);
-  if(stepEl){ stepEl.style.opacity='0'; stepEl.style.transform='translateY(16px)'; stepEl.style.transition='none';
-    requestAnimationFrame(()=>{ stepEl.style.transition='opacity .5s var(--easing), transform .5s var(--easing)'; stepEl.style.opacity='1'; stepEl.style.transform='translateY(0)'; }); }
+  const stepEl = document.getElementById('m-step-'+n);
+  if(stepEl) {
+    stepEl.style.opacity='0'; stepEl.style.transform='translateY(14px)'; stepEl.style.transition='none';
+    requestAnimationFrame(()=>{
+      stepEl.style.transition='opacity .45s cubic-bezier(0.16,1,0.3,1), transform .45s cubic-bezier(0.16,1,0.3,1)';
+      stepEl.style.opacity='1'; stepEl.style.transform='translateY(0)';
+    });
+  }
 }
 
-/* ═══════════════════════════════════════
-   VALIDATION
-═══════════════════════════════════════ */
-function setValid(id){ document.getElementById(id).classList.remove('error'); document.getElementById(id).classList.add('valid'); }
-function setError(id){ document.getElementById(id).classList.add('error'); document.getElementById(id).classList.remove('valid'); }
-function clearState(id){ document.getElementById(id).classList.remove('error','valid'); }
+/* Open triggers */
+document.querySelectorAll('.open-modal-btn').forEach(btn => {
+  btn.addEventListener('click', openModal);
+});
 
-function validateStep1(){
+/* Close triggers */
+document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+/* ── Modal Validation ── */
+function mSetValid(id){ const el=document.getElementById(id); if(el){el.classList.remove('error');el.classList.add('valid');} }
+function mSetError(id){ const el=document.getElementById(id); if(el){el.classList.add('error');el.classList.remove('valid');} }
+function mClearState(id){ const el=document.getElementById(id); if(el) el.classList.remove('error','valid'); }
+
+function mValidateStep1(){
   let ok = true;
-  const name = document.getElementById('inp-name').value.trim();
-  const email = document.getElementById('inp-email').value.trim();
-  const phone = document.getElementById('inp-phone').value.trim();
-
-  if(name.length < 2){ setError('f-name'); ok=false; } else setValid('f-name');
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setError('f-email'); ok=false; } else setValid('f-email');
-  if(!/^\d{10}$/.test(phone)){ setError('f-phone'); ok=false; } else setValid('f-phone');
-
+  const name = document.getElementById('m-inp-name').value.trim();
+  const email = document.getElementById('m-inp-email').value.trim();
+  const phone = document.getElementById('m-inp-phone').value.trim();
+  if(name.length < 2){ mSetError('mf-name'); ok=false; } else mSetValid('mf-name');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ mSetError('mf-email'); ok=false; } else mSetValid('mf-email');
+  if(!/^\d{10}$/.test(phone)){ mSetError('mf-phone'); ok=false; } else mSetValid('mf-phone');
   return ok;
 }
-
-function validateStep2(){
+function mValidateStep2(){
   let ok = true;
-  const goal = document.getElementById('inp-goal').value;
-  if(!goal){ setError('f-goal'); ok=false; } else clearState('f-goal');
-  if(!consentChecked){ document.getElementById('consent-label').style.color='var(--error)'; ok=false; }
-  else document.getElementById('consent-label').style.color='';
+  const goal = document.getElementById('m-inp-goal').value;
+  if(!goal){ mSetError('mf-goal'); ok=false; } else mClearState('mf-goal');
+  if(!mConsentChecked){ document.getElementById('m-consent-label').style.color='#E07070'; ok=false; }
+  else document.getElementById('m-consent-label').style.color='';
   return ok;
 }
 
 /* Live validation */
-document.getElementById('inp-name').addEventListener('blur', ()=>{
-  const v=document.getElementById('inp-name').value.trim();
-  if(v) v.length<2 ? setError('f-name') : setValid('f-name');
+document.getElementById('m-inp-name').addEventListener('blur', ()=>{
+  const v=document.getElementById('m-inp-name').value.trim();
+  if(v) v.length<2?mSetError('mf-name'):mSetValid('mf-name');
 });
-document.getElementById('inp-email').addEventListener('blur', ()=>{
-  const v=document.getElementById('inp-email').value.trim();
-  if(v) /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? setValid('f-email') : setError('f-email');
+document.getElementById('m-inp-email').addEventListener('blur', ()=>{
+  const v=document.getElementById('m-inp-email').value.trim();
+  if(v) /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)?mSetValid('mf-email'):mSetError('mf-email');
 });
-document.getElementById('inp-phone').addEventListener('input', e=>{
+document.getElementById('m-inp-phone').addEventListener('input', e=>{
   e.target.value = e.target.value.replace(/\D/g,'').slice(0,10);
-  if(e.target.value.length===10) setValid('f-phone');
-  else if(e.target.value.length>0) clearState('f-phone');
+  if(e.target.value.length===10) mSetValid('mf-phone');
+  else if(e.target.value.length>0) mClearState('mf-phone');
 });
-document.getElementById('inp-goal').addEventListener('change', e=>{
-  e.target.classList.add('has-value'); clearState('f-goal');
+document.getElementById('m-inp-goal').addEventListener('change', e=>{
+  e.target.classList.add('has-value'); mClearState('mf-goal');
 });
 
-/* ═══════════════════════════════════════
-   CONSENT CHECKBOX
-═══════════════════════════════════════ */
-let consentChecked = false;
-const consentBox = document.getElementById('consent-box');
-function toggleConsent(){
-  consentChecked = !consentChecked;
-  consentBox.classList.toggle('checked', consentChecked);
-  consentBox.setAttribute('aria-checked', consentChecked);
-  if(consentChecked) document.getElementById('consent-label').style.color='';
+/* Consent */
+const mConsentBox = document.getElementById('m-consent-box');
+function toggleMConsent(){
+  mConsentChecked = !mConsentChecked;
+  mConsentBox.classList.toggle('checked', mConsentChecked);
+  mConsentBox.setAttribute('aria-checked', mConsentChecked);
+  if(mConsentChecked) document.getElementById('m-consent-label').style.color='';
 }
-consentBox.addEventListener('click', toggleConsent);
-consentBox.addEventListener('keydown', e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); toggleConsent(); } });
+mConsentBox.addEventListener('click', toggleMConsent);
+mConsentBox.addEventListener('keydown', e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); toggleMConsent(); } });
 
-/* ═══════════════════════════════════════
-   STEP 1 NEXT
-═══════════════════════════════════════ */
-document.getElementById('next-btn-1').addEventListener('click', ()=>{
-  if(!validateStep1()) return;
-
-  // Brief loading feel
-  const btn = document.getElementById('next-btn-1');
-  btn.classList.add('loading'); btn.disabled = true;
-  setTimeout(()=>{
-    btn.classList.remove('loading'); btn.disabled = false;
-    goToStep(2);
-  }, 700);
+/* Step 1 → 2 */
+document.getElementById('m-next-btn').addEventListener('click', ()=>{
+  if(!mValidateStep1()) return;
+  const btn = document.getElementById('m-next-btn');
+  btn.classList.add('m-loading'); btn.disabled = true;
+  setTimeout(()=>{ btn.classList.remove('m-loading'); btn.disabled=false; goToModalStep(2); }, 700);
 });
 
-/* ═══════════════════════════════════════
-   FORM SUBMIT
-═══════════════════════════════════════ */
-document.getElementById('lead-form').addEventListener('submit', async(e)=>{
+/* Submit */
+document.getElementById('modal-lead-form').addEventListener('submit', async(e)=>{
   e.preventDefault();
-  if(!validateStep2()) return;
+  if(!mValidateStep2()) return;
+  const sb = document.getElementById('m-submit-btn');
+  sb.classList.add('m-loading'); sb.disabled = true;
 
-  const submitBtn = document.getElementById('submit-btn');
-  submitBtn.classList.add('loading'); submitBtn.disabled = true;
-
-  // ── Collect data ──
   const leadData = {
-    name:  document.getElementById('inp-name').value.trim(),
-    email: document.getElementById('inp-email').value.trim(),
-    phone: '+91' + document.getElementById('inp-phone').value.trim(),
-    goal:  document.getElementById('inp-goal').value,
+    name:  document.getElementById('m-inp-name').value.trim(),
+    email: document.getElementById('m-inp-email').value.trim(),
+    phone: '+91' + document.getElementById('m-inp-phone').value.trim(),
+    goal:  document.getElementById('m-inp-goal').value,
     timestamp: new Date().toISOString()
   };
 
   // ── API INTEGRATION PLACEHOLDER ──
-  // Replace the block below with your actual API call, e.g.:
+  // Replace with your actual API / Firebase call:
   //
-  // const resp = await fetch('https://your-api.com/leads', {
+  // await fetch('https://your-api.com/leads', {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
   //   body: JSON.stringify(leadData)
   // });
   //
-  // Firebase example:
-  // import { db } from './firebase-config';
-  // import { collection, addDoc } from 'firebase/firestore';
-  // await addDoc(collection(db, 'leads'), leadData);
-  //
-  console.log('Lead data:', leadData); // Remove in production
+  console.log('Lead captured:', leadData);
 
-  await new Promise(r => setTimeout(r, 1400)); // Simulated API delay
+  await new Promise(r => setTimeout(r, 1400));
 
-  // ── Success ──
-  submitBtn.classList.remove('loading');
+  sb.classList.remove('m-loading');
 
-  // Update progress to done
-  document.getElementById('prog-fill').style.width = '100%';
-  document.getElementById('sd3').className = 'step-dot active';
-  document.getElementById('sd2').className = 'step-dot done';
-  document.getElementById('pl3').className = 'prog-label active';
-  document.getElementById('step-label-text').textContent = 'Complete';
+  // Progress complete
+  document.getElementById('m-prog-fill').style.width = '100%';
+  document.getElementById('msd3').className = 'm-step-dot active';
+  document.getElementById('msd2').className = 'm-step-dot done';
+  document.getElementById('mpl3').className = 'm-prog-label active';
 
-  // Show success overlay
-  const overlay = document.getElementById('success-overlay');
-  overlay.classList.add('show');
+  // Show success
+  document.getElementById('modal-success').classList.add('show');
 
-  // Redirect after 3 seconds
-  // Change 'index.html' to your actual homepage URL
-  setTimeout(()=>{
-    window.location.href = 'index.html';
-  }, 3200);
-});
-
-/* ═══════════════════════════════════════
-   MAGNETIC BUTTONS
-═══════════════════════════════════════ */
-document.querySelectorAll('.submit-btn').forEach(btn=>{
-  btn.addEventListener('mousemove', e=>{
-    const r=btn.getBoundingClientRect();
-    const dx=(e.clientX-r.left-r.width/2)*.2;
-    const dy=(e.clientY-r.top-r.height/2)*.2;
-    btn.style.transform=`translate(${dx}px,${dy}px)`;
-  });
-  btn.addEventListener('mouseleave',()=>{ btn.style.transform=''; });
+  // Auto-close after 3s
+  setTimeout(()=>{ closeModal(); }, 3200);
 });
 </script>
 </body>
