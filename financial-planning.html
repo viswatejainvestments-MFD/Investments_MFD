@@ -629,62 +629,93 @@ document.querySelectorAll('.btn-primary,.btn-white,.nav-cta,.sticky-btn').forEac
 function updateFill(el){const pct=((el.value-el.min)/(el.max-el.min))*100;el.style.background=`linear-gradient(to right,#B8960C ${pct}%,rgba(255,255,255,0.1) ${pct}%)`;}
 document.querySelectorAll('.calc-input').forEach(i=>{updateFill(i);i.addEventListener('input',()=>updateFill(i));});
 
+/* ── FORMAT INR ── */
+function fmtINR(n){
+  if(n>=1e7) return '₹'+(n/1e7).toFixed(2)+' Cr';
+  if(n>=1e5) return '₹'+(n/1e5).toFixed(1)+' L';
+  return '₹'+Math.round(n).toLocaleString('en-IN');
+}
+
 /* ── SIP CALCULATOR ── */
-function fmtINR(n){if(n>=1e7)return'₹'+(n/1e7).toFixed(2)+' Cr';if(n>=1e5)return'₹'+(n/1e5).toFixed(1)+' L';return'₹'+Math.round(n).toLocaleString('en-IN');}
-
 function calcSIP(){
-  const monthly=+document.getElementById('sip-amount').value;
-  const annualRate=+document.getElementById('sip-return').value/100;
-  const years=+document.getElementById('sip-years').value;
-  const stepup=+document.getElementById('sip-stepup').value/100;
-  const r=annualRate/12;
-  let corpus=0,invested=0,m=monthly;
-  const yearlyCorpus=[],yearlyInvested=[];
-  for(let y=1;y<=years;y++){
-    for(let mo=0;mo<12;mo++){corpus=(corpus+m)*(1+r);invested+=m;}
-    yearlyCorpus.push(corpus);yearlyInvested.push(invested);
-    if(stepup>0)m=monthly*Math.pow(1+stepup,y);
+  const monthly = +document.getElementById('sip-amount').value;
+  const annualRate = +document.getElementById('sip-return').value / 100;
+  const years = +document.getElementById('sip-years').value;
+  const stepup = +document.getElementById('sip-stepup').value / 100;
+  const r = annualRate / 12;
+
+  let corpus = 0, invested = 0, m = monthly;
+  const yearlyCorpus = [], yearlyInvested = [];
+
+  for(let y = 1; y <= years; y++){
+    for(let mo = 0; mo < 12; mo++){
+      corpus = (corpus + m) * (1 + r);
+      invested += m;
+    }
+    yearlyCorpus.push(corpus);
+    yearlyInvested.push(invested);
+    if(stepup > 0) m = monthly * Math.pow(1 + stepup, y);
   }
-  const gains=corpus-invested;
-  document.getElementById('corpus-num').textContent=fmtINR(corpus).replace('₹','');
-  document.getElementById('corpus-val').innerHTML=fmtINR(corpus).replace('₹','₹<span id="corpus-num">')+' </span>';
-  document.getElementById('corpus-val').textContent=fmtINR(corpus);
-  document.getElementById('invested-val').textContent=fmtINR(invested);
-  document.getElementById('gains-val').textContent=fmtINR(gains);
-  document.getElementById('multiple-val').textContent=(corpus/invested).toFixed(1)+'x';
-  document.getElementById('cagr-val').textContent=document.getElementById('sip-return').value+'%';
-  drawChart(yearlyCorpus,yearlyInvested,years);
+
+  const gains = corpus - invested;
+
+  /* ── FIX: update corpus display cleanly ── */
+  const corpusFormatted = fmtINR(corpus);
+  // Split on ₹ to get just the number+unit part for the <span>
+  const corpusNumPart = corpusFormatted.replace('₹', '');
+  document.getElementById('corpus-val').innerHTML = '₹<span id="corpus-num" style="color:var(--gold-light)">' + corpusNumPart + '</span>';
+
+  document.getElementById('invested-val').textContent = fmtINR(invested);
+  document.getElementById('gains-val').textContent = fmtINR(gains);
+  document.getElementById('multiple-val').textContent = (corpus / invested).toFixed(1) + 'x';
+  document.getElementById('cagr-val').textContent = document.getElementById('sip-return').value + '%';
+
+  drawChart(yearlyCorpus, yearlyInvested, years);
 }
 
-function drawChart(corpus,invested,years){
-  const svg=document.getElementById('sip-chart-svg');
-  const W=380,H=140,pad=10;
-  const maxV=Math.max(...corpus);
-  function px(i){return pad+(i/(years-1||1))*(W-pad*2);}
-  function py(v){return H-pad-(v/maxV)*(H-pad*2);}
-  let lineD='',areaD='',iLineD='';
-  corpus.forEach((v,i)=>{
-    const x=px(i),y=py(v);
-    lineD+=(i===0?`M${x},${y}`:`L${x},${y}`);
-    areaD+=(i===0?`M${px(0)},${H-pad}L${x},${y}`:`L${x},${y}`);
+/* ── CHART ── */
+function drawChart(corpus, invested, years){
+  const W = 380, H = 140, pad = 10;
+  const maxV = Math.max(...corpus);
+  function px(i){ return pad + (i / (years - 1 || 1)) * (W - pad * 2); }
+  function py(v){ return H - pad - (v / maxV) * (H - pad * 2); }
+
+  let lineD = '', areaD = '', iLineD = '';
+  corpus.forEach((v, i) => {
+    const x = px(i), y = py(v);
+    lineD += (i === 0 ? `M${x},${y}` : `L${x},${y}`);
+    areaD += (i === 0 ? `M${px(0)},${H - pad}L${x},${y}` : `L${x},${y}`);
   });
-  areaD+=`L${px(years-1)},${H-pad}Z`;
-  invested.forEach((v,i)=>{iLineD+=(i===0?`M${px(i)},${py(v)}`:`L${px(i)},${py(v)}`);});
-  document.getElementById('chart-line').setAttribute('d',lineD);
-  document.getElementById('chart-area').setAttribute('d',areaD);
-  document.getElementById('chart-invested').setAttribute('d',iLineD);
+  areaD += `L${px(years - 1)},${H - pad}Z`;
+  invested.forEach((v, i) => {
+    iLineD += (i === 0 ? `M${px(i)},${py(v)}` : `L${px(i)},${py(v)}`);
+  });
+
+  document.getElementById('chart-line').setAttribute('d', lineD);
+  document.getElementById('chart-area').setAttribute('d', areaD);
+  document.getElementById('chart-invested').setAttribute('d', iLineD);
 }
 
-/* Label updaters */
-document.getElementById('sip-amount').addEventListener('input',function(){
-  const v=+this.value;document.getElementById('sip-val').textContent='₹'+v.toLocaleString('en-IN');calcSIP();});
-document.getElementById('sip-return').addEventListener('input',function(){
-  document.getElementById('return-val').textContent=this.value+'%';calcSIP();});
-document.getElementById('sip-years').addEventListener('input',function(){
-  document.getElementById('years-val').textContent=this.value+' yrs';calcSIP();});
-document.getElementById('sip-stepup').addEventListener('input',function(){
-  document.getElementById('stepup-val').textContent=this.value+'%';calcSIP();});
+/* ── SLIDER LABEL UPDATERS ── */
+document.getElementById('sip-amount').addEventListener('input', function(){
+  const v = +this.value;
+  document.getElementById('sip-val').textContent = '₹' + v.toLocaleString('en-IN');
+  calcSIP();
+});
+document.getElementById('sip-return').addEventListener('input', function(){
+  document.getElementById('return-val').textContent = this.value + '%';
+  calcSIP();
+});
+document.getElementById('sip-years').addEventListener('input', function(){
+  document.getElementById('years-val').textContent = this.value + ' yrs';
+  calcSIP();
+});
+document.getElementById('sip-stepup').addEventListener('input', function(){
+  document.getElementById('stepup-val').textContent = this.value + '%';
+  calcSIP();
+});
 
+/* ── INITIAL RENDER ── */
 calcSIP();
 </script>
 </body>
