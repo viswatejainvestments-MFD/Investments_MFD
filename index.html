@@ -2076,6 +2076,10 @@ document.querySelectorAll('.service-card').forEach(card => {
 /* ═══════════════════════════════════════════
    CONSULTATION MODAL
 ═══════════════════════════════════════════ */
+
+/* ── Google Sheets endpoint ── */
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwmiZHs3G12_iv9oVyGVfnIDEtC6FFp-V7fMV3yXxR1j7rFLgK1kMarqwuOS3NLPZ4O/exec';
+
 const modal = document.getElementById('consultation-modal');
 let mCurrentStep = 1;
 let mConsentChecked = false;
@@ -2214,44 +2218,54 @@ document.getElementById('m-next-btn').addEventListener('click', ()=>{
   setTimeout(()=>{ btn.classList.remove('m-loading'); btn.disabled=false; goToModalStep(2); }, 700);
 });
 
-/* Submit */
-document.getElementById('modal-lead-form').addEventListener('submit', async(e)=>{
+/* ── Submit & send to Google Sheets ── */
+document.getElementById('modal-lead-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  if(!mValidateStep2()) return;
+  if (!mValidateStep2()) return;
+
   const sb = document.getElementById('m-submit-btn');
-  sb.classList.add('m-loading'); sb.disabled = true;
+  sb.classList.add('m-loading');
+  sb.disabled = true;
 
   const leadData = {
-    name:  document.getElementById('m-inp-name').value.trim(),
-    email: document.getElementById('m-inp-email').value.trim(),
-    phone: '+91' + document.getElementById('m-inp-phone').value.trim(),
-    goal:  document.getElementById('m-inp-goal').value,
-    timestamp: new Date().toISOString()
+    name:      document.getElementById('m-inp-name').value.trim(),
+    email:     document.getElementById('m-inp-email').value.trim(),
+    phone:     '+91' + document.getElementById('m-inp-phone').value.trim(),
+    goal:      document.getElementById('m-inp-goal').value,
+    timestamp: new Date().toISOString(),
+    source:    document.referrer || 'Direct'
   };
 
-  // ── API INTEGRATION PLACEHOLDER ──
-  // Replace with your actual API / Firebase call:
-  //
-  // await fetch('https://your-api.com/leads', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(leadData)
-  // });
-  //
-  console.log('Lead captured:', leadData);
-
-  await new Promise(r => setTimeout(r, 1400));
+  try {
+    /* Google Apps Script requires a no-cors fetch with FormData or a
+       regular fetch that tolerates an opaque response.
+       Using 'no-cors' mode: the request goes through but we get an
+       opaque response — that's fine, the sheet still records the row. */
+    await fetch(GOOGLE_SHEETS_URL, {
+      method: 'POST',
+      mode:   'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(leadData)
+    });
+  } catch (err) {
+    /* Even if the network call fails, show success UX so the user
+       isn't blocked. You can add fallback logic here if needed. */
+    console.warn('Sheet submission error:', err);
+  }
 
   sb.classList.remove('m-loading');
 
+  /* Update progress to 100% */
   document.getElementById('m-prog-fill').style.width = '100%';
   document.getElementById('msd3').className = 'm-step-dot active';
   document.getElementById('msd2').className = 'm-step-dot done';
   document.getElementById('mpl3').className = 'm-prog-label active';
 
+  /* Show success overlay */
   document.getElementById('modal-success').classList.add('show');
 
-  setTimeout(()=>{ closeModal(); }, 3200);
+  /* Auto-close after 3.2 s */
+  setTimeout(() => { closeModal(); }, 3200);
 });
 </script>
 </body>
