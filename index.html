@@ -165,7 +165,7 @@ nav.scrolled {
   font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
   padding: 10px 22px; border: 1px solid var(--gold);
   background: transparent; color: var(--gold);
-  text-decoration: none;
+  text-decoration: none; cursor: none;
   transition: all 0.35s var(--easing);
   position: relative; overflow: hidden;
 }
@@ -197,7 +197,6 @@ nav.scrolled {
     radial-gradient(ellipse 70% 90% at 88% 45%, rgba(212,175,55,0.07) 0%, transparent 65%),
     radial-gradient(ellipse 45% 50% at 5% 85%, rgba(212,175,55,0.05) 0%, transparent 60%);
 }
-/* Animated grid lines */
 .hero-grid {
   position: absolute; inset: 0; z-index: 0;
   background-image:
@@ -211,7 +210,6 @@ nav.scrolled {
   from { background-position: 0 0, 0 0; }
   to   { background-position: 80px 80px, 80px 80px; }
 }
-/* Vertical accent lines */
 .hero-line { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border-light); }
 .hero-line:nth-child(1) { right: 45%; animation: lineFade 3s 0.5s both; }
 .hero-line:nth-child(2) { right: 32%; animation: lineFade 3s 0.8s both; }
@@ -241,7 +239,6 @@ nav.scrolled {
   letter-spacing: -0.015em;
 }
 .hero h1 em { font-style: italic; color: var(--gold); }
-/* Word-by-word reveal */
 .hero h1 .word {
   display: inline-block;
   opacity: 0; transform: translateY(40px);
@@ -290,7 +287,6 @@ nav.scrolled {
 .btn-ghost:hover { color: var(--gold); }
 .btn-ghost:hover svg { transform: translateX(6px); }
 
-/* Floating stat cards */
 .hero-stats {
   position: absolute; bottom: 64px; right: 60px;
   display: flex; gap: 40px;
@@ -323,7 +319,6 @@ nav.scrolled {
   color: var(--muted); margin-top: 4px;
 }
 
-/* Scroll indicator */
 .scroll-hint {
   position: absolute; bottom: 32px; left: 60px;
   display: flex; align-items: center; gap: 12px;
@@ -394,7 +389,6 @@ nav.scrolled {
   line-height: 1.85; max-width: 520px; font-weight: 300;
 }
 
-/* Scroll reveal */
 .reveal {
   opacity: 0; transform: translateY(40px);
   transition: opacity 0.8s var(--easing), transform 0.8s var(--easing);
@@ -428,7 +422,6 @@ nav.scrolled {
   pointer-events: none;
 }
 .about-visual { position: relative; height: 500px; }
-
 .about-card-main {
   position: absolute; inset: 0 50px 50px 0;
   background: var(--charcoal);
@@ -441,7 +434,6 @@ nav.scrolled {
   padding: 40px;
   background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
 }
-/* Animated floating orb inside the dark card */
 .about-orb {
   position: absolute; top: 20%; left: 40%;
   width: 200px; height: 200px; border-radius: 50%;
@@ -463,7 +455,6 @@ nav.scrolled {
   font-family: 'DM Mono', monospace;
   font-size: 0.7rem; color: rgba(255,255,255,0.45); letter-spacing: 0.1em;
 }
-
 .about-badge {
   position: absolute; right: 0; bottom: 0;
   width: 160px; height: 160px;
@@ -482,8 +473,6 @@ nav.scrolled {
   font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
   color: rgba(255,255,255,0.8); text-align: center;
 }
-
-/* Floating mini-card */
 .about-float-card {
   position: absolute; top: 30px; right: 20px;
   background: white; border: 1px solid var(--border);
@@ -504,7 +493,6 @@ nav.scrolled {
   font-size: 0.6rem; letter-spacing: 0.12em; color: var(--muted);
   text-transform: uppercase; margin-top: 3px;
 }
-
 .about-features { margin-top: 40px; display: flex; flex-direction: column; gap: 24px; }
 .about-feature {
   display: flex; gap: 20px; align-items: flex-start;
@@ -595,15 +583,12 @@ nav.scrolled {
 }
 .service-card:hover::after { transform: scaleX(1); }
 .service-card:hover { background: white; transform: translateY(-6px); box-shadow: 0 24px 64px rgba(0,0,0,0.08); }
-
-/* Sliding background on hover */
 .service-card-bg {
   position: absolute; inset: 0;
   background: linear-gradient(135deg, rgba(184,150,12,0.04), transparent);
   opacity: 0; transition: opacity 0.4s;
 }
 .service-card:hover .service-card-bg { opacity: 1; }
-
 .service-num {
   font-family: 'Cormorant Garamond', serif;
   font-size: 4.5rem; font-weight: 300; color: rgba(240,230,184,0.5);
@@ -624,7 +609,7 @@ nav.scrolled {
   margin-top: 32px;
   font-family: 'DM Mono', monospace;
   font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--gold);
+  color: var(--gold); text-decoration: none;
   transform: translateX(-10px); opacity: 0;
   transition: opacity 0.3s, transform 0.4s var(--easing);
 }
@@ -633,7 +618,7 @@ nav.scrolled {
 .service-card:hover .service-arrow svg { transform: translateX(4px); }
 
 /* ─────────────────────────────────────────
-   PROCESS (DARK)
+   PROCESS
 ───────────────────────────────────────── */
 .process {
   background: var(--charcoal);
@@ -656,7 +641,6 @@ nav.scrolled {
 .process .section-tag::before { background: var(--gold-light); }
 .process .section-title { color: white; }
 .process .section-sub { color: rgba(255,255,255,0.42); }
-
 .process-layout {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 80px; align-items: start; margin-top: 64px;
@@ -686,7 +670,6 @@ nav.scrolled {
 .process-step:hover .step-num { color: rgba(212,175,55,0.5); }
 .step-title { font-size: 1rem; font-weight: 500; color: white; margin-bottom: 8px; }
 .step-desc { font-size: 0.82rem; color: rgba(255,255,255,0.42); line-height: 1.72; }
-
 .process-visual {
   background: rgba(255,255,255,0.02);
   border: 1px solid rgba(212,175,55,0.12);
@@ -831,7 +814,6 @@ nav.scrolled {
     radial-gradient(ellipse 40% 40% at 20% 80%, rgba(212,175,55,0.04), transparent 60%);
   pointer-events: none;
 }
-/* Animated diagonal line texture */
 .amc-section::after {
   content: ''; position: absolute; inset: 0;
   background-image: repeating-linear-gradient(
@@ -848,7 +830,6 @@ nav.scrolled {
 .amc-section .section-tag::before { background: var(--gold-light); }
 .amc-section .section-title { color: white; }
 .amc-section .section-sub { color: rgba(255,255,255,0.42); margin-bottom: 56px; }
-
 .amc-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -870,7 +851,6 @@ nav.scrolled {
   transform: translateY(-5px);
   box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(212,175,55,0.2);
 }
-/* Gold shimmer sweep on hover */
 .amc-card-glow {
   position: absolute; inset: 0;
   background: linear-gradient(105deg, transparent 40%, rgba(212,175,55,0.06) 50%, transparent 60%);
@@ -879,7 +859,6 @@ nav.scrolled {
   pointer-events: none;
 }
 .amc-card:hover .amc-card-glow { transform: translateX(100%); }
-/* Top accent line that grows */
 .amc-card::before {
   content: ''; position: absolute; top: 0; left: 0;
   height: 2px; width: 0;
@@ -887,7 +866,6 @@ nav.scrolled {
   transition: width 0.5s var(--easing);
 }
 .amc-card:hover::before { width: 100%; }
-
 .amc-icon {
   width: 44px; height: 44px;
   color: var(--gold);
@@ -897,7 +875,6 @@ nav.scrolled {
 }
 .amc-icon svg { width: 100%; height: 100%; }
 .amc-card:hover .amc-icon { opacity: 1; transform: scale(1.1) rotate(-5deg); }
-
 .amc-name {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.1rem; font-weight: 400;
@@ -916,7 +893,6 @@ nav.scrolled {
   transition: color 0.3s, border-color 0.3s;
 }
 .amc-card:hover .amc-tag { color: var(--gold-light); border-color: rgba(212,175,55,0.35); }
-
 .amc-footer-note {
   display: flex; align-items: center; gap: 20px;
   font-family: 'DM Mono', monospace;
@@ -1020,6 +996,417 @@ footer::before {
 }
 .footer-legal a:hover { color: rgba(255,255,255,0.6); }
 
+/* ═══════════════════════════════════════════════
+   CONSULTATION POPUP MODAL
+═══════════════════════════════════════════════ */
+#consultation-modal {
+  position: fixed; inset: 0; z-index: 50000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s var(--easing);
+}
+#consultation-modal.open {
+  opacity: 1; pointer-events: all;
+}
+
+/* Backdrop */
+.modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(8,8,8,0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: none;
+}
+
+/* Modal card */
+.modal-card {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 480px;
+  transform: translateY(32px) scale(0.97);
+  transition: transform 0.5s var(--easing);
+}
+#consultation-modal.open .modal-card {
+  transform: translateY(0) scale(1);
+}
+
+.modal-glass {
+  background: rgba(18, 16, 12, 0.92);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(212,175,55,0.22);
+  padding: 52px 48px 44px;
+  position: relative; overflow: hidden;
+}
+
+/* Ambient orb inside modal */
+.modal-glass::before {
+  content: '';
+  position: absolute; top: -60px; left: -60px;
+  width: 240px; height: 240px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,175,55,0.07), transparent 70%);
+  pointer-events: none;
+  animation: orbDrift 12s ease-in-out infinite;
+}
+.modal-glass::after {
+  content: '';
+  position: absolute; bottom: -60px; right: -40px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,175,55,0.05), transparent 70%);
+  pointer-events: none;
+  animation: orbDrift 16s 4s ease-in-out infinite reverse;
+}
+@keyframes orbDrift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, -20px); }
+}
+
+/* Top accent bar */
+.modal-accent-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--gold) 40%, var(--gold-light) 60%, transparent 100%);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.8s 0.1s var(--easing);
+}
+#consultation-modal.open .modal-accent-bar { transform: scaleX(1); }
+
+/* Close button */
+.modal-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(212,175,55,0.2);
+  background: transparent; cursor: none;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.4);
+  transition: border-color 0.3s, color 0.3s, background 0.3s;
+  z-index: 2;
+}
+.modal-close:hover {
+  border-color: rgba(212,175,55,0.5);
+  color: var(--gold-light);
+  background: rgba(212,175,55,0.06);
+}
+
+/* Modal header */
+.modal-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.26em; text-transform: uppercase;
+  color: var(--gold);
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 18px; position: relative;
+}
+.modal-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+
+.modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem; font-weight: 300; line-height: 1.12;
+  color: white; margin-bottom: 8px; position: relative;
+}
+.modal-title em { font-style: italic; color: var(--gold-light); }
+
+.modal-sub {
+  font-size: 0.8rem; color: rgba(255,255,255,0.35);
+  line-height: 1.75; margin-bottom: 32px; font-weight: 300;
+  position: relative;
+}
+
+/* Progress bar */
+.modal-progress-wrap { margin-bottom: 28px; }
+.modal-progress-labels {
+  display: flex; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.m-prog-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(255,255,255,0.15);
+  transition: color 0.3s;
+}
+.m-prog-label.active { color: var(--gold); }
+.m-prog-label.done { color: rgba(212,175,55,0.4); }
+.modal-progress-track {
+  height: 2px; background: rgba(255,255,255,0.07);
+  position: relative; overflow: hidden; border-radius: 2px;
+}
+.modal-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  width: 33%; border-radius: 2px;
+  transition: width 0.6s var(--easing);
+  position: relative;
+}
+.modal-progress-fill::after {
+  content: '';
+  position: absolute; right: -1px; top: -3px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold-light);
+  box-shadow: 0 0 8px var(--gold);
+}
+
+/* Form fields */
+.m-field-group { display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px; }
+.m-field { position: relative; }
+.m-field-label {
+  position: absolute; top: 50%; left: 16px;
+  transform: translateY(-50%);
+  font-size: 0.78rem; color: rgba(255,255,255,0.28);
+  pointer-events: none;
+  transition: top .25s var(--easing), font-size .25s, color .25s, letter-spacing .25s;
+  z-index: 1;
+}
+.m-field-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 300;
+  padding: 20px 16px 8px;
+  outline: none;
+  transition: border-color .3s, background .3s, box-shadow .3s;
+  cursor: none;
+  border-radius: 0;
+  appearance: none;
+}
+.m-field-input::placeholder { color: transparent; }
+.m-field-input:focus,
+.m-field-input:not(:placeholder-shown) {
+  border-color: rgba(212,175,55,0.22);
+  background: rgba(212,175,55,0.03);
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.04), inset 0 1px 0 rgba(212,175,55,0.04);
+}
+.m-field-input:focus ~ .m-field-label,
+.m-field-input:not(:placeholder-shown) ~ .m-field-label {
+  top: 10px; font-size: 0.6rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold);
+}
+.m-field-input:focus { border-color: rgba(212,175,55,0.5); }
+
+/* Phone prefix */
+.m-phone-wrap { position: relative; display: flex; }
+.m-phone-prefix {
+  display: flex; align-items: center;
+  padding: 14px 12px 8px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-right: none;
+  font-size: 0.82rem; color: rgba(255,255,255,0.4);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.06em;
+  transition: border-color .3s, background .3s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.m-phone-wrap:has(.m-field-input:focus) .m-phone-prefix {
+  border-color: rgba(212,175,55,0.5);
+  background: rgba(212,175,55,0.03);
+  color: rgba(255,255,255,0.65);
+}
+.m-phone-wrap .m-field-input { padding-left: 12px; }
+.m-phone-wrap .m-field-label { left: calc(56px + 12px); }
+
+/* Select */
+.m-field-select {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: rgba(255,255,255,0.28);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem; font-weight: 300;
+  padding: 15px 16px;
+  outline: none;
+  cursor: none;
+  border-radius: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color .3s, background .3s, color .3s, box-shadow .3s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8960C' stroke-width='1.3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 12px;
+}
+.m-field-select:focus {
+  border-color: rgba(212,175,55,0.5);
+  background-color: rgba(212,175,55,0.03);
+  color: white;
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.04);
+}
+.m-field-select.has-value { color: white; border-color: rgba(212,175,55,0.22); }
+.m-field-select option { background: #1a1a16; color: white; }
+
+/* Validation */
+.m-field.valid .m-field-input { border-color: rgba(111,191,142,0.35); }
+.m-field.error .m-field-input { border-color: rgba(224,112,112,0.5); box-shadow: 0 0 0 4px rgba(224,112,112,0.05); }
+.m-field-error {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.1em;
+  color: #E07070;
+  margin-top: 5px; padding-left: 2px;
+  height: 0; overflow: hidden; opacity: 0;
+  transition: height .3s var(--easing), opacity .3s;
+}
+.m-field.error .m-field-error { height: 16px; opacity: 1; }
+
+/* Consent */
+.m-consent-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 24px;
+}
+.m-consent-check {
+  width: 17px; height: 17px; flex-shrink: 0;
+  border: 1px solid rgba(212,175,55,0.22);
+  background: rgba(255,255,255,0.03);
+  cursor: none;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+  transition: background .3s, border-color .3s, box-shadow .3s;
+}
+.m-consent-check.checked {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 10px rgba(212,175,55,0.28);
+}
+.m-consent-check::after {
+  content: '';
+  width: 4px; height: 8px;
+  border-right: 1.5px solid white;
+  border-bottom: 1.5px solid white;
+  transform: rotate(45deg) translateY(-1px);
+  opacity: 0; transition: opacity .2s;
+}
+.m-consent-check.checked::after { opacity: 1; }
+.m-consent-text {
+  font-size: 0.72rem; color: rgba(255,255,255,0.28);
+  line-height: 1.7; cursor: none;
+}
+.m-consent-text a { color: var(--gold); text-decoration: none; }
+.m-consent-text a:hover { text-decoration: underline; }
+
+/* Submit button */
+.m-submit-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 17px 24px;
+  cursor: none;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  position: relative; overflow: hidden;
+  transition: color .35s, box-shadow .35s;
+}
+.m-submit-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--gold);
+  transform: translateX(-101%);
+  transition: transform .4s var(--easing);
+  z-index: 0;
+}
+.m-submit-btn:hover::before { transform: translateX(0); }
+.m-submit-btn:hover { color: var(--dark); box-shadow: 0 0 24px rgba(212,175,55,0.22); }
+.m-submit-btn:disabled { opacity: 0.5; pointer-events: none; }
+.m-submit-btn-text, .m-submit-btn-icon { position: relative; z-index: 1; }
+.m-submit-btn-icon { transition: transform .3s var(--easing); }
+.m-submit-btn:hover .m-submit-btn-icon { transform: translateX(6px); }
+.m-spinner {
+  width: 15px; height: 15px;
+  border: 1.5px solid rgba(212,175,55,0.3);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+  display: none; position: relative; z-index: 1;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.m-loading .m-submit-btn-text,
+.m-loading .m-submit-btn-icon { display: none; }
+.m-loading .m-spinner { display: block; }
+
+/* Success overlay */
+.modal-success {
+  position: absolute; inset: 0;
+  background: rgba(18,16,12,0.97);
+  backdrop-filter: blur(20px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 18px; z-index: 10;
+  opacity: 0; pointer-events: none;
+  transition: opacity .5s var(--easing);
+}
+.modal-success.show { opacity: 1; pointer-events: all; }
+.modal-success-ring {
+  width: 68px; height: 68px;
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.modal-success-ring::before {
+  content: '';
+  position: absolute; inset: -6px;
+  border: 1px solid rgba(212,175,55,0.1);
+  border-radius: 50%;
+  animation: ringPulse 2s ease-in-out infinite;
+}
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 0.2; }
+}
+.modal-check-svg { width: 30px; height: 30px; }
+.modal-check-path {
+  stroke: var(--gold-light);
+  stroke-width: 2; fill: none;
+  stroke-dasharray: 50; stroke-dashoffset: 50;
+  stroke-linecap: round;
+  transition: stroke-dashoffset .6s .2s var(--easing);
+}
+.modal-success.show .modal-check-path { stroke-dashoffset: 0; }
+.modal-success-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.7rem; font-weight: 300; color: white;
+  text-align: center; line-height: 1.2;
+}
+.modal-success-title em { color: var(--gold-light); font-style: italic; }
+.modal-success-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.25); text-align: center;
+}
+.modal-success-bar { width: 160px; height: 1px; background: rgba(255,255,255,0.07); }
+.modal-success-bar-fill {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  transition: width 2.5s linear;
+}
+.modal-success.show .modal-success-bar-fill { width: 100%; }
+
+/* Step indicators in modal */
+.modal-step-dots {
+  position: absolute; top: 22px; right: 56px;
+  display: flex; align-items: center; gap: 8px;
+}
+.m-step-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  transition: background .4s, transform .4s var(--easing-back);
+}
+.m-step-dot.active { background: var(--gold); transform: scale(1.4); }
+.m-step-dot.done { background: rgba(212,175,55,0.3); }
+
+/* Modal footer note */
+.modal-card-footer {
+  margin-top: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.modal-footer-line { flex: 1; height: 1px; background: rgba(255,255,255,0.05); }
+.modal-footer-note {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.14);
+  white-space: nowrap;
+}
+
 /* ─────────────────────────────────────────
    RESPONSIVE
 ───────────────────────────────────────── */
@@ -1045,6 +1432,8 @@ footer::before {
   .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
   .nav-actions { gap: 8px; }
   .nav-cta { padding: 8px 14px; font-size: 0.65rem; }
+  .modal-glass { padding: 44px 24px 36px; }
+  .modal-title { font-size: 1.9rem; }
 }
 </style>
 </head>
@@ -1067,6 +1456,141 @@ footer::before {
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     CONSULTATION POPUP MODAL
+═══════════════════════════════════════════ -->
+<div id="consultation-modal" role="dialog" aria-modal="true" aria-label="Book Free Consultation">
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+  <div class="modal-card">
+    <div class="modal-glass">
+      <div class="modal-accent-bar"></div>
+
+      <!-- Step dots -->
+      <div class="modal-step-dots">
+        <div class="m-step-dot active" id="msd1"></div>
+        <div class="m-step-dot" id="msd2"></div>
+        <div class="m-step-dot" id="msd3"></div>
+      </div>
+
+      <!-- Close -->
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <!-- Header -->
+      <div class="modal-eyebrow">Begin Your Journey</div>
+      <h2 class="modal-title">Your wealth story<br>starts <em>here.</em></h2>
+      <p class="modal-sub">Tell us a little about yourself — we'll craft a personalised financial plan at no cost, no obligations.</p>
+
+      <!-- Progress -->
+      <div class="modal-progress-wrap">
+        <div class="modal-progress-labels">
+          <span class="m-prog-label active" id="mpl1">Details</span>
+          <span class="m-prog-label" id="mpl2">Goals</span>
+          <span class="m-prog-label" id="mpl3">Done</span>
+        </div>
+        <div class="modal-progress-track">
+          <div class="modal-progress-fill" id="m-prog-fill"></div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form id="modal-lead-form" novalidate>
+
+        <!-- Step 1 -->
+        <div id="m-step-1">
+          <div class="m-field-group">
+
+            <div class="m-field" id="mf-name">
+              <input type="text" class="m-field-input" id="m-inp-name" placeholder="Full Name" autocomplete="name">
+              <label class="m-field-label" for="m-inp-name">Full Name</label>
+              <div class="m-field-error" id="merr-name">Please enter your full name</div>
+            </div>
+
+            <div class="m-field" id="mf-email">
+              <input type="email" class="m-field-input" id="m-inp-email" placeholder="Email Address" autocomplete="email">
+              <label class="m-field-label" for="m-inp-email">Email Address</label>
+              <div class="m-field-error" id="merr-email">Please enter a valid email</div>
+            </div>
+
+            <div class="m-field m-phone-wrap" id="mf-phone">
+              <div class="m-phone-prefix">+91</div>
+              <input type="tel" class="m-field-input" id="m-inp-phone" placeholder="Mobile Number" autocomplete="tel" maxlength="10">
+              <label class="m-field-label" for="m-inp-phone">Mobile Number</label>
+              <div class="m-field-error" id="merr-phone">Please enter a valid 10-digit number</div>
+            </div>
+
+          </div>
+
+          <button type="button" class="m-submit-btn" id="m-next-btn">
+            <span class="m-submit-btn-text">Continue</span>
+            <svg class="m-submit-btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
+              <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="m-spinner"></div>
+          </button>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="m-step-2" style="display:none">
+          <div class="m-field-group">
+            <div class="m-field" id="mf-goal">
+              <select class="m-field-select" id="m-inp-goal">
+                <option value="" disabled selected hidden>Select your primary goal</option>
+                <option value="wealth">Wealth Creation</option>
+                <option value="retirement">Retirement Planning</option>
+                <option value="tax">Tax Saving</option>
+                <option value="child">Child's Education / Marriage</option>
+                <option value="home">Home Purchase</option>
+                <option value="emergency">Emergency Fund Building</option>
+                <option value="other">Something else</option>
+              </select>
+              <div class="m-field-error" id="merr-goal">Please select an investment goal</div>
+            </div>
+          </div>
+
+          <div class="m-consent-row">
+            <div class="m-consent-check" id="m-consent-box" role="checkbox" aria-checked="false" tabindex="0"></div>
+            <p class="m-consent-text" id="m-consent-label">I agree to be contacted by Yours Wealth regarding my financial goals. I accept the <a href="#">Privacy Policy</a> and <a href="#">Terms of Use</a>.</p>
+          </div>
+
+          <button type="submit" class="m-submit-btn" id="m-submit-btn">
+            <span class="m-submit-btn-text">Get My Free Plan</span>
+            <svg class="m-submit-btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
+              <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="m-spinner"></div>
+          </button>
+        </div>
+
+      </form>
+
+      <!-- Success overlay -->
+      <div class="modal-success" id="modal-success">
+        <div class="modal-success-ring">
+          <svg class="modal-check-svg" viewBox="0 0 32 32">
+            <path class="modal-check-path" d="M8 17l6 6 10-12"/>
+          </svg>
+        </div>
+        <div class="modal-success-title">Welcome to<br><em>Yours Wealth.</em></div>
+        <div class="modal-success-sub">We'll be in touch shortly</div>
+        <div class="modal-success-bar">
+          <div class="modal-success-bar-fill" id="m-success-bar"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-card-footer">
+      <div class="modal-footer-line"></div>
+      <div class="modal-footer-note">256-bit encrypted · AMFI registered</div>
+      <div class="modal-footer-line"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════ NAV ═══════════════ -->
 <nav id="main-nav">
   <a href="#" class="nav-logo">Yours<span>Wealth</span></a>
@@ -1078,7 +1602,7 @@ footer::before {
   </ul>
   <div class="nav-actions">
     <a href="financial-planner.html" class="nav-cta">Get Your Goal Plan</a>
-    <a href="#contact" class="nav-cta solid">Book Consultation</a>
+    <button class="nav-cta solid open-modal-btn">Book Consultation</button>
   </div>
 </nav>
 
@@ -1090,9 +1614,7 @@ footer::before {
   <div class="hero-line"></div>
   <div class="hero-content">
     <div class="hero-tag">Wealth Management & Financial Planning</div>
-    <h1 id="hero-heading">
-      <!-- Words injected by JS for staggered animation -->
-    </h1>
+    <h1 id="hero-heading"></h1>
     <p>At Yours Wealth, we don't just manage your money — we design a personalised financial journey that compounds over decades, so you can focus on living the life you've worked so hard to create.</p>
     <div class="hero-actions">
       <a href="#services" class="btn-primary">
@@ -1109,10 +1631,8 @@ footer::before {
       </a>
     </div>
   </div>
-
   <div class="scroll-hint">
     <div class="scroll-line"></div>
-    
   </div>
 </section>
 
@@ -1137,8 +1657,6 @@ footer::before {
     <div class="marquee-item">Investment Advisory</div>
   </div>
 </div>
-
-
 
 <!-- ═══════════════ ABOUT ═══════════════ -->
 <section class="about" id="about">
@@ -1196,72 +1714,54 @@ footer::before {
       <div class="service-num">01</div>
       <div class="service-title">Financial Planning</div>
       <div class="service-desc">A comprehensive roadmap for your finances — budgeting, savings goals, debt management, and milestone planning. We map where you are and architect where you want to be.</div>
-      <a href="financial-planning.html" class="service-arrow">
-  Know More 
-  <svg width="14" height="9" viewBox="0 0 14 9" fill="none">
-    <path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-  </svg>
-</a>
+      <a href="financial-planning.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
     </div>
     <div class="service-card reveal d1">
       <div class="service-card-bg"></div>
       <div class="service-num">02</div>
       <div class="service-title">Investment Advisory</div>
       <div class="service-desc">Research-backed investment strategies across equity, debt, mutual funds, and alternative assets. We build portfolios that grow intelligently over time while managing downside risk.</div>
-      <a href="investment-advisory.html" class="service-arrow">
-  Know More 
-  <svg width="14" height="9" viewBox="0 0 14 9" fill="none">
-    <path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-  </svg>
-</a>
+      <a href="investment-advisory.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
     </div>
     <div class="service-card reveal d2">
       <div class="service-card-bg"></div>
       <div class="service-num">03</div>
       <div class="service-title">Retirement Planning</div>
       <div class="service-desc">Whether retirement is 5 years or 25 years away, we create a plan that ensures you never outlive your money — and retire on your own terms, not someone else's timeline.</div>
-      <a href="retirement-planning.html" class="service-arrow">
-  Know More 
-  <svg width="14" height="9" viewBox="0 0 14 9" fill="none">
-    <path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-  </svg>
-</a>
+      <a href="retirement-planning.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
     </div>
     <div class="service-card reveal d1">
       <div class="service-card-bg"></div>
       <div class="service-num">04</div>
       <div class="service-title">Tax Optimisation</div>
       <div class="service-desc">Legal, smart strategies to reduce your tax burden and keep more of what you earn. From ELSS to NPS to efficient asset structuring, we ensure your money works harder post-tax.</div>
-      <a href="tax-optimisation.html" class="service-arrow">
-  Know More 
-  <svg width="14" height="9" viewBox="0 0 14 9" fill="none">
-    <path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-  </svg>
-</a>
+      <a href="tax-optimisation.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
     </div>
     <div class="service-card reveal d2">
       <div class="service-card-bg"></div>
       <div class="service-num">05</div>
       <div class="service-title">Risk & Insurance Planning</div>
       <div class="service-desc">Protecting wealth is as critical as building it. We assess your risk exposure — health, life, income, liability — and design the right coverage so life's uncertainties don't derail your plans.</div>
-      <a href="risk-insurance.html" class="service-arrow">
-  Know More 
-  <svg width="14" height="9" viewBox="0 0 14 9" fill="none">
-    <path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-  </svg>
-</a>
+      <a href="risk-insurance.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
     </div>
     <div class="service-card reveal d3">
       <div class="service-card-bg"></div>
       <div class="service-num">06</div>
       <div class="service-title">Estate & Legacy Planning</div>
       <div class="service-desc">Ensure your wealth transitions smoothly across generations. We help structure your assets, create wills, set up trusts, and design a legacy that reflects your values and wishes.</div>
-      <a href="estate-planning.html" class="service-arrow">
-  Know More 
-  <svg width="14" height="9" viewBox="0 0 14 9" fill="none">
-    <path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-  </svg>
-</a>
+      <a href="estate-planning.html" class="service-arrow">Know More
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
     </div>
   </div>
 </section>
@@ -1370,106 +1870,20 @@ footer::before {
     <div class="section-tag reveal">Our Partners</div>
     <h2 class="section-title reveal d1">Empanelled with India's<br><em>leading fund houses.</em></h2>
     <p class="section-sub reveal d2">We are an AMFI-registered Mutual Fund Distributor, officially empanelled with the best AMCs in the country — giving you access to a curated universe of top-performing funds.</p>
-
     <div class="amc-grid">
-      <div class="amc-card reveal">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.2"/><path d="M12 26l4-12 4 8 4-8 4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="amc-name">HDFC Mutual Fund</div>
-        <div class="amc-tag">Equity · Debt · Hybrid</div>
-      </div>
-      <div class="amc-card reveal d1">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="8" stroke="currentColor" stroke-width="1.2"/><path d="M13 20h14M20 13v14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </div>
-        <div class="amc-name">ICICI Prudential</div>
-        <div class="amc-tag">BAF · Index · Debt</div>
-      </div>
-      <div class="amc-card reveal d2">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><polygon points="20,4 36,30 4,30" stroke="currentColor" stroke-width="1.2" fill="none"/><line x1="20" y1="14" x2="20" y2="24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </div>
-        <div class="amc-name">Nippon India MF</div>
-        <div class="amc-tag">Equity · Debt · Index</div>
-      </div>
-      <div class="amc-card reveal d3">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="16" stroke="currentColor" stroke-width="1.2"/><path d="M15 20c0-2.76 2.24-5 5-5s5 2.24 5 5-2.24 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </div>
-        <div class="amc-name">Kotak Mahindra MF</div>
-        <div class="amc-tag">Equity · Debt</div>
-      </div>
-      <div class="amc-card reveal d1">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><path d="M8 32V16l12-8 12 8v16H8z" stroke="currentColor" stroke-width="1.2"/><rect x="15" y="22" width="10" height="10" stroke="currentColor" stroke-width="1.2"/></svg>
-        </div>
-        <div class="amc-name">Parag Parikh MF</div>
-        <div class="amc-tag">Flexi Cap · Global</div>
-      </div>
-      <div class="amc-card reveal d2">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><path d="M6 34l7-14 7 6 7-16 7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="amc-name">Edelweiss MF</div>
-        <div class="amc-tag">International · ELSS</div>
-      </div>
-      <div class="amc-card reveal d3">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><path d="M20 6l4 8h8l-6.5 5.5 2.5 8.5L20 23l-8 5 2.5-8.5L8 14h8z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
-        </div>
-        <div class="amc-name">Quant Mutual Fund</div>
-        <div class="amc-tag">Equity</div>
-      </div>
-      <div class="amc-card reveal d1">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="14" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 34c0-6.63 5.37-12 12-12s12 5.37 12 12" stroke="currentColor" stroke-width="1.2"/></svg>
-        </div>
-        <div class="amc-name">Bajaj Finserv MF</div>
-        <div class="amc-tag">Equity · Debt</div>
-      </div>
-      <div class="amc-card reveal d2">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><rect x="6" y="18" width="28" height="16" rx="3" stroke="currentColor" stroke-width="1.2"/><path d="M14 18V12a6 6 0 0112 0v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </div>
-        <div class="amc-name">Mahindra Manulife</div>
-        <div class="amc-tag">Equity · Debt</div>
-      </div>
-      <div class="amc-card reveal d3">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><path d="M10 30V16M20 30V10M30 30V20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6 34h28" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-        </div>
-        <div class="amc-name">Capitalmind MF</div>
-        <div class="amc-tag">Multi asset · Flexi</div>
-      </div>
-      <div class="amc-card reveal d1">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><path d="M20 6C12.27 6 6 12.27 6 20s6.27 14 14 14 14-6.27 14-14S27.73 6 20 6z" stroke="currentColor" stroke-width="1.2"/><path d="M20 13v7l5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </div>
-        <div class="amc-name">Axis Mutual Fund</div>
-        <div class="amc-tag">ELSS · Large Cap</div>
-      </div>
-      <div class="amc-card reveal d2">
-        <div class="amc-card-glow"></div>
-        <div class="amc-icon">
-          <svg viewBox="0 0 40 40" fill="none"><path d="M8 20h8l4-10 4 20 4-10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="amc-name">Aditya Birla SL MF</div>
-        <div class="amc-tag">Index · Debt · Hybrid</div>
-      </div>
+      <div class="amc-card reveal"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1.2"/><path d="M12 26l4-12 4 8 4-8 4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="amc-name">HDFC Mutual Fund</div><div class="amc-tag">Equity · Debt · Hybrid</div></div>
+      <div class="amc-card reveal d1"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="8" stroke="currentColor" stroke-width="1.2"/><path d="M13 20h14M20 13v14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="amc-name">ICICI Prudential</div><div class="amc-tag">BAF · Index · Debt</div></div>
+      <div class="amc-card reveal d2"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><polygon points="20,4 36,30 4,30" stroke="currentColor" stroke-width="1.2" fill="none"/><line x1="20" y1="14" x2="20" y2="24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="amc-name">Nippon India MF</div><div class="amc-tag">Equity · Debt · Index</div></div>
+      <div class="amc-card reveal d3"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="16" stroke="currentColor" stroke-width="1.2"/><path d="M15 20c0-2.76 2.24-5 5-5s5 2.24 5 5-2.24 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="amc-name">Kotak Mahindra MF</div><div class="amc-tag">Equity · Debt</div></div>
+      <div class="amc-card reveal d1"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M8 32V16l12-8 12 8v16H8z" stroke="currentColor" stroke-width="1.2"/><rect x="15" y="22" width="10" height="10" stroke="currentColor" stroke-width="1.2"/></svg></div><div class="amc-name">Parag Parikh MF</div><div class="amc-tag">Flexi Cap · Global</div></div>
+      <div class="amc-card reveal d2"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M6 34l7-14 7 6 7-16 7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="amc-name">Edelweiss MF</div><div class="amc-tag">International · ELSS</div></div>
+      <div class="amc-card reveal d3"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M20 6l4 8h8l-6.5 5.5 2.5 8.5L20 23l-8 5 2.5-8.5L8 14h8z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg></div><div class="amc-name">Quant Mutual Fund</div><div class="amc-tag">Equity</div></div>
+      <div class="amc-card reveal d1"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="14" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 34c0-6.63 5.37-12 12-12s12 5.37 12 12" stroke="currentColor" stroke-width="1.2"/></svg></div><div class="amc-name">Bajaj Finserv MF</div><div class="amc-tag">Equity · Debt</div></div>
+      <div class="amc-card reveal d2"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><rect x="6" y="18" width="28" height="16" rx="3" stroke="currentColor" stroke-width="1.2"/><path d="M14 18V12a6 6 0 0112 0v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="amc-name">Mahindra Manulife</div><div class="amc-tag">Equity · Debt</div></div>
+      <div class="amc-card reveal d3"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M10 30V16M20 30V10M30 30V20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6 34h28" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div><div class="amc-name">Capitalmind MF</div><div class="amc-tag">Multi asset · Flexi</div></div>
+      <div class="amc-card reveal d1"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M20 6C12.27 6 6 12.27 6 20s6.27 14 14 14 14-6.27 14-14S27.73 6 20 6z" stroke="currentColor" stroke-width="1.2"/><path d="M20 13v7l5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="amc-name">Axis Mutual Fund</div><div class="amc-tag">ELSS · Large Cap</div></div>
+      <div class="amc-card reveal d2"><div class="amc-card-glow"></div><div class="amc-icon"><svg viewBox="0 0 40 40" fill="none"><path d="M8 20h8l4-10 4 20 4-10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="amc-name">Aditya Birla SL MF</div><div class="amc-tag">Index · Debt · Hybrid</div></div>
     </div>
-
     <div class="amc-footer-note reveal">
       <div class="amc-note-line"></div>
       <span>AMFI-registered Mutual Fund Distributor · ARN empanelled</span>
@@ -1481,7 +1895,7 @@ footer::before {
 <!-- ═══════════════ CTA STRIP ═══════════════ -->
 <div class="cta-strip" id="contact">
   <div class="cta-strip-title reveal-left">Your financial future<br>starts with <em>one conversation.</em></div>
-  <a href="mailto:viswateja.investments@gmail.com" class="btn-white reveal d2"><span>Book a Free Consultation</span></a>
+  <button class="btn-white open-modal-btn reveal d2"><span>Book a Free Consultation</span></button>
 </div>
 
 <!-- ═══════════════ FOOTER ═══════════════ -->
@@ -1494,11 +1908,11 @@ footer::before {
     <div>
       <div class="footer-col-title">Services</div>
       <ul class="footer-links">
-        <li><a href="#">Financial Planning</a></li>
-        <li><a href="#">Investment Advisory</a></li>
-        <li><a href="#">Retirement Planning</a></li>
-        <li><a href="#">Tax Optimisation</a></li>
-        <li><a href="#">Estate Planning</a></li>
+        <li><a href="financial-planning.html">Financial Planning</a></li>
+        <li><a href="investment-advisory.html">Investment Advisory</a></li>
+        <li><a href="retirement-planning.html">Retirement Planning</a></li>
+        <li><a href="tax-optimisation.html">Tax Optimisation</a></li>
+        <li><a href="estate-planning.html">Estate Planning</a></li>
       </ul>
     </div>
     <div>
@@ -1547,8 +1961,7 @@ const ring = document.getElementById('cursor-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
 document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 function animCursor() {
-  rx += (mx - rx) * 0.18;
-  ry += (my - ry) * 0.18;
+  rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
   if(dot) { dot.style.left = mx + 'px'; dot.style.top = my + 'px'; }
   if(ring) { ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; }
   requestAnimationFrame(animCursor);
@@ -1559,55 +1972,31 @@ animCursor();
 const canvas = document.getElementById('particle-canvas');
 const ctx = canvas.getContext('2d');
 let W, H, particles = [];
-function resize() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize', resize);
-
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
 class Particle {
   constructor() { this.reset(); }
   reset() {
-    this.x = Math.random() * W;
-    this.y = Math.random() * H;
+    this.x = Math.random() * W; this.y = Math.random() * H;
     this.size = Math.random() * 1.5 + 0.3;
     this.speedX = (Math.random() - 0.5) * 0.3;
     this.speedY = -Math.random() * 0.4 - 0.1;
     this.opacity = Math.random() * 0.4 + 0.1;
-    this.life = 0;
-    this.maxLife = Math.random() * 300 + 200;
+    this.life = 0; this.maxLife = Math.random() * 300 + 200;
   }
-  update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    this.life++;
-    if(this.life > this.maxLife || this.y < -10) this.reset();
-  }
+  update() { this.x += this.speedX; this.y += this.speedY; this.life++; if(this.life > this.maxLife || this.y < -10) this.reset(); }
   draw() {
     const t = this.life / this.maxLife;
     const alpha = this.opacity * (t < 0.1 ? t*10 : t > 0.8 ? (1-t)*5 : 1);
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = `rgba(212,175,55,1)`;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.globalAlpha = alpha; ctx.fillStyle = 'rgba(212,175,55,1)';
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
   }
 }
-for(let i = 0; i < 80; i++) {
-  const p = new Particle();
-  p.life = Math.random() * p.maxLife; // stagger
-  particles.push(p);
-}
-function animParticles() {
-  ctx.clearRect(0, 0, W, H);
-  particles.forEach(p => { p.update(); p.draw(); });
-  ctx.globalAlpha = 1;
-  requestAnimationFrame(animParticles);
-}
+for(let i = 0; i < 80; i++) { const p = new Particle(); p.life = Math.random() * p.maxLife; particles.push(p); }
+function animParticles() { ctx.clearRect(0, 0, W, H); particles.forEach(p => { p.update(); p.draw(); }); ctx.globalAlpha = 1; requestAnimationFrame(animParticles); }
 animParticles();
 
-/* ── HERO HEADING WORD ANIMATION ── */
+/* ── HERO HEADING ── */
 const heroLines = ['Build Wealth.', 'Secure Your', '<em>Future.</em>', 'On Your Terms.'];
 const heroEl = document.getElementById('hero-heading');
 let delay = 0.8;
@@ -1615,10 +2004,8 @@ heroLines.forEach((line, li) => {
   const words = line.split(' ');
   words.forEach((w, wi) => {
     const span = document.createElement('span');
-    span.className = 'word';
-    span.innerHTML = w + (wi < words.length - 1 ? ' ' : '');
-    span.style.animationDelay = delay + 's';
-    delay += 0.08;
+    span.className = 'word'; span.innerHTML = w + (wi < words.length - 1 ? ' ' : '');
+    span.style.animationDelay = delay + 's'; delay += 0.08;
     heroEl.appendChild(span);
   });
   if(li < heroLines.length - 1) heroEl.appendChild(document.createElement('br'));
@@ -1626,49 +2013,19 @@ heroLines.forEach((line, li) => {
 
 /* ── NAV SCROLL ── */
 const nav = document.getElementById('main-nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 60);
-});
+window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 60); });
 
 /* ── SCROLL REVEAL ── */
 const revealObs = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if(e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
-  });
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal, .reveal-left, .reveal-scale').forEach(el => revealObs.observe(el));
 
-/* ── COUNTER ANIMATION ── */
-function animCounter(el) {
-  const target = parseInt(el.dataset.target);
-  const suffix = el.dataset.suffix || '';
-  const duration = 1800;
-  const start = performance.now();
-  function tick(now) {
-    const t = Math.min((now - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - t, 3);
-    el.textContent = Math.round(ease * target) + suffix;
-    if(t < 1) requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-}
-const counterObs = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if(e.isIntersecting) {
-      e.target.querySelectorAll('.counter').forEach(animCounter);
-      counterObs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.3 });
-document.querySelectorAll('.hero-stats').forEach(el => counterObs.observe(el));
-
-/* ── CHART BAR ANIMATION ── */
+/* ── CHART BARS ── */
 const chartObs = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if(e.isIntersecting) {
-      e.target.querySelectorAll('.chart-bar-fill').forEach((bar, i) => {
-        setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, i * 150);
-      });
+      e.target.querySelectorAll('.chart-bar-fill').forEach((bar, i) => { setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, i * 150); });
       chartObs.unobserve(e.target);
     }
   });
@@ -1676,22 +2033,16 @@ const chartObs = new IntersectionObserver((entries) => {
 const pv = document.getElementById('proc-visual');
 if(pv) chartObs.observe(pv);
 
-/* ── MAGNETIC HOVER on CTA buttons ── */
+/* ── MAGNETIC HOVER ── */
 document.querySelectorAll('.btn-primary, .btn-white, .nav-cta').forEach(btn => {
   btn.addEventListener('mousemove', e => {
     const r = btn.getBoundingClientRect();
-    const cx = r.left + r.width / 2;
-    const cy = r.top + r.height / 2;
-    const dx = (e.clientX - cx) * 0.25;
-    const dy = (e.clientY - cy) * 0.25;
-    btn.style.transform = `translate(${dx}px, ${dy}px)`;
+    btn.style.transform = `translate(${(e.clientX - r.left - r.width/2) * 0.25}px, ${(e.clientY - r.top - r.height/2) * 0.25}px)`;
   });
-  btn.addEventListener('mouseleave', () => {
-    btn.style.transform = '';
-  });
+  btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
 });
 
-/* ── TILT on service cards ── */
+/* ── SERVICE CARD TILT ── */
 document.querySelectorAll('.service-card').forEach(card => {
   card.addEventListener('mousemove', e => {
     const r = card.getBoundingClientRect();
@@ -1699,9 +2050,197 @@ document.querySelectorAll('.service-card').forEach(card => {
     const y = (e.clientY - r.top) / r.height - 0.5;
     card.style.transform = `translateY(-6px) rotateX(${-y * 4}deg) rotateY(${x * 4}deg)`;
   });
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = '';
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+
+/* ═══════════════════════════════════════════
+   CONSULTATION MODAL
+═══════════════════════════════════════════ */
+const modal = document.getElementById('consultation-modal');
+let mCurrentStep = 1;
+let mConsentChecked = false;
+
+function openModal() {
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  // Reset to step 1 each time
+  resetModal();
+}
+
+function closeModal() {
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function resetModal() {
+  mCurrentStep = 1;
+  mConsentChecked = false;
+  document.getElementById('m-step-1').style.display = 'block';
+  document.getElementById('m-step-2').style.display = 'none';
+  document.getElementById('modal-success').classList.remove('show');
+  document.getElementById('m-prog-fill').style.width = '33%';
+  // Reset step dots
+  ['msd1','msd2','msd3'].forEach((id,i) => {
+    document.getElementById(id).className = 'm-step-dot' + (i===0?' active':'');
   });
+  // Reset progress labels
+  ['mpl1','mpl2','mpl3'].forEach((id,i) => {
+    document.getElementById(id).className = 'm-prog-label' + (i===0?' active':'');
+  });
+  // Reset form fields
+  document.getElementById('m-inp-name').value = '';
+  document.getElementById('m-inp-email').value = '';
+  document.getElementById('m-inp-phone').value = '';
+  document.getElementById('m-inp-goal').value = '';
+  document.getElementById('m-inp-goal').classList.remove('has-value');
+  document.getElementById('m-consent-box').classList.remove('checked');
+  document.getElementById('m-consent-box').setAttribute('aria-checked','false');
+  document.getElementById('m-consent-label').style.color = '';
+  ['mf-name','mf-email','mf-phone','mf-goal'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.remove('valid','error');
+  });
+  // Reset next button
+  const nb = document.getElementById('m-next-btn');
+  nb.classList.remove('m-loading'); nb.disabled = false;
+  const sb = document.getElementById('m-submit-btn');
+  sb.classList.remove('m-loading'); sb.disabled = false;
+}
+
+function goToModalStep(n) {
+  document.getElementById('m-step-1').style.display = n===1?'block':'none';
+  document.getElementById('m-step-2').style.display = n===2?'block':'none';
+  mCurrentStep = n;
+  document.getElementById('m-prog-fill').style.width = n===1?'33%':n===2?'66%':'100%';
+  ['msd1','msd2','msd3'].forEach((id,i) => {
+    document.getElementById(id).className = 'm-step-dot' + (i===n-1?' active':i<n-1?' done':'');
+  });
+  ['mpl1','mpl2','mpl3'].forEach((id,i) => {
+    document.getElementById(id).className = 'm-prog-label' + (i===n-1?' active':i<n-1?' done':'');
+  });
+  // Fade in new step
+  const stepEl = document.getElementById('m-step-'+n);
+  if(stepEl) {
+    stepEl.style.opacity='0'; stepEl.style.transform='translateY(14px)'; stepEl.style.transition='none';
+    requestAnimationFrame(()=>{
+      stepEl.style.transition='opacity .45s cubic-bezier(0.16,1,0.3,1), transform .45s cubic-bezier(0.16,1,0.3,1)';
+      stepEl.style.opacity='1'; stepEl.style.transform='translateY(0)';
+    });
+  }
+}
+
+/* Open triggers */
+document.querySelectorAll('.open-modal-btn').forEach(btn => {
+  btn.addEventListener('click', openModal);
+});
+
+/* Close triggers */
+document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+/* ── Modal Validation ── */
+function mSetValid(id){ const el=document.getElementById(id); if(el){el.classList.remove('error');el.classList.add('valid');} }
+function mSetError(id){ const el=document.getElementById(id); if(el){el.classList.add('error');el.classList.remove('valid');} }
+function mClearState(id){ const el=document.getElementById(id); if(el) el.classList.remove('error','valid'); }
+
+function mValidateStep1(){
+  let ok = true;
+  const name = document.getElementById('m-inp-name').value.trim();
+  const email = document.getElementById('m-inp-email').value.trim();
+  const phone = document.getElementById('m-inp-phone').value.trim();
+  if(name.length < 2){ mSetError('mf-name'); ok=false; } else mSetValid('mf-name');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ mSetError('mf-email'); ok=false; } else mSetValid('mf-email');
+  if(!/^\d{10}$/.test(phone)){ mSetError('mf-phone'); ok=false; } else mSetValid('mf-phone');
+  return ok;
+}
+function mValidateStep2(){
+  let ok = true;
+  const goal = document.getElementById('m-inp-goal').value;
+  if(!goal){ mSetError('mf-goal'); ok=false; } else mClearState('mf-goal');
+  if(!mConsentChecked){ document.getElementById('m-consent-label').style.color='#E07070'; ok=false; }
+  else document.getElementById('m-consent-label').style.color='';
+  return ok;
+}
+
+/* Live validation */
+document.getElementById('m-inp-name').addEventListener('blur', ()=>{
+  const v=document.getElementById('m-inp-name').value.trim();
+  if(v) v.length<2?mSetError('mf-name'):mSetValid('mf-name');
+});
+document.getElementById('m-inp-email').addEventListener('blur', ()=>{
+  const v=document.getElementById('m-inp-email').value.trim();
+  if(v) /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)?mSetValid('mf-email'):mSetError('mf-email');
+});
+document.getElementById('m-inp-phone').addEventListener('input', e=>{
+  e.target.value = e.target.value.replace(/\D/g,'').slice(0,10);
+  if(e.target.value.length===10) mSetValid('mf-phone');
+  else if(e.target.value.length>0) mClearState('mf-phone');
+});
+document.getElementById('m-inp-goal').addEventListener('change', e=>{
+  e.target.classList.add('has-value'); mClearState('mf-goal');
+});
+
+/* Consent */
+const mConsentBox = document.getElementById('m-consent-box');
+function toggleMConsent(){
+  mConsentChecked = !mConsentChecked;
+  mConsentBox.classList.toggle('checked', mConsentChecked);
+  mConsentBox.setAttribute('aria-checked', mConsentChecked);
+  if(mConsentChecked) document.getElementById('m-consent-label').style.color='';
+}
+mConsentBox.addEventListener('click', toggleMConsent);
+mConsentBox.addEventListener('keydown', e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); toggleMConsent(); } });
+
+/* Step 1 → 2 */
+document.getElementById('m-next-btn').addEventListener('click', ()=>{
+  if(!mValidateStep1()) return;
+  const btn = document.getElementById('m-next-btn');
+  btn.classList.add('m-loading'); btn.disabled = true;
+  setTimeout(()=>{ btn.classList.remove('m-loading'); btn.disabled=false; goToModalStep(2); }, 700);
+});
+
+/* Submit */
+document.getElementById('modal-lead-form').addEventListener('submit', async(e)=>{
+  e.preventDefault();
+  if(!mValidateStep2()) return;
+  const sb = document.getElementById('m-submit-btn');
+  sb.classList.add('m-loading'); sb.disabled = true;
+
+  const leadData = {
+    name:  document.getElementById('m-inp-name').value.trim(),
+    email: document.getElementById('m-inp-email').value.trim(),
+    phone: '+91' + document.getElementById('m-inp-phone').value.trim(),
+    goal:  document.getElementById('m-inp-goal').value,
+    timestamp: new Date().toISOString()
+  };
+
+  // ── API INTEGRATION PLACEHOLDER ──
+  // Replace with your actual API / Firebase call:
+  //
+  // await fetch('https://your-api.com/leads', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify(leadData)
+  // });
+  //
+  console.log('Lead captured:', leadData);
+
+  await new Promise(r => setTimeout(r, 1400));
+
+  sb.classList.remove('m-loading');
+
+  // Progress complete
+  document.getElementById('m-prog-fill').style.width = '100%';
+  document.getElementById('msd3').className = 'm-step-dot active';
+  document.getElementById('msd2').className = 'm-step-dot done';
+  document.getElementById('mpl3').className = 'm-prog-label active';
+
+  // Show success
+  document.getElementById('modal-success').classList.add('show');
+
+  // Auto-close after 3s
+  setTimeout(()=>{ closeModal(); }, 3200);
 });
 </script>
 </body>
