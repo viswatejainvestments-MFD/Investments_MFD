@@ -1,1 +1,2649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YoursWealth — Comprehensive Financial Life Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --gold: #B8960C;
+  --gold-light: #D4AF37;
+  --gold-pale: rgba(184,150,12,0.08);
+  --cream: #F5F0E8;
+  --ivory: #FAF7F2;
+  --charcoal: #1C1C1C;
+  --charcoal-soft: #2A2A2A;
+  --muted: #7A736A;
+  --muted-light: #A09890;
+  --border: rgba(184,150,12,0.2);
+  --border-light: rgba(184,150,12,0.1);
+  --success: #2E7D52;
+  --success-bg: rgba(46,125,82,0.08);
+  --warn: #B85C0C;
+  --warn-bg: rgba(184,92,12,0.08);
+  --danger: #C0392B;
+  --danger-bg: rgba(192,57,43,0.08);
+  --radius: 12px;
+  --radius-sm: 6px;
+  --shadow: 0 8px 40px rgba(0,0,0,0.06);
+  --shadow-hover: 0 16px 60px rgba(0,0,0,0.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--charcoal);min-height:100vh;}
 
+nav{padding:18px 40px;border-bottom:1px solid var(--border-light);background:rgba(250,247,242,0.95);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;text-decoration:none;color:var(--charcoal);letter-spacing:0.02em;}
+.nav-logo span{color:var(--gold)}
+.nav-meta{display:flex;align-items:center;gap:16px}
+.nav-progress{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.08em;}
+.nav-score-badge{padding:4px 12px;background:var(--charcoal);color:var(--gold-light);border-radius:20px;font-size:11px;font-family:'DM Mono',monospace;display:none;}
+
+.fp-wrap{max-width:920px;margin:0 auto;padding:2.5rem 1.4rem 5rem;}
+
+.hero{text-align:center;margin-bottom:2.5rem;padding:2rem 0 1rem;}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,42px);font-weight:300;line-height:1.2;margin-bottom:12px;}
+.hero h1 em{font-style:italic;color:var(--gold);}
+.hero p{color:var(--muted);font-size:15px;max-width:520px;margin:0 auto;line-height:1.6;}
+
+/* Progress bar */
+.progress-outer{background:var(--cream);border-radius:20px;height:4px;margin-bottom:1.5rem;overflow:hidden;border:1px solid var(--border-light);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:20px;transition:width 0.4s ease;}
+.progress-bar{display:flex;gap:5px;margin:0 0 2rem;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+.progress-bar::-webkit-scrollbar{display:none}
+.step-pill{flex:1;min-width:72px;padding:8px 8px;border-radius:30px;border:1px solid var(--border-light);font-size:10px;text-align:center;color:var(--muted);cursor:pointer;transition:all 0.25s;white-space:nowrap;font-family:'DM Mono',monospace;letter-spacing:0.04em;}
+.step-pill:hover{border-color:var(--gold);color:var(--gold)}
+.step-pill.active{background:var(--gold);color:white;border-color:var(--gold);box-shadow:0 4px 16px rgba(184,150,12,0.3);}
+.step-pill.done{background:var(--charcoal);color:white;border-color:var(--charcoal);}
+
+.section{display:none}
+.section.visible{display:block;animation:fadeUp 0.35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.section-header{margin-bottom:1.5rem}
+.section-header h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;margin-bottom:4px;}
+.section-header p{color:var(--muted);font-size:13px;}
+.section-chapter{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
+
+.card{background:white;border:1px solid var(--border-light);border-radius:var(--radius);padding:1.6rem;margin-bottom:1.2rem;box-shadow:var(--shadow);transition:box-shadow 0.25s;}
+.card:hover{box-shadow:var(--shadow-hover)}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.2rem;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;margin-bottom:3px;}
+.card-sub{color:var(--muted);font-size:12px;}
+.card-icon{width:36px;height:36px;background:var(--gold-pale);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+
+/* Two-column card layout */
+.card-cols{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;}
+.card-cols .card{margin-bottom:0;}
+.card-cols-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.2rem;}
+.card-cols-3 .card{margin-bottom:0;}
+
+.form-row{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;}
+.form-row.three{grid-template-columns:repeat(3,1fr)}
+.form-row.four{grid-template-columns:repeat(4,1fr)}
+.form-row.single{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:11px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;font-family:'DM Mono',monospace;}
+.form-group input,.form-group select,.form-group textarea{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;background:white;width:100%;outline:none;transition:all 0.2s;color:var(--charcoal);}
+.form-group textarea{resize:vertical;min-height:70px;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,150,12,0.1);}
+.input-prefix{position:relative}
+.input-prefix span{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none;}
+.input-prefix input{padding-left:26px}
+.input-suffix{position:relative}
+.input-suffix span{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none;}
+.input-suffix input{padding-right:36px}
+.field-hint{font-size:11px;color:var(--muted-light);margin-top:3px;font-style:italic;}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:1rem;}
+.metric-grid.two{grid-template-columns:repeat(2,1fr)}
+.metric-grid.three{grid-template-columns:repeat(3,1fr)}
+.metric-grid.five{grid-template-columns:repeat(5,1fr)}
+.metric{background:var(--cream);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border-light);}
+.metric .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;margin-bottom:4px}
+.metric .val{font-size:19px;font-weight:500;font-family:'Cormorant Garamond',serif;margin-bottom:2px}
+.metric .hint{font-size:10px;color:var(--muted-light)}
+.metric.highlight{background:var(--charcoal);color:white}
+.metric.highlight .lbl{color:rgba(255,255,255,0.5)}
+.metric.highlight .hint{color:rgba(255,255,255,0.4)}
+.metric.gold-metric{background:linear-gradient(135deg,rgba(184,150,12,0.12),rgba(184,150,12,0.06));border-color:var(--border)}
+.metric.ok-metric{background:var(--success-bg);border-color:rgba(46,125,82,0.2);}
+.metric.ok-metric .lbl{color:var(--success)}
+.metric.warn-metric{background:var(--warn-bg);border-color:rgba(184,92,12,0.2);}
+.metric.danger-metric{background:var(--danger-bg);border-color:rgba(192,57,43,0.2);}
+
+.score-bar-wrap{margin:8px 0}
+.score-bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;font-family:'DM Mono',monospace}
+.score-bar{height:5px;background:var(--cream);border-radius:3px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+
+/* Allocation bars */
+.alloc-bar-wrap{margin-top:1rem}
+.alloc-bar{height:28px;border-radius:var(--radius-sm);overflow:hidden;display:flex}
+.alloc-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:white;font-weight:500;transition:width 0.4s ease;font-family:'DM Mono',monospace;}
+.alloc-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+.alloc-dot{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);}
+.alloc-dot span{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+
+/* Goals */
+.goals-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.goal-item{display:flex;align-items:flex-start;justify-content:space-between;background:var(--cream);border-radius:var(--radius-sm);padding:12px 14px;border:1px solid var(--border-light);}
+.goal-left{flex:1}
+.goal-name{font-size:14px;font-weight:500;margin-bottom:2px}
+.goal-detail{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.7}
+.goal-badges{display:flex;gap:5px;align-items:center;flex-shrink:0;flex-wrap:wrap;max-width:180px;justify-content:flex-end;}
+.badge{padding:2px 8px;border-radius:20px;font-size:10px;font-family:'DM Mono',monospace;letter-spacing:0.04em;}
+.badge-ok{background:var(--success-bg);color:var(--success)}
+.badge-warn{background:var(--warn-bg);color:var(--warn)}
+.badge-danger{background:var(--danger-bg);color:var(--danger)}
+.badge-info{background:rgba(50,102,173,0.1);color:#3266AD}
+.badge-gold{background:var(--gold-pale);color:var(--gold);border:1px solid var(--border);}
+
+/* Radio groups */
+.radio-stack{display:flex;flex-direction:column;gap:8px;margin-bottom:1.2rem}
+.radio-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.2rem}
+.radio-opt{display:flex;gap:10px;align-items:flex-start;padding:11px 14px;background:var(--cream);border-radius:var(--radius-sm);cursor:pointer;font-size:13px;border:1px solid transparent;transition:all 0.2s;}
+.radio-opt:hover{border-color:var(--border)}
+.radio-opt:has(input:checked){border-color:var(--gold);background:var(--gold-pale);}
+.radio-opt input[type=radio]:checked+span{font-weight:500}
+.radio-opt .opt-title{font-size:13px;font-weight:500;margin-bottom:2px;}
+.radio-opt .opt-sub{font-size:11px;color:var(--muted);}
+.radio-chip{display:flex;gap:6px;align-items:center;padding:7px 14px;background:var(--cream);border-radius:20px;cursor:pointer;font-size:12px;border:1px solid transparent;transition:all 0.2s;font-family:'DM Mono',monospace;}
+.radio-chip:hover{border-color:var(--border)}
+.radio-chip:has(input:checked){border-color:var(--gold);background:var(--gold-pale);color:var(--charcoal);font-weight:500;}
+.radio-chip input{display:none}
+
+/* Sliders */
+.slider-row{margin-bottom:14px}
+.slider-row label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;}
+.slider-row label span{color:var(--charcoal);font-weight:500}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;background:linear-gradient(to right,var(--gold) 0%,var(--gold) 60%,var(--cream) 60%);border-radius:2px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--charcoal);border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+
+/* Checklist */
+.checklist{display:flex;flex-direction:column;gap:10px}
+.check-item{display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--cream);border-radius:var(--radius-sm);border:1px solid var(--border-light);}
+.check-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.check-icon.ok{background:var(--success-bg);color:var(--success)}
+.check-icon.warn{background:var(--warn-bg);color:var(--warn)}
+.check-icon.bad{background:var(--danger-bg);color:var(--danger)}
+.check-text{font-size:13px;font-weight:500;margin-bottom:2px}
+.check-sub{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* Buttons */
+.btn{padding:11px 22px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;border:1px solid var(--border);background:white;transition:all 0.25s;font-family:'DM Sans',sans-serif;letter-spacing:0.01em;}
+.btn:hover{background:var(--cream)}
+.btn-primary{background:var(--charcoal);color:white;border-color:var(--charcoal);}
+.btn-primary:hover{background:var(--gold);border-color:var(--gold);box-shadow:0 4px 20px rgba(184,150,12,0.3);}
+.btn-gold{background:var(--gold);color:white;border-color:var(--gold);}
+.btn-gold:hover{background:#9A7C08;border-color:#9A7C08;}
+.btn-sm{padding:7px 14px;font-size:12px;}
+.btn-lg{padding:14px 28px;font-size:14px;}
+.nav-row{display:flex;justify-content:space-between;margin-top:1.5rem;align-items:center;}
+
+/* Dividers / Labels */
+.divider{height:1px;background:var(--border-light);margin:1.2rem 0;}
+.section-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:10px;}
+.section-label.gold{color:var(--gold)}
+
+/* Scenarios */
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:1rem 0;}
+.scenario{padding:14px;border-radius:var(--radius-sm);text-align:center;border:1px solid var(--border-light);}
+.scenario .s-label{font-size:10px;color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.08em}
+.scenario .s-val{font-size:18px;font-weight:500;font-family:'Cormorant Garamond',serif}
+.scenario.best{background:var(--success-bg);border-color:rgba(46,125,82,0.2)}
+.scenario.best .s-val{color:var(--success)}
+.scenario.exp{background:rgba(50,102,173,0.06);border-color:rgba(50,102,173,0.2)}
+.scenario.exp .s-val{color:#3266AD}
+.scenario.stress{background:var(--danger-bg);border-color:rgba(192,57,43,0.2)}
+.scenario.stress .s-val{color:var(--danger)}
+
+/* Risk ring */
+.risk-display{display:flex;align-items:center;gap:20px;padding:16px;background:var(--cream);border-radius:var(--radius-sm);border:1px solid var(--border-light);}
+.risk-ring-wrap{position:relative;flex-shrink:0}
+.risk-label-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.risk-label-inner div:first-child{font-size:18px;font-weight:600;font-family:'Cormorant Garamond',serif}
+.risk-label-inner div:last-child{font-size:8px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-family:'DM Mono',monospace}
+.risk-info h3{font-size:16px;font-weight:500;margin-bottom:4px}
+.risk-info p{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* Fund cards */
+.fund-card{background:white;border:1px solid var(--border-light);border-radius:var(--radius);padding:1.2rem;margin-bottom:10px;box-shadow:var(--shadow);transition:all 0.25s;position:relative;overflow:hidden;}
+.fund-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;}
+.fund-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+.fund-card.cat-equity::before{background:#3266AD}
+.fund-card.cat-debt::before{background:#1D9E75}
+.fund-card.cat-hybrid::before{background:#BA7517}
+.fund-card.cat-intl::before{background:#7B5EA7}
+.fund-card.cat-gold::before{background:var(--gold)}
+.fund-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.fund-name{font-size:15px;font-weight:500;margin-bottom:3px}
+.fund-cat{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:0.04em}
+.fund-alloc-pill{background:var(--gold-pale);color:var(--gold);border:1px solid var(--border);padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;font-family:'DM Mono',monospace;flex-shrink:0;}
+.fund-amount{font-size:20px;font-family:'Cormorant Garamond',serif;font-weight:500;margin-bottom:8px;}
+.fund-stats{display:flex;gap:12px;flex-wrap:wrap;}
+.fund-stat{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
+.fund-stat strong{color:var(--charcoal);font-weight:500}
+.fund-why{font-size:12.5px;color:var(--charcoal);line-height:1.65;margin-top:10px;padding:10px 12px;background:var(--cream);border-radius:var(--radius-sm);border-left:3px solid var(--gold);}
+.fund-why-label{font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);font-family:'DM Mono',monospace;margin-bottom:4px;}
+
+/* Summary */
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.summary-card{background:var(--cream);padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border-light);}
+.sc-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;margin-bottom:4px}
+.sc-val{font-size:20px;font-family:'Cormorant Garamond',serif;font-weight:500}
+.sc-sub{font-size:11px;color:var(--muted-light);margin-top:2px}
+
+.health-score-wrap{text-align:center;padding:2.5rem;background:linear-gradient(135deg,var(--charcoal),#333);border-radius:var(--radius);color:white;margin-bottom:1.2rem;}
+.health-score-num{font-size:80px;font-family:'Cormorant Garamond',serif;font-weight:300;line-height:1;color:var(--gold-light);}
+.health-score-label{font-size:11px;text-transform:uppercase;letter-spacing:0.15em;font-family:'DM Mono',monospace;color:rgba(255,255,255,0.5);margin-bottom:8px;}
+.health-score-text{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5}
+
+.tag{display:inline-block;padding:4px 10px;background:var(--cream);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--muted);margin:3px;font-family:'DM Mono',monospace;}
+
+.priority-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.priority-list li{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;padding:10px;background:var(--cream);border-radius:var(--radius-sm);}
+.priority-num{width:22px;height:22px;border-radius:50%;background:var(--charcoal);color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'DM Mono',monospace;flex-shrink:0;margin-top:1px;}
+
+/* Insight boxes */
+.insight{padding:12px 14px;border-left:3px solid var(--gold);background:var(--gold-pale);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:12px;color:var(--muted);line-height:1.6;margin:10px 0;}
+.insight strong{color:var(--charcoal)}
+.insight.warn{border-color:var(--warn);background:var(--warn-bg)}
+.insight.ok{border-color:var(--success);background:var(--success-bg)}
+.insight.danger{border-color:var(--danger);background:var(--danger-bg)}
+
+/* Cost of delay */
+.cost-of-delay{padding:16px;background:linear-gradient(135deg,rgba(192,57,43,0.06),rgba(192,57,43,0.03));border:1px solid rgba(192,57,43,0.2);border-radius:var(--radius-sm);margin:10px 0;}
+.cod-title{font-size:13px;font-weight:600;color:var(--danger);margin-bottom:6px;}
+.cod-body{font-size:12px;color:var(--muted);line-height:1.6}
+.cod-number{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:var(--danger);}
+
+/* CTA */
+.cta-action{padding:24px;background:linear-gradient(135deg,var(--charcoal),#2A2A2A);border-radius:var(--radius);text-align:center;margin:1.2rem 0;}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:24px;color:white;margin-bottom:6px;}
+.cta-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px}
+.cta-amount{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gold-light);font-weight:300;}
+
+/* Timeline milestones */
+.milestone-row{display:flex;align-items:center;gap:0;margin:1rem 0;overflow-x:auto;padding-bottom:8px;}
+.milestone{text-align:center;flex:1;min-width:80px}
+.milestone-dot{width:12px;height:12px;border-radius:50%;background:var(--gold);margin:0 auto 6px;border:2px solid white;box-shadow:0 0 0 2px var(--gold)}
+.milestone-dot.reached{background:var(--success);box-shadow:0 0 0 2px var(--success)}
+.milestone-dot.future{background:var(--cream);border-color:var(--border)}
+.milestone-line{flex:1;height:2px;background:var(--border-light);margin-bottom:18px}
+.milestone-line.done{background:var(--gold)}
+.milestone-year{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted)}
+.milestone-val{font-size:11px;font-weight:500;color:var(--charcoal)}
+
+/* Goal-fund map */
+.goal-fund-group{margin-bottom:1rem}
+.goal-fund-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--charcoal);border-radius:var(--radius-sm) var(--radius-sm) 0 0;color:white;}
+.goal-fund-header .gf-name{font-size:14px;font-weight:500}
+.goal-fund-header .gf-amount{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--gold-light);margin-left:auto}
+.goal-fund-list{border:1px solid var(--border-light);border-top:none;border-radius:0 0 var(--radius-sm) var(--radius-sm);overflow:hidden;}
+.goal-fund-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border-light);background:white;}
+.goal-fund-row:last-child{border-bottom:none}
+.gfr-name{font-size:13px;color:var(--charcoal)}
+.gfr-sip{font-size:12px;font-family:'DM Mono',monospace;color:var(--gold);font-weight:500}
+
+/* Table */
+.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+.data-table th{padding:8px 12px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;border-bottom:1px solid var(--border-light);}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--border-light);}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--cream)}
+
+/* Net worth waterfall */
+.nw-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px;}
+.nw-bar-label{min-width:130px;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;}
+.nw-bar-track{flex:1;height:20px;background:var(--cream);border-radius:3px;overflow:hidden;}
+.nw-bar-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:8px;font-size:10px;color:white;font-family:'DM Mono',monospace;transition:width 0.6s ease;}
+.nw-bar-val{min-width:80px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;}
+
+/* Loading shimmer */
+.loading-shimmer{background:linear-gradient(90deg,var(--cream) 25%,#ede8df 50%,var(--cream) 75%);background-size:400% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-sm);height:40px;margin:8px 0;}
+@keyframes shimmer{0%{background-position:400% 0}100%{background-position:-400% 0}}
+
+/* SIP calculator mini */
+.sip-quick{background:linear-gradient(135deg,rgba(184,150,12,0.08),rgba(184,150,12,0.03));border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin:10px 0;}
+.sip-quick-title{font-size:12px;font-weight:600;color:var(--gold);margin-bottom:8px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.08em;}
+
+/* Gauge-style meter */
+.gauge-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
+.gauge-item{flex:1;min-width:80px;text-align:center;}
+.gauge-label{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;margin-top:6px;}
+.gauge-val{font-size:16px;font-family:'Cormorant Garamond',serif;font-weight:500;}
+
+/* Responsive */
+@media(max-width:700px){
+  nav{padding:14px 20px}
+  .fp-wrap{padding:1.5rem 1rem 4rem}
+  .form-row,.form-row.three,.form-row.four{grid-template-columns:1fr}
+  .metric-grid,.metric-grid.five{grid-template-columns:repeat(2,1fr)}
+  .scenario-grid{grid-template-columns:1fr}
+  .summary-grid{grid-template-columns:repeat(2,1fr)}
+  .card-cols,.card-cols-3{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .metric-grid{grid-template-columns:1fr 1fr}
+  .summary-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Yours<span>Wealth</span></a>
+  <div class="nav-meta">
+    <div class="nav-score-badge" id="live-score-badge">Score: —</div>
+    <div class="nav-progress" id="nav-progress">Step 1 of 12</div>
+  </div>
+</nav>
+
+<div class="fp-wrap">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Comprehensive Financial Life Plan</div>
+    <h1>Know everything.<br><em>Plan with precision.</em></h1>
+    <p>A thorough 12-step financial planning process — covering your life situation, cash flows, assets, protection, tax, goals, and a bespoke mutual fund portfolio. Built to the standard of a professional wealth plan.</p>
+  </div>
+
+  <div class="progress-outer"><div class="progress-fill" id="progress-fill" style="width:8.3%"></div></div>
+  <div class="progress-bar" id="pills"></div>
+
+  <!-- ══════════ SECTION 1: PERSONAL PROFILE ══════════ -->
+  <div class="section visible" id="sec-0">
+    <div class="section-header">
+      <div class="section-chapter">Chapter 1</div>
+      <h2>Personal profile & life stage</h2>
+      <p>Your life situation shapes everything — from how much risk you can afford to take, to which goals matter most right now. We start here.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">About you</div><div class="card-sub">Basic demographics and life stage — used throughout the plan</div></div>
+        <div class="card-icon">👤</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label>First name</label>
+          <input type="text" id="p-name" placeholder="Viswateja">
+        </div>
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" id="p-age" placeholder="32" min="18" max="80" oninput="updateLifeStage()">
+        </div>
+        <div class="form-group">
+          <label>City / location</label>
+          <input type="text" id="p-city" placeholder="Hyderabad">
+        </div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label>Marital status</label>
+          <select id="p-marital" oninput="updateLifeStage()">
+            <option value="single">Single</option>
+            <option value="married">Married</option>
+            <option value="married-kids">Married with children</option>
+            <option value="divorced">Divorced</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Number of children</label>
+          <input type="number" id="p-children" placeholder="0" min="0" max="10" oninput="updateLifeStage()">
+        </div>
+        <div class="form-group">
+          <label>Spouse's age (if applicable)</label>
+          <input type="number" id="p-spouse-age" placeholder="30" min="0" max="80">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Employment type</label>
+          <select id="p-employment" oninput="updateLifeStage()">
+            <option value="salaried-private">Salaried — Private sector</option>
+            <option value="salaried-govt">Salaried — Government / PSU</option>
+            <option value="self-employed">Self-employed / Professional</option>
+            <option value="business">Business owner</option>
+            <option value="freelance">Freelancer / Consultant</option>
+            <option value="retired">Retired</option>
+            <option value="student">Student</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Years to retirement</label>
+          <input type="number" id="p-retire-years" placeholder="28" min="0" max="50" oninput="updateLifeStage()">
+        </div>
+      </div>
+      <div id="life-stage-display"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Financial awareness</div><div class="card-sub">Honest self-assessment — helps us calibrate the complexity of recommendations</div></div>
+        <div class="card-icon">📚</div>
+      </div>
+      <div class="section-label">How would you rate your financial knowledge?</div>
+      <div class="radio-chips" id="finlit-opts">
+        <label class="radio-chip"><input type="radio" name="finlit" value="1"><span>Beginner — just starting</span></label>
+        <label class="radio-chip"><input type="radio" name="finlit" value="2"><span>Some basics</span></label>
+        <label class="radio-chip"><input type="radio" name="finlit" value="3"><span>Comfortable with investing</span></label>
+        <label class="radio-chip"><input type="radio" name="finlit" value="4"><span>Advanced — I research deeply</span></label>
+      </div>
+      <div class="section-label">Do you currently have active mutual fund investments?</div>
+      <div class="radio-chips" id="existing-mf-opts">
+        <label class="radio-chip"><input type="radio" name="existing_mf" value="no"><span>No — starting fresh</span></label>
+        <label class="radio-chip"><input type="radio" name="existing_mf" value="yes-random"><span>Yes — scattered / no strategy</span></label>
+        <label class="radio-chip"><input type="radio" name="existing_mf" value="yes-planned"><span>Yes — goal-mapped SIPs</span></label>
+      </div>
+      <div class="section-label">Biggest financial worry right now?</div>
+      <div class="radio-chips" id="worry-opts">
+        <label class="radio-chip"><input type="radio" name="worry" value="retirement"><span>Not saving enough for retirement</span></label>
+        <label class="radio-chip"><input type="radio" name="worry" value="children"><span>Children's education / future</span></label>
+        <label class="radio-chip"><input type="radio" name="worry" value="house"><span>Buying a home</span></label>
+        <label class="radio-chip"><input type="radio" name="worry" value="debt"><span>Paying off debt</span></label>
+        <label class="radio-chip"><input type="radio" name="worry" value="emergency"><span>No safety net</span></label>
+        <label class="radio-chip"><input type="radio" name="worry" value="tax"><span>High tax outgo</span></label>
+        <label class="radio-chip"><input type="radio" name="worry" value="general"><span>General wealth building</span></label>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <div></div>
+      <button class="btn btn-primary" onclick="goTo(1)">Next: Goals & Aspirations →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTION 2: GOALS ══════════ -->
+  <div class="section" id="sec-1">
+    <div class="section-header">
+      <div class="section-chapter">Chapter 2</div>
+      <h2>Goals & financial aspirations</h2>
+      <p>Every rupee you invest must serve a purpose. Define your goals with precision — we'll attach a specific mutual fund strategy to each one.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Your financial goals</div><div class="card-sub">Each goal gets its own SIP amount, fund selection, and progress tracking</div></div>
+        <div class="card-icon">🎯</div>
+      </div>
+      <div class="goals-list" id="goals-list">
+        <div style="font-size:13px;color:var(--muted);padding:8px 0">No goals added yet. Use the form below to add your first goal.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Add a financial goal</div><div class="card-sub">Be specific and realistic — "Daughter's IIT engineering fees" is better than "education"</div></div>
+        <div class="card-icon">➕</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Goal name</label>
+          <input type="text" id="g-name" placeholder="e.g. Retirement corpus">
+        </div>
+        <div class="form-group">
+          <label>Goal category</label>
+          <select id="g-category">
+            <option value="retirement">Retirement</option>
+            <option value="education">Child's Education</option>
+            <option value="house">Home Purchase</option>
+            <option value="wedding">Wedding</option>
+            <option value="travel">Travel / Sabbatical</option>
+            <option value="car">Vehicle</option>
+            <option value="business">Business / Startup</option>
+            <option value="emergency">Emergency Fund Build</option>
+            <option value="wealth">Wealth Creation</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label>Target amount today (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="g-amount" placeholder="5000000"></div>
+        </div>
+        <div class="form-group">
+          <label>Years to goal</label>
+          <input type="number" id="g-years" placeholder="20" min="1" max="40">
+        </div>
+        <div class="form-group">
+          <label>Inflation rate (%)</label>
+          <input type="number" id="g-inflation" placeholder="6" min="0" max="15">
+        </div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label>Priority level</label>
+          <select id="g-priority">
+            <option value="critical">Non-negotiable</option>
+            <option value="high">High priority</option>
+            <option value="flexible">Flexible / aspirational</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Existing corpus for this goal (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="g-lumpsum" placeholder="0"></div>
+        </div>
+        <div class="form-group">
+          <label>Funding preference</label>
+          <select id="g-funding">
+            <option value="sip">SIP only</option>
+            <option value="lumpsum">Lumpsum only</option>
+            <option value="both">SIP + Lumpsum</option>
+          </select>
+        </div>
+      </div>
+      <div id="goal-preview" style="margin-bottom:12px"></div>
+      <button class="btn btn-primary" onclick="saveGoal()" style="width:100%">Save this goal →</button>
+    </div>
+
+    <div class="card" id="goals-summary-card" style="display:none">
+      <div class="card-header">
+        <div><div class="card-title">Goals summary</div></div>
+        <div class="card-icon">📊</div>
+      </div>
+      <div id="goals-summary-content"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(0)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(2)">Next: Income & Cash Flow →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTION 3: INCOME ══════════ -->
+  <div class="section" id="sec-2">
+    <div class="section-header">
+      <div class="section-chapter">Chapter 3</div>
+      <h2>Income, expenses & cash flow</h2>
+      <p>Your investable surplus is the engine of all wealth creation. We map every rupee flowing in and out to find your true investment capacity.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Income sources</div><div class="card-sub">Enter monthly post-tax (take-home) amounts</div></div>
+        <div class="card-icon">💰</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label>Primary salary / business income (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="inc-fixed" placeholder="120000" oninput="calcCashflow()"></div>
+        </div>
+        <div class="form-group">
+          <label>Variable / bonus (monthly avg) (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="inc-var" placeholder="20000" oninput="calcCashflow()"></div>
+        </div>
+        <div class="form-group">
+          <label>Other income (rent, dividends, etc.) (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="inc-other" placeholder="0" oninput="calcCashflow()"></div>
+        </div>
+      </div>
+      <div class="form-row" id="spouse-income-row">
+        <div class="form-group">
+          <label>Spouse's monthly income (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="inc-spouse" placeholder="0" oninput="calcCashflow()"></div>
+        </div>
+        <div class="form-group">
+          <label>Annual increment expected (%)</label>
+          <div class="input-suffix"><span>%</span><input type="number" id="inc-increment" placeholder="8" oninput="calcCashflow()"></div>
+          <div class="field-hint">Used for 5/10-year projections</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Monthly expenses — itemised</div><div class="card-sub">Being thorough here prevents the #1 planning mistake: underestimating spending</div></div>
+        <div class="card-icon">📊</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label>Rent / home loan EMI (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="exp-rent" placeholder="25000" oninput="calcCashflow()"></div>
+        </div>
+        <div class="form-group">
+          <label>Groceries & household (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="exp-grocery" placeholder="15000" oninput="calcCashflow()"></div>
+        </div>
+        <div class="form-group">
+          <label>Utilities & subscriptions (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="exp-util" placeholder="5000" oninput="calcCashflow()"></div>
+        </div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label>Transport & fuel (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="exp-transport" placeholder="8000" oninput="calcCashflow()"></div>
+        </div>
+        <div class="form-group">
+          <label>Children's education / tuition (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="exp-edu" placeholder="10000" oninput="calcCashflow()"></div>
+        </div>
+        <div class="form-group">
+          <label>Healthcare / medicines (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="exp-health" placeholder="3000" oninput="calcCashflow()"></div>
+        </div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label>Dining out / entertainment (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="exp-dining" placeholder="8000" oninput="calcCashflow()"></div>
+        </div>
+        <div class="form-group">
+          <label>Shopping / lifestyle (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="exp-shop" placeholder="10000" oninput="calcCashflow()"></div>
+        </div>
+        <div class="form-group">
+          <label>Other / miscellaneous (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="exp-misc" placeholder="5000" oninput="calcCashflow()"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Debt obligations</div><div class="card-sub">All active EMIs — we calculate your debt burden ratio</div></div>
+        <div class="card-icon">⚖️</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label>Home loan EMI (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="emi-home" placeholder="0" oninput="calcCashflow()"></div>
+        </div>
+        <div class="form-group">
+          <label>Car / vehicle loan EMI (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="emi-car" placeholder="0" oninput="calcCashflow()"></div>
+        </div>
+        <div class="form-group">
+          <label>Personal loan / other EMI (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="emi-personal" placeholder="0" oninput="calcCashflow()"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="cashflow-card" style="display:none">
+      <div class="card-header">
+        <div><div class="card-title">Your complete cash flow picture</div></div>
+        <div class="card-icon">📈</div>
+      </div>
+      <div id="cashflow-metrics"></div>
+      <div id="cashflow-breakdown"></div>
+      <div id="cashflow-insight" style="margin-top:12px"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Next: Net Worth →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTION 4: NET WORTH ══════════ -->
+  <div class="section" id="sec-3">
+    <div class="section-header">
+      <div class="section-chapter">Chapter 4</div>
+      <h2>Assets, liabilities & net worth</h2>
+      <p>Your balance sheet — what you own minus what you owe. This is the true measure of financial health, and it shapes every investment decision.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Financial assets</div><div class="card-sub">Current market values — be accurate, these feed your net worth and allocation analysis</div></div>
+        <div class="card-icon">🏦</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Mutual funds — equity (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-mf-eq" placeholder="200000" oninput="calcNetWorth()"></div></div>
+        <div class="form-group"><label>Mutual funds — debt/hybrid (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-mf-debt" placeholder="50000" oninput="calcNetWorth()"></div></div>
+        <div class="form-group"><label>Direct equity / stocks (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-equity" placeholder="100000" oninput="calcNetWorth()"></div></div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Fixed deposits / RDs (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-fd" placeholder="100000" oninput="calcNetWorth()"></div></div>
+        <div class="form-group"><label>PPF balance (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-ppf" placeholder="200000" oninput="calcNetWorth()"></div></div>
+        <div class="form-group"><label>EPF / NPS balance (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-epf" placeholder="300000" oninput="calcNetWorth()"></div></div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Gold (physical + digital) (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-gold" placeholder="100000" oninput="calcNetWorth()"></div></div>
+        <div class="form-group"><label>Cash / savings account (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-cash" placeholder="80000" oninput="calcNetWorth()"></div></div>
+        <div class="form-group"><label>Other investments (ULIP, SGB, etc.) (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-other" placeholder="0" oninput="calcNetWorth()"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Physical / illiquid assets</div><div class="card-sub">Market value of real assets — note that illiquid assets cannot be easily SIP-funded</div></div>
+        <div class="card-icon">🏠</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Primary residence (current value) (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-house" placeholder="7500000" oninput="calcNetWorth()"></div></div>
+        <div class="form-group"><label>Other real estate (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-re-other" placeholder="0" oninput="calcNetWorth()"></div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Vehicles (current value) (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-vehicle" placeholder="800000" oninput="calcNetWorth()"></div></div>
+        <div class="form-group"><label>Business equity / partnership value (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="a-business" placeholder="0" oninput="calcNetWorth()"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Liabilities</div><div class="card-sub">All outstanding debt — both affects net worth and locks up future cash flows</div></div>
+        <div class="card-icon">📉</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Home loan outstanding (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="l-home" placeholder="0" oninput="calcNetWorth()"></div></div>
+        <div class="form-group"><label>Car loan outstanding (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="l-car" placeholder="0" oninput="calcNetWorth()"></div></div>
+        <div class="form-group"><label>Personal loan / credit card (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="l-personal" placeholder="0" oninput="calcNetWorth()"></div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Other loans (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="l-other" placeholder="0" oninput="calcNetWorth()"></div></div>
+        <div class="form-group"><label>Avg interest rate on loans (%)</label><div class="input-suffix"><span>%</span><input type="number" id="l-rate" placeholder="8.5" oninput="calcNetWorth()"></div></div>
+      </div>
+    </div>
+
+    <div id="networth-display"></div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Next: Risk Profile →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTION 5: RISK PROFILE ══════════ -->
+  <div class="section" id="sec-4">
+    <div class="section-header">
+      <div class="section-chapter">Chapter 5</div>
+      <h2>Risk profiling — deep assessment</h2>
+      <p>True risk profiling goes beyond "how do you feel about markets." We measure psychological tolerance, financial capacity, time horizon, and goal constraints — together.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Psychological risk tolerance</div><div class="card-sub">Answer as you truly are — not how you wish you'd react</div></div>
+        <div class="card-icon">🧠</div>
+      </div>
+
+      <div class="section-label">During the 2020 COVID crash (Sensex fell 38% in 40 days), what would you most likely do?</div>
+      <div class="radio-stack">
+        <label class="radio-opt"><input type="radio" name="react" value="1"><div><div class="opt-title">Exit immediately — stop all SIPs, move to FD</div><div class="opt-sub">Capital preservation overrides everything</div></div></label>
+        <label class="radio-opt"><input type="radio" name="react" value="2"><div><div class="opt-title">Pause SIPs and wait for clarity</div><div class="opt-sub">Worried, but not fully exiting</div></div></label>
+        <label class="radio-opt"><input type="radio" name="react" value="3"><div><div class="opt-title">Continue SIPs without change</div><div class="opt-sub">I know markets recover — stay the course</div></div></label>
+        <label class="radio-opt"><input type="radio" name="react" value="4"><div><div class="opt-title">Increase SIPs — buy the dip aggressively</div><div class="opt-sub">Crashes are buying opportunities</div></div></label>
+      </div>
+
+      <div class="section-label">If your portfolio fell ₹5 lakh (paper loss) in one month, your honest reaction would be:</div>
+      <div class="radio-stack">
+        <label class="radio-opt"><input type="radio" name="loss_react" value="1"><div><div class="opt-title">Cannot sleep — this amount of loss is unacceptable</div></div></label>
+        <label class="radio-opt"><input type="radio" name="loss_react" value="2"><div><div class="opt-title">Uncomfortable but I'd stay — with a lot of anxiety</div></div></label>
+        <label class="radio-opt"><input type="radio" name="loss_react" value="3"><div><div class="opt-title">Okay with it — this is the nature of equity investing</div></div></label>
+        <label class="radio-opt"><input type="radio" name="loss_react" value="4"><div><div class="opt-title">Excited — lower NAV means cheaper units for my SIP</div></div></label>
+      </div>
+
+      <div class="section-label">What is your maximum tolerable portfolio drawdown in any single year?</div>
+      <div class="radio-chips">
+        <label class="radio-chip"><input type="radio" name="loss" value="1"><span>Less than 5%</span></label>
+        <label class="radio-chip"><input type="radio" name="loss" value="2"><span>5–10%</span></label>
+        <label class="radio-chip"><input type="radio" name="loss" value="3"><span>10–20%</span></label>
+        <label class="radio-chip"><input type="radio" name="loss" value="4"><span>20–30%+</span></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Financial risk capacity</div><div class="card-sub">Your ability — not just willingness — to absorb losses</div></div>
+        <div class="card-icon">💼</div>
+      </div>
+
+      <div class="section-label">Income stability</div>
+      <div class="radio-chips">
+        <label class="radio-chip"><input type="radio" name="stab" value="1"><span>Highly uncertain / project-based</span></label>
+        <label class="radio-chip"><input type="radio" name="stab" value="2"><span>Variable — good years and bad</span></label>
+        <label class="radio-chip"><input type="radio" name="stab" value="3"><span>Stable — regular salary</span></label>
+        <label class="radio-chip"><input type="radio" name="stab" value="4"><span>Very stable — government / multiple streams</span></label>
+      </div>
+
+      <div class="section-label">If you lost your income for 6 months, could you continue SIPs?</div>
+      <div class="radio-chips">
+        <label class="radio-chip"><input type="radio" name="income_loss" value="1"><span>No — would immediately stop</span></label>
+        <label class="radio-chip"><input type="radio" name="income_loss" value="2"><span>Maybe 1–2 months</span></label>
+        <label class="radio-chip"><input type="radio" name="income_loss" value="3"><span>Yes — have 6 months covered</span></label>
+        <label class="radio-chip"><input type="radio" name="income_loss" value="4"><span>Yes — have 12+ months covered</span></label>
+      </div>
+
+      <div class="section-label">Dependents and responsibilities</div>
+      <div class="radio-chips">
+        <label class="radio-chip"><input type="radio" name="dep" value="0"><span>None</span></label>
+        <label class="radio-chip"><input type="radio" name="dep" value="1"><span>Spouse / 1 dependent</span></label>
+        <label class="radio-chip"><input type="radio" name="dep" value="2"><span>2–3 dependents</span></label>
+        <label class="radio-chip"><input type="radio" name="dep" value="3"><span>4+ including elderly parents</span></label>
+      </div>
+
+      <div class="section-label">Investment experience and knowledge</div>
+      <div class="radio-chips">
+        <label class="radio-chip"><input type="radio" name="invest_exp" value="1"><span>New to investing (&lt;2 yrs)</span></label>
+        <label class="radio-chip"><input type="radio" name="invest_exp" value="2"><span>Some experience (2–5 yrs)</span></label>
+        <label class="radio-chip"><input type="radio" name="invest_exp" value="3"><span>Experienced (5–10 yrs)</span></label>
+        <label class="radio-chip"><input type="radio" name="invest_exp" value="4"><span>Veteran — seen multiple market cycles</span></label>
+      </div>
+
+      <div class="section-label">Investment time horizon for your primary goal</div>
+      <div class="radio-chips">
+        <label class="radio-chip"><input type="radio" name="horizon_risk" value="1"><span>Less than 3 years</span></label>
+        <label class="radio-chip"><input type="radio" name="horizon_risk" value="2"><span>3–5 years</span></label>
+        <label class="radio-chip"><input type="radio" name="horizon_risk" value="3"><span>5–10 years</span></label>
+        <label class="radio-chip"><input type="radio" name="horizon_risk" value="4"><span>10+ years</span></label>
+      </div>
+
+      <button class="btn btn-primary" onclick="calcRisk()" style="width:100%;margin-top:0.8rem">Calculate my risk profile →</button>
+      <div id="risk-result" style="margin-top:1rem"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(3)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(5)">Next: Insurance →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTION 6: INSURANCE ══════════ -->
+  <div class="section" id="sec-5">
+    <div class="section-header">
+      <div class="section-chapter">Chapter 6</div>
+      <h2>Insurance & financial protection</h2>
+      <p>Insurance is not an investment — it's a financial firewall. One uninsured event can erase decades of wealth. We audit every layer of your protection.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Life insurance</div><div class="card-sub">Term insurance is the only rational life cover — we calculate exactly how much you need</div></div>
+        <div class="card-icon">🛡️</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Annual income (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ins-income" placeholder="1440000" oninput="calcInsurance()"></div></div>
+        <div class="form-group"><label>Monthly household expenses (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ins-exp" placeholder="80000" oninput="calcInsurance()"></div></div>
+        <div class="form-group"><label>Number of dependents</label><input type="number" id="ins-dep" placeholder="2" min="0" max="10" oninput="calcInsurance()"></div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Youngest child's age</label><input type="number" id="ins-child-age" placeholder="5" min="0" max="25" oninput="calcInsurance()"></div>
+        <div class="form-group"><label>Outstanding loans (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ins-loans" placeholder="0" oninput="calcInsurance()"></div></div>
+        <div class="form-group"><label>Existing term cover (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ins-life" placeholder="0" oninput="calcInsurance()"></div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Do you have ULIPs or endowment policies?</label>
+          <select id="ins-ulip">
+            <option value="no">No</option>
+            <option value="yes">Yes — treating as investment (not cover)</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Spouse also earning?</label>
+          <select id="ins-spouse-earner">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Health & other insurance</div><div class="card-sub">Medical costs in India rise 12–15% annually — your cover must keep pace</div></div>
+        <div class="card-icon">🏥</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Individual health cover (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ins-health-ind" placeholder="500000" oninput="calcInsurance()"></div></div>
+        <div class="form-group"><label>Family floater cover (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ins-health-family" placeholder="1000000" oninput="calcInsurance()"></div></div>
+        <div class="form-group"><label>Employer-provided cover (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ins-health-employer" placeholder="500000" oninput="calcInsurance()"></div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Critical illness cover (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ins-critical" placeholder="0" oninput="calcInsurance()"></div></div>
+        <div class="form-group"><label>Personal accident cover (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ins-accident" placeholder="0" oninput="calcInsurance()"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Emergency fund status</div><div class="card-sub">The foundation before all investing — your liquid financial airbag</div></div>
+        <div class="card-icon">🔐</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Emergency fund saved (months of expenses)</label><input type="number" id="ins-emergency" placeholder="3" min="0" max="24" oninput="calcInsurance()"></div>
+        <div class="form-group"><label>Where is it kept?</label>
+          <select id="ins-emergency-where">
+            <option value="savings">Savings account (low return)</option>
+            <option value="liquid-mf">Liquid / overnight mutual fund (ideal)</option>
+            <option value="fd">Fixed deposit (some penalty on break)</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="insurance-output"></div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(4)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(6)">Next: Tax Planning →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTION 7: TAX PLANNING ══════════ -->
+  <div class="section" id="sec-6">
+    <div class="section-header">
+      <div class="section-chapter">Chapter 7</div>
+      <h2>Tax planning & efficiency</h2>
+      <p>Tax saved is return earned. A 30% slab investor who misses Section 80C wastes ₹46,800 annually — every year, compounded. We close every legal gap.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Your tax situation</div><div class="card-sub">Used to select the most tax-efficient fund types and calculate tax savings</div></div>
+        <div class="card-icon">💰</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label>Annual gross income (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="tax-income" placeholder="1800000" oninput="calcTax()"></div>
+        </div>
+        <div class="form-group">
+          <label>Income tax slab</label>
+          <select id="tax-slab" oninput="calcTax()">
+            <option value="0">Nil (below ₹7L - new regime)</option>
+            <option value="5">5% slab</option>
+            <option value="20" selected>20% slab</option>
+            <option value="30">30% slab</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tax regime preference</label>
+          <select id="tax-regime" oninput="calcTax()">
+            <option value="old">Old regime (with deductions)</option>
+            <option value="new">New regime (lower rates)</option>
+            <option value="unsure">Unsure — help me decide</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Current 80C utilisation</div><div class="card-sub">Section 80C limit: ₹1,50,000/year — are you using all of it?</div></div>
+        <div class="card-icon">📋</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>EPF contribution (₹/yr)</label><div class="input-prefix"><span>₹</span><input type="number" id="tax-epf" placeholder="72000" oninput="calcTax()"></div></div>
+        <div class="form-group"><label>PPF investment (₹/yr)</label><div class="input-prefix"><span>₹</span><input type="number" id="tax-ppf" placeholder="0" oninput="calcTax()"></div></div>
+        <div class="form-group"><label>ELSS mutual fund SIP (₹/yr)</label><div class="input-prefix"><span>₹</span><input type="number" id="tax-elss" placeholder="0" oninput="calcTax()"></div></div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Life insurance premium (₹/yr)</label><div class="input-prefix"><span>₹</span><input type="number" id="tax-lifeins" placeholder="0" oninput="calcTax()"></div></div>
+        <div class="form-group"><label>Children's tuition fees (₹/yr)</label><div class="input-prefix"><span>₹</span><input type="number" id="tax-tuition" placeholder="0" oninput="calcTax()"></div></div>
+        <div class="form-group"><label>Home loan principal repaid (₹/yr)</label><div class="input-prefix"><span>₹</span><input type="number" id="tax-homeloan" placeholder="0" oninput="calcTax()"></div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>NPS contribution (80CCD 1B) (₹/yr)</label><div class="input-prefix"><span>₹</span><input type="number" id="tax-nps" placeholder="0" oninput="calcTax()"></div></div>
+        <div class="form-group"><label>Health insurance premium 80D (₹/yr)</label><div class="input-prefix"><span>₹</span><input type="number" id="tax-health-prem" placeholder="0" oninput="calcTax()"></div></div>
+      </div>
+    </div>
+
+    <div id="tax-output"></div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(5)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(7)">Next: Investment Strategy →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTION 8: STRATEGY ══════════ -->
+  <div class="section" id="sec-7">
+    <div class="section-header">
+      <div class="section-chapter">Chapter 8</div>
+      <h2>Mutual fund investment strategy</h2>
+      <p>Asset allocation drives 90%+ of long-term returns. This section sets the precise framework for how every SIP rupee is deployed across market segments.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Target asset allocation</div><div class="card-sub">Guided by your risk profile — adjust if needed</div></div>
+        <div class="card-icon">⚖️</div>
+      </div>
+      <div class="slider-row"><label>Large Cap Equity (Nifty 50 / large-cap funds) <span id="eq-lc-val">30%</span></label><input type="range" min="0" max="60" step="5" value="30" id="sl-eq-lc" oninput="updateStrategy()"></div>
+      <div class="slider-row"><label>Mid Cap Equity <span id="eq-mc-val">15%</span></label><input type="range" min="0" max="40" step="5" value="15" id="sl-eq-mc" oninput="updateStrategy()"></div>
+      <div class="slider-row"><label>Small Cap Equity <span id="eq-sc-val">5%</span></label><input type="range" min="0" max="25" step="5" value="5" id="sl-eq-sc" oninput="updateStrategy()"></div>
+      <div class="slider-row"><label>Flexi Cap / Multi Cap <span id="eq-flex-val">10%</span></label><input type="range" min="0" max="40" step="5" value="10" id="sl-eq-flex" oninput="updateStrategy()"></div>
+      <div class="slider-row"><label>Debt (bond / short-duration / liquid funds) <span id="debt-val">25%</span></label><input type="range" min="0" max="60" step="5" value="25" id="sl-debt" oninput="updateStrategy()"></div>
+      <div class="slider-row"><label>Gold (Gold ETF / FoF) <span id="gold-val">10%</span></label><input type="range" min="0" max="25" step="5" value="10" id="sl-gold" oninput="updateStrategy()"></div>
+      <div class="slider-row"><label>International equity <span id="intl-val">5%</span></label><input type="range" min="0" max="20" step="5" value="5" id="sl-intl" oninput="updateStrategy()"></div>
+      <div id="strategy-alloc"></div>
+      <div id="strategy-verdict"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Investment style & preferences</div><div class="card-sub">These preferences shape your specific fund selection</div></div>
+        <div class="card-icon">🎛️</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Investment approach</label>
+          <select id="inv-style">
+            <option value="passive">100% Passive (index funds only)</option>
+            <option value="active">100% Active (fund manager alpha)</option>
+            <option value="blend" selected>Core-Satellite Blend (recommended)</option>
+          </select>
+          <div class="field-hint">Blend = 60% passive index core + 40% active satellite funds</div>
+        </div>
+        <div class="form-group">
+          <label>SIP date preference</label>
+          <select id="sip-date">
+            <option value="1">1st of month</option>
+            <option value="5">5th of month</option>
+            <option value="10">10th of month</option>
+            <option value="15">15th of month</option>
+            <option value="25">25th of month</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Annual SIP step-up (%)</label>
+          <input type="number" id="annual-stepup" placeholder="10" min="0" max="30">
+          <div class="field-hint">10% step-up annually nearly triples your final corpus vs flat SIP</div>
+        </div>
+        <div class="form-group">
+          <label>Preferred fund house (if any)</label>
+          <select id="fund-house-pref">
+            <option value="none">No preference</option>
+            <option value="hdfc">HDFC</option>
+            <option value="icici">ICICI Prudential</option>
+            <option value="sbi">SBI</option>
+            <option value="kotak">Kotak</option>
+            <option value="axis">Axis</option>
+            <option value="mirae">Mirae Asset</option>
+            <option value="parag">Parag Parikh</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Rebalancing frequency</label>
+          <select id="rebalance-freq">
+            <option value="annual">Annual (recommended)</option>
+            <option value="semi">Semi-annual</option>
+            <option value="quarterly">Quarterly</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Dividend vs Growth</label>
+          <select id="dividend-pref">
+            <option value="growth" selected>Growth option (wealth compounding)</option>
+            <option value="idcw">IDCW (income need)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(6)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(8)">Next: SIP Planning →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTION 9: SIP PLANNING ══════════ -->
+  <div class="section" id="sec-8">
+    <div class="section-header">
+      <div class="section-chapter">Chapter 9</div>
+      <h2>SIP planning & goal feasibility</h2>
+      <p>SIP is not a product — it's a discipline. Here we calculate the precise monthly amount each goal demands, check your capacity, and identify any gaps.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">SIP capacity & goal mapping</div><div class="card-sub">Enter your total available SIP budget — we'll show you how far it goes</div></div>
+        <div class="card-icon">🔄</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Total monthly SIP budget (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="sip-total" placeholder="25000" oninput="calcSIPPlan()"></div>
+          <div class="field-hint">Your investable surplus after all expenses and existing obligations</div>
+        </div>
+        <div class="form-group">
+          <label>Lumpsum available to invest now (₹)</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="lumpsum-now" placeholder="0" oninput="calcSIPPlan()"></div>
+          <div class="field-hint">Bonuses, matured FDs, gifts — deploy strategically</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Annual SIP step-up (%)</label>
+          <div class="input-suffix"><span>%</span><input type="number" id="sip-stepup" placeholder="10" oninput="calcSIPPlan()"></div>
+        </div>
+        <div class="form-group">
+          <label>Expected portfolio return (% p.a.)</label>
+          <div class="input-suffix"><span>%</span><input type="number" id="sip-return" placeholder="12" oninput="calcSIPPlan()"></div>
+          <div class="field-hint">Conservative: 10%, Moderate: 12%, Aggressive: 14–15%</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sip-plan-output"></div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(7)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(9)">Next: Projections →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTION 10: PROJECTIONS ══════════ -->
+  <div class="section" id="sec-9">
+    <div class="section-header">
+      <div class="section-chapter">Chapter 10</div>
+      <h2>Wealth projections & scenarios</h2>
+      <p>See your financial future mapped across bull, expected, and bear market scenarios. This is where the numbers become real and the plan becomes motivating.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Projection inputs</div><div class="card-sub">Fine-tune these for precision</div></div>
+        <div class="card-icon">🔮</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Monthly SIP (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="pr-sip" placeholder="25000" oninput="calcProjections()"></div></div>
+        <div class="form-group"><label>Starting corpus (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="pr-corpus" placeholder="500000" oninput="calcProjections()"></div></div>
+        <div class="form-group"><label>Investment horizon (years)</label><input type="number" id="pr-years" placeholder="20" min="1" max="40" oninput="calcProjections()"></div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Expected return (% p.a.)</label><input type="number" id="pr-return" placeholder="12" oninput="calcProjections()"></div>
+        <div class="form-group"><label>Annual step-up (%)</label><input type="number" id="pr-stepup" placeholder="10" min="0" max="30" oninput="calcProjections()"></div>
+        <div class="form-group"><label>Inflation (% p.a.)</label><input type="number" id="pr-inflation" placeholder="6" oninput="calcProjections()"></div>
+      </div>
+    </div>
+
+    <div id="projection-out"></div>
+
+    <div class="card">
+      <div style="position:relative;width:100%;height:300px">
+        <canvas id="proj-chart" role="img" aria-label="Wealth projection chart"></canvas>
+      </div>
+    </div>
+
+    <div id="goal-mapping" style="margin-top:1rem"></div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(8)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(10)">Next: Retirement Plan →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTION 11: RETIREMENT ══════════ -->
+  <div class="section" id="sec-10">
+    <div class="section-header">
+      <div class="section-chapter">Chapter 11</div>
+      <h2>Retirement planning deep dive</h2>
+      <p>Retirement is not a goal — it's a 20–30 year financial phase that requires its own corpus, withdrawal strategy, and inflation protection plan.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Retirement inputs</div><div class="card-sub">We model your retirement corpus, monthly income need, and shortfall</div></div>
+        <div class="card-icon">🌅</div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Current age</label><input type="number" id="ret-current-age" placeholder="32" oninput="calcRetirement()"></div>
+        <div class="form-group"><label>Target retirement age</label><input type="number" id="ret-age" placeholder="60" oninput="calcRetirement()"></div>
+        <div class="form-group"><label>Life expectancy (plan until age)</label><input type="number" id="ret-life" placeholder="85" oninput="calcRetirement()"></div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group"><label>Desired monthly expenses in retirement (today's ₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ret-monthly" placeholder="80000" oninput="calcRetirement()"></div></div>
+        <div class="form-group"><label>Inflation in retirement (%)</label><input type="number" id="ret-inflation" placeholder="5" oninput="calcRetirement()"></div>
+        <div class="form-group"><label>Post-retirement investment return (%)</label><input type="number" id="ret-post-return" placeholder="7" oninput="calcRetirement()"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Expected EPF corpus at retirement (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ret-epf" placeholder="3000000" oninput="calcRetirement()"></div></div>
+        <div class="form-group"><label>Other pension / annuity income/month (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ret-pension" placeholder="0" oninput="calcRetirement()"></div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>SIP growth rate pre-retirement (%)</label><input type="number" id="ret-return" placeholder="12" oninput="calcRetirement()"></div>
+        <div class="form-group"><label>Current retirement corpus (₹)</label><div class="input-prefix"><span>₹</span><input type="number" id="ret-corpus-now" placeholder="500000" oninput="calcRetirement()"></div></div>
+      </div>
+    </div>
+
+    <div id="retirement-output"></div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(9)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(11)">View Complete Plan →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTION 12: COMPLETE PLAN ══════════ -->
+  <div class="section" id="sec-11">
+    <div id="final-summary"></div>
+    <div class="nav-row" style="justify-content:center;gap:12px;flex-wrap:wrap">
+      <button class="btn" onclick="goTo(0)">Start over</button>
+      <button class="btn btn-gold btn-lg" onclick="window.location.href='mailto:viswateja.investments@gmail.com?subject=I want to start my SIP plan — Plan Submitted'">📩 Start my SIP — Email Viswateja</button>
+      <button class="btn btn-lg btn-primary" onclick="window.open('https://wa.me/917095858488?text=Hi+Viswateja,+I+completed+the+Yours+Wealth+financial+plan+and+want+to+get+started','_blank')">💬 WhatsApp</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  STATE & NAVIGATION
+// ═══════════════════════════════════════════════════
+const steps = ['Profile','Goals','Income','Net Worth','Risk','Insurance','Tax','Strategy','SIP Plan','Projections','Retirement','Your Plan'];
+let current = 0;
+let goals = [];
+let projChart = null;
+
+function renderPills() {
+  const c = document.getElementById('pills');
+  c.innerHTML = steps.map((s,i) =>
+    `<div class="step-pill ${i===current?'active':i<current?'done':''}" onclick="goTo(${i})">${i<current?'✓ ':''}${s}</div>`
+  ).join('');
+  document.getElementById('nav-progress').textContent = `Step ${current+1} of ${steps.length}`;
+  document.getElementById('progress-fill').style.width = ((current+1)/steps.length*100).toFixed(1)+'%';
+  const scoreBadge = document.getElementById('live-score-badge');
+  const score = calcHealthScore();
+  if(score>0){scoreBadge.style.display='block';scoreBadge.textContent='Score: '+score;}
+}
+function goTo(n) {
+  document.getElementById('sec-'+current).classList.remove('visible');
+  current = n;
+  document.getElementById('sec-'+n).classList.add('visible');
+  renderPills();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===11) buildSummary();
+}
+renderPills();
+
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+function fmt(n) { return (isNaN(n)||n===null)?'—':'₹'+Math.round(n).toLocaleString('en-IN'); }
+function pct(n,dec=0) { return (isNaN(n)||!isFinite(n))?'—':n.toFixed(dec)+'%'; }
+function crores(n) {
+  if(!n||isNaN(n)) return '—';
+  if(n>=10000000) return '₹'+(n/10000000).toFixed(2)+'Cr';
+  if(n>=100000) return '₹'+(n/100000).toFixed(1)+'L';
+  return fmt(n);
+}
+function gv(id,fallback=0){ const v=parseFloat(document.getElementById(id)?.value); return isNaN(v)?fallback:v; }
+function gvs(id,fallback=''){ return document.getElementById(id)?.value||fallback; }
+function inflAdjust(amount,years,rate){ return amount*Math.pow(1+rate/100,years); }
+function calcSIPNeeded(target,years,rate=12){
+  const mr=rate/12/100,n=years*12;
+  if(mr===0) return target/n;
+  if(target<=0) return 0;
+  return target*mr/((Math.pow(1+mr,n)-1)*(1+mr));
+}
+function fvSIP(sip,corpus,years,annualReturn,stepup=0){
+  let c=corpus,s=sip,mr=annualReturn/12/100;
+  for(let y=0;y<years;y++){
+    for(let m=0;m<12;m++){c=c*(1+mr)+s;}
+    s*=(1+stepup/100);
+  }
+  return c;
+}
+function scoreColor(score){
+  if(score>=80) return 'var(--success)';
+  if(score>=60) return '#3266AD';
+  if(score>=40) return 'var(--warn)';
+  return 'var(--danger)';
+}
+
+// ═══════════════════════════════════════════════════
+//  SECTION 1: LIFE STAGE
+// ═══════════════════════════════════════════════════
+function updateLifeStage(){
+  const age = gv('p-age',0);
+  const retYears = gv('p-retire-years',28);
+  const marital = gvs('p-marital','single');
+  const emp = gvs('p-employment','salaried-private');
+  if(!age) return;
+  const stages = [
+    {max:25,name:'Early Accumulation',icon:'🌱',desc:'Prime time to start. Every rupee invested now has the longest runway to compound. Even ₹5,000/month at this stage creates more wealth than ₹25,000/month started at 40.'},
+    {max:35,name:'Growth Phase',icon:'🚀',desc:'Income rising, responsibilities growing. Lock in maximum SIP discipline now — before lifestyle inflation catches up. This decade determines your financial trajectory.'},
+    {max:45,name:'Peak Earning Phase',icon:'⚡',desc:'Highest earning, highest expenses. Balance aggressive wealth creation with protection. Children\'s education and retirement must both be funded simultaneously.'},
+    {max:55,name:'Pre-Retirement',icon:'🎯',desc:'Shift from accumulation to preservation. Reduce equity aggressively towards debt. Target having 8–10x annual expenses already saved. No room for high-risk bets.'},
+    {max:100,name:'Retirement / Distribution',icon:'🌅',desc:'Focus on sustainable withdrawal rate (4% rule). Maintain 30–40% equity for inflation protection. Annuities and senior citizen FDs become relevant.'},
+  ];
+  const stage = stages.find(s=>age<=s.max)||stages[stages.length-1];
+  document.getElementById('life-stage-display').innerHTML=`
+    <div class="divider"></div>
+    <div class="insight ok">
+      <strong>${stage.icon} Life Stage: ${stage.name}</strong><br>${stage.desc}
+      ${retYears>0?`<br><strong>Accumulation window:</strong> ${retYears} years to retirement — ${(retYears*12).toLocaleString()} SIP installments.`:''}
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  SECTION 2: GOALS
+// ═══════════════════════════════════════════════════
+['g-amount','g-years','g-inflation','g-lumpsum'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('input',previewGoal);
+});
+function previewGoal(){
+  const amount=gv('g-amount',0),years=gv('g-years',10),inflation=gv('g-inflation',6),lumpsum=gv('g-lumpsum',0);
+  if(!amount){ document.getElementById('goal-preview').innerHTML=''; return; }
+  const fv=inflAdjust(amount,years,inflation);
+  const lumpsumFV=lumpsum*Math.pow(1.12,years);
+  const gap=Math.max(0,fv-lumpsumFV);
+  const sip=calcSIPNeeded(gap,years,12);
+  const sipAggressive=calcSIPNeeded(gap,years,14);
+  document.getElementById('goal-preview').innerHTML=`
+    <div class="sip-quick">
+      <div class="sip-quick-title">Goal preview</div>
+      <div class="metric-grid three">
+        <div class="metric"><div class="lbl">Inflation-adjusted target</div><div class="val">${crores(fv)}</div><div class="hint">at ${inflation}% inflation over ${years} years</div></div>
+        <div class="metric gold-metric"><div class="lbl">SIP needed (12% return)</div><div class="val">${fmt(sip)}<span style="font-size:12px">/mo</span></div><div class="hint">to fully fund this goal</div></div>
+        <div class="metric"><div class="lbl">SIP needed (14% return)</div><div class="val">${fmt(sipAggressive)}<span style="font-size:12px">/mo</span></div><div class="hint">aggressive scenario</div></div>
+      </div>
+      ${lumpsum>0?`<div class="insight" style="margin-top:8px">Your lumpsum of ${fmt(lumpsum)} grows to ${crores(lumpsumFV)} — covers ${pct(lumpsumFV/fv*100)} of the goal.</div>`:''}
+    </div>`;
+}
+function saveGoal(){
+  const name=document.getElementById('g-name').value.trim();
+  const amount=gv('g-amount',0);
+  const years=gv('g-years',10);
+  const inflation=gv('g-inflation',6);
+  const lumpsum=gv('g-lumpsum',0);
+  const priority=gvs('g-priority','high');
+  const category=gvs('g-category','wealth');
+  const funding=gvs('g-funding','sip');
+  if(!name){alert('Please enter a goal name.');return;}
+  const fv=inflAdjust(amount,years,inflation);
+  const lumpsumFV=lumpsum*Math.pow(1.12,years);
+  const gap=Math.max(0,fv-lumpsumFV);
+  const horizon=years<=3?'short':years<=10?'medium':'long';
+  goals.push({name,amount,fv,gap,horizon,priority,years,inflation,lumpsum,category,funding});
+  renderGoals();
+  ['g-name','g-amount','g-years','g-inflation','g-lumpsum'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('goal-preview').innerHTML='';
+}
+function removeGoal(i){goals.splice(i,1);renderGoals();}
+function renderGoals(){
+  const el=document.getElementById('goals-list');
+  const card=document.getElementById('goals-summary-card');
+  if(!goals.length){
+    el.innerHTML='<div style="font-size:13px;color:var(--muted);padding:8px 0">No goals added yet.</div>';
+    card.style.display='none';return;
+  }
+  const hMap={short:{c:'badge-warn',l:'Short'},medium:{c:'badge-info',l:'Medium'},long:{c:'badge-ok',l:'Long'}};
+  const pMap={critical:{c:'badge-danger',l:'Non-negotiable'},high:{c:'badge-warn',l:'High'},flexible:{c:'badge-ok',l:'Flexible'}};
+  const catIcon={retirement:'🌅',education:'🎓',house:'🏠',wedding:'💒',travel:'✈️',car:'🚗',business:'💼',emergency:'🔐',wealth:'📈',other:'🎯'};
+  el.innerHTML=goals.map((g,i)=>`
+    <div class="goal-item">
+      <div class="goal-left">
+        <div class="goal-name">${catIcon[g.category]||'🎯'} ${g.name}</div>
+        <div class="goal-detail">
+          Today: ${fmt(g.amount)} → Target: ${crores(g.fv)} · ${g.years} yrs · ${g.inflation}% inflation<br>
+          SIP @ 12%: <strong>${fmt(calcSIPNeeded(g.gap,g.years,12))}/mo</strong> &nbsp;|&nbsp; SIP @ 14%: <strong>${fmt(calcSIPNeeded(g.gap,g.years,14))}/mo</strong>
+          ${g.lumpsum>0?` &nbsp;|&nbsp; Lumpsum: ${fmt(g.lumpsum)}`:''}
+        </div>
+      </div>
+      <div class="goal-badges">
+        <span class="badge ${hMap[g.horizon].c}">${hMap[g.horizon].l}</span>
+        <span class="badge ${pMap[g.priority].c}">${pMap[g.priority].l}</span>
+        <button class="btn btn-sm" style="padding:3px 9px;font-size:11px" onclick="removeGoal(${i})">✕</button>
+      </div>
+    </div>`).join('');
+  // Goals summary
+  const totalSIPNeeded=goals.reduce((s,g)=>s+calcSIPNeeded(g.gap,g.years,12),0);
+  const totalTarget=goals.reduce((s,g)=>s+g.fv,0);
+  card.style.display='block';
+  document.getElementById('goals-summary-content').innerHTML=`
+    <div class="metric-grid three">
+      <div class="metric"><div class="lbl">Total goals</div><div class="val">${goals.length}</div></div>
+      <div class="metric gold-metric"><div class="lbl">Total target wealth</div><div class="val">${crores(totalTarget)}</div><div class="hint">inflation-adjusted</div></div>
+      <div class="metric highlight"><div class="lbl">Total SIP needed</div><div class="val">${fmt(totalSIPNeeded)}/mo</div></div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  SECTION 3: CASHFLOW
+// ═══════════════════════════════════════════════════
+function calcCashflow(){
+  const fi=gv('inc-fixed',0),vi=gv('inc-var',0),other=gv('inc-other',0),spouse=gv('inc-spouse',0);
+  const total=fi+vi+other+spouse;
+  const rent=gv('exp-rent',0),groc=gv('exp-grocery',0),util=gv('exp-util',0),trans=gv('exp-transport',0);
+  const edu=gv('exp-edu',0),health=gv('exp-health',0),dining=gv('exp-dining',0),shop=gv('exp-shop',0),misc=gv('exp-misc',0);
+  const emiHome=gv('emi-home',0),emiCar=gv('emi-car',0),emiPers=gv('emi-personal',0);
+  const totalEMI=emiHome+emiCar+emiPers;
+  const totalEss=rent+groc+util+trans+edu+health;
+  const totalDisc=dining+shop+misc;
+  const totalExp=totalEss+totalDisc+totalEMI;
+  const surplus=total-totalExp;
+  const savRate=total?Math.max(0,surplus)/total*100:0;
+  const emiRate=total?totalEMI/total*100:0;
+  if(!total){document.getElementById('cashflow-card').style.display='none';return;}
+  document.getElementById('cashflow-card').style.display='block';
+  window._cashflow={total,totalEss,totalDisc,totalEMI,surplus,savRate,emiRate};
+  
+  const qualColors={ok:'var(--success)',warn:'var(--warn)',bad:'var(--danger)'};
+  const savQ=savRate>=30?'ok':savRate>=15?'warn':'bad';
+  const emiQ=emiRate<=30?'ok':emiRate<=40?'warn':'bad';
+  const surplusQ=surplus>0?'ok':surplus===0?'warn':'bad';
+  
+  document.getElementById('cashflow-metrics').innerHTML=`
+    <div class="metric-grid">
+      <div class="metric ${surplusQ==='ok'?'ok-metric':surplusQ==='bad'?'danger-metric':'warn-metric'}">
+        <div class="lbl">Monthly surplus</div><div class="val">${fmt(surplus)}</div><div class="hint">investable capacity</div>
+      </div>
+      <div class="metric ${savQ==='ok'?'ok-metric':savQ==='bad'?'danger-metric':'warn-metric'}">
+        <div class="lbl">Savings rate</div><div class="val">${pct(savRate)}</div><div class="hint">target: 20%+</div>
+      </div>
+      <div class="metric ${emiQ==='ok'?'ok-metric':emiQ==='bad'?'danger-metric':'warn-metric'}">
+        <div class="lbl">EMI burden</div><div class="val">${pct(emiRate)}</div><div class="hint">safe limit: 40%</div>
+      </div>
+      <div class="metric gold-metric">
+        <div class="lbl">Annual investable</div><div class="val">${crores(Math.max(0,surplus)*12)}</div><div class="hint">projected</div>
+      </div>
+    </div>`;
+  
+  // Expense breakdown
+  const segments = [
+    {label:'Essential',amount:totalEss,color:'#3266AD'},
+    {label:'EMIs',amount:totalEMI,color:'#C0392B'},
+    {label:'Discretionary',amount:totalDisc,color:'#BA7517'},
+    {label:'Surplus',amount:Math.max(0,surplus),color:'#1D9E75'},
+  ].filter(s=>s.amount>0);
+  const segs=segments.map(s=>`<div class="alloc-seg" style="width:${(s.amount/total*100).toFixed(1)}%;background:${s.color}">${(s.amount/total*100)>8?Math.round(s.amount/total*100)+'%':''}</div>`).join('');
+  const legend=segments.map(s=>`<div class="alloc-dot"><span style="background:${s.color}"></span>${s.label} ${fmt(s.amount)} (${pct(s.amount/total*100)})</div>`).join('');
+  document.getElementById('cashflow-breakdown').innerHTML=`
+    <div class="divider"></div>
+    <div class="section-label">Income allocation breakdown</div>
+    <div class="alloc-bar">${segs}</div>
+    <div class="alloc-legend" style="margin-top:10px">${legend}</div>`;
+  
+  let insight='';
+  if(savRate<10) insight+=`<div class="insight danger"><strong>⚠ Critical: Very low savings rate (${pct(savRate)}).</strong> Under 10% savings means wealth creation is nearly impossible. A 10% reduction in discretionary spending unlocks ${fmt(totalDisc*0.1)} more per month for SIPs.</div>`;
+  else if(savRate>=30) insight+=`<div class="insight ok"><strong>✓ Exceptional savings discipline — ${pct(savRate)}.</strong> Top 10% of earners. Ensure this surplus flows into goal-mapped SIPs, not just savings accounts.</div>`;
+  else insight+=`<div class="insight"><strong>Savings rate: ${pct(savRate)}.</strong> Healthy — but pushing to 25%+ through lifestyle optimization would dramatically accelerate every goal.</div>`;
+  if(emiRate>40) insight+=`<div class="insight danger" style="margin-top:8px"><strong>⚠ EMI burden ${pct(emiRate)} exceeds safe 40% limit.</strong> This is your most urgent financial risk. Prioritize debt elimination before increasing equity SIPs.</div>`;
+  else if(emiRate>25) insight+=`<div class="insight warn" style="margin-top:8px"><strong>EMI burden at ${pct(emiRate)}.</strong> Manageable but elevated. Avoid taking any new loans until this reduces below 25%.</div>`;
+  document.getElementById('cashflow-insight').innerHTML=insight;
+}
+
+// ═══════════════════════════════════════════════════
+//  SECTION 4: NET WORTH
+// ═══════════════════════════════════════════════════
+function calcNetWorth(){
+  const mfEq=gv('a-mf-eq',0),mfDebt=gv('a-mf-debt',0),equity=gv('a-equity',0);
+  const fd=gv('a-fd',0),ppf=gv('a-ppf',0),epf=gv('a-epf',0);
+  const gold=gv('a-gold',0),cash=gv('a-cash',0),other=gv('a-other',0);
+  const house=gv('a-house',0),reOther=gv('a-re-other',0),vehicle=gv('a-vehicle',0),biz=gv('a-business',0);
+  const lHome=gv('l-home',0),lCar=gv('l-car',0),lPers=gv('l-personal',0),lOther=gv('l-other',0);
+  
+  const finAssets=mfEq+mfDebt+equity+fd+ppf+epf+gold+cash+other;
+  const physAssets=house+reOther+vehicle+biz;
+  const totalAssets=finAssets+physAssets;
+  const totalLiab=lHome+lCar+lPers+lOther;
+  const netWorth=totalAssets-totalLiab;
+  const liquidAssets=mfEq+mfDebt+equity+gold+cash;
+  const debtRatio=totalAssets?totalLiab/totalAssets*100:0;
+  
+  window._netWorth={netWorth,finAssets,physAssets,totalAssets,totalLiab,liquidAssets,mfEq,mfDebt,equity,fd,ppf,epf,gold,cash};
+  
+  if(!totalAssets&&!totalLiab){document.getElementById('networth-display').innerHTML='';return;}
+  
+  // Asset allocation visual
+  const allocItems=[
+    {label:'Equity MFs',val:mfEq,color:'#3266AD'},
+    {label:'Debt MFs',val:mfDebt,color:'#1D9E75'},
+    {label:'Direct Stocks',val:equity,color:'#4A7EC7'},
+    {label:'Fixed Income',val:fd,color:'#27AE60'},
+    {label:'PPF',val:ppf,color:'#2980B9'},
+    {label:'EPF/NPS',val:epf,color:'#16A085'},
+    {label:'Gold',val:gold,color:var_gold()},
+    {label:'Cash',val:cash,color:'#7F8C8D'},
+    {label:'Other',val:other,color:'#95A5A6'},
+    {label:'Real Estate',val:house+reOther,color:'#8E44AD'},
+    {label:'Vehicle/Biz',val:vehicle+biz,color:'#E67E22'},
+  ].filter(x=>x.val>0);
+  
+  const segs=allocItems.map(x=>`<div class="alloc-seg" style="width:${(x.val/totalAssets*100).toFixed(1)}%;background:${x.color}">${x.val/totalAssets*100>8?Math.round(x.val/totalAssets*100)+'%':''}</div>`).join('');
+  const legend=allocItems.map(x=>`<div class="alloc-dot"><span style="background:${x.color}"></span>${x.label} ${crores(x.val)} (${pct(x.val/totalAssets*100)})</div>`).join('');
+  
+  // Bar chart rows
+  function barRow(label,amount,color,total){
+    const p=Math.min(100,amount/total*100);
+    return `<div class="nw-bar-row">
+      <div class="nw-bar-label">${label}</div>
+      <div class="nw-bar-track"><div class="nw-bar-fill" style="width:${p.toFixed(1)}%;background:${color}">${p>15?crores(amount):''}</div></div>
+      <div class="nw-bar-val">${crores(amount)}</div>
+    </div>`;
+  }
+  
+  document.getElementById('networth-display').innerHTML=`
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Net worth snapshot</div><div class="card-sub">Your complete financial balance sheet</div></div>
+        <div class="card-icon">📊</div>
+      </div>
+      <div class="metric-grid three" style="margin-top:0">
+        <div class="metric ok-metric"><div class="lbl">Total assets</div><div class="val">${crores(totalAssets)}</div></div>
+        <div class="metric danger-metric"><div class="lbl">Total liabilities</div><div class="val">${crores(totalLiab)}</div></div>
+        <div class="metric ${netWorth>0?'gold-metric':'danger-metric'}"><div class="lbl">Net worth</div><div class="val">${crores(netWorth)}</div></div>
+      </div>
+      <div class="metric-grid" style="margin-top:10px">
+        <div class="metric"><div class="lbl">Financial assets</div><div class="val">${crores(finAssets)}</div><div class="hint">liquid & investable</div></div>
+        <div class="metric"><div class="lbl">Physical assets</div><div class="val">${crores(physAssets)}</div><div class="hint">illiquid</div></div>
+        <div class="metric"><div class="lbl">Liquid assets</div><div class="val">${crores(liquidAssets)}</div><div class="hint">accessible quickly</div></div>
+        <div class="metric ${debtRatio>50?'danger-metric':debtRatio>30?'warn-metric':'ok-metric'}"><div class="lbl">Debt ratio</div><div class="val">${pct(debtRatio)}</div><div class="hint">liabilities ÷ assets</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="section-label">Portfolio allocation (all assets)</div>
+      <div class="alloc-bar">${segs}</div>
+      <div class="alloc-legend" style="margin-top:10px">${legend}</div>
+      <div class="divider"></div>
+      <div class="section-label">Asset waterfall</div>
+      ${barRow('Equity MFs',mfEq,'#3266AD',totalAssets)}
+      ${barRow('Direct Equity',equity,'#4A7EC7',totalAssets)}
+      ${barRow('Debt MFs & FDs',mfDebt+fd,'#1D9E75',totalAssets)}
+      ${barRow('PPF + EPF/NPS',ppf+epf,'#16A085',totalAssets)}
+      ${barRow('Gold',gold,'#B8960C',totalAssets)}
+      ${barRow('Real Estate',house+reOther,'#8E44AD',totalAssets)}
+      ${totalLiab>0?barRow('Total Liabilities',totalLiab,'#C0392B',totalAssets):''}
+      ${debtRatio>50?`<div class="insight danger" style="margin-top:12px"><strong>⚠ Debt ratio ${pct(debtRatio)} is high.</strong> Liabilities exceed half your assets. A structured debt-elimination plan must precede aggressive equity investing.</div>`:''}
+      ${mfEq+equity<totalAssets*0.1?`<div class="insight warn" style="margin-top:8px"><strong>Low equity exposure.</strong> Only ${pct((mfEq+equity)/totalAssets*100)} of assets in equity. For long-term goals, equity is your primary wealth-creation engine.</div>`:''}
+    </div>`;
+}
+function var_gold(){return '#B8960C';}
+
+// ═══════════════════════════════════════════════════
+//  SECTION 5: RISK PROFILE
+// ═══════════════════════════════════════════════════
+function calcRisk(){
+  const react=parseInt(document.querySelector('input[name="react"]:checked')?.value||2);
+  const lossReact=parseInt(document.querySelector('input[name="loss_react"]:checked')?.value||2);
+  const loss=parseInt(document.querySelector('input[name="loss"]:checked')?.value||2);
+  const stab=parseInt(document.querySelector('input[name="stab"]:checked')?.value||2);
+  const incomeLoss=parseInt(document.querySelector('input[name="income_loss"]:checked')?.value||2);
+  const dep=parseInt(document.querySelector('input[name="dep"]:checked')?.value||1);
+  const exp=parseInt(document.querySelector('input[name="invest_exp"]:checked')?.value||1);
+  const horizRisk=parseInt(document.querySelector('input[name="horizon_risk"]:checked')?.value||2);
+  
+  // Weighted scoring
+  const score=react*2+lossReact*2+loss*1.5+stab*1+incomeLoss*1+(3-dep)*0.5+exp*1+horizRisk*1;
+  const maxScore=4*2+4*2+4*1.5+4*1+4*1+(3-0)*0.5+4*1+4*1; // ~36
+  const normScore=Math.round(score/maxScore*100);
+  
+  const profiles=[
+    {min:0,max:30,name:'Conservative',score:normScore,color:'#D85A30',eq:25,debt:55,gold:15,intl:5,
+     lc:20,mc:3,sc:0,flex:2,
+     desc:'Capital preservation is your primary objective. You value predictability and sleep-at-night comfort over maximum returns. Your portfolio will beat inflation and FDs while keeping volatility minimal.'},
+    {min:31,max:50,name:'Moderate',score:normScore,color:'#BA7517',eq:50,debt:35,gold:10,intl:5,
+     lc:30,mc:10,sc:3,flex:7,
+     desc:'Balanced growth with manageable volatility. You can handle moderate market dips while keeping long-term perspective. The most statistically reliable long-term wealth-creation profile.'},
+    {min:51,max:70,name:'Moderately Aggressive',score:normScore,color:'#3266AD',eq:65,debt:20,gold:10,intl:5,
+     lc:30,mc:20,sc:7,flex:8,
+     desc:'Growth-focused with high equity conviction. You understand market cycles and can hold through corrections without panic. Your long horizon and financial stability support this positioning.'},
+    {min:71,max:100,name:'Aggressive',score:normScore,color:'#1D9E75',eq:80,debt:10,gold:5,intl:5,
+     lc:25,mc:25,sc:15,flex:15,
+     desc:'Maximum wealth creation orientation. You have high financial stability, long time horizon, and the psychological conviction to hold through 30%+ drawdowns. Every rupee is working at full intensity.'},
+  ];
+  const p=profiles.find(x=>normScore>=x.min&&normScore<=x.max)||profiles[1];
+  window.userRisk=p;
+  
+  // Auto-configure strategy sliders
+  document.getElementById('sl-eq-lc').value=p.lc;
+  document.getElementById('sl-eq-mc').value=p.mc;
+  document.getElementById('sl-eq-sc').value=p.sc;
+  document.getElementById('sl-eq-flex').value=p.flex;
+  document.getElementById('sl-debt').value=p.debt;
+  document.getElementById('sl-gold').value=p.gold;
+  document.getElementById('sl-intl').value=p.intl;
+  ['eq-lc-val','eq-mc-val','eq-sc-val','eq-flex-val','debt-val','gold-val','intl-val'].forEach((id,i)=>{
+    const vals=[p.lc,p.mc,p.sc,p.flex,p.debt,p.gold,p.intl];
+    document.getElementById(id).textContent=vals[i]+'%';
+  });
+  updateStrategy();
+  
+  const circ=2*Math.PI*40;
+  const dash=normScore/100*circ;
+  document.getElementById('risk-result').innerHTML=`
+    <div class="risk-display">
+      <div class="risk-ring-wrap">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--cream)" stroke-width="8"/>
+          <circle cx="50" cy="50" r="40" fill="none" stroke="${p.color}" stroke-width="8"
+            stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}"
+            stroke-dashoffset="${circ*0.25}" stroke-linecap="round"
+            transform="rotate(-90 50 50)" style="transition:stroke-dasharray 0.8s ease"/>
+        </svg>
+        <div class="risk-label-inner">
+          <div style="color:${p.color}">${normScore}</div><div>/100</div>
+        </div>
+      </div>
+      <div class="risk-info">
+        <h3>${p.name} Investor</h3>
+        <p>${p.desc}</p>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="badge badge-info">Equity ${p.eq}%</span>
+          <span class="badge badge-ok">Debt ${p.debt}%</span>
+          <span class="badge badge-warn">Gold ${p.gold}%</span>
+          ${p.intl?`<span class="badge" style="background:rgba(123,94,167,0.1);color:#7B5EA7">Intl ${p.intl}%</span>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="insight ok" style="margin-top:10px"><strong>✓ Strategy configured.</strong> Strategy sliders on the Strategy page have been automatically set to your ${p.name} profile. You can fine-tune them there.</div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  SECTION 6: INSURANCE
+// ═══════════════════════════════════════════════════
+function calcInsurance(){
+  const income=gv('ins-income',0),exp=gv('ins-exp',0),dep=gv('ins-dep',0);
+  const childAge=gv('ins-child-age',0),loans=gv('ins-loans',0);
+  const lifeExist=gv('ins-life',0);
+  const healthInd=gv('ins-health-ind',0),healthFam=gv('ins-health-family',0),healthEmp=gv('ins-health-employer',0);
+  const critical=gv('ins-critical',0),accident=gv('ins-accident',0);
+  const emergency=gv('ins-emergency',0);
+  const yearsToChildIndependent=Math.max(0,25-childAge);
+  
+  if(!income&&!exp){document.getElementById('insurance-output').innerHTML='';return;}
+  
+  // Life cover calculation (HLV + expense method)
+  const yearsOfWork=Math.max(10,gv('p-retire-years',25));
+  const hlvMethod=income*15; // Human Life Value method
+  const expenseMethod=exp*12*20+loans+(dep*500000); // Expense replacement method
+  const lifeNeeded=Math.max(hlvMethod,expenseMethod);
+  const lifeGap=Math.max(0,lifeNeeded-lifeExist);
+  
+  // Health cover adequacy
+  const totalHealth=healthInd+healthFam+healthEmp;
+  const healthNeeded=dep>0?Math.max(1500000,dep*500000+500000):500000;
+  const healthOk=totalHealth>=healthNeeded;
+  
+  // Super top-up recommendation
+  const superTopUp=Math.max(0,healthNeeded-totalHealth);
+  
+  // Emergency fund
+  const emergencyNeeded=exp*6;
+  const emergencyHave=emergency*exp;
+  const emergencyOk=emergency>=6;
+  
+  const lifeOk=lifeExist>=lifeNeeded;
+  const ulip=gvs('ins-ulip','no')==='yes';
+  
+  // Term plan cost estimate
+  const age=gv('p-age',35);
+  const termCostPer1Cr=age<30?6000:age<40?8000:age<45?12000:18000;
+  const termCost=Math.round(lifeGap/10000000*termCostPer1Cr);
+  
+  const checks=[
+    {ok:lifeOk,warn:!lifeOk&&lifeExist>0,label:'Pure Term Life Insurance',
+     detail:lifeOk
+       ?`Your cover of ${crores(lifeExist)} is adequate (recommended: ${crores(lifeNeeded)}). Review annually as income grows.`
+       :`Recommended cover: ${crores(lifeNeeded)} (${crores(lifeGap)} additional needed). A term plan for this would cost approximately ${fmt(termCost)}/year — tiny relative to the protection provided. Use HLV method: ${gv('p-retire-years',25)} years × ₹${(income/100000).toFixed(0)}L annual income.`
+    },
+    {ok:healthOk,warn:!healthOk&&totalHealth>0,label:'Health Insurance (Family Floater)',
+     detail:healthOk
+       ?`Total health cover ${crores(totalHealth)} is adequate. Remember: employer cover lapses if you change jobs — maintain personal cover independently.`
+       :`Recommended: ${crores(healthNeeded)} for your family. Current gap: ${crores(superTopUp)}. A Super Top-Up plan can bridge this gap at low cost (Rs 5,000–8,000/year for additional ₹${(superTopUp/100000).toFixed(0)}L cover).`
+    },
+    {ok:emergencyOk,warn:!emergencyOk&&emergency>0,label:'Emergency Fund (6 months liquid)',
+     detail:emergencyOk
+       ?`${emergency} months secured (${fmt(emergencyHave)}). Keep this in a liquid mutual fund — instant redemption with better returns than savings accounts.`
+       :`Only ${emergency} months saved. Need ${fmt(emergencyNeeded)} (${fmt(emergencyNeeded-emergencyHave)} more). Build this BEFORE increasing any SIPs — it's your financial immune system.`
+    },
+    {ok:critical>0,warn:critical===0,label:'Critical Illness Cover',
+     detail:critical>0
+       ?`₹${(critical/100000).toFixed(0)}L critical illness cover in place. Ensure it covers cancer, cardiac events, and stroke — the top 3 causes of financial ruin from illness.`
+       :`Critical illness cover pays a lump sum on diagnosis. With ₹30–50L cover, you can take 2–3 years off work for treatment and recovery without financial pressure. Costs ₹5,000–10,000/year.`
+    },
+    {ok:accident>0,warn:accident===0,label:'Personal Accident Cover',
+     detail:accident>0
+       ?`Personal accident cover in place. Ensure it includes partial disability and not just accidental death.`
+       :`A comprehensive personal accident policy covering death, total disability, and partial disability is essential — especially for salaried earners. Costs just ₹2,000–4,000/year for ₹1Cr cover.`
+    },
+  ];
+  
+  const protectionScore=checks.filter(c=>c.ok).length;
+  
+  document.getElementById('insurance-output').innerHTML=`
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Insurance adequacy audit</div><div class="card-sub">${protectionScore}/5 protection layers secured</div></div>
+        <div class="card-icon">🛡️</div>
+      </div>
+      <div class="checklist">${checks.map(x=>`
+        <div class="check-item">
+          <div class="check-icon ${x.ok?'ok':x.warn?'warn':'bad'}">${x.ok?'✓':x.warn?'!':'✗'}</div>
+          <div><div class="check-text">${x.label}</div><div class="check-sub">${x.detail}</div></div>
+        </div>`).join('')}
+      </div>
+      ${ulip?`<div class="insight danger" style="margin-top:12px"><strong>⚠ ULIPs detected.</strong> ULIPs combine insurance and investment poorly — high charges (3–5% p.a.) eat into returns. After the lock-in, evaluate surrendering and reinvesting in pure term + mutual fund combination for significantly better outcomes.</div>`:''}
+      ${!emergencyOk?`<div class="insight warn" style="margin-top:8px"><strong>Do this first:</strong> Build emergency fund to ${fmt(emergencyNeeded)} before stepping up any SIPs. Use a liquid fund for instant access.</div>`:''}
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  SECTION 7: TAX
+// ═══════════════════════════════════════════════════
+function calcTax(){
+  const income=gv('tax-income',0),slab=gv('tax-slab',20);
+  const epf=gv('tax-epf',0),ppf=gv('tax-ppf',0),elss=gv('tax-elss',0);
+  const lifeins=gv('tax-lifeins',0),tuition=gv('tax-tuition',0),homeloan=gv('tax-homeloan',0);
+  const nps=gv('tax-nps',0),healthPrem=gv('tax-health-prem',0);
+  
+  if(!income){document.getElementById('tax-output').innerHTML='';return;}
+  
+  const regime=gvs('tax-regime','old');
+  const total80C=Math.min(150000,epf+ppf+elss+lifeins+tuition+homeloan);
+  const unused80C=Math.max(0,150000-total80C);
+  const elssNeeded=Math.max(0,unused80C);
+  const npsBenefit=Math.min(50000,nps);
+  const healthBenefit=Math.min(25000+(dep_health_limit()),healthPrem);
+  
+  function dep_health_limit(){
+    const d=gv('ins-dep',0);
+    return d>0?25000:0;
+  }
+  
+  const totalDeductions=total80C+npsBenefit+healthBenefit;
+  const taxSaved=Math.round(totalDeductions*slab/100);
+  const potentialTaxSaving=Math.round((unused80C+Math.max(0,50000-nps))*slab/100);
+  
+  const elssPerMonth=Math.round(elssNeeded/12/100)*100;
+  
+  document.getElementById('tax-output').innerHTML=`
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Tax optimisation analysis</div><div class="card-sub">Maximise legal deductions — every rupee saved is a return earned</div></div>
+        <div class="card-icon">💡</div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><div class="lbl">80C utilised</div><div class="val">${fmt(total80C)}</div><div class="hint">of ₹1,50,000 limit</div></div>
+        <div class="metric ${unused80C===0?'ok-metric':'warn-metric'}"><div class="lbl">80C remaining</div><div class="val">${fmt(unused80C)}</div><div class="hint">${unused80C===0?'Fully utilised':'Gap to close'}</div></div>
+        <div class="metric gold-metric"><div class="lbl">Tax saved (current)</div><div class="val">${fmt(taxSaved)}</div><div class="hint">per year</div></div>
+        <div class="metric ${potentialTaxSaving===0?'ok-metric':'warn-metric'}"><div class="lbl">Additional tax saveable</div><div class="val">${fmt(potentialTaxSaving)}</div><div class="hint">opportunity remaining</div></div>
+      </div>
+      
+      <div class="divider"></div>
+      <div class="section-label gold">Section 80C utilisation</div>
+      ${[
+        {label:'EPF contribution',val:epf,max:150000},
+        {label:'PPF investment',val:ppf,max:150000},
+        {label:'ELSS SIP',val:elss,max:150000},
+        {label:'Life insurance premium',val:lifeins,max:150000},
+        {label:'Children\'s tuition',val:tuition,max:150000},
+        {label:'Home loan principal',val:homeloan,max:150000},
+      ].filter(x=>x.val>0).map(x=>`
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>${x.label}</span><span>${fmt(x.val)}</span></div>
+          <div class="score-bar"><div class="score-bar-fill" style="width:${Math.min(100,x.val/150000*100).toFixed(0)}%;background:var(--gold)"></div></div>
+        </div>`).join('')}
+      
+      ${unused80C>0?`
+      <div class="insight warn" style="margin-top:12px">
+        <strong>⚠ ₹${(unused80C/1000).toFixed(0)}K 80C gap — tax leakage of ${fmt(Math.round(unused80C*slab/100))}/year.</strong><br>
+        Bridging with ELSS mutual fund: ${fmt(elssPerMonth)}/month SIP. You get equity market returns AND ${slab}% tax deduction — the most efficient investment available for your tax slab.
+      </div>`:''}
+      
+      ${nps<50000&&slab>=20?`
+      <div class="insight" style="margin-top:8px">
+        <strong>💡 NPS Section 80CCD(1B) opportunity.</strong><br>
+        Additional ₹50,000 deduction available via NPS — saves ${fmt(Math.round(Math.min(50000,50000-nps)*slab/100))} more in tax. NPS equity option delivers competitive long-term returns.
+      </div>`:''}
+      
+      ${regime==='unsure'?`
+      <div class="insight" style="margin-top:8px">
+        <strong>Old vs New regime:</strong> Old regime wins if your total deductions exceed ₹${slab===30?'4,25,000':slab===20?'2,00,000':'75,000'}. With your current deductions of ${fmt(totalDeductions)}, the ${totalDeductions>150000?'old':'new'} regime likely saves more. Get a CA to verify.
+      </div>`:''}
+      
+      <div class="divider"></div>
+      <div class="section-label gold">MF tax efficiency guide (your ${slab}% slab)</div>
+      <table class="data-table">
+        <tr><th>Fund type</th><th>Holding period</th><th>Tax rate</th><th>Verdict</th></tr>
+        <tr><td>Equity / ELSS MF</td><td>12+ months (LTCG)</td><td>10% (₹1L exempt annually)</td><td><span class="badge badge-ok">Most efficient</span></td></tr>
+        <tr><td>Equity MF</td><td>&lt;12 months (STCG)</td><td>15%</td><td><span class="badge badge-warn">Avoid short-term</span></td></tr>
+        <tr><td>Debt MF (post Apr 2023)</td><td>Any</td><td>As per income slab (${slab}%)</td><td><span class="badge badge-warn">FD-like taxation now</span></td></tr>
+        <tr><td>Gold ETF / FoF</td><td>24+ months</td><td>20% with indexation</td><td><span class="badge badge-info">Good long-term</span></td></tr>
+        <tr><td>ELSS (80C)</td><td>3-year lock-in</td><td>10% LTCG (₹1L exempt)</td><td><span class="badge badge-ok">Tax-saving + returns</span></td></tr>
+      </table>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  SECTION 8: STRATEGY (sliders)
+// ═══════════════════════════════════════════════════
+function updateStrategy(){
+  const lc=gv('sl-eq-lc',30),mc=gv('sl-eq-mc',15),sc=gv('sl-eq-sc',5),flex=gv('sl-eq-flex',10);
+  const debt=gv('sl-debt',25),gold=gv('sl-gold',10),intl=gv('sl-intl',5);
+  const totalEq=lc+mc+sc+flex;
+  const total=totalEq+debt+gold+intl;
+  
+  document.getElementById('eq-lc-val').textContent=lc+'%';
+  document.getElementById('eq-mc-val').textContent=mc+'%';
+  document.getElementById('eq-sc-val').textContent=sc+'%';
+  document.getElementById('eq-flex-val').textContent=flex+'%';
+  document.getElementById('debt-val').textContent=debt+'%';
+  document.getElementById('gold-val').textContent=gold+'%';
+  document.getElementById('intl-val').textContent=intl+'%';
+  
+  ['sl-eq-lc','sl-eq-mc','sl-eq-sc','sl-eq-flex','sl-debt','sl-gold','sl-intl'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.style.background=`linear-gradient(to right,var(--gold) 0%,var(--gold) ${el.value*1/(id.includes('eq-lc')?60:id.includes('eq-mc')?40:id.includes('eq-sc')?25:id.includes('eq-flex')?40:id.includes('debt')?60:id.includes('gold')?25:20)*100}%,var(--cream) ${el.value*1/(id.includes('eq-lc')?60:id.includes('eq-mc')?40:id.includes('eq-sc')?25:id.includes('eq-flex')?40:id.includes('debt')?60:id.includes('gold')?25:20)*100}%)`;
+  });
+  
+  const segments=[
+    {label:'Large Cap',val:lc,color:'#1A3E6F'},
+    {label:'Mid Cap',val:mc,color:'#3266AD'},
+    {label:'Small Cap',val:sc,color:'#4A7EC7'},
+    {label:'Flexi Cap',val:flex,color:'#7AAED6'},
+    {label:'Debt',val:debt,color:'#1D9E75'},
+    {label:'Gold',val:gold,color:'#B8960C'},
+    {label:'International',val:intl,color:'#7B5EA7'},
+  ].filter(s=>s.val>0);
+  
+  const rem=100-total;
+  const segs=segments.map(s=>`<div class="alloc-seg" style="width:${s.val}%;background:${s.color}">${s.val>8?s.val+'%':''}</div>`).join('')
+    +(rem>0?`<div class="alloc-seg" style="width:${rem}%;background:var(--cream)"></div>`:'');
+  const legend=segments.map(s=>`<div class="alloc-dot"><span style="background:${s.color}"></span>${s.label} ${s.val}%</div>`).join('');
+  
+  document.getElementById('strategy-alloc').innerHTML=`
+    <div class="divider"></div>
+    <div class="metric-grid three" style="margin-bottom:12px">
+      <div class="metric"><div class="lbl">Total equity</div><div class="val">${totalEq}%</div></div>
+      <div class="metric"><div class="lbl">Debt + Gold</div><div class="val">${debt+gold}%</div></div>
+      <div class="metric ${total===100?'ok-metric':'warn-metric'}"><div class="lbl">Total allocated</div><div class="val">${total}%</div></div>
+    </div>
+    <div class="alloc-bar">${segs}</div>
+    <div class="alloc-legend" style="margin-top:10px">${legend}</div>`;
+  
+  document.getElementById('strategy-verdict').innerHTML = total===100
+    ? `<div class="insight ok" style="margin-top:8px"><strong>✓ Allocation sums to 100%.</strong> Strategy confirmed. Equity allocation ${totalEq}% — ${totalEq>70?'aggressive growth mode':totalEq>50?'balanced growth':'conservative'} positioning.</div>`
+    : `<div class="insight warn" style="margin-top:8px"><strong>${rem>0?rem+'% unallocated.':Math.abs(rem)+'% over-allocated.'} Adjust sliders to reach exactly 100%.</strong></div>`;
+  
+  window._strategy={lc,mc,sc,flex,debt,gold,intl,totalEq};
+}
+updateStrategy();
+
+// ═══════════════════════════════════════════════════
+//  SECTION 9: SIP PLAN
+// ═══════════════════════════════════════════════════
+function calcSIPPlan(){
+  const sipTotal=gv('sip-total',0),lumpNow=gv('lumpsum-now',0);
+  const stepup=gv('sip-stepup',10),ret=gv('sip-return',12);
+  if(!sipTotal&&!goals.length){document.getElementById('sip-plan-output').innerHTML='';return;}
+  
+  if(!goals.length){
+    document.getElementById('sip-plan-output').innerHTML=`<div class="insight warn">Add goals in Section 2 first — then we'll map your SIP budget to each goal.</div>`;
+    return;
+  }
+  
+  const goalSIPs=goals.map(g=>{
+    const needed=calcSIPNeeded(g.gap,g.years,ret);
+    return {...g,needed,canFund:sipTotal>0&&needed<=sipTotal*0.8};
+  });
+  const totalNeeded=goalSIPs.reduce((s,g)=>s+g.needed,0);
+  const gap=Math.max(0,totalNeeded-sipTotal);
+  const covered=sipTotal>0?Math.min(100,sipTotal/totalNeeded*100):0;
+  
+  // Priority-based allocation
+  const critical=goalSIPs.filter(g=>g.priority==='critical');
+  const high=goalSIPs.filter(g=>g.priority==='high');
+  const flex=goalSIPs.filter(g=>g.priority==='flexible');
+  const criticalSum=critical.reduce((s,g)=>s+g.needed,0);
+  const highSum=high.reduce((s,g)=>s+g.needed,0);
+  
+  // 5-year wealth projection with step-up
+  const p5=fvSIP(sipTotal,lumpNow,5,ret,stepup);
+  const p10=fvSIP(sipTotal,lumpNow,10,ret,stepup);
+  const p20=fvSIP(sipTotal,lumpNow,20,ret,stepup);
+  const totalInv5=lumpNow+sipTotal*12*5*(1+stepup/100*2.5);
+  
+  document.getElementById('sip-plan-output').innerHTML=`
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">SIP budget vs goals</div><div class="card-sub">Goal-wise SIP requirement mapped against your budget</div></div>
+        <div class="card-icon">🔄</div>
+      </div>
+      <div class="metric-grid three">
+        <div class="metric ${sipTotal>=totalNeeded?'ok-metric':'warn-metric'}"><div class="lbl">Your SIP budget</div><div class="val">${fmt(sipTotal)}/mo</div></div>
+        <div class="metric"><div class="lbl">Total SIP needed</div><div class="val">${fmt(totalNeeded)}/mo</div></div>
+        <div class="metric ${gap===0?'ok-metric':'danger-metric'}"><div class="lbl">Gap</div><div class="val">${gap===0?'None':fmt(gap)+'/mo'}</div><div class="hint">${gap>0?'shortfall to bridge':'fully covered'}</div></div>
+      </div>
+      
+      <div class="divider"></div>
+      <div class="section-label">Goal-wise SIP requirement vs coverage</div>
+      ${goalSIPs.map(g=>{
+        const p=sipTotal?Math.min(100,g.needed/sipTotal*100):0;
+        const covP=sipTotal?Math.min(100,sipTotal/totalNeeded*100*g.needed/totalNeeded*sipTotal/g.needed):0;
+        return `<div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+            <span style="font-weight:500">${g.name}</span>
+            <span style="font-family:'DM Mono',monospace;color:var(--gold)">${fmt(g.needed)}/mo <span style="color:var(--muted)">(${crores(g.fv)} in ${g.years}y)</span></span>
+          </div>
+          <div class="score-bar"><div class="score-bar-fill" style="width:${Math.min(100,sipTotal?sipTotal/g.needed*100:0).toFixed(0)}%;background:${g.needed<=sipTotal?'var(--success)':g.needed<=sipTotal*1.5?'var(--warn)':'var(--danger)'}"></div></div>
+          ${g.needed>sipTotal?`<div style="font-size:11px;color:var(--danger);margin-top:3px">Shortfall: ${fmt(g.needed-sipTotal)}/mo — consider extending timeline by ${Math.ceil((g.needed-sipTotal)/sipTotal*g.years)} years or reducing target.</div>`:''}
+        </div>`;
+      }).join('')}
+      
+      ${gap>0?`<div class="insight warn" style="margin-top:8px"><strong>Gap of ${fmt(gap)}/month.</strong> Priority approach: Fully fund non-negotiable goals (${fmt(criticalSum)}/mo) first, then high-priority (${fmt(highSum)}/mo). Flexible goals can wait for salary increments or step-ups.</div>`
+      :`<div class="insight ok" style="margin-top:8px"><strong>✓ Your SIP budget covers all goals.</strong> ${sipTotal>totalNeeded?`Surplus of ${fmt(sipTotal-totalNeeded)}/mo — invest additional in wealth creation.`:''}</div>`}
+    </div>
+    
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">SIP compounding milestones</div><div class="card-sub">${fmt(sipTotal)}/mo SIP with ${stepup}% annual step-up at ${ret}% p.a.</div></div>
+        <div class="card-icon">📈</div>
+      </div>
+      <div class="metric-grid three">
+        <div class="metric"><div class="lbl">After 5 years</div><div class="val">${crores(p5)}</div><div class="hint">invested: ${crores(totalInv5)}</div></div>
+        <div class="metric gold-metric"><div class="lbl">After 10 years</div><div class="val">${crores(p10)}</div></div>
+        <div class="metric highlight"><div class="lbl">After 20 years</div><div class="val">${crores(p20)}</div></div>
+      </div>
+      <div class="insight" style="margin-top:10px">
+        <strong>Power of step-up:</strong> At ${stepup}% annual step-up, your SIP of ${fmt(sipTotal)}/month becomes ${fmt(Math.round(sipTotal*Math.pow(1+stepup/100,10)/100)*100)}/month by year 10 — the step-up alone adds ${crores(p20-fvSIP(sipTotal,lumpNow,20,ret,0))} to your final corpus vs a flat SIP.
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  SECTION 10: PROJECTIONS
+// ═══════════════════════════════════════════════════
+function calcProjections(){
+  const sip=gv('pr-sip',0),corpus=gv('pr-corpus',0);
+  const years=gv('pr-years',20),r=gv('pr-return',12);
+  const stepup=gv('pr-stepup',10),inflation=gv('pr-inflation',6);
+  if(!sip&&!corpus) return;
+  
+  const best=fvSIP(sip,corpus,years,r+3,stepup);
+  const expected=fvSIP(sip,corpus,years,r,stepup);
+  const stress=fvSIP(sip,corpus,years,Math.max(r-4,2),stepup);
+  const inflAdj=expected/Math.pow(1+inflation/100,years);
+  let totalInvested=corpus;let s=sip;
+  for(let i=0;i<years;i++){totalInvested+=s*12;s*=(1+stepup/100);}
+  const wealthMult=totalInvested?(expected/totalInvested).toFixed(1):'—';
+  const delayedExpected=fvSIP(sip,corpus,years-1,r,stepup);
+  const costOfDelay=expected-delayedExpected;
+  
+  document.getElementById('projection-out').innerHTML=`
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Wealth at ${years} years — 3 scenarios</div><div class="card-sub">${fmt(sip)} SIP · ${stepup}% step-up · ${r}% base return · ${years}-year horizon</div></div>
+        <div class="card-icon">🔮</div>
+      </div>
+      <div class="scenario-grid">
+        <div class="scenario best"><div class="s-label">Bull (${r+3}% p.a.)</div><div class="s-val">${crores(best)}</div></div>
+        <div class="scenario exp"><div class="s-label">Expected (${r}% p.a.)</div><div class="s-val">${crores(expected)}</div></div>
+        <div class="scenario stress"><div class="s-label">Bear (${Math.max(r-4,2)}% p.a.)</div><div class="s-val">${crores(stress)}</div></div>
+      </div>
+      <div class="metric-grid three" style="margin-top:12px">
+        <div class="metric"><div class="lbl">Total invested</div><div class="val">${crores(totalInvested)}</div></div>
+        <div class="metric gold-metric"><div class="lbl">Real value (today's ₹)</div><div class="val">${crores(inflAdj)}</div><div class="hint">after ${inflation}% inflation</div></div>
+        <div class="metric highlight"><div class="lbl">Wealth multiple</div><div class="val">${wealthMult}×</div><div class="hint">every rupee becomes ${wealthMult}</div></div>
+      </div>
+      <div class="cost-of-delay" style="margin-top:12px">
+        <div class="cod-title">⏰ The cost of waiting just 1 year</div>
+        <div class="cod-body">Starting one year later costs you approximately <span class="cod-number">${crores(costOfDelay)}</span> in final wealth. That is the price of procrastination.</div>
+      </div>
+    </div>`;
+  
+  renderProjChart(r,sip,corpus,years,stepup);
+  renderGoalMapping(expected,r,sip,stepup);
+}
+
+function renderProjChart(r,sip,corpus,years,stepup){
+  const labels=[],best=[],exp=[],stress=[],inv=[];
+  const pts=Math.min(years,20);
+  const step=Math.max(1,Math.floor(years/pts));
+  for(let y=0;y<=years;y+=step){
+    if(y>years)break;
+    labels.push('Yr '+y);
+    best.push(+(fvSIP(sip,corpus,y,r+3,stepup)/100000).toFixed(1));
+    exp.push(+(fvSIP(sip,corpus,y,r,stepup)/100000).toFixed(1));
+    stress.push(+(fvSIP(sip,corpus,y,Math.max(r-4,2),stepup)/100000).toFixed(1));
+    let c=corpus,s=sip;for(let i=0;i<y;i++){c+=s*12;s*=(1+stepup/100);}
+    inv.push(+(c/100000).toFixed(1));
+  }
+  if(labels[labels.length-1]!=='Yr '+years){
+    labels.push('Yr '+years);
+    best.push(+(fvSIP(sip,corpus,years,r+3,stepup)/100000).toFixed(1));
+    exp.push(+(fvSIP(sip,corpus,years,r,stepup)/100000).toFixed(1));
+    stress.push(+(fvSIP(sip,corpus,years,Math.max(r-4,2),stepup)/100000).toFixed(1));
+    let c=corpus,s=sip;for(let i=0;i<years;i++){c+=s*12;s*=(1+stepup/100);}
+    inv.push(+(c/100000).toFixed(1));
+  }
+  if(projChart)projChart.destroy();
+  projChart=new Chart(document.getElementById('proj-chart'),{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Bull case',data:best,borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,.06)',fill:true,tension:.35,borderWidth:2,pointRadius:2},
+      {label:'Expected',data:exp,borderColor:'#3266AD',backgroundColor:'rgba(50,102,173,.06)',fill:true,tension:.35,borderWidth:2.5,pointRadius:3},
+      {label:'Bear case',data:stress,borderColor:'#D85A30',backgroundColor:'rgba(216,90,48,.04)',fill:true,tension:.35,borderDash:[5,4],borderWidth:1.5,pointRadius:2},
+      {label:'Total invested',data:inv,borderColor:'var(--gold)',backgroundColor:'transparent',fill:false,tension:.3,borderDash:[3,3],borderWidth:1.5,pointRadius:0},
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:'top',labels:{font:{size:11,family:'DM Mono'},color:'#7A736A',boxWidth:12,usePointStyle:true}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ₹${ctx.parsed.y}L`}}
+      },
+      scales:{
+        y:{ticks:{callback:v=>'₹'+v+'L',font:{size:10,family:'DM Mono'},color:'#A09890'},grid:{color:'rgba(128,128,128,.06)'},border:{display:false}},
+        x:{ticks:{font:{size:10,family:'DM Mono'},color:'#A09890'},grid:{display:false},border:{display:false}}
+      }
+    }
+  });
+}
+
+function renderGoalMapping(expected,r,sip,stepup=10){
+  if(!goals.length)return;
+  const items=goals.map(g=>{
+    const needed=calcSIPNeeded(g.gap,g.years,r||12);
+    const canFund=sip>=needed*0.8;
+    return `<div class="check-item">
+      <div class="check-icon ${canFund?'ok':'warn'}">${canFund?'✓':'!'}</div>
+      <div>
+        <div class="check-text">${g.name} — ${crores(g.fv)} in ${g.years} yrs</div>
+        <div class="check-sub">SIP needed: <strong>${fmt(needed)}/mo</strong> · ${canFund?'On track.':'Need '+fmt(needed-sip)+' more per month or reduce goal by '+pct((1-sip/needed)*100)+'.'}</div>
+      </div>
+    </div>`;
+  }).join('');
+  const totalSIPNeeded=goals.reduce((s,g)=>s+calcSIPNeeded(g.gap,g.years,r||12),0);
+  document.getElementById('goal-mapping').innerHTML=`
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Goal feasibility check</div><div class="card-sub">Can your current SIP fund every goal?</div></div><div class="card-icon">🗺️</div></div>
+      <div class="checklist">${items}</div>
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--muted);font-size:13px">Total SIP for all goals</span>
+        <strong style="font-family:'Cormorant Garamond',serif;font-size:20px">${fmt(totalSIPNeeded)}/mo</strong>
+      </div>
+    </div>`;
+  window._totalSIPNeeded=totalSIPNeeded;
+}
+
+// ═══════════════════════════════════════════════════
+//  SECTION 11: RETIREMENT
+// ═══════════════════════════════════════════════════
+function calcRetirement(){
+  const curAge=gv('ret-current-age',32),retAge=gv('ret-age',60),lifeExp=gv('ret-life',85);
+  const monthlyExp=gv('ret-monthly',80000),retInflation=gv('ret-inflation',5);
+  const postReturn=gv('ret-post-return',7),preReturn=gv('ret-return',12);
+  const epf=gv('ret-epf',0),pension=gv('ret-pension',0);
+  const corpusNow=gv('ret-corpus-now',0);
+  
+  if(!curAge||!retAge)return;
+  
+  const yearsToRet=Math.max(1,retAge-curAge);
+  const retDuration=Math.max(1,lifeExp-retAge);
+  
+  // Monthly expense in retirement (inflation-adjusted)
+  const retMonthlyFV=inflAdjust(monthlyExp,yearsToRet,retInflation);
+  
+  // Corpus needed at retirement (annuity formula)
+  const postMR=postReturn/12/100;
+  const n=retDuration*12;
+  const retCorpusNeeded=postMR>0?retMonthlyFV*(1-Math.pow(1+postMR,-n))/postMR:retMonthlyFV*n;
+  
+  // What EPF provides
+  const epfAtRet=epf*Math.pow(1.085,yearsToRet); // 8.5% EPF return
+  const pensionCorpus=pension*12*20; // 20x annuity multiple
+  const corpusAlreadyProvided=epfAtRet+pensionCorpus;
+  
+  // Corpus gap
+  const retGap=Math.max(0,retCorpusNeeded-corpusAlreadyProvided);
+  
+  // SIP needed for retirement
+  const lumpsumFVatRet=corpusNow*Math.pow(1+preReturn/100,yearsToRet);
+  const finalGap=Math.max(0,retGap-lumpsumFVatRet);
+  const sipForRet=calcSIPNeeded(finalGap,yearsToRet,preReturn);
+  
+  // What current corpus grows to
+  const corpusAtRet=fvSIP(0,corpusNow,yearsToRet,preReturn,0);
+  
+  // Safe withdrawal rate check
+  const swrMonthly=retCorpusNeeded*0.04/12;
+  
+  document.getElementById('retirement-output').innerHTML=`
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Retirement corpus analysis</div><div class="card-sub">${yearsToRet} years to retirement · ${retDuration} years of retirement to fund</div></div>
+        <div class="card-icon">🌅</div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><div class="lbl">Monthly expense in retirement</div><div class="val">${crores(retMonthlyFV)}</div><div class="hint">today's ₹${fmt(monthlyExp)} at ${retInflation}% inflation</div></div>
+        <div class="metric highlight"><div class="lbl">Corpus needed at ${retAge}</div><div class="val">${crores(retCorpusNeeded)}</div><div class="hint">to sustain ${retDuration} years</div></div>
+        <div class="metric ${corpusAlreadyProvided>retCorpusNeeded*0.5?'ok-metric':'warn-metric'}"><div class="lbl">EPF + pension provides</div><div class="val">${crores(corpusAlreadyProvided)}</div></div>
+        <div class="metric ${finalGap===0?'ok-metric':'danger-metric'}"><div class="lbl">Remaining gap</div><div class="val">${crores(finalGap)}</div><div class="hint">to fund via SIP</div></div>
+      </div>
+      
+      <div class="divider"></div>
+      <div class="metric-grid three" style="margin-top:0">
+        <div class="metric gold-metric"><div class="lbl">SIP needed for retirement</div><div class="val">${fmt(sipForRet)}/mo</div><div class="hint">at ${preReturn}% return with ${gv('sip-stepup',10)}% step-up</div></div>
+        <div class="metric"><div class="lbl">Current corpus grows to</div><div class="val">${crores(corpusAtRet)}</div><div class="hint">at ${preReturn}% over ${yearsToRet} years</div></div>
+        <div class="metric"><div class="lbl">Safe withdrawal rate</div><div class="val">${fmt(swrMonthly)}/mo</div><div class="hint">4% SWR from corpus</div></div>
+      </div>
+      
+      <div class="insight ${sipForRet<10000?'ok':'warn'}" style="margin-top:12px">
+        <strong>${sipForRet<10000?'✓ Retirement well on track.':'⚠ Retirement gap exists.'}</strong> 
+        You need ${fmt(sipForRet)}/month dedicated to retirement. 
+        ${yearsToRet>15?`Starting today, a ${fmt(sipForRet)} SIP with 10% annual step-up will build to ${crores(fvSIP(sipForRet,corpusNow,yearsToRet,preReturn,10))} — well above your ${crores(retCorpusNeeded)} need.`:''}
+      </div>
+      
+      <div class="divider"></div>
+      <div class="section-label gold">Retirement readiness timeline</div>
+      <div class="milestone-row">
+        <div class="milestone"><div class="milestone-dot ${curAge<=35?'reached':'future'}"></div><div class="milestone-year">Age ${curAge}</div><div class="milestone-val">Now</div></div>
+        <div class="milestone-line ${yearsToRet>15?'done':''}"></div>
+        <div class="milestone"><div class="milestone-dot ${yearsToRet<=20?'reached':'future'}"></div><div class="milestone-year">Age ${curAge+Math.round(yearsToRet/2)}</div><div class="milestone-val">Mid-point</div></div>
+        <div class="milestone-line"></div>
+        <div class="milestone"><div class="milestone-dot future"></div><div class="milestone-year">Age ${retAge}</div><div class="milestone-val">${crores(retCorpusNeeded)} needed</div></div>
+        <div class="milestone-line"></div>
+        <div class="milestone"><div class="milestone-dot future"></div><div class="milestone-year">Age ${lifeExp}</div><div class="milestone-val">Corpus exhausted</div></div>
+      </div>
+      
+      <div class="insight" style="margin-top:8px">
+        <strong>Post-retirement strategy:</strong> Shift to a conservative 70% debt / 30% equity allocation at retirement. Use systematic withdrawal plan (SWP) from debt and balanced funds. Keep 2 years of expenses in liquid funds at all times. Review annually.
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  MUTUAL FUND RECOMMENDATION ENGINE
+// ═══════════════════════════════════════════════════
+/*
+  Logic:
+  1. Detect dominant goal horizon from goals[]
+  2. Map [risk profile × horizon × strategy] to curated fund portfolio
+  3. All rationale is personalised to this client's data
+  4. ELSS for 20%+ slab on medium/long horizon
+  5. Passive style → index-heavy; active → manager-led; blend → core-satellite
+  6. Never show more than 5 funds
+  7. Fund names appear only here — purpose-driven, not generic suggestions
+*/
+function getMFPlan(riskProfile, sipAmount, taxSlab, invStyle) {
+  const rn = riskProfile ? riskProfile.name : 'Moderate';
+  const taxSl = parseInt(taxSlab)||20;
+  const sip = sipAmount || 10000;
+  const name = document.getElementById('p-name')?.value?.trim()||'you';
+
+  // Detect dominant horizon from goals
+  let horizon = 'long';
+  if(goals.length > 0) {
+    const w = {short:0,medium:0,long:0};
+    goals.forEach(g => {
+      const weight = g.priority==='critical'?3:g.priority==='high'?2:1;
+      w[g.horizon] = (w[g.horizon]||0) + weight;
+    });
+    horizon = Object.keys(w).reduce((a,b)=>w[a]>=w[b]?a:b);
+  }
+  
+  // Strategy preference
+  const style = invStyle||'blend';
+  
+  // ─── FUND UNIVERSE ───
+  const F = {
+    // Passive / Index
+    nifty50_uti:   {name:'UTI Nifty 50 Index Fund',           cat:'Large Cap Index',      type:'equity',aum:'₹22,000Cr',er:'0.17%',min:500,  since:'2000',return5yr:'14.2%'},
+    nifty50_hdfc:  {name:'HDFC Index Fund – Nifty 50',        cat:'Large Cap Index',      type:'equity',aum:'₹18,000Cr',er:'0.20%',min:100,  since:'2002',return5yr:'14.1%'},
+    nifty_next50:  {name:'Nippon India Index Fund – N50',     cat:'Next 50 Index',        type:'equity',aum:'₹4,500Cr', er:'0.20%',min:100,  since:'2010',return5yr:'15.3%'},
+    nasdaq_mot:    {name:'Motilal Oswal Nasdaq 100 FoF',      cat:'International Index',  type:'intl',  aum:'₹6,000Cr', er:'0.31%',min:500,  since:'2018',return5yr:'18.4%'},
+    midcap150_mot: {name:'Motilal Oswal Midcap 150 Index',   cat:'Mid Cap Index',        type:'equity',aum:'₹3,000Cr', er:'0.21%',min:500,  since:'2019',return5yr:'21.7%'},
+    
+    // Active Equity
+    ppfas:         {name:'Parag Parikh Flexi Cap Fund',       cat:'Flexi Cap',            type:'equity',aum:'₹85,000Cr',er:'0.63%',min:1000, since:'2013',return5yr:'20.1%'},
+    kotak_mid:     {name:'Kotak Emerging Equity Fund',        cat:'Mid Cap',              type:'equity',aum:'₹48,000Cr',er:'1.52%',min:1000, since:'2007',return5yr:'22.4%'},
+    nippon_sc:     {name:'Nippon India Small Cap Fund',       cat:'Small Cap',            type:'equity',aum:'₹60,000Cr',er:'1.55%',min:100,  since:'2010',return5yr:'25.3%'},
+    hdfc_midcap:   {name:'HDFC Mid-Cap Opportunities Fund',  cat:'Mid Cap',              type:'equity',aum:'₹72,000Cr',er:'1.55%',min:100,  since:'2007',return5yr:'21.8%'},
+    mirae_large:   {name:'Mirae Asset Large Cap Fund',        cat:'Large Cap',            type:'equity',aum:'₹40,000Cr',er:'0.55%',min:1000, since:'2008',return5yr:'14.8%'},
+    
+    // Hybrid / BAF
+    hdfc_baf:      {name:'HDFC Balanced Advantage Fund',     cat:'Balanced Advantage',   type:'hybrid',aum:'₹92,000Cr',er:'1.52%',min:100,  since:'1994',return5yr:'14.8%'},
+    icici_baf:     {name:'ICICI Pru Balanced Advantage Fund',cat:'Balanced Advantage',   type:'hybrid',aum:'₹60,000Cr',er:'1.51%',min:100,  since:'2006',return5yr:'13.5%'},
+    hdfc_hybrid:   {name:'HDFC Hybrid Equity Fund',          cat:'Aggressive Hybrid',    type:'hybrid',aum:'₹24,000Cr',er:'1.72%',min:100,  since:'2003',return5yr:'15.2%'},
+    
+    // ELSS
+    mirae_elss:    {name:'Mirae Asset ELSS Tax Saver Fund',  cat:'ELSS (80C)',           type:'equity',aum:'₹25,000Cr',er:'1.58%',min:500,  since:'2015',return5yr:'17.2%'},
+    quant_elss:    {name:'Quant ELSS Tax Saver Fund',        cat:'ELSS (80C)',           type:'equity',aum:'₹8,000Cr', er:'1.72%',min:500,  since:'2000',return5yr:'22.5%'},
+    
+    // Debt
+    hdfc_corp:     {name:'HDFC Corporate Bond Fund',         cat:'Corporate Bond',       type:'debt',  aum:'₹32,000Cr',er:'0.36%',min:100,  since:'2010',return5yr:'7.1%'},
+    sbi_short:     {name:'SBI Short Duration Fund',          cat:'Short Duration',       type:'debt',  aum:'₹18,000Cr',er:'0.62%',min:5000, since:'2005',return5yr:'6.8%'},
+    icici_liq:     {name:'ICICI Pru Liquid Fund',            cat:'Liquid Fund',          type:'debt',  aum:'₹50,000Cr',er:'0.19%',min:100,  since:'2001',return5yr:'5.9%'},
+    kotak_arb:     {name:'Kotak Arbitrage Fund',             cat:'Arbitrage Fund',       type:'debt',  aum:'₹35,000Cr',er:'0.45%',min:500,  since:'2005',return5yr:'6.2%'},
+    
+    // Gold
+    hdfc_gold:     {name:'HDFC Gold Fund',                   cat:'Gold ETF FoF',         type:'gold',  aum:'₹2,200Cr', er:'0.54%',min:100,  since:'2011',return5yr:'12.6%'},
+    nippon_gold:   {name:'Nippon India Gold Savings Fund',   cat:'Gold ETF FoF',         type:'gold',  aum:'₹1,800Cr', er:'0.34%',min:100,  since:'2011',return5yr:'12.3%'},
+  };
+  
+  // ─── PORTFOLIO BLUEPRINTS ───
+  const blueprints = {
+    Conservative: {
+      short: [
+        {...F.icici_liq,alloc:35,rationale:`With your ${rn} risk profile and a short-term goal, capital safety is paramount. This liquid fund provides 6–7% return with instant T+1 redemption — your corpus stays safe while earning more than a savings account.`},
+        {...F.sbi_short,alloc:30,rationale:'Short-duration bonds perfectly match a 1–3 year timeline. No equity risk, no lock-in — just predictable, FD-beating returns at 7–8% p.a.'},
+        {...F.icici_baf,alloc:25,rationale:`A small dynamic equity allocation adds inflation-protection upside. The fund's automatic equity/debt switching means you never take more risk than the market warrants.`},
+        {...F.hdfc_gold,alloc:10,rationale:'Gold hedge for near-term goals. When equity and debt both face headwinds, gold often rises — protecting your corpus right when you need to redeem.'},
+      ],
+      medium: [
+        {...F.icici_baf,alloc:40,rationale:`Your ${rn} profile over a 3–10 year horizon is ideally served by a BAF. Dynamic equity of 30–80% means you automatically capture bull runs while being protected in bear markets. Over any 5-year period this fund has delivered positive returns.`},
+        {...F.hdfc_corp,alloc:35,rationale:'AAA-rated corporate bonds delivering 7–8% p.a. — the steady, predictable leg of your portfolio. As your goal approaches, this allocation compounds quietly without volatility.'},
+        {...F.hdfc_gold,alloc:15,rationale:'Gold diversification over the medium term. In years when equity disappoints, gold often compensates — reducing the emotional stress of investing.'},
+        {...F.icici_liq,alloc:10,rationale:'Liquid buffer — keeps your SIP debit running and provides instant liquidity for any short-term needs without breaking your long-term investments.'},
+      ],
+      long: [
+        {...F.hdfc_baf,alloc:40,rationale:`Your ${rn} profile benefits greatly from a balanced advantage fund even over the long term. Automatic rebalancing captures equity upside in bull runs and protects in corrections — letting you sleep through market cycles.`},
+        {...F.hdfc_corp,alloc:30,rationale:'Long-term corporate bond SIP compounds remarkably. ₹5,000/month over 15 years at 7.5% grows to over ₹16L — pure, risk-free compounding working alongside your equity allocation.'},
+        {...F.ppfas,alloc:20,rationale:'A quality-first flexi cap with 20–25% global allocation adds gentle equity growth without the volatility of pure large-cap or mid-cap funds. Ideal for conservative investors who still need inflation-beating returns.'},
+        {...F.hdfc_gold,alloc:10,rationale:'20-year gold allocation protects against rupee depreciation and serves as rebalancing capital during equity crashes — buy equities cheap when gold has risen.'},
+      ],
+    },
+    Moderate: {
+      short: [
+        {...F.icici_baf,alloc:45,rationale:`For your near-term goal with a ${rn} risk profile, a BAF never delivers negative returns over any 3-year rolling period — the most reliable short-term equity-containing product.`},
+        {...F.sbi_short,alloc:30,rationale:'Predictable short-duration returns matching your goal timeline. Better than FDs with similar safety and no premature withdrawal penalty.'},
+        {...F.hdfc_gold,alloc:15,rationale:'Short-term gold hedge — if equity markets correct near your goal date, gold typically compensates, protecting your targeted corpus.'},
+        {...F.icici_liq,alloc:10,rationale:'Liquid reserve for SIP continuity and short-term needs. Never let a temporary cash crunch force you to pause investments.'},
+      ],
+      medium: [
+        {...F.nifty50_uti,alloc:35,rationale:`The most cost-efficient way to own India's top 50 businesses at just 0.17% p.a. Over any 10-year period, this index has delivered positive returns. For a ${rn} investor, this is your reliable, low-cost foundation.`},
+        {...F.ppfas,alloc:30,rationale:'Flexi cap with global quality exposure — the only Indian fund systematically diversified across US tech, European pharma, and Indian leaders. Over 10 years, it has outperformed Nifty 50 by 3–4% annually.'},
+        {...F.hdfc_corp,alloc:20,rationale:'As your medium-term goals approach, debt provides capital preservation. This fund holds AA+ and AAA bonds — return predictability you can plan around.'},
+        {...F.hdfc_gold,alloc:15,rationale:'In a balanced medium-term portfolio, 15% gold reduces drawdown significantly. In 2020, when equity fell 38%, gold rose 25% — your portfolio loss was cushioned to under 15%.'},
+      ],
+      long: [
+        {...F.nifty50_uti,alloc:30,rationale:`Your long-term ${rn} plan needs a passive core. The Nifty 50 has compounded at 12–13% over 20 years and beaten 80% of active large-cap funds net of fees. This is your engine.`},
+        {...F.ppfas,alloc:30,rationale:'Quality global equity adds alpha above the index. Holding for 10+ years, this fund captures India\'s growth while also benefiting from US tech leadership — true geographic diversification.'},
+        {...F.kotak_mid,alloc:25,rationale:'Mid-caps create generational wealth over long horizons. Companies that were mid-cap in 2010 (Bajaj Finance, Titan, Trent) are now large-cap giants. Your 10+ year horizon is precisely what this fund needs.'},
+        {...F.hdfc_gold,alloc:15,rationale:'Long-term gold allocation (15%) provides a rebalancing anchor. Sell gold when it outperforms, buy equity when markets are cheap — a disciplined approach that improves risk-adjusted returns.'},
+      ],
+    },
+    'Moderately Aggressive': {
+      short: [
+        {...F.icici_baf,alloc:50,rationale:`Even growth-oriented investors protect near-term goals. BAFs have never given negative returns over any 3-year period — your corpus is protected while you wait to redeploy to equity after goal achievement.`},
+        {...F.sbi_short,alloc:25,rationale:'Debt anchor ensuring capital safety near your goal maturity date. The last thing you want is equity volatility erasing your corpus just before you need it.'},
+        {...F.nifty50_uti,alloc:15,rationale:'Low-cost index participation for any market upside in the 1–3 year window. At 0.17% cost, you capture full market returns if conditions cooperate.'},
+        {...F.hdfc_gold,alloc:10,rationale:'Tail-risk hedge at goal maturity — if equity corrects 20% in year 2, your gold allocation rises, protecting your corpus total.'},
+      ],
+      medium: [
+        {...F.nifty50_uti,alloc:30,rationale:`Passive large-cap core at minimal cost — your reliable base. For a ${rn} investor with 5–10 year horizon, the Nifty 50 is the anchor that keeps your portfolio grounded.`},
+        {...F.ppfas,alloc:25,rationale:'Active global quality exposure on top of your passive base. When Nifty underperforms, Google or Amazon may compensate. True diversification across geographies and sectors.'},
+        {...F.kotak_mid,alloc:25,rationale:'Mid-caps at 5–7 year horizon — your primary alpha source. Mid-cap companies growing into large-caps is India\'s most reliable wealth creation story. Kotak has navigated multiple market cycles successfully.'},
+        {...F.hdfc_gold,alloc:20,rationale:'Higher gold (20%) than moderate profile because you have more equity exposure elsewhere. Gold reduces overall portfolio volatility while gold ETF investments remain liquid and tradeable.'},
+      ],
+      long: [
+        {...F.nifty50_uti,alloc:25,rationale:`Passive backbone — 12–13% CAGR at near-zero cost. In a ${rn} long-horizon portfolio, the index core ensures you never dramatically underperform the market while your satellites generate alpha.`},
+        {...F.kotak_mid,alloc:30,rationale:'Your primary wealth engine. Mid-caps have outperformed large-caps by 3–4% annually over every 10-year period in India. With your risk appetite, this is where meaningful alpha is generated.'},
+        {...F.nippon_sc,alloc:25,rationale:'Small-cap alpha over 10+ years is extraordinary — Nippon Small Cap has delivered 20%+ CAGR over a decade. Every ₹5,000/month SIP sustained for 15 years here builds substantial wealth. The risk is real and you can handle it.'},
+        {...F.hdfc_gold,alloc:20,rationale:'In a high-equity portfolio, gold is not optional. During the 2008, 2020, and 2022 drawdowns, gold rose 20–30% — giving you the courage and capital to rebalance into equity at the lows.'},
+      ],
+    },
+    Aggressive: {
+      short: [
+        {...F.icici_baf,alloc:45,rationale:`Even your aggressive profile protects near-term goals. Three-year BAF history shows zero instances of negative returns — your short-term corpus is secured while you deploy your long-term capital aggressively.`},
+        {...F.nifty50_uti,alloc:30,rationale:'Low-volatility equity for your near-term goal. You want market participation but not the 30–40% swings of mid/small cap. The index delivers full equity return at minimum volatility.'},
+        {...F.sbi_short,alloc:15,rationale:'Small debt layer ensures your corpus doesn\'t take a hit right before you need it. Liquidity matters more than returns at the final approach to a goal.'},
+        {...F.hdfc_gold,alloc:10,rationale:'Final-year hedge. If markets crash in year 2 of your 3-year goal, your gold allocation rises, compensating and protecting the corpus you\'ve built.'},
+      ],
+      medium: [
+        {...F.ppfas,alloc:30,rationale:`Your ${rn} medium-term plan is anchored by a global quality fund with India exposure. Over any 5-year period, PPFAS has outperformed Nifty 50 by 3–4% — your most important active allocation.`},
+        {...F.kotak_mid,alloc:25,rationale:'Mid-caps deliver at the 5–7 year horizon — enough time for the growth story to play out fully. Kotak Emerging Equity has one of the longest mid-cap track records in India.'},
+        {...F.nasdaq_mot,alloc:25,rationale:'Nasdaq 100 for US tech exposure — Apple, Microsoft, Nvidia, Alphabet in one fund. Over any 5+ year period, this index has delivered exceptional USD returns, amplified in INR terms by ~3–4%.'},
+        {...F.hdfc_gold,alloc:20,rationale:'Higher gold in aggressive portfolio acts as rebalancing capital and downside protection. When equity delivers, reduce gold; when equity crashes, gold funds your opportunistic equity purchases.'},
+      ],
+      long: [
+        {...F.ppfas,alloc:30,rationale:`Your flagship long-term compounder. Since 2013 inception, PPFAS has delivered 18%+ CAGR — investing in the best businesses globally. For an ${rn} investor with 10+ year horizon, no single fund better balances quality and growth.`},
+        {...F.kotak_mid,alloc:25,rationale:'The Indian mid-cap growth story over 10+ years is the most powerful wealth-creation opportunity in any emerging market globally. This fund identifies tomorrow\'s large-caps before the world does.'},
+        {...F.nippon_sc,alloc:25,rationale:'Small-cap wealth creation for patient, aggressive investors. At your 10+ year horizon and risk appetite, small-cap compounding transforms meaningful SIPs into landmark wealth. The volatility is the price — your reward is extraordinary.'},
+        {...F.nasdaq_mot,alloc:20,rationale:'Global technology allocation for the truly long-term aggressive investor. The Nasdaq 100\'s 20-year CAGR exceeds 14% USD — the most profitable businesses in human history in your portfolio, providing genuine diversification from Indian cycles.'},
+      ],
+    },
+  };
+  
+  let portfolio = ((blueprints[rn]||blueprints['Moderate'])[horizon]||(blueprints[rn]||blueprints['Moderate'])['long']).map(f=>({...f}));
+  
+  // ── ELSS Override (20%+ tax slab, medium/long) ──
+  if(taxSl>=20 && horizon!=='short') {
+    const eqIdx = portfolio.findIndex(f=>f.type==='equity'&&!f.cat.includes('ELSS')&&!f.cat.includes('Index')&&!f.cat.includes('BAF'));
+    if(eqIdx!==-1) {
+      const savedAlloc=portfolio[eqIdx].alloc;
+      portfolio[eqIdx]={
+        ...F.mirae_elss,alloc:savedAlloc,
+        rationale:`Tax-optimised equity choice for your ${taxSl}% slab. ELSS delivers identical equity market returns but saves you ₹${taxSl===30?'46,800':taxSl===20?'30,000':'15,000'} in tax per ₹1.5L invested under Section 80C. The 3-year lock-in enforces the investment discipline that leads to compounding success.`
+      };
+    }
+  }
+  
+  // ── Style Override ──
+  if(style==='passive') {
+    portfolio=portfolio.map(f=>{
+      if(f.type==='equity'&&!f.cat.includes('Index')&&!f.cat.includes('ELSS')&&!f.cat.includes('BAF')&&!f.cat.includes('Balanced')) {
+        return {...F.nifty50_uti,alloc:f.alloc,rationale:`Passive index at 0.17% — the most cost-efficient equity exposure available. Over 15 years, the fee difference vs active funds (1.5–2%) compounds to lakhs staying in your portfolio rather than the AMC's.`};
+      }
+      return f;
+    });
+    // Deduplicate
+    const merged=[];
+    portfolio.forEach(f=>{const ex=merged.find(x=>x.name===f.name);if(ex)ex.alloc+=f.alloc;else merged.push({...f});});
+    portfolio=merged;
+    const tot=portfolio.reduce((s,f)=>s+f.alloc,0);
+    if(tot!==100)portfolio[0].alloc+=100-tot;
+  }
+  
+  // ── Max 5 funds ──
+  portfolio=portfolio.slice(0,5);
+  
+  // Assign SIP amounts
+  portfolio=portfolio.map(f=>({...f,sipAmt:Math.round(sip*f.alloc/100/100)*100}));
+  
+  return portfolio;
+}
+
+// ─── Goal-Fund Map ───
+function buildGoalFundMap(mfPortfolio,sip){
+  if(!goals.length) return '';
+  const r=gv('pr-return',12);
+  const equityFunds=mfPortfolio.filter(f=>f.type==='equity');
+  const hybridFunds=mfPortfolio.filter(f=>f.type==='hybrid');
+  const debtFunds=mfPortfolio.filter(f=>f.type==='debt');
+  const goldFunds=mfPortfolio.filter(f=>f.type==='gold');
+  const intlFunds=mfPortfolio.filter(f=>f.type==='intl');
+  
+  const groups=goals.map(g=>{
+    const needed=calcSIPNeeded(g.gap,g.years,r);
+    let assigned=[];
+    if(g.horizon==='short'){
+      assigned=[...hybridFunds.slice(0,1),...debtFunds.slice(0,1)];
+    } else if(g.horizon==='medium'){
+      assigned=[...equityFunds.slice(0,1),...hybridFunds.slice(0,1)];
+    } else {
+      assigned=[...equityFunds.slice(0,2),...(intlFunds.length?intlFunds.slice(0,1):[])];
+      if(!assigned.length) assigned=equityFunds.slice(0,2);
+    }
+    if(!assigned.length) assigned=mfPortfolio.slice(0,2);
+    const split=Math.round(needed/Math.max(1,assigned.length)/100)*100;
+    const catIcon={retirement:'🌅',education:'🎓',house:'🏠',wedding:'💒',travel:'✈️',car:'🚗',business:'💼',emergency:'🔐',wealth:'📈',other:'🎯'};
+    return `<div class="goal-fund-group">
+      <div class="goal-fund-header">
+        <span>${catIcon[g.category]||'🎯'}</span>
+        <span class="gf-name">${g.name}</span>
+        <span class="gf-amount">${crores(g.fv)} in ${g.years}y · ${fmt(needed)}/mo needed</span>
+      </div>
+      <div class="goal-fund-list">
+        ${assigned.map(f=>`
+          <div class="goal-fund-row">
+            <div><div class="gfr-name">${f.name}</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace">${f.cat}</div></div>
+            <div class="gfr-sip">${fmt(split)}/mo</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  
+  return `<div class="card">
+    <div class="card-header">
+      <div><div class="card-title">Goal-to-fund allocation map</div><div class="card-sub">Which fund serves which goal — your personalised investment roadmap</div></div>
+      <div class="card-icon">🗺️</div>
+    </div>
+    <div class="insight" style="margin-bottom:12px"><strong>How this works:</strong> Short-term goals use debt/hybrid for capital protection. Medium-term goals use hybrid + equity blend. Long-term goals use pure equity — time is your risk management.</div>
+    ${groups}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  FINANCIAL HEALTH SCORE (0–100)
+// ═══════════════════════════════════════════════════
+function calcHealthScore(){
+  let score=0;
+  const fi=gv('inc-fixed',0),vi=gv('inc-var',0),total=fi+vi;
+  const savings=gv('sip-total',0)||gv('pr-sip',0);
+  const savRate=total?savings/total*100:0;
+  if(savRate>=30)score+=25;else if(savRate>=20)score+=20;else if(savRate>=10)score+=12;else if(savRate>0)score+=5;
+  const emg=gv('ins-emergency',0);
+  if(emg>=6)score+=20;else if(emg>=3)score+=12;else if(emg>=1)score+=5;
+  const life=gv('ins-life',0),income=gv('ins-income',0);
+  if(life>=income*10)score+=10;else if(life>0)score+=5;
+  const health=gv('ins-health-family',0)+gv('ins-health-ind',0);
+  if(health>=1000000)score+=10;else if(health>0)score+=5;
+  const totalEMI=(gv('emi-home',0))+(gv('emi-car',0))+(gv('emi-personal',0));
+  const emiBurden=total?totalEMI/total*100:0;
+  if(emiBurden===0)score+=15;else if(emiBurden<=20)score+=12;else if(emiBurden<=35)score+=7;else if(emiBurden<=50)score+=3;
+  if(goals.length>=3)score+=10;else if(goals.length>=1)score+=6;
+  const mfEq=gv('a-mf-eq',0)+gv('a-equity',0);
+  if(mfEq>=total*12)score+=10;else if(mfEq>=total*6)score+=7;else if(mfEq>0)score+=4;
+  const tax80C=(gv('tax-epf',0)+gv('tax-ppf',0)+gv('tax-elss',0)+gv('tax-lifeins',0)+gv('tax-tuition',0)+gv('tax-homeloan',0));
+  if(tax80C>=150000)score+=5;else if(tax80C>=75000)score+=3;
+  return Math.min(score,100);
+}
+
+// ═══════════════════════════════════════════════════
+//  SECTION 12: FINAL SUMMARY
+// ═══════════════════════════════════════════════════
+function buildSummary(){
+  const name=document.getElementById('p-name')?.value?.trim()||'Investor';
+  const fi=gv('inc-fixed',0),vi=gv('inc-var',0),total=fi+vi;
+  const totalEMI=(gv('emi-home',0))+(gv('emi-car',0))+(gv('emi-personal',0));
+  const sip=gv('pr-sip',0)||gv('sip-total',0);
+  const corpus=gv('pr-corpus',0);
+  const r=gv('pr-return',12),years=gv('pr-years',20),stepup=gv('pr-stepup',10);
+  const taxSlab=gvs('tax-slab','20');
+  const invStyle=gvs('inv-style','blend');
+  const sipDate=gvs('sip-date','5');
+  const riskProfile=window.userRisk;
+  
+  const healthScore=calcHealthScore();
+  const scoreLabel=healthScore>=80?'Excellent':healthScore>=60?'Good':healthScore>=40?'Fair':'Needs Attention';
+  const scoreColor_=scoreColor(healthScore);
+  const scoreDesc=healthScore>=80
+    ?`${name}'s financial foundation is strong. Strategy, goals, and protection are aligned. Now it's time to optimise and compound.`
+    :healthScore>=60
+    ?`Good progress, ${name}. Key gaps exist — close insurance and emergency fund first, then push SIPs higher with confidence.`
+    :healthScore>=40
+    ?`Your plan needs attention. Start with the basics — protection and emergency fund — before building an aggressive investment portfolio.`
+    :`Immediate action required. Emergency fund and term insurance come first. Then begin investing, even in small amounts. Every day counts.`;
+  
+  const mfPortfolio=getMFPlan(riskProfile,sip,taxSlab,invStyle);
+  const goalFundMap=buildGoalFundMap(mfPortfolio,sip);
+  
+  const finalCorpus=fvSIP(sip,corpus,years,r,stepup);
+  let totalInvested=corpus;let s=sip;
+  for(let i=0;i<years;i++){totalInvested+=s*12;s*=(1+stepup/100);}
+  const wealthMult=totalInvested?(finalCorpus/totalInvested).toFixed(1):'—';
+  
+  const catColors={equity:'cat-equity',debt:'cat-debt',hybrid:'cat-hybrid',intl:'cat-intl',gold:'cat-gold'};
+  const styleLabels={passive:'Passive (Index funds)',active:'Active (Fund manager alpha)',blend:'Core-Satellite Blend'};
+  
+  const fundsHtml=mfPortfolio.map(f=>`
+    <div class="fund-card ${catColors[f.type]||'cat-equity'}">
+      <div class="fund-header">
+        <div>
+          <div class="fund-name">${f.name}</div>
+          <div class="fund-cat">${f.cat} · ${f.type.toUpperCase()}</div>
+        </div>
+        <div class="fund-alloc-pill">${f.alloc}% allocation</div>
+      </div>
+      <div class="fund-amount">${fmt(f.sipAmt)}<span style="font-size:13px;color:var(--muted);font-weight:400"> / month</span></div>
+      <div class="fund-stats">
+        <div class="fund-stat">AUM <strong>${f.aum}</strong></div>
+        <div class="fund-stat">Expense ratio <strong>${f.er}</strong></div>
+        <div class="fund-stat">Min SIP <strong>₹${f.min}</strong></div>
+        <div class="fund-stat">Since <strong>${f.since}</strong></div>
+        <div class="fund-stat">5Y return <strong>${f.return5yr}</strong></div>
+      </div>
+      <div class="fund-why">
+        <div class="fund-why-label">Why this fund for you</div>
+        ${f.rationale}
+      </div>
+    </div>`).join('');
+  
+  const goalsHtml=goals.length
+    ?goals.map(g=>{
+      const catIcon={retirement:'🌅',education:'🎓',house:'🏠',wedding:'💒',travel:'✈️',car:'🚗',business:'💼',emergency:'🔐',wealth:'📈',other:'🎯'};
+      return `<span class="tag">${catIcon[g.category]||'🎯'} ${g.name}: ${crores(g.fv)} in ${g.years}y</span>`;
+    }).join('')
+    :`<span class="tag" style="color:var(--muted)">No goals defined</span>`;
+  
+  // Priority action plan
+  const priorities=[];
+  const emg=gv('ins-emergency',0);
+  if(emg<6) priorities.push({icon:'🔐',action:'Build emergency fund to 6 months of expenses first.',detail:`Target: ${fmt(gv('ins-exp',0)*6||gv('exp-rent',0)*6+gv('exp-grocery',0)*6)}. Keep in a liquid mutual fund — instant access, 6–7% return, better than savings account.`});
+  const lifeGap=(gv('ins-income',0)*15)-(gv('ins-life',0));
+  if(lifeGap>0) priorities.push({icon:'🛡️',action:`Close life insurance gap of ${crores(lifeGap)}.`,detail:`Buy a pure term plan — not ULIP or endowment. At age ${gv('p-age',35)}, a ${crores(lifeGap)} term cover costs ₹${Math.round(lifeGap/10000000*(gv('p-age',35)<40?8000:14000))}/year.`});
+  if(sip>0) priorities.push({icon:'🚀',action:`Start SIP of ${fmt(sip)} immediately.`,detail:`Set up auto-debit for the ${sipDate}${sipDate==='1'?'st':sipDate==='2'?'nd':sipDate==='3'?'rd':'th'} of each month. SIPs work best when automated — remove the human decision from the equation.`});
+  const unused80C=Math.max(0,150000-(gv('tax-epf',0)+gv('tax-ppf',0)+gv('tax-elss',0)+gv('tax-lifeins',0)+gv('tax-tuition',0)+gv('tax-homeloan',0)));
+  if(unused80C>0&&parseInt(taxSlab)>=20) priorities.push({icon:'💰',action:`Claim ₹${(unused80C/1000).toFixed(0)}K in unused 80C — save ₹${Math.round(unused80C*parseInt(taxSlab)/100).toLocaleString()}/year in tax.`,detail:`Bridge with ELSS SIP: ${fmt(Math.round(unused80C/12/100)*100)}/month. You get equity returns AND tax savings simultaneously.`});
+  priorities.push({icon:'📈',action:`Step up your SIP by ${gv('annual-stepup',10)||10}% every April.`,detail:`This single habit — stepping up on your annual increment date — nearly triples your final corpus compared to a flat SIP. Set a calendar reminder today.`});
+  priorities.push({icon:'📅',action:'Schedule a 6-monthly portfolio review.',detail:`Every April and October, review allocation vs targets, rebalance if any asset class is ±5% from target, and check goal progress. Rebalancing alone adds 0.5–1% to annualised returns.`});
+  if(goals.length>0) priorities.push({icon:'🗺️',action:'Map each SIP to a specific goal.',detail:'When your investments have names and purposes, you stay invested through market turbulence. Generic wealth-building is less powerful than goal-linked SIP portfolios.'});
+  
+  const retSIP=calcSIPNeeded(gv('ret-corpus-now',0)?0:1000000,gv('ret-age',60)-(gv('ret-current-age',32)||gv('p-age',32)),gv('ret-return',12));
+  
+  document.getElementById('final-summary').innerHTML=`
+    <div class="health-score-wrap">
+      <div class="health-score-label">Financial health score — ${name}</div>
+      <div class="health-score-num">${healthScore}</div>
+      <div style="font-size:22px;font-family:'Cormorant Garamond',serif;color:white;margin:8px 0">${scoreLabel}</div>
+      <div class="health-score-text">${scoreDesc}</div>
+      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        ${[
+          {label:'Savings',score:((gv('sip-total',0)||gv('pr-sip',0))/Math.max(1,(gv('inc-fixed',0)+gv('inc-var',0)))*100).toFixed(0)+'%',ok:(gv('sip-total',0)||gv('pr-sip',0))/(gv('inc-fixed',0)+gv('inc-var',0)||1)>=0.2},
+          {label:'Protection',score:(gv('ins-life',0)>0&&gv('ins-health-family',0)>0?'Covered':'Gaps'),ok:gv('ins-life',0)>0&&gv('ins-health-family',0)>0},
+          {label:'Emergency',score:gv('ins-emergency',0)+'mo',ok:gv('ins-emergency',0)>=6},
+          {label:'Goals',score:goals.length+' set',ok:goals.length>=1},
+        ].map(x=>`<div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px 16px;text-align:center">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.5);font-family:'DM Mono',monospace;margin-bottom:4px">${x.label}</div>
+          <div style="font-size:18px;font-family:'Cormorant Garamond',serif;color:${x.ok?'#6FCEA5':'#E88C7D'}">${x.score}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Complete financial snapshot</div><div class="card-sub">Where you stand today across every dimension</div></div>
+        <div class="card-icon">📋</div>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-card"><div class="sc-label">Monthly income</div><div class="sc-val">${fmt(total)}</div></div>
+        <div class="summary-card"><div class="sc-label">Monthly SIP</div><div class="sc-val">${fmt(sip)}</div><div class="sc-sub">${total?pct(sip/total*100)+' of income':''}</div></div>
+        <div class="summary-card"><div class="sc-label">Net worth</div><div class="sc-val">${crores(window._netWorth?.netWorth||0)}</div></div>
+        <div class="summary-card"><div class="sc-label">Risk profile</div><div class="sc-val" style="font-size:16px">${riskProfile?riskProfile.name:'Not assessed'}</div></div>
+        <div class="summary-card"><div class="sc-label">Investment horizon</div><div class="sc-val">${years} years</div></div>
+        <div class="summary-card"><div class="sc-label">Strategy</div><div class="sc-val" style="font-size:13px">${styleLabels[invStyle]||'—'}</div></div>
+      </div>
+    </div>
+
+    ${sip>0&&years>0?`
+    <div class="card" style="background:linear-gradient(135deg,var(--charcoal),#2A2A2A);color:white;border-color:rgba(255,255,255,0.05)">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="color:white;font-size:24px">If ${name} starts today…</div>
+          <div class="card-sub" style="color:rgba(255,255,255,0.4)">${fmt(sip)}/month · ${years} years · ${r}% p.a. · ${stepup}% annual step-up</div>
+        </div>
+        <div class="card-icon" style="background:rgba(212,175,55,0.15)">🏆</div>
+      </div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center">
+        <div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:4px">Invested</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:rgba(255,255,255,0.7)">${crores(totalInvested)}</div>
+        </div>
+        <div style="font-size:28px;color:var(--gold)">→</div>
+        <div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:4px">Final corpus</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:48px;color:var(--gold-light);font-weight:300">${crores(finalCorpus)}</div>
+        </div>
+        <div style="background:rgba(184,150,12,0.15);border:1px solid rgba(184,150,12,0.3);border-radius:8px;padding:14px 18px;text-align:center">
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:4px">Wealth multiple</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:40px;color:var(--gold-light)">${wealthMult}×</div>
+        </div>
+      </div>
+    </div>`:''}
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Your goals</div><div class="card-sub">${goals.length} goal(s) with inflation-adjusted targets and SIP requirements</div></div>
+        <div class="card-icon">🎯</div>
+      </div>
+      <div>${goalsHtml}</div>
+      ${goals.length?`<div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--muted);font-size:13px">Total SIP needed for all goals</span>
+        <strong style="font-family:'Cormorant Garamond',serif;font-size:20px">${fmt(goals.reduce((s,g)=>s+calcSIPNeeded(g.gap,g.years,r),0))}/mo</strong>
+      </div>`:''}
+    </div>
+
+    ${goalFundMap}
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Recommended mutual fund portfolio</div>
+          <div class="card-sub">${riskProfile?riskProfile.name+' profile':'Custom'} · ${goals.length} goal(s) · ${styleLabels[invStyle]||''} · SIP on ${sipDate}th · ${taxSlab}% tax slab</div>
+        </div>
+        <div class="card-icon">💼</div>
+      </div>
+      
+      <div class="alloc-bar" style="margin-bottom:12px">
+        ${mfPortfolio.filter(f=>f.type==='equity'||f.type==='hybrid').reduce((s,f)=>s+f.alloc,0)>0?`<div class="alloc-seg" style="width:${mfPortfolio.filter(f=>f.type==='equity'||f.type==='hybrid').reduce((s,f)=>s+f.alloc,0)}%;background:#3266AD">${mfPortfolio.filter(f=>f.type==='equity'||f.type==='hybrid').reduce((s,f)=>s+f.alloc,0)}%</div>`:''}
+        ${mfPortfolio.filter(f=>f.type==='debt').reduce((s,f)=>s+f.alloc,0)>0?`<div class="alloc-seg" style="width:${mfPortfolio.filter(f=>f.type==='debt').reduce((s,f)=>s+f.alloc,0)}%;background:#1D9E75">${mfPortfolio.filter(f=>f.type==='debt').reduce((s,f)=>s+f.alloc,0)}%</div>`:''}
+        ${mfPortfolio.filter(f=>f.type==='gold').reduce((s,f)=>s+f.alloc,0)>0?`<div class="alloc-seg" style="width:${mfPortfolio.filter(f=>f.type==='gold').reduce((s,f)=>s+f.alloc,0)}%;background:#BA7517">${mfPortfolio.filter(f=>f.type==='gold').reduce((s,f)=>s+f.alloc,0)}%</div>`:''}
+        ${mfPortfolio.filter(f=>f.type==='intl').reduce((s,f)=>s+f.alloc,0)>0?`<div class="alloc-seg" style="width:${mfPortfolio.filter(f=>f.type==='intl').reduce((s,f)=>s+f.alloc,0)}%;background:#7B5EA7">${mfPortfolio.filter(f=>f.type==='intl').reduce((s,f)=>s+f.alloc,0)}%</div>`:''}
+      </div>
+      
+      ${fundsHtml}
+      
+      <div class="insight" style="margin-top:1rem">
+        <strong>Tax efficiency (${taxSlab}% slab):</strong> 
+        Hold equity funds 12+ months — 10% LTCG with ₹1L annual exemption. 
+        Debt funds taxed at income slab rate (${taxSlab}%) — use FDs or AAA bonds for &lt;3 year debt needs. 
+        ${parseInt(taxSlab)>=20?'ELSS in your portfolio saves ₹'+Math.round(Math.min(150000,gv('tax-elss',0)||50000)*parseInt(taxSlab)/100).toLocaleString()+'/year while building equity wealth — double benefit.':''}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Your prioritised action plan</div><div class="card-sub">Do these in order — each builds the foundation for the next</div></div>
+        <div class="card-icon">📌</div>
+      </div>
+      <ul class="priority-list">
+        ${priorities.map((p,i)=>`
+          <li>
+            <div class="priority-num">${i+1}</div>
+            <div>
+              <div style="font-weight:500;margin-bottom:2px">${p.icon} ${p.action}</div>
+              <div style="font-size:12px;color:var(--muted)">${p.detail}</div>
+            </div>
+          </li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="card" style="background:var(--charcoal);color:white;border-color:rgba(255,255,255,0.05)">
+      <div class="card-header">
+        <div>
+          <div class="card-title" style="color:white">Rebalancing & portfolio maintenance</div>
+          <div class="card-sub" style="color:rgba(255,255,255,0.5)">How to keep your plan on track after launch</div>
+        </div>
+        <div class="card-icon" style="background:rgba(255,255,255,0.08)">🔄</div>
+      </div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.7">
+        <strong style="color:var(--gold-light)">Annual rebalancing (every April):</strong> If any asset class has drifted ±5% from target, rebalance. Example: if equity has grown to 75% vs 65% target, shift the excess into debt/gold. This locks in gains and systematically buys underperformers.<br><br>
+        <strong style="color:var(--gold-light)">SIP step-up:</strong> Every April, increase all SIPs by ${gv('annual-stepup',10)||10}%. Even a 5% step-up, applied consistently, compounds to enormous wealth differences over 15+ years.<br><br>
+        <strong style="color:var(--gold-light)">Goal tracking:</strong> Every 6 months, check each goal against its SIP requirement. If inflation has increased, adjust SIP upward. If bonus or windfall available, deploy as lumpsum into the goal furthest behind schedule.<br><br>
+        <strong style="color:var(--gold-light)">Funds to avoid:</strong> ULIP, endowment policies, NFOs without track record, sector/thematic funds (unless you have specific conviction), dividend option (choose growth for compounding), and any fund with expense ratio &gt;2%.
+      </div>
+    </div>
+
+    <div class="cta-action">
+      <div class="cta-title">Your plan is built. One step left.</div>
+      <div class="cta-sub">The most sophisticated financial plan is worth nothing without execution. Let's start.</div>
+      <div class="cta-amount">${sip>0?fmt(sip)+'/month SIP — start today':'Set your SIP amount and begin'}</div>
+      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-gold btn-lg" onclick="window.location.href='mailto:viswateja.investments@gmail.com?subject=Ready to start my SIP — Plan Completed&body=Hi Viswateja, I completed my financial plan and want to start my SIP.'">
+          📩 Start my SIP — Email Viswateja
+        </button>
+        <button class="btn btn-lg" style="background:rgba(255,255,255,0.1);color:white;border-color:rgba(255,255,255,0.2)" onclick="window.open('https://wa.me/917095858488?text=Hi+Viswateja,+I+completed+the+YoursWealth+financial+plan','_blank')">
+          💬 WhatsApp me
+        </button>
+      </div>
+    </div>`;
+}
+</script>
+</body>
+</html>
