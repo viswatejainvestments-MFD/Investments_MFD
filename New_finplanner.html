@@ -6,6 +6,8 @@
 <title>YoursWealth — Comprehensive Financial Life Plan</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
 :root {
   --gold: #B8960C;
@@ -34,23 +36,38 @@
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--charcoal);min-height:100vh;}
 
+/* ── HERO GRID BACKGROUND ── */
+.hero-grid-bg {
+  position:absolute;inset:0;
+  background-image: 
+    linear-gradient(rgba(184,150,12,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,150,12,0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events:none;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+}
+
 nav{padding:18px 40px;border-bottom:1px solid var(--border-light);background:rgba(250,247,242,0.95);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;}
 .nav-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;text-decoration:none;color:var(--charcoal);letter-spacing:0.02em;}
 .nav-logo span{color:var(--gold)}
 .nav-meta{display:flex;align-items:center;gap:16px}
 .nav-progress{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:0.08em;}
-.nav-score-badge{padding:4px 12px;background:var(--charcoal);color:var(--gold-light);border-radius:20px;font-size:11px;font-family:'DM Mono',monospace;display:none;}
+.nav-score-badge{padding:4px 12px;background:var(--charcoal);color:var(--gold-light);border-radius:20px;font-size:11px;font-family:'DM Mono',monospace;display:none;transition:all 0.3s;}
 
 .fp-wrap{max-width:920px;margin:0 auto;padding:2.5rem 1.4rem 5rem;}
 
-.hero{text-align:center;margin-bottom:2.5rem;padding:2rem 0 1rem;}
-.hero-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;}
-.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,42px);font-weight:300;line-height:1.2;margin-bottom:12px;}
+.hero{text-align:center;margin-bottom:2.5rem;padding:2.5rem 0 1.5rem;position:relative;overflow:hidden;border-radius:16px;}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;animation:fadeUp 0.5s ease 0.1s both;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,5vw,42px);font-weight:300;line-height:1.2;margin-bottom:12px;animation:fadeUp 0.5s ease 0.2s both;}
 .hero h1 em{font-style:italic;color:var(--gold);}
-.hero p{color:var(--muted);font-size:15px;max-width:520px;margin:0 auto;line-height:1.6;}
+.hero p{color:var(--muted);font-size:15px;max-width:520px;margin:0 auto;line-height:1.6;animation:fadeUp 0.5s ease 0.3s both;}
+.hero-stats{display:flex;gap:24px;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;animation:fadeUp 0.5s ease 0.4s both;}
+.hero-stat{text-align:center;padding:10px 20px;background:white;border:1px solid var(--border-light);border-radius:8px;min-width:100px;}
+.hero-stat .hs-val{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--gold);}
+.hero-stat .hs-lbl{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;}
 
 .progress-outer{background:var(--cream);border-radius:20px;height:4px;margin-bottom:1.5rem;overflow:hidden;border:1px solid var(--border-light);}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:20px;transition:width 0.4s ease;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:20px;transition:width 0.5s cubic-bezier(.4,0,.2,1);}
 .progress-bar{display:flex;gap:5px;margin:0 0 2rem;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
 .progress-bar::-webkit-scrollbar{display:none}
 .step-pill{flex:1;min-width:72px;padding:8px 8px;border-radius:30px;border:1px solid var(--border-light);font-size:10px;text-align:center;color:var(--muted);cursor:pointer;transition:all 0.25s;white-space:nowrap;font-family:'DM Mono',monospace;letter-spacing:0.04em;}
@@ -60,19 +77,27 @@ nav{padding:18px 40px;border-bottom:1px solid var(--border-light);background:rgb
 
 .section{display:none}
 .section.visible{display:block;animation:fadeUp 0.35s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+@keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spinIn{from{stroke-dasharray:0 999}to{}}
+@keyframes shimmer{0%{background-position:-200px 0}100%{background-position:200px 0}}
 
 .section-header{margin-bottom:1.5rem}
 .section-header h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;margin-bottom:4px;}
 .section-header p{color:var(--muted);font-size:13px;}
 .section-chapter{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
 
-.card{background:white;border:1px solid var(--border-light);border-radius:var(--radius);padding:1.6rem;margin-bottom:1.2rem;box-shadow:var(--shadow);transition:box-shadow 0.25s;}
-.card:hover{box-shadow:var(--shadow-hover)}
+/* ── CARD ENHANCEMENTS ── */
+.card{background:white;border:1px solid var(--border-light);border-radius:var(--radius);padding:1.6rem;margin-bottom:1.2rem;box-shadow:var(--shadow);transition:box-shadow 0.25s,transform 0.2s;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);opacity:0;transition:opacity 0.3s;}
+.card:hover{box-shadow:var(--shadow-hover);transform:translateY(-1px);}
+.card:hover::before{opacity:1;}
 .card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.2rem;}
 .card-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;margin-bottom:3px;}
 .card-sub{color:var(--muted);font-size:12px;}
-.card-icon{width:36px;height:36px;background:var(--gold-pale);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.card-icon{width:36px;height:36px;background:var(--gold-pale);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:transform 0.2s;}
+.card:hover .card-icon{transform:scale(1.1);}
 
 .card-cols{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem;}
 .card-cols .card{margin-bottom:0;}
@@ -96,13 +121,16 @@ nav{padding:18px 40px;border-bottom:1px solid var(--border-light);background:rgb
 .input-suffix input{padding-right:36px}
 .field-hint{font-size:11px;color:var(--muted-light);margin-top:3px;font-style:italic;}
 
+/* ── ANIMATED METRICS ── */
 .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:1rem;}
 .metric-grid.two{grid-template-columns:repeat(2,1fr)}
 .metric-grid.three{grid-template-columns:repeat(3,1fr)}
 .metric-grid.five{grid-template-columns:repeat(5,1fr)}
-.metric{background:var(--cream);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border-light);}
+.metric{background:var(--cream);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border-light);transition:all 0.2s;position:relative;overflow:hidden;}
+.metric::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.4),transparent);pointer-events:none;}
+.metric:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(184,150,12,0.1);}
 .metric .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;margin-bottom:4px}
-.metric .val{font-size:19px;font-weight:500;font-family:'Cormorant Garamond',serif;margin-bottom:2px}
+.metric .val{font-size:19px;font-weight:500;font-family:'Cormorant Garamond',serif;margin-bottom:2px;transition:all 0.4s;}
 .metric .hint{font-size:10px;color:var(--muted-light)}
 .metric.highlight{background:var(--charcoal);color:white}
 .metric.highlight .lbl{color:rgba(255,255,255,0.5)}
@@ -113,23 +141,34 @@ nav{padding:18px 40px;border-bottom:1px solid var(--border-light);background:rgb
 .metric.warn-metric{background:var(--warn-bg);border-color:rgba(184,92,12,0.2);}
 .metric.danger-metric{background:var(--danger-bg);border-color:rgba(192,57,43,0.2);}
 
+/* ── SPARKLINE MINI CHARTS ── */
+.sparkline-wrap{position:relative;width:100%;height:32px;margin-top:6px;}
+.sparkline-wrap canvas{width:100%!important;height:32px!important;}
+
+/* ── ANIMATED SCORE BAR ── */
 .score-bar-wrap{margin:8px 0}
 .score-bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;font-family:'DM Mono',monospace}
 .score-bar{height:5px;background:var(--cream);border-radius:3px;overflow:hidden}
-.score-bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.score-bar-fill{height:100%;border-radius:3px;transition:width 0.8s cubic-bezier(.4,0,.2,1);}
 
+/* ── ANIMATED ALLOCATION BAR ── */
 .alloc-bar-wrap{margin-top:1rem}
 .alloc-bar{height:28px;border-radius:var(--radius-sm);overflow:hidden;display:flex}
-.alloc-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:white;font-weight:500;transition:width 0.4s ease;font-family:'DM Mono',monospace;}
+.alloc-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;color:white;font-weight:500;transition:width 0.6s cubic-bezier(.4,0,.2,1);font-family:'DM Mono',monospace;cursor:pointer;position:relative;}
+.alloc-seg:hover{filter:brightness(1.1);}
 .alloc-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
 .alloc-dot{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);}
 .alloc-dot span{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
 
+/* ── GOALS ── */
 .goals-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
-.goal-item{display:flex;align-items:flex-start;justify-content:space-between;background:var(--cream);border-radius:var(--radius-sm);padding:12px 14px;border:1px solid var(--border-light);}
+.goal-item{display:flex;align-items:flex-start;justify-content:space-between;background:var(--cream);border-radius:var(--radius-sm);padding:12px 14px;border:1px solid var(--border-light);transition:all 0.2s;}
+.goal-item:hover{border-color:var(--border);background:white;}
 .goal-left{flex:1}
 .goal-name{font-size:14px;font-weight:500;margin-bottom:2px}
 .goal-detail{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.7}
+.goal-progress-mini{margin-top:6px;height:3px;background:rgba(184,150,12,0.15);border-radius:2px;overflow:hidden;}
+.goal-progress-mini-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.6s ease;}
 .goal-badges{display:flex;gap:5px;align-items:center;flex-shrink:0;flex-wrap:wrap;max-width:180px;justify-content:flex-end;}
 .badge{padding:2px 8px;border-radius:20px;font-size:10px;font-family:'DM Mono',monospace;letter-spacing:0.04em;}
 .badge-ok{background:var(--success-bg);color:var(--success)}
@@ -138,6 +177,7 @@ nav{padding:18px 40px;border-bottom:1px solid var(--border-light);background:rgb
 .badge-info{background:rgba(50,102,173,0.1);color:#3266AD}
 .badge-gold{background:var(--gold-pale);color:var(--gold);border:1px solid var(--border);}
 
+/* ── RADIO CONTROLS ── */
 .radio-stack{display:flex;flex-direction:column;gap:8px;margin-bottom:1.2rem}
 .radio-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.2rem}
 .radio-opt{display:flex;gap:10px;align-items:flex-start;padding:11px 14px;background:var(--cream);border-radius:var(--radius-sm);cursor:pointer;font-size:13px;border:1px solid transparent;transition:all 0.2s;}
@@ -151,14 +191,17 @@ nav{padding:18px 40px;border-bottom:1px solid var(--border-light);background:rgb
 .radio-chip:has(input:checked){border-color:var(--gold);background:var(--gold-pale);color:var(--charcoal);font-weight:500;}
 .radio-chip input{display:none}
 
+/* ── SLIDERS ── */
 .slider-row{margin-bottom:14px}
 .slider-row label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;}
 .slider-row label span{color:var(--charcoal);font-weight:500}
 input[type=range]{width:100%;-webkit-appearance:none;height:4px;background:linear-gradient(to right,var(--gold) 0%,var(--gold) 60%,var(--cream) 60%);border-radius:2px;outline:none;cursor:pointer;}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--charcoal);border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
 
+/* ── CHECKLIST ── */
 .checklist{display:flex;flex-direction:column;gap:10px}
-.check-item{display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--cream);border-radius:var(--radius-sm);border:1px solid var(--border-light);}
+.check-item{display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--cream);border-radius:var(--radius-sm);border:1px solid var(--border-light);transition:all 0.2s;}
+.check-item:hover{border-color:var(--border);}
 .check-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;}
 .check-icon.ok{background:var(--success-bg);color:var(--success)}
 .check-icon.warn{background:var(--warn-bg);color:var(--warn)}
@@ -166,22 +209,29 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .check-text{font-size:13px;font-weight:500;margin-bottom:2px}
 .check-sub{font-size:12px;color:var(--muted);line-height:1.5}
 
-.btn{padding:11px 22px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;border:1px solid var(--border);background:white;transition:all 0.25s;font-family:'DM Sans',sans-serif;letter-spacing:0.01em;}
+/* ── BUTTONS ── */
+.btn{padding:11px 22px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;border:1px solid var(--border);background:white;transition:all 0.25s;font-family:'DM Sans',sans-serif;letter-spacing:0.01em;position:relative;overflow:hidden;}
+.btn::after{content:'';position:absolute;inset:0;background:white;opacity:0;transition:opacity 0.2s;}
+.btn:hover::after{opacity:0.1;}
 .btn:hover{background:var(--cream)}
+.btn:active{transform:scale(0.98);}
 .btn-primary{background:var(--charcoal);color:white;border-color:var(--charcoal);}
 .btn-primary:hover{background:var(--gold);border-color:var(--gold);box-shadow:0 4px 20px rgba(184,150,12,0.3);}
 .btn-gold{background:var(--gold);color:white;border-color:var(--gold);}
-.btn-gold:hover{background:#9A7C08;border-color:#9A7C08;}
+.btn-gold:hover{background:#9A7C08;border-color:#9A7C08;box-shadow:0 4px 20px rgba(184,150,12,0.4);}
 .btn-sm{padding:7px 14px;font-size:12px;}
 .btn-lg{padding:14px 28px;font-size:14px;}
 .nav-row{display:flex;justify-content:space-between;margin-top:1.5rem;align-items:center;}
 
+/* ── DIVIDERS & LABELS ── */
 .divider{height:1px;background:var(--border-light);margin:1.2rem 0;}
 .section-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:10px;}
 .section-label.gold{color:var(--gold)}
 
+/* ── SCENARIO CARDS ── */
 .scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:1rem 0;}
-.scenario{padding:14px;border-radius:var(--radius-sm);text-align:center;border:1px solid var(--border-light);}
+.scenario{padding:14px;border-radius:var(--radius-sm);text-align:center;border:1px solid var(--border-light);transition:all 0.25s;}
+.scenario:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.08);}
 .scenario .s-label{font-size:10px;color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.08em}
 .scenario .s-val{font-size:18px;font-weight:500;font-family:'Cormorant Garamond',serif}
 .scenario.best{background:var(--success-bg);border-color:rgba(46,125,82,0.2)}
@@ -191,6 +241,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .scenario.stress{background:var(--danger-bg);border-color:rgba(192,57,43,0.2)}
 .scenario.stress .s-val{color:var(--danger)}
 
+/* ── RISK PROFILE RING ── */
 .risk-display{display:flex;align-items:center;gap:20px;padding:16px;background:var(--cream);border-radius:var(--radius-sm);border:1px solid var(--border-light);}
 .risk-ring-wrap{position:relative;flex-shrink:0}
 .risk-label-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
@@ -199,39 +250,55 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .risk-info h3{font-size:16px;font-weight:500;margin-bottom:4px}
 .risk-info p{font-size:12px;color:var(--muted);line-height:1.5}
 
+/* ── SUMMARY GRID ── */
 .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.summary-card{background:var(--cream);padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border-light);}
+.summary-card{background:var(--cream);padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border-light);transition:all 0.2s;}
+.summary-card:hover{border-color:var(--border);background:white;}
 .sc-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;margin-bottom:4px}
 .sc-val{font-size:20px;font-family:'Cormorant Garamond',serif;font-weight:500}
 .sc-sub{font-size:11px;color:var(--muted-light);margin-top:2px}
 
-.health-score-wrap{text-align:center;padding:2.5rem;background:linear-gradient(135deg,var(--charcoal),#333);border-radius:var(--radius);color:white;margin-bottom:1.2rem;}
+/* ── HEALTH SCORE ── */
+.health-score-wrap{text-align:center;padding:2.5rem;background:linear-gradient(135deg,var(--charcoal),#333);border-radius:var(--radius);color:white;margin-bottom:1.2rem;position:relative;overflow:hidden;}
+.health-score-wrap::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(184,150,12,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,12,0.06) 1px,transparent 1px);background-size:24px 24px;}
 .health-score-num{font-size:80px;font-family:'Cormorant Garamond',serif;font-weight:300;line-height:1;color:var(--gold-light);}
 .health-score-label{font-size:11px;text-transform:uppercase;letter-spacing:0.15em;font-family:'DM Mono',monospace;color:rgba(255,255,255,0.5);margin-bottom:8px;}
 .health-score-text{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5}
 
+/* ── ANIMATED RING SVG ── */
+.ring-animated circle.fill{animation:spinIn 1.2s ease-out forwards;}
+@keyframes ringDraw{from{stroke-dasharray:0 999}to{}}
+
+/* ── TAGS ── */
 .tag{display:inline-block;padding:4px 10px;background:var(--cream);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--muted);margin:3px;font-family:'DM Mono',monospace;}
 
+/* ── PRIORITY LIST ── */
 .priority-list{list-style:none;display:flex;flex-direction:column;gap:8px}
-.priority-list li{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;padding:10px;background:var(--cream);border-radius:var(--radius-sm);}
+.priority-list li{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;padding:10px;background:var(--cream);border-radius:var(--radius-sm);border:1px solid var(--border-light);transition:all 0.2s;}
+.priority-list li:hover{border-color:var(--border);background:white;transform:translateX(2px);}
 .priority-num{width:22px;height:22px;border-radius:50%;background:var(--charcoal);color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'DM Mono',monospace;flex-shrink:0;margin-top:1px;}
 
+/* ── INSIGHTS ── */
 .insight{padding:12px 14px;border-left:3px solid var(--gold);background:var(--gold-pale);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:12px;color:var(--muted);line-height:1.6;margin:10px 0;}
 .insight strong{color:var(--charcoal)}
 .insight.warn{border-color:var(--warn);background:var(--warn-bg)}
 .insight.ok{border-color:var(--success);background:var(--success-bg)}
 .insight.danger{border-color:var(--danger);background:var(--danger-bg)}
 
+/* ── COST OF DELAY ── */
 .cost-of-delay{padding:16px;background:linear-gradient(135deg,rgba(192,57,43,0.06),rgba(192,57,43,0.03));border:1px solid rgba(192,57,43,0.2);border-radius:var(--radius-sm);margin:10px 0;}
 .cod-title{font-size:13px;font-weight:600;color:var(--danger);margin-bottom:6px;}
 .cod-body{font-size:12px;color:var(--muted);line-height:1.6}
 .cod-number{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:var(--danger);}
 
-.cta-action{padding:24px;background:linear-gradient(135deg,var(--charcoal),#2A2A2A);border-radius:var(--radius);text-align:center;margin:1.2rem 0;}
-.cta-title{font-family:'Cormorant Garamond',serif;font-size:24px;color:white;margin-bottom:6px;}
-.cta-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px}
-.cta-amount{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gold-light);font-weight:300;}
+/* ── CTA ── */
+.cta-action{padding:24px;background:linear-gradient(135deg,var(--charcoal),#2A2A2A);border-radius:var(--radius);text-align:center;margin:1.2rem 0;position:relative;overflow:hidden;}
+.cta-action::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(184,150,12,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,12,0.05) 1px,transparent 1px);background-size:28px 28px;}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:24px;color:white;margin-bottom:6px;position:relative;}
+.cta-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;position:relative;}
+.cta-amount{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--gold-light);font-weight:300;position:relative;}
 
+/* ── MILESTONES ── */
 .milestone-row{display:flex;align-items:center;gap:0;margin:1rem 0;overflow-x:auto;padding-bottom:8px;}
 .milestone{text-align:center;flex:1;min-width:80px}
 .milestone-dot{width:12px;height:12px;border-radius:50%;background:var(--gold);margin:0 auto 6px;border:2px solid white;box-shadow:0 0 0 2px var(--gold)}
@@ -242,24 +309,38 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .milestone-year{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted)}
 .milestone-val{font-size:11px;font-weight:500;color:var(--charcoal)}
 
+/* ── DATA TABLES ── */
 .data-table{width:100%;border-collapse:collapse;font-size:13px;}
 .data-table th{padding:8px 12px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-family:'DM Mono',monospace;border-bottom:1px solid var(--border-light);}
 .data-table td{padding:10px 12px;border-bottom:1px solid var(--border-light);}
 .data-table tr:last-child td{border-bottom:none}
 .data-table tr:hover td{background:var(--cream)}
 
+/* ── NW BARS ── */
 .nw-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px;}
 .nw-bar-label{min-width:130px;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;}
 .nw-bar-track{flex:1;height:20px;background:var(--cream);border-radius:3px;overflow:hidden;}
-.nw-bar-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:8px;font-size:10px;color:white;font-family:'DM Mono',monospace;transition:width 0.6s ease;}
+.nw-bar-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:8px;font-size:10px;color:white;font-family:'DM Mono',monospace;transition:width 0.8s cubic-bezier(.4,0,.2,1);}
 .nw-bar-val{min-width:80px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;}
 
+/* ── SIP QUICK ── */
 .sip-quick{background:linear-gradient(135deg,rgba(184,150,12,0.08),rgba(184,150,12,0.03));border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin:10px 0;}
 .sip-quick-title{font-size:12px;font-weight:600;color:var(--gold);margin-bottom:8px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.08em;}
 
-/* ── CONTACT MODAL ── */
+/* ── ANALYTICAL EXTRAS ── */
+.kpi-strip{display:flex;gap:0;border:1px solid var(--border-light);border-radius:var(--radius-sm);overflow:hidden;margin:1rem 0;}
+.kpi-strip-item{flex:1;padding:10px 14px;text-align:center;border-right:1px solid var(--border-light);background:white;transition:background 0.2s;}
+.kpi-strip-item:last-child{border-right:none;}
+.kpi-strip-item:hover{background:var(--cream);}
+.kpi-strip-item .ks-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:3px;}
+.kpi-strip-item .ks-val{font-size:15px;font-family:'Cormorant Garamond',serif;font-weight:500;}
+
+.comparison-row{display:flex;gap:0;margin:8px 0;}
+.comparison-bar{flex:1;padding:8px 10px;font-size:11px;font-family:'DM Mono',monospace;transition:all 0.3s;}
+
+/* ── MODAL ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px);}
-.modal-box{background:white;border-radius:16px;padding:2rem;max-width:460px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,0.18);animation:fadeUp 0.3s ease;}
+.modal-box{background:white;border-radius:16px;padding:2rem;max-width:480px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,0.18);animation:fadeUp 0.3s ease;}
 .modal-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;}
 .modal-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;margin-bottom:6px;}
 .modal-sub{font-size:13px;color:var(--muted);margin-bottom:1.4rem;line-height:1.6;}
@@ -273,6 +354,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .modal-sent .sent-title{font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:6px;}
 .modal-sent .sent-sub{font-size:13px;color:var(--muted);line-height:1.5;}
 
+/* ── PDF GENERATING OVERLAY ── */
+.pdf-overlay{position:fixed;inset:0;background:rgba(28,28,28,0.85);z-index:600;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;backdrop-filter:blur(8px);}
+.pdf-spinner{width:48px;height:48px;border:3px solid rgba(212,175,55,0.2);border-top-color:var(--gold-light);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pdf-overlay p{color:rgba(255,255,255,0.7);font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;}
+
 @media(max-width:700px){
   nav{padding:14px 20px}
   .fp-wrap{padding:1.5rem 1rem 4rem}
@@ -281,6 +368,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   .scenario-grid{grid-template-columns:1fr}
   .summary-grid{grid-template-columns:repeat(2,1fr)}
   .card-cols,.card-cols-3{grid-template-columns:1fr}
+  .kpi-strip{flex-wrap:wrap}
 }
 @media(max-width:480px){
   .metric-grid{grid-template-columns:1fr 1fr}
@@ -290,13 +378,19 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </head>
 <body>
 
-<!-- ══ CONTACT MODAL ══ -->
+<!-- PDF GENERATING OVERLAY -->
+<div class="pdf-overlay" id="pdf-overlay" style="display:none">
+  <div class="pdf-spinner"></div>
+  <p>Generating your PDF report…</p>
+</div>
+
+<!-- CONTACT MODAL -->
 <div class="modal-overlay" id="contact-modal" style="display:none">
   <div class="modal-box">
     <div id="modal-form-wrap">
       <div class="modal-eyebrow">Almost there</div>
       <div class="modal-title">Your plan is ready.<br>Where should we send it?</div>
-      <div class="modal-sub">Enter your details below. We'll email your complete financial report and reach out to help you get started.</div>
+      <div class="modal-sub">Enter your details below. We'll generate a PDF of your complete financial report and email it — plus reach out to help you get started.</div>
       <div class="modal-field">
         <label>Full name *</label>
         <input type="text" id="cm-name" placeholder="Your full name">
@@ -315,15 +409,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       </div>
       <div id="modal-err" style="font-size:12px;color:var(--danger);margin-top:4px;display:none">Please fill in name, email and phone number.</div>
       <div class="modal-actions">
-        <button class="btn btn-primary btn-lg" style="flex:1" onclick="sendReport()">📩 Send my report →</button>
+        <button class="btn btn-primary btn-lg" style="flex:1" onclick="sendReport()">📩 Generate PDF & Send →</button>
         <button class="btn" onclick="closeModal()">Skip</button>
       </div>
-      <div style="font-size:11px;color:var(--muted-light);margin-top:10px;text-align:center;">Your details are only shared with Viswateja at YoursWealth. No spam, ever.</div>
+      <div style="font-size:11px;color:var(--muted-light);margin-top:10px;text-align:center;">A PDF report will be downloaded and an email will open pre-filled with your plan.</div>
     </div>
     <div class="modal-sent" id="modal-sent-wrap">
       <div class="sent-icon">✅</div>
-      <div class="sent-title">Report sent!</div>
-      <div class="sent-sub">Your financial plan is on its way to your inbox. Viswateja will review it and get in touch shortly to help you start your SIP.</div>
+      <div class="sent-title">PDF generated & email ready!</div>
+      <div class="sent-sub">Your PDF report has been downloaded. Your email client opened with the report pre-filled. Viswateja will review and get in touch shortly.</div>
       <button class="btn btn-primary" style="margin-top:1rem;width:100%" onclick="closeModal()">View my plan →</button>
     </div>
   </div>
@@ -340,15 +434,22 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="fp-wrap">
 
   <div class="hero">
+    <div class="hero-grid-bg"></div>
     <div class="hero-eyebrow">Comprehensive Financial Life Plan</div>
     <h1>Know everything.<br><em>Plan with precision.</em></h1>
     <p>A thorough 11-step financial planning process — covering your life situation, cash flows, assets, protection, tax, goals, and projections. Built to the standard of a professional wealth plan.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hs-val">11</div><div class="hs-lbl">Chapters</div></div>
+      <div class="hero-stat"><div class="hs-val">50+</div><div class="hs-lbl">Data Points</div></div>
+      <div class="hero-stat"><div class="hs-val">PDF</div><div class="hs-lbl">Report Included</div></div>
+      <div class="hero-stat"><div class="hs-val">Free</div><div class="hs-lbl">No Cost</div></div>
+    </div>
   </div>
 
   <div class="progress-outer"><div class="progress-fill" id="progress-fill" style="width:9.1%"></div></div>
   <div class="progress-bar" id="pills"></div>
 
-  <!-- ══════════ SECTION 1: PERSONAL PROFILE ══════════ -->
+  <!-- ══ SECTION 1: PERSONAL PROFILE ══ -->
   <div class="section visible" id="sec-0">
     <div class="section-header">
       <div class="section-chapter">Chapter 1</div>
@@ -428,7 +529,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
   </div>
 
-  <!-- ══════════ SECTION 2: GOALS ══════════ -->
+  <!-- ══ SECTION 2: GOALS ══ -->
   <div class="section" id="sec-1">
     <div class="section-header">
       <div class="section-chapter">Chapter 2</div>
@@ -504,7 +605,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
   </div>
 
-  <!-- ══════════ SECTION 3: INCOME ══════════ -->
+  <!-- ══ SECTION 3: INCOME ══ -->
   <div class="section" id="sec-2">
     <div class="section-header">
       <div class="section-chapter">Chapter 3</div>
@@ -573,7 +674,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
   </div>
 
-  <!-- ══════════ SECTION 4: NET WORTH ══════════ -->
+  <!-- ══ SECTION 4: NET WORTH ══ -->
   <div class="section" id="sec-3">
     <div class="section-header">
       <div class="section-chapter">Chapter 4</div>
@@ -637,7 +738,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
   </div>
 
-  <!-- ══════════ SECTION 5: RISK PROFILE ══════════ -->
+  <!-- ══ SECTION 5: RISK PROFILE ══ -->
   <div class="section" id="sec-4">
     <div class="section-header">
       <div class="section-chapter">Chapter 5</div>
@@ -720,7 +821,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
   </div>
 
-  <!-- ══════════ SECTION 6: INSURANCE ══════════ -->
+  <!-- ══ SECTION 6: INSURANCE ══ -->
   <div class="section" id="sec-5">
     <div class="section-header">
       <div class="section-chapter">Chapter 6</div>
@@ -790,7 +891,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
   </div>
 
-  <!-- ══════════ SECTION 7: TAX PLANNING ══════════ -->
+  <!-- ══ SECTION 7: TAX PLANNING ══ -->
   <div class="section" id="sec-6">
     <div class="section-header">
       <div class="section-chapter">Chapter 7</div>
@@ -848,7 +949,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
   </div>
 
-  <!-- ══════════ SECTION 8: SIP PLANNING ══════════ -->
+  <!-- ══ SECTION 8: SIP PLANNING ══ -->
   <div class="section" id="sec-7">
     <div class="section-header">
       <div class="section-chapter">Chapter 8</div>
@@ -891,7 +992,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
   </div>
 
-  <!-- ══════════ SECTION 9: PROJECTIONS ══════════ -->
+  <!-- ══ SECTION 9: PROJECTIONS ══ -->
   <div class="section" id="sec-8">
     <div class="section-header">
       <div class="section-chapter">Chapter 9</div>
@@ -927,7 +1028,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
   </div>
 
-  <!-- ══════════ SECTION 10: RETIREMENT ══════════ -->
+  <!-- ══ SECTION 10: RETIREMENT ══ -->
   <div class="section" id="sec-9">
     <div class="section-header">
       <div class="section-chapter">Chapter 10</div>
@@ -965,12 +1066,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     </div>
   </div>
 
-  <!-- ══════════ SECTION 11: COMPLETE PLAN ══════════ -->
+  <!-- ══ SECTION 11: COMPLETE PLAN ══ -->
   <div class="section" id="sec-10">
     <div id="final-summary"></div>
     <div class="nav-row" style="justify-content:center;gap:12px;flex-wrap:wrap">
       <button class="btn" onclick="goTo(0)">Start over</button>
-      <button class="btn btn-gold btn-lg" onclick="showContactModal('email')">📩 Get my report by email</button>
+      <button class="btn btn-gold btn-lg" onclick="showContactModal('email')">📩 Get PDF Report by Email</button>
       <button class="btn btn-lg btn-primary" onclick="showContactModal('whatsapp')">💬 Connect on WhatsApp</button>
     </div>
   </div>
@@ -978,9 +1079,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  STATE & NAVIGATION
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 const steps = ['Profile','Goals','Income','Net Worth','Risk','Insurance','Tax','SIP Plan','Projections','Retirement','Your Plan'];
 let current = 0;
 let goals = [];
@@ -995,7 +1096,7 @@ function renderPills() {
   document.getElementById('progress-fill').style.width = ((current+1)/steps.length*100).toFixed(1)+'%';
   const scoreBadge = document.getElementById('live-score-badge');
   const score = calcHealthScore();
-  if(score>0){scoreBadge.style.display='block';scoreBadge.textContent='Score: '+score;}
+  if(score>0){scoreBadge.style.display='block';scoreBadge.textContent='Score: '+score+'/100';}
 }
 
 function goTo(n) {
@@ -1006,25 +1107,25 @@ function goTo(n) {
   window.scrollTo({top:0,behavior:'smooth'});
   if(n===10){
     buildSummary();
-    setTimeout(()=>showContactModal('auto'), 800);
+    setTimeout(()=>showContactModal('auto'), 900);
   }
 }
 renderPills();
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  HELPERS
-// ═══════════════════════════════════════════════════
-function fmt(n) { return (isNaN(n)||n===null)?'—':'₹'+Math.round(n).toLocaleString('en-IN'); }
-function pct(n,dec=0) { return (isNaN(n)||!isFinite(n))?'—':n.toFixed(dec)+'%'; }
-function crores(n) {
+// ═══════════════════════════════════════════════
+function fmt(n){return (isNaN(n)||n===null)?'—':'₹'+Math.round(n).toLocaleString('en-IN');}
+function pct(n,dec=0){return (isNaN(n)||!isFinite(n))?'—':n.toFixed(dec)+'%';}
+function crores(n){
   if(!n||isNaN(n)) return '—';
   if(n>=10000000) return '₹'+(n/10000000).toFixed(2)+'Cr';
   if(n>=100000) return '₹'+(n/100000).toFixed(1)+'L';
   return fmt(n);
 }
-function gv(id,fallback=0){ const v=parseFloat(document.getElementById(id)?.value); return isNaN(v)?fallback:v; }
-function gvs(id,fallback=''){ return document.getElementById(id)?.value||fallback; }
-function inflAdjust(amount,years,rate){ return amount*Math.pow(1+rate/100,years); }
+function gv(id,fallback=0){const v=parseFloat(document.getElementById(id)?.value);return isNaN(v)?fallback:v;}
+function gvs(id,fallback=''){return document.getElementById(id)?.value||fallback;}
+function inflAdjust(amount,years,rate){return amount*Math.pow(1+rate/100,years);}
 function calcSIPNeeded(target,years,rate=12){
   const mr=rate/12/100,n=years*12;
   if(mr===0) return target/n;
@@ -1039,69 +1140,87 @@ function fvSIP(sip,corpus,years,annualReturn,stepup=0){
   }
   return c;
 }
-function scoreColor(score){
-  if(score>=80) return 'var(--success)';
-  if(score>=60) return '#3266AD';
-  if(score>=40) return 'var(--warn)';
-  return 'var(--danger)';
+function animateValue(el, end, prefix='', suffix='', duration=600){
+  if(!el) return;
+  const start=0,startTime=performance.now();
+  function update(now){
+    const pct=Math.min((now-startTime)/duration,1);
+    const ease=1-Math.pow(1-pct,3);
+    const cur=Math.round(start+(end-start)*ease);
+    el.textContent=prefix+cur.toLocaleString('en-IN')+suffix;
+    if(pct<1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SECTION 1: LIFE STAGE
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function updateLifeStage(){
-  const age = gv('p-age',0);
-  const retYears = gv('p-retire-years',28);
+  const age=gv('p-age',0);
+  const retYears=gv('p-retire-years',28);
   if(!age) return;
-  const stages = [
+  const stages=[
     {max:25,name:'Early Accumulation',icon:'🌱',desc:'Prime time to start. Every rupee invested now has the longest runway to compound. Even ₹5,000/month at this stage creates more wealth than ₹25,000/month started at 40.'},
     {max:35,name:'Growth Phase',icon:'🚀',desc:'Income rising, responsibilities growing. Lock in maximum SIP discipline now — before lifestyle inflation catches up. This decade determines your financial trajectory.'},
     {max:45,name:'Peak Earning Phase',icon:'⚡',desc:'Highest earning, highest expenses. Balance aggressive wealth creation with protection. Children\'s education and retirement must both be funded simultaneously.'},
     {max:55,name:'Pre-Retirement',icon:'🎯',desc:'Shift from accumulation to preservation. Reduce equity aggressively towards debt. Target having 8–10x annual expenses already saved.'},
     {max:100,name:'Retirement / Distribution',icon:'🌅',desc:'Focus on sustainable withdrawal rate (4% rule). Maintain 30–40% equity for inflation protection.'},
   ];
-  const stage = stages.find(s=>age<=s.max)||stages[stages.length-1];
+  const stage=stages.find(s=>age<=s.max)||stages[stages.length-1];
+  const compoundYears=retYears>0?retYears:0;
+  // Show compound power of ₹10K/mo for their window
+  const compoundDemo=fvSIP(10000,0,compoundYears,12,0);
   document.getElementById('life-stage-display').innerHTML=`
     <div class="divider"></div>
     <div class="insight ok">
       <strong>${stage.icon} Life Stage: ${stage.name}</strong><br>${stage.desc}
       ${retYears>0?`<br><strong>Accumulation window:</strong> ${retYears} years to retirement — ${(retYears*12).toLocaleString()} SIP installments.`:''}
-    </div>`;
+    </div>
+    ${compoundYears>0?`<div class="kpi-strip" style="margin-top:10px">
+      <div class="kpi-strip-item"><div class="ks-lbl">Years left</div><div class="ks-val" style="color:var(--gold)">${compoundYears}</div></div>
+      <div class="kpi-strip-item"><div class="ks-lbl">SIP installments</div><div class="ks-val">${(compoundYears*12).toLocaleString()}</div></div>
+      <div class="kpi-strip-item"><div class="ks-lbl">₹10K/mo grows to</div><div class="ks-val" style="color:var(--success)">${crores(compoundDemo)}</div></div>
+      <div class="kpi-strip-item"><div class="ks-lbl">Wealth multiple</div><div class="ks-val" style="color:var(--gold)">${compoundYears>0&&compoundDemo?(compoundDemo/(compoundYears*120000)).toFixed(1):0}×</div></div>
+    </div>`:''}`;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SECTION 2: GOALS
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 ['g-amount','g-years','g-inflation','g-lumpsum'].forEach(id=>{
   document.getElementById(id)?.addEventListener('input',previewGoal);
 });
 function previewGoal(){
   const amount=gv('g-amount',0),years=gv('g-years',10),inflation=gv('g-inflation',6),lumpsum=gv('g-lumpsum',0);
-  if(!amount){ document.getElementById('goal-preview').innerHTML=''; return; }
+  if(!amount){document.getElementById('goal-preview').innerHTML='';return;}
   const fv=inflAdjust(amount,years,inflation);
   const lumpsumFV=lumpsum*Math.pow(1.12,years);
   const gap=Math.max(0,fv-lumpsumFV);
   const sip=calcSIPNeeded(gap,years,12);
   const sipAggressive=calcSIPNeeded(gap,years,14);
+  const inflMultiplier=(fv/amount).toFixed(2);
   document.getElementById('goal-preview').innerHTML=`
     <div class="sip-quick">
-      <div class="sip-quick-title">Goal preview</div>
+      <div class="sip-quick-title">Goal preview — live calculation</div>
       <div class="metric-grid three">
-        <div class="metric"><div class="lbl">Inflation-adjusted target</div><div class="val">${crores(fv)}</div><div class="hint">at ${inflation}% inflation over ${years} years</div></div>
+        <div class="metric"><div class="lbl">Inflation-adjusted target</div><div class="val">${crores(fv)}</div><div class="hint">${inflMultiplier}× of today's ₹ over ${years}y</div></div>
         <div class="metric gold-metric"><div class="lbl">SIP needed (12% return)</div><div class="val">${fmt(sip)}<span style="font-size:12px">/mo</span></div><div class="hint">to fully fund this goal</div></div>
         <div class="metric"><div class="lbl">SIP needed (14% return)</div><div class="val">${fmt(sipAggressive)}<span style="font-size:12px">/mo</span></div><div class="hint">aggressive scenario</div></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="score-bar-label"><span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace">Total cost over ${years} years</span><span style="font-size:11px;font-family:'DM Mono',monospace">${crores(sip*12*years)} invested → ${crores(fv)}</span></div>
+        <div class="score-bar" style="height:6px"><div class="score-bar-fill" style="width:${Math.min(100,(sip*12*years/fv*100)).toFixed(0)}%;background:var(--gold)"></div></div>
+        <div style="font-size:10px;color:var(--muted-light);margin-top:3px;font-family:'DM Mono',monospace">Returns contribute ${pct(100-(sip*12*years/fv*100))} of final corpus — compounding at work</div>
       </div>
       ${lumpsum>0?`<div class="insight" style="margin-top:8px">Your lumpsum of ${fmt(lumpsum)} grows to ${crores(lumpsumFV)} — covers ${pct(lumpsumFV/fv*100)} of the goal.</div>`:''}
     </div>`;
 }
 function saveGoal(){
   const name=document.getElementById('g-name').value.trim();
-  const amount=gv('g-amount',0);
-  const years=gv('g-years',10);
-  const inflation=gv('g-inflation',6);
-  const lumpsum=gv('g-lumpsum',0);
-  const priority=gvs('g-priority','high');
-  const category=gvs('g-category','wealth');
+  const amount=gv('g-amount',0);const years=gv('g-years',10);
+  const inflation=gv('g-inflation',6);const lumpsum=gv('g-lumpsum',0);
+  const priority=gvs('g-priority','high');const category=gvs('g-category','wealth');
   const funding=gvs('g-funding','sip');
   if(!name){alert('Please enter a goal name.');return;}
   const fv=inflAdjust(amount,years,inflation);
@@ -1124,36 +1243,56 @@ function renderGoals(){
   const hMap={short:{c:'badge-warn',l:'Short'},medium:{c:'badge-info',l:'Medium'},long:{c:'badge-ok',l:'Long'}};
   const pMap={critical:{c:'badge-danger',l:'Non-negotiable'},high:{c:'badge-warn',l:'High'},flexible:{c:'badge-ok',l:'Flexible'}};
   const catIcon={retirement:'🌅',education:'🎓',house:'🏠',wedding:'💒',travel:'✈️',car:'🚗',business:'💼',emergency:'🔐',wealth:'📈',other:'🎯'};
-  el.innerHTML=goals.map((g,i)=>`
-    <div class="goal-item">
+  el.innerHTML=goals.map((g,i)=>{
+    const needed=calcSIPNeeded(g.gap,g.years,12);
+    const progressPct=Math.min(100,g.lumpsum/Math.max(1,g.fv)*100);
+    return `<div class="goal-item">
       <div class="goal-left">
         <div class="goal-name">${catIcon[g.category]||'🎯'} ${g.name}</div>
         <div class="goal-detail">
           Today: ${fmt(g.amount)} → Target: ${crores(g.fv)} · ${g.years} yrs · ${g.inflation}% inflation<br>
-          SIP @ 12%: <strong>${fmt(calcSIPNeeded(g.gap,g.years,12))}/mo</strong> &nbsp;|&nbsp; SIP @ 14%: <strong>${fmt(calcSIPNeeded(g.gap,g.years,14))}/mo</strong>
-          ${g.lumpsum>0?` &nbsp;|&nbsp; Lumpsum: ${fmt(g.lumpsum)}`:''}
+          SIP @ 12%: <strong>${fmt(needed)}/mo</strong> &nbsp;|&nbsp; SIP @ 14%: <strong>${fmt(calcSIPNeeded(g.gap,g.years,14))}/mo</strong>
+          ${g.lumpsum>0?` &nbsp;|&nbsp; Corpus: ${fmt(g.lumpsum)}`:''}
         </div>
+        <div class="goal-progress-mini"><div class="goal-progress-mini-fill" style="width:${progressPct.toFixed(0)}%"></div></div>
       </div>
       <div class="goal-badges">
         <span class="badge ${hMap[g.horizon].c}">${hMap[g.horizon].l}</span>
         <span class="badge ${pMap[g.priority].c}">${pMap[g.priority].l}</span>
         <button class="btn btn-sm" style="padding:3px 9px;font-size:11px" onclick="removeGoal(${i})">✕</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   const totalSIPNeeded=goals.reduce((s,g)=>s+calcSIPNeeded(g.gap,g.years,12),0);
   const totalTarget=goals.reduce((s,g)=>s+g.fv,0);
+  const totalToday=goals.reduce((s,g)=>s+g.amount,0);
   card.style.display='block';
   document.getElementById('goals-summary-content').innerHTML=`
     <div class="metric-grid three">
       <div class="metric"><div class="lbl">Total goals</div><div class="val">${goals.length}</div></div>
-      <div class="metric gold-metric"><div class="lbl">Total target wealth</div><div class="val">${crores(totalTarget)}</div><div class="hint">inflation-adjusted</div></div>
+      <div class="metric gold-metric"><div class="lbl">Total inflation-adj. target</div><div class="val">${crores(totalTarget)}</div><div class="hint">vs today's ${crores(totalToday)}</div></div>
       <div class="metric highlight"><div class="lbl">Total SIP needed</div><div class="val">${fmt(totalSIPNeeded)}/mo</div></div>
+    </div>
+    <div style="margin-top:12px">
+      <div class="section-label gold">Goal priority breakdown</div>
+      ${['critical','high','flexible'].map(p=>{
+        const glist=goals.filter(g=>g.priority===p);
+        if(!glist.length) return '';
+        const pLabels={critical:'Non-negotiable',high:'High priority',flexible:'Flexible'};
+        const pColors={critical:'var(--danger)',high:'var(--warn)',flexible:'var(--success)'};
+        const sum=glist.reduce((s,g)=>s+calcSIPNeeded(g.gap,g.years,12),0);
+        return `<div class="nw-bar-row">
+          <div class="nw-bar-label" style="color:${pColors[p]}">${pLabels[p]} (${glist.length})</div>
+          <div class="nw-bar-track"><div class="nw-bar-fill" style="width:${totalSIPNeeded?(sum/totalSIPNeeded*100).toFixed(0):0}%;background:${pColors[p]}">${sum/totalSIPNeeded>0.15?fmt(sum)+'/mo':''}</div></div>
+          <div class="nw-bar-val">${fmt(sum)}/mo</div>
+        </div>`;
+      }).join('')}
     </div>`;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SECTION 3: CASHFLOW
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function calcCashflow(){
   const fi=gv('inc-fixed',0),vi=gv('inc-var',0),other=gv('inc-other',0),spouse=gv('inc-spouse',0);
   const total=fi+vi+other+spouse;
@@ -1172,6 +1311,9 @@ function calcCashflow(){
   window._cashflow={total,totalEss,totalDisc,totalEMI,surplus,savRate,emiRate};
   const savQ=savRate>=30?'ok':savRate>=15?'warn':'bad';
   const emiQ=emiRate<=30?'ok':emiRate<=40?'warn':'bad';
+  const increment=gv('inc-increment',8);
+  const inc3=total*Math.pow(1+increment/100,3);
+  const inc5=total*Math.pow(1+increment/100,5);
   const surplusQ=surplus>0?'ok':surplus===0?'warn':'bad';
   document.getElementById('cashflow-metrics').innerHTML=`
     <div class="metric-grid">
@@ -1187,6 +1329,12 @@ function calcCashflow(){
       <div class="metric gold-metric">
         <div class="lbl">Annual investable</div><div class="val">${crores(Math.max(0,surplus)*12)}</div><div class="hint">projected</div>
       </div>
+    </div>
+    <div class="kpi-strip" style="margin-top:12px">
+      <div class="kpi-strip-item"><div class="ks-lbl">Income now</div><div class="ks-val">${crores(total)}</div></div>
+      <div class="kpi-strip-item"><div class="ks-lbl">in 3 years</div><div class="ks-val" style="color:var(--gold)">${crores(inc3)}</div></div>
+      <div class="kpi-strip-item"><div class="ks-lbl">in 5 years</div><div class="ks-val" style="color:var(--success)">${crores(inc5)}</div></div>
+      <div class="kpi-strip-item"><div class="ks-lbl">Increment rate</div><div class="ks-val">${increment}% p.a.</div></div>
     </div>`;
   const segments=[
     {label:'Essential',amount:totalEss,color:'#3266AD'},
@@ -1194,13 +1342,26 @@ function calcCashflow(){
     {label:'Discretionary',amount:totalDisc,color:'#BA7517'},
     {label:'Surplus',amount:Math.max(0,surplus),color:'#1D9E75'},
   ].filter(s=>s.amount>0);
-  const segs=segments.map(s=>`<div class="alloc-seg" style="width:${(s.amount/total*100).toFixed(1)}%;background:${s.color}">${(s.amount/total*100)>8?Math.round(s.amount/total*100)+'%':''}</div>`).join('');
+  const segs=segments.map(s=>`<div class="alloc-seg" style="width:${(s.amount/total*100).toFixed(1)}%;background:${s.color}" title="${s.label}: ${fmt(s.amount)}">${(s.amount/total*100)>8?Math.round(s.amount/total*100)+'%':''}</div>`).join('');
   const legend=segments.map(s=>`<div class="alloc-dot"><span style="background:${s.color}"></span>${s.label} ${fmt(s.amount)} (${pct(s.amount/total*100)})</div>`).join('');
   document.getElementById('cashflow-breakdown').innerHTML=`
     <div class="divider"></div>
     <div class="section-label">Income allocation breakdown</div>
     <div class="alloc-bar">${segs}</div>
-    <div class="alloc-legend" style="margin-top:10px">${legend}</div>`;
+    <div class="alloc-legend" style="margin-top:10px">${legend}</div>
+    <div style="margin-top:12px">
+      <div class="section-label gold">Expense analysis</div>
+      ${[
+        {label:'Essential expenses',val:totalEss,color:'#3266AD'},
+        {label:'EMI obligations',val:totalEMI,color:'#C0392B'},
+        {label:'Discretionary spend',val:totalDisc,color:'#BA7517'},
+      ].filter(x=>x.val>0).map(x=>`
+        <div class="nw-bar-row">
+          <div class="nw-bar-label">${x.label}</div>
+          <div class="nw-bar-track"><div class="nw-bar-fill" style="width:${(x.val/total*100).toFixed(0)}%;background:${x.color}">${x.val/total>0.15?fmt(x.val):''}</div></div>
+          <div class="nw-bar-val">${pct(x.val/total*100)}</div>
+        </div>`).join('')}
+    </div>`;
   let insight='';
   if(savRate<10) insight+=`<div class="insight danger"><strong>⚠ Critical: Very low savings rate (${pct(savRate)}).</strong> Under 10% savings means wealth creation is nearly impossible.</div>`;
   else if(savRate>=30) insight+=`<div class="insight ok"><strong>✓ Exceptional savings discipline — ${pct(savRate)}.</strong> Ensure this surplus flows into goal-mapped SIPs, not just savings accounts.</div>`;
@@ -1210,22 +1371,23 @@ function calcCashflow(){
   document.getElementById('cashflow-insight').innerHTML=insight;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SECTION 4: NET WORTH
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function calcNetWorth(){
   const mfEq=gv('a-mf-eq',0),mfDebt=gv('a-mf-debt',0),equity=gv('a-equity',0);
   const fd=gv('a-fd',0),ppf=gv('a-ppf',0),epf=gv('a-epf',0);
-  const gold=gv('a-gold',0),cash=gv('a-cash',0),other=gv('a-other',0);
+  const gold=gv('a-gold',0),cash=gv('a-cash',0),otherA=gv('a-other',0);
   const house=gv('a-house',0),reOther=gv('a-re-other',0),vehicle=gv('a-vehicle',0),biz=gv('a-business',0);
   const lHome=gv('l-home',0),lCar=gv('l-car',0),lPers=gv('l-personal',0),lOther=gv('l-other',0);
-  const finAssets=mfEq+mfDebt+equity+fd+ppf+epf+gold+cash+other;
+  const finAssets=mfEq+mfDebt+equity+fd+ppf+epf+gold+cash+otherA;
   const physAssets=house+reOther+vehicle+biz;
   const totalAssets=finAssets+physAssets;
   const totalLiab=lHome+lCar+lPers+lOther;
   const netWorth=totalAssets-totalLiab;
   const liquidAssets=mfEq+mfDebt+equity+gold+cash;
   const debtRatio=totalAssets?totalLiab/totalAssets*100:0;
+  const equityPct=totalAssets?(mfEq+equity)/totalAssets*100:0;
   window._netWorth={netWorth,finAssets,physAssets,totalAssets,totalLiab,liquidAssets,mfEq,mfDebt,equity,fd,ppf,epf,gold,cash};
   if(!totalAssets&&!totalLiab){document.getElementById('networth-display').innerHTML='';return;}
   const allocItems=[
@@ -1237,11 +1399,11 @@ function calcNetWorth(){
     {label:'EPF/NPS',val:epf,color:'#16A085'},
     {label:'Gold',val:gold,color:'#B8960C'},
     {label:'Cash',val:cash,color:'#7F8C8D'},
-    {label:'Other',val:other,color:'#95A5A6'},
+    {label:'Other',val:otherA,color:'#95A5A6'},
     {label:'Real Estate',val:house+reOther,color:'#8E44AD'},
     {label:'Vehicle/Biz',val:vehicle+biz,color:'#E67E22'},
   ].filter(x=>x.val>0);
-  const segs=allocItems.map(x=>`<div class="alloc-seg" style="width:${(x.val/totalAssets*100).toFixed(1)}%;background:${x.color}">${x.val/totalAssets*100>8?Math.round(x.val/totalAssets*100)+'%':''}</div>`).join('');
+  const segs=allocItems.map(x=>`<div class="alloc-seg" style="width:${(x.val/totalAssets*100).toFixed(1)}%;background:${x.color}" title="${x.label}: ${crores(x.val)}">${x.val/totalAssets*100>8?Math.round(x.val/totalAssets*100)+'%':''}</div>`).join('');
   const legend=allocItems.map(x=>`<div class="alloc-dot"><span style="background:${x.color}"></span>${x.label} ${crores(x.val)} (${pct(x.val/totalAssets*100)})</div>`).join('');
   function barRow(label,amount,color,total){
     const p=Math.min(100,amount/total*100);
@@ -1251,6 +1413,9 @@ function calcNetWorth(){
       <div class="nw-bar-val">${crores(amount)}</div>
     </div>`;
   }
+  // NW at target returns over 10 years
+  const nw5=totalAssets>0?netWorth*Math.pow(1.12,5):0;
+  const nw10=totalAssets>0?netWorth*Math.pow(1.12,10):0;
   document.getElementById('networth-display').innerHTML=`
     <div class="card">
       <div class="card-header">
@@ -1268,12 +1433,18 @@ function calcNetWorth(){
         <div class="metric"><div class="lbl">Liquid assets</div><div class="val">${crores(liquidAssets)}</div><div class="hint">accessible quickly</div></div>
         <div class="metric ${debtRatio>50?'danger-metric':debtRatio>30?'warn-metric':'ok-metric'}"><div class="lbl">Debt ratio</div><div class="val">${pct(debtRatio)}</div><div class="hint">liabilities ÷ assets</div></div>
       </div>
+      ${netWorth>0?`<div class="kpi-strip" style="margin-top:12px">
+        <div class="kpi-strip-item"><div class="ks-lbl">Net worth today</div><div class="ks-val">${crores(netWorth)}</div></div>
+        <div class="kpi-strip-item"><div class="ks-lbl">Projected 5yr</div><div class="ks-val" style="color:var(--gold)">${crores(nw5)}</div></div>
+        <div class="kpi-strip-item"><div class="ks-lbl">Projected 10yr</div><div class="ks-val" style="color:var(--success)">${crores(nw10)}</div></div>
+        <div class="kpi-strip-item"><div class="ks-lbl">Equity allocation</div><div class="ks-val">${pct(equityPct)}</div></div>
+      </div>`:''}
       <div class="divider"></div>
       <div class="section-label">Portfolio allocation (all assets)</div>
       <div class="alloc-bar">${segs}</div>
       <div class="alloc-legend" style="margin-top:10px">${legend}</div>
       <div class="divider"></div>
-      <div class="section-label">Asset waterfall</div>
+      <div class="section-label gold">Asset waterfall</div>
       ${barRow('Equity MFs',mfEq,'#3266AD',totalAssets)}
       ${barRow('Direct Equity',equity,'#4A7EC7',totalAssets)}
       ${barRow('Debt MFs & FDs',mfDebt+fd,'#1D9E75',totalAssets)}
@@ -1285,9 +1456,9 @@ function calcNetWorth(){
     </div>`;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SECTION 5: RISK PROFILE
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function calcRisk(){
   const react=parseInt(document.querySelector('input[name="react"]:checked')?.value||2);
   const lossReact=parseInt(document.querySelector('input[name="loss_react"]:checked')?.value||2);
@@ -1308,12 +1479,16 @@ function calcRisk(){
     {min:51,max:70,name:'Moderately Aggressive',score:normScore,color:'#3266AD',eq:65,debt:20,gold:10,intl:5,
      desc:'Growth-focused with high equity conviction. Your long horizon and financial stability support this positioning.'},
     {min:71,max:100,name:'Aggressive',score:normScore,color:'#1D9E75',eq:80,debt:10,gold:5,intl:5,
-     desc:'Maximum wealth creation orientation. You have high financial stability and the psychological conviction to hold through 30%+ drawdowns.'},
+     desc:'Maximum wealth creation orientation. High financial stability and psychological conviction to hold through 30%+ drawdowns.'},
   ];
   const p=profiles.find(x=>normScore>=x.min&&normScore<=x.max)||profiles[1];
   window.userRisk=p;
   const circ=2*Math.PI*40;
   const dash=normScore/100*circ;
+  // Breakdown scores
+  const psychScore=Math.round((react+lossReact+loss)/(4+4+4)*100);
+  const capScore=Math.round((stab+incomeLoss+(3-dep)+exp)/(4+4+3+4)*100);
+  const horizScore=Math.round(horizRisk/4*100);
   document.getElementById('risk-result').innerHTML=`
     <div class="risk-display">
       <div class="risk-ring-wrap">
@@ -1339,15 +1514,30 @@ function calcRisk(){
         </div>
       </div>
     </div>
-    <div class="insight ok" style="margin-top:10px"><strong>✓ Risk profile assessed.</strong> Your ${p.name} profile score is ${normScore}/100. This will be used to guide your overall allocation.</div>`;
+    <div style="margin-top:12px">
+      <div class="section-label gold">Risk score breakdown</div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Psychological tolerance</span><span>${psychScore}/100</span></div>
+        <div class="score-bar"><div class="score-bar-fill" style="width:${psychScore}%;background:${p.color}"></div></div>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Financial capacity</span><span>${capScore}/100</span></div>
+        <div class="score-bar"><div class="score-bar-fill" style="width:${capScore}%;background:#3266AD"></div></div>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-label"><span>Time horizon</span><span>${horizScore}/100</span></div>
+        <div class="score-bar"><div class="score-bar-fill" style="width:${horizScore}%;background:var(--success)"></div></div>
+      </div>
+    </div>
+    <div class="insight ok" style="margin-top:10px"><strong>✓ Risk profile assessed.</strong> Your ${p.name} profile score is ${normScore}/100. This guides your overall asset allocation.</div>`;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SECTION 6: INSURANCE
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function calcInsurance(){
   const income=gv('ins-income',0),exp=gv('ins-exp',0),dep=gv('ins-dep',0);
-  const childAge=gv('ins-child-age',0),loans=gv('ins-loans',0);
+  const loans=gv('ins-loans',0);
   const lifeExist=gv('ins-life',0);
   const healthInd=gv('ins-health-ind',0),healthFam=gv('ins-health-family',0),healthEmp=gv('ins-health-employer',0);
   const critical=gv('ins-critical',0),accident=gv('ins-accident',0);
@@ -1378,7 +1568,7 @@ function calcInsurance(){
        :`Recommended: ${crores(healthNeeded)} for your family. Gap: ${crores(superTopUp)}.`},
     {ok:emergencyOk,warn:!emergencyOk&&emergency>0,label:'Emergency Fund (6 months liquid)',
      detail:emergencyOk?`${emergency} months secured (${fmt(emergencyHave)}). Ideal in a liquid fund.`
-       :`Only ${emergency} months saved. Need ${fmt(emergencyNeeded - emergencyHave)} more. Build this BEFORE stepping up SIPs.`},
+       :`Only ${emergency} months saved. Need ${fmt(emergencyNeeded-emergencyHave)} more. Build this BEFORE stepping up SIPs.`},
     {ok:critical>0,warn:critical===0,label:'Critical Illness Cover',
      detail:critical>0?`₹${(critical/100000).toFixed(0)}L critical illness cover in place.`
        :'No critical illness cover. A ₹30–50L policy costs ₹5,000–10,000/year.'},
@@ -1387,11 +1577,29 @@ function calcInsurance(){
        :'A ₹1Cr personal accident policy costs ₹2,000–4,000/year.'},
   ];
   const protectionScore=checks.filter(c=>c.ok).length;
+  const circProt=2*Math.PI*28;
+  const dashProt=protectionScore/5*circProt;
   document.getElementById('insurance-output').innerHTML=`
     <div class="card">
       <div class="card-header">
         <div><div class="card-title">Insurance adequacy audit</div><div class="card-sub">${protectionScore}/5 protection layers secured</div></div>
         <div class="card-icon">🛡️</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:1rem;padding:12px;background:var(--cream);border-radius:var(--radius-sm);border:1px solid var(--border-light)">
+        <div style="position:relative;flex-shrink:0">
+          <svg width="70" height="70" viewBox="0 0 70 70">
+            <circle cx="35" cy="35" r="28" fill="none" stroke="var(--border-light)" stroke-width="7"/>
+            <circle cx="35" cy="35" r="28" fill="none" stroke="${protectionScore>=4?'var(--success)':protectionScore>=2?'var(--warn)':'var(--danger)'}" stroke-width="7"
+              stroke-dasharray="${dashProt.toFixed(1)} ${circProt.toFixed(1)}"
+              stroke-dashoffset="${circProt*0.25}" stroke-linecap="round"
+              transform="rotate(-90 35 35)" style="transition:stroke-dasharray 0.8s ease"/>
+          </svg>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600">${protectionScore}/5</div>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:500;margin-bottom:4px">${protectionScore>=4?'Well protected':protectionScore>=2?'Partially covered':'Under-protected'}</div>
+          <div style="font-size:12px;color:var(--muted)">Complete all 5 layers before aggressive investing. Each layer protects the others.</div>
+        </div>
       </div>
       <div class="checklist">${checks.map(x=>`
         <div class="check-item">
@@ -1403,9 +1611,9 @@ function calcInsurance(){
     </div>`;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SECTION 7: TAX
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function calcTax(){
   const income=gv('tax-income',0),slab=gv('tax-slab',20);
   const epf=gv('tax-epf',0),ppf=gv('tax-ppf',0),elss=gv('tax-elss',0);
@@ -1421,6 +1629,7 @@ function calcTax(){
   const taxSaved=Math.round(totalDeductions*slab/100);
   const potentialTaxSaving=Math.round((unused80C+Math.max(0,50000-nps))*slab/100);
   const elssPerMonth=Math.round(unused80C/12/100)*100;
+  const utilPct=total80C/150000*100;
   document.getElementById('tax-output').innerHTML=`
     <div class="card">
       <div class="card-header">
@@ -1433,6 +1642,10 @@ function calcTax(){
         <div class="metric gold-metric"><div class="lbl">Tax saved (current)</div><div class="val">${fmt(taxSaved)}</div><div class="hint">per year</div></div>
         <div class="metric ${potentialTaxSaving===0?'ok-metric':'warn-metric'}"><div class="lbl">Additional tax saveable</div><div class="val">${fmt(potentialTaxSaving)}</div></div>
       </div>
+      <div style="margin-top:12px">
+        <div class="score-bar-label"><span style="font-family:'DM Mono',monospace;font-size:11px">80C utilisation</span><span style="font-family:'DM Mono',monospace;font-size:11px">${pct(utilPct)} used</span></div>
+        <div class="score-bar" style="height:8px"><div class="score-bar-fill" style="width:${utilPct.toFixed(0)}%;background:${utilPct>=100?'var(--success)':utilPct>=60?'var(--gold)':'var(--danger)'}"></div></div>
+      </div>
       <div class="divider"></div>
       <div class="section-label gold">Section 80C utilisation</div>
       ${[{label:'EPF contribution',val:epf},{label:'PPF investment',val:ppf},{label:'ELSS SIP',val:elss},{label:'Life insurance premium',val:lifeins},{label:'Children\'s tuition',val:tuition},{label:'Home loan principal',val:homeloan}].filter(x=>x.val>0).map(x=>`
@@ -1440,15 +1653,15 @@ function calcTax(){
           <div class="score-bar-label"><span>${x.label}</span><span>${fmt(x.val)}</span></div>
           <div class="score-bar"><div class="score-bar-fill" style="width:${Math.min(100,x.val/150000*100).toFixed(0)}%;background:var(--gold)"></div></div>
         </div>`).join('')}
-      ${unused80C>0?`<div class="insight warn" style="margin-top:12px"><strong>⚠ ₹${(unused80C/1000).toFixed(0)}K 80C gap — tax leakage of ${fmt(Math.round(unused80C*slab/100))}/year.</strong> Can be bridged via ELSS SIP: ${fmt(elssPerMonth)}/month.</div>`:''}
+      ${unused80C>0?`<div class="insight warn" style="margin-top:12px"><strong>⚠ ₹${(unused80C/1000).toFixed(0)}K 80C gap — tax leakage of ${fmt(Math.round(unused80C*slab/100))}/year.</strong> Can be bridged via ELSS SIP: ${fmt(elssPerMonth)}/month. Over 20 years at 12%, this ${fmt(elssPerMonth)}/mo ELSS grows to ${crores(fvSIP(elssPerMonth,0,20,12,0))} tax-free.</div>`:''}
       ${nps<50000&&slab>=20?`<div class="insight" style="margin-top:8px"><strong>💡 NPS Section 80CCD(1B):</strong> Additional ₹50,000 deduction available, saving ${fmt(Math.round(Math.min(50000,50000-nps)*slab/100))} more in tax.</div>`:''}
-      ${regime==='unsure'?`<div class="insight" style="margin-top:8px"><strong>Old vs New regime:</strong> Old regime wins if your total deductions exceed a threshold. With deductions of ${fmt(totalDeductions)}, consult a CA to verify the better option.</div>`:''}
+      ${regime==='unsure'?`<div class="insight" style="margin-top:8px"><strong>Old vs New regime:</strong> Old regime wins if your total deductions exceed the threshold. With deductions of ${fmt(totalDeductions)}, consult a CA to verify the better option.</div>`:''}
     </div>`;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SECTION 8: SIP PLAN
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function calcSIPPlan(){
   const sipTotal=gv('sip-total',0),lumpNow=gv('lumpsum-now',0);
   const stepup=gv('sip-stepup',10),ret=gv('sip-return',12);
@@ -1470,6 +1683,9 @@ function calcSIPPlan(){
   const p5=fvSIP(sipTotal,lumpNow,5,ret,stepup);
   const p10=fvSIP(sipTotal,lumpNow,10,ret,stepup);
   const p20=fvSIP(sipTotal,lumpNow,20,ret,stepup);
+  const p30=fvSIP(sipTotal,lumpNow,30,ret,stepup);
+  let totalInvested5=lumpNow;let s5=sipTotal;for(let i=0;i<5;i++){totalInvested5+=s5*12;s5*=(1+stepup/100);}
+  let totalInvested20=lumpNow;let s20=sipTotal;for(let i=0;i<20;i++){totalInvested20+=s20*12;s20*=(1+stepup/100);}
   document.getElementById('sip-plan-output').innerHTML=`
     <div class="card">
       <div class="card-header">
@@ -1483,33 +1699,40 @@ function calcSIPPlan(){
       </div>
       <div class="divider"></div>
       <div class="section-label">Goal-wise SIP requirement</div>
-      ${goalSIPs.map(g=>`<div style="margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
-          <span style="font-weight:500">${g.name}</span>
-          <span style="font-family:'DM Mono',monospace;color:var(--gold)">${fmt(g.needed)}/mo <span style="color:var(--muted)">(${crores(g.fv)} in ${g.years}y)</span></span>
-        </div>
-        <div class="score-bar"><div class="score-bar-fill" style="width:${Math.min(100,sipTotal?sipTotal/g.needed*100:0).toFixed(0)}%;background:${g.needed<=sipTotal?'var(--success)':g.needed<=sipTotal*1.5?'var(--warn)':'var(--danger)'}"></div></div>
-        ${g.needed>sipTotal?`<div style="font-size:11px;color:var(--danger);margin-top:3px">Shortfall: ${fmt(g.needed-sipTotal)}/mo</div>`:''}
-      </div>`).join('')}
+      ${goalSIPs.map(g=>{
+        const coverPct=sipTotal?Math.min(100,sipTotal/g.needed*100):0;
+        return `<div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+            <span style="font-weight:500">${g.name}</span>
+            <span style="font-family:'DM Mono',monospace;color:var(--gold)">${fmt(g.needed)}/mo <span style="color:var(--muted)">(${crores(g.fv)} in ${g.years}y)</span></span>
+          </div>
+          <div class="score-bar" style="height:8px"><div class="score-bar-fill" style="width:${coverPct.toFixed(0)}%;background:${g.needed<=sipTotal?'var(--success)':g.needed<=sipTotal*1.5?'var(--warn)':'var(--danger)'}"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted-light);margin-top:2px;font-family:'DM Mono',monospace">
+            <span>Budget covers ${pct(coverPct)} of this goal's SIP</span>
+            ${g.needed>sipTotal?`<span style="color:var(--danger)">Shortfall: ${fmt(g.needed-sipTotal)}/mo</span>`:'<span style="color:var(--success)">✓ Covered</span>'}
+          </div>
+        </div>`;
+      }).join('')}
       ${gap>0?`<div class="insight warn">Priority approach: Fund non-negotiable goals (${fmt(criticalSum)}/mo) first, then high-priority (${fmt(highSum)}/mo). Flexible goals wait for salary increments.</div>`
-      :`<div class="insight ok"><strong>✓ Your SIP budget covers all goals.</strong>${sipTotal>totalNeeded?` Surplus of ${fmt(sipTotal-totalNeeded)}/mo.`:''}</div>`}
+      :`<div class="insight ok"><strong>✓ Your SIP budget covers all goals.</strong>${sipTotal>totalNeeded?` Surplus of ${fmt(sipTotal-totalNeeded)}/mo — deploy in index fund or NPS.`:''}</div>`}
     </div>
     <div class="card">
       <div class="card-header">
         <div><div class="card-title">SIP compounding milestones</div><div class="card-sub">${fmt(sipTotal)}/mo with ${stepup}% step-up at ${ret}% p.a.</div></div>
         <div class="card-icon">📈</div>
       </div>
-      <div class="metric-grid three">
-        <div class="metric"><div class="lbl">After 5 years</div><div class="val">${crores(p5)}</div></div>
+      <div class="metric-grid">
+        <div class="metric"><div class="lbl">After 5 years</div><div class="val">${crores(p5)}</div><div class="hint">${crores(totalInvested5)} invested · ${totalInvested5?(p5/totalInvested5).toFixed(1):0}× return</div></div>
         <div class="metric gold-metric"><div class="lbl">After 10 years</div><div class="val">${crores(p10)}</div></div>
-        <div class="metric highlight"><div class="lbl">After 20 years</div><div class="val">${crores(p20)}</div></div>
+        <div class="metric highlight"><div class="lbl">After 20 years</div><div class="val">${crores(p20)}</div><div class="hint">${crores(totalInvested20)} invested · ${totalInvested20?(p20/totalInvested20).toFixed(1):0}× return</div></div>
+        <div class="metric"><div class="lbl">After 30 years</div><div class="val">${crores(p30)}</div></div>
       </div>
     </div>`;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SECTION 9: PROJECTIONS
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function calcProjections(){
   const sip=gv('pr-sip',0),corpus=gv('pr-corpus',0);
   const years=gv('pr-years',20),r=gv('pr-return',12);
@@ -1524,6 +1747,7 @@ function calcProjections(){
   const wealthMult=totalInvested?(expected/totalInvested).toFixed(1):'—';
   const delayedExpected=fvSIP(sip,corpus,years-1,r,stepup);
   const costOfDelay=expected-delayedExpected;
+  const cagr=corpus>0?((Math.pow(expected/corpus,1/years)-1)*100).toFixed(1):'—';
   document.getElementById('projection-out').innerHTML=`
     <div class="card">
       <div class="card-header">
@@ -1531,18 +1755,19 @@ function calcProjections(){
         <div class="card-icon">🔮</div>
       </div>
       <div class="scenario-grid">
-        <div class="scenario best"><div class="s-label">Bull (${r+3}% p.a.)</div><div class="s-val">${crores(best)}</div></div>
-        <div class="scenario exp"><div class="s-label">Expected (${r}% p.a.)</div><div class="s-val">${crores(expected)}</div></div>
-        <div class="scenario stress"><div class="s-label">Bear (${Math.max(r-4,2)}% p.a.)</div><div class="s-val">${crores(stress)}</div></div>
+        <div class="scenario best"><div class="s-label">Bull (${r+3}% p.a.)</div><div class="s-val">${crores(best)}</div><div style="font-size:10px;color:var(--success);margin-top:4px;font-family:'DM Mono',monospace">${totalInvested?(best/totalInvested).toFixed(1):0}× multiple</div></div>
+        <div class="scenario exp"><div class="s-label">Expected (${r}% p.a.)</div><div class="s-val">${crores(expected)}</div><div style="font-size:10px;color:#3266AD;margin-top:4px;font-family:'DM Mono',monospace">${wealthMult}× multiple</div></div>
+        <div class="scenario stress"><div class="s-label">Bear (${Math.max(r-4,2)}% p.a.)</div><div class="s-val">${crores(stress)}</div><div style="font-size:10px;color:var(--danger);margin-top:4px;font-family:'DM Mono',monospace">${totalInvested?(stress/totalInvested).toFixed(1):0}× multiple</div></div>
       </div>
-      <div class="metric-grid three" style="margin-top:12px">
+      <div class="metric-grid" style="margin-top:12px">
         <div class="metric"><div class="lbl">Total invested</div><div class="val">${crores(totalInvested)}</div></div>
         <div class="metric gold-metric"><div class="lbl">Real value (today's ₹)</div><div class="val">${crores(inflAdj)}</div><div class="hint">after ${inflation}% inflation</div></div>
         <div class="metric highlight"><div class="lbl">Wealth multiple</div><div class="val">${wealthMult}×</div></div>
+        <div class="metric"><div class="lbl">Effective CAGR</div><div class="val">${cagr}%</div><div class="hint">on deployed capital</div></div>
       </div>
       <div class="cost-of-delay" style="margin-top:12px">
         <div class="cod-title">⏰ The cost of waiting just 1 year</div>
-        <div class="cod-body">Starting one year later costs approximately <span class="cod-number">${crores(costOfDelay)}</span> in final wealth.</div>
+        <div class="cod-body">Starting one year later costs approximately <span class="cod-number">${crores(costOfDelay)}</span> in final wealth — equivalent to ${costOfDelay>0&&sip>0?Math.round(costOfDelay/sip).toLocaleString():0} months of your SIP, lost forever.</div>
       </div>
     </div>`;
   renderProjChart(r,sip,corpus,years,stepup);
@@ -1618,9 +1843,9 @@ function renderGoalMapping(expected,r,sip,stepup=10){
   window._totalSIPNeeded=totalSIPNeeded;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SECTION 10: RETIREMENT
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function calcRetirement(){
   const curAge=gv('ret-current-age',32),retAge=gv('ret-age',60),lifeExp=gv('ret-life',85);
   const monthlyExp=gv('ret-monthly',80000),retInflation=gv('ret-inflation',5);
@@ -1643,6 +1868,7 @@ function calcRetirement(){
   const sipForRet=calcSIPNeeded(finalGap,yearsToRet,preReturn);
   const corpusAtRet=fvSIP(0,corpusNow,yearsToRet,preReturn,0);
   const swrMonthly=retCorpusNeeded*0.04/12;
+  const readinessPct=Math.min(100,corpusAlreadyProvided/retCorpusNeeded*100);
   document.getElementById('retirement-output').innerHTML=`
     <div class="card">
       <div class="card-header">
@@ -1654,6 +1880,10 @@ function calcRetirement(){
         <div class="metric highlight"><div class="lbl">Corpus needed at ${retAge}</div><div class="val">${crores(retCorpusNeeded)}</div><div class="hint">to sustain ${retDuration} years</div></div>
         <div class="metric ${corpusAlreadyProvided>retCorpusNeeded*0.5?'ok-metric':'warn-metric'}"><div class="lbl">EPF + pension provides</div><div class="val">${crores(corpusAlreadyProvided)}</div></div>
         <div class="metric ${finalGap===0?'ok-metric':'danger-metric'}"><div class="lbl">Remaining gap</div><div class="val">${crores(finalGap)}</div></div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="score-bar-label"><span style="font-family:'DM Mono',monospace;font-size:11px">Retirement readiness</span><span style="font-family:'DM Mono',monospace;font-size:11px">${pct(readinessPct)} funded by EPF/pension</span></div>
+        <div class="score-bar" style="height:8px"><div class="score-bar-fill" style="width:${readinessPct.toFixed(0)}%;background:${readinessPct>=80?'var(--success)':readinessPct>=40?'var(--gold)':'var(--danger)'}"></div></div>
       </div>
       <div class="divider"></div>
       <div class="metric-grid three">
@@ -1680,9 +1910,9 @@ function calcRetirement(){
     </div>`;
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  HEALTH SCORE
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function calcHealthScore(){
   let score=0;
   const fi=gv('inc-fixed',0),vi=gv('inc-var',0),total=fi+vi;
@@ -1706,11 +1936,316 @@ function calcHealthScore(){
   return Math.min(score,100);
 }
 
-// ═══════════════════════════════════════════════════
-//  CONTACT MODAL & REPORT GENERATION
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  PDF GENERATION (jsPDF)
+// ═══════════════════════════════════════════════
+async function generatePDF(clientName, clientPhone, clientEmail){
+  return new Promise((resolve) => {
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit:'mm', format:'a4' });
+      const name = clientName || document.getElementById('p-name')?.value || 'Client';
+      const age = gv('p-age',0);
+      const city = gvs('p-city','');
+      const income = gv('inc-fixed',0)+gv('inc-var',0)+gv('inc-other',0)+gv('inc-spouse',0);
+      const surplus = window._cashflow?.surplus||0;
+      const savRate = window._cashflow?.savRate||0;
+      const sip = gv('pr-sip',0)||gv('sip-total',0);
+      const sipStepup = gv('pr-stepup',10)||gv('sip-stepup',10);
+      const netWorth = window._netWorth?.netWorth||0;
+      const healthScore = calcHealthScore();
+      const riskProfile = window.userRisk;
+      const r = gv('pr-return',12)||gv('sip-return',12);
+      const years = gv('pr-years',20);
+      const corpus = gv('pr-corpus',0);
+      const finalCorpus = fvSIP(sip,corpus,years,r,sipStepup);
+      let totalInvested = corpus; let s = sip;
+      for(let i=0;i<years;i++){totalInvested+=s*12;s*=(1+sipStepup/100);}
+      const wealthMult = totalInvested?(finalCorpus/totalInvested).toFixed(1):'—';
+      const dateStr = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+
+      // ── PAGE 1: COVER ──
+      doc.setFillColor(28,28,28);
+      doc.rect(0,0,210,297,'F');
+      // Gold accent bar
+      doc.setFillColor(184,150,12);
+      doc.rect(0,0,210,2,'F');
+      // Brand
+      doc.setTextColor(212,175,55);
+      doc.setFontSize(28);
+      doc.setFont('helvetica','bold');
+      doc.text('YoursWealth',20,30);
+      doc.setTextColor(120,115,110);
+      doc.setFontSize(10);
+      doc.setFont('helvetica','normal');
+      doc.text('COMPREHENSIVE FINANCIAL LIFE PLAN',20,38);
+      // Divider
+      doc.setDrawColor(184,150,12);
+      doc.setLineWidth(0.3);
+      doc.line(20,44,190,44);
+      // Client info
+      doc.setTextColor(255,255,255);
+      doc.setFontSize(22);
+      doc.setFont('helvetica','bold');
+      doc.text(name,20,60);
+      doc.setFontSize(11);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(160,152,144);
+      doc.text(`Age: ${age||'—'}  |  City: ${city||'—'}  |  Date: ${dateStr}`,20,68);
+      // Health Score Big
+      doc.setFillColor(40,40,40);
+      doc.roundedRect(20,80,80,50,4,4,'F');
+      doc.setTextColor(212,175,55);
+      doc.setFontSize(40);
+      doc.setFont('helvetica','bold');
+      doc.text(String(healthScore),32,112);
+      doc.setFontSize(11);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(160,152,144);
+      doc.text('FINANCIAL HEALTH SCORE /100',27,120);
+      // Key metrics boxes
+      const boxes=[
+        {label:'Monthly Income',val:crores(income)},
+        {label:'Monthly SIP',val:fmt(sip)},
+        {label:'Net Worth',val:crores(netWorth)},
+        {label:'Risk Profile',val:riskProfile?riskProfile.name:'—'},
+      ];
+      boxes.forEach((b,i)=>{
+        const x=110+(i%2)*46,y=80+Math.floor(i/2)*26;
+        doc.setFillColor(40,40,40);
+        doc.roundedRect(x,y,42,22,3,3,'F');
+        doc.setTextColor(160,152,144);
+        doc.setFontSize(7);
+        doc.text(b.label.toUpperCase(),x+3,y+7);
+        doc.setTextColor(255,255,255);
+        doc.setFontSize(11);
+        doc.setFont('helvetica','bold');
+        doc.text(String(b.val||'—'),x+3,y+16);
+        doc.setFont('helvetica','normal');
+      });
+      // Projection highlight
+      doc.setFillColor(184,150,12);
+      doc.roundedRect(20,140,170,35,4,4,'F');
+      doc.setTextColor(28,28,28);
+      doc.setFontSize(10);
+      doc.setFont('helvetica','bold');
+      doc.text('WEALTH PROJECTION',28,152);
+      doc.setFontSize(9);
+      doc.setFont('helvetica','normal');
+      doc.text(`${fmt(sip)}/mo SIP · ${sipStepup}% step-up · ${r}% return · ${years} years`,28,160);
+      doc.setFontSize(16);
+      doc.setFont('helvetica','bold');
+      doc.text(`${crores(totalInvested)} invested  →  ${crores(finalCorpus)}`,28,170);
+      doc.setFontSize(10);
+      doc.text(`(${wealthMult}× wealth multiple)`,28,177);
+      // Footer
+      doc.setTextColor(80,75,70);
+      doc.setFontSize(8);
+      doc.setFont('helvetica','normal');
+      doc.text('Generated by YoursWealth Financial Planner  |  viswateja.investments@gmail.com  |  +91 70958 58488',105,285,{align:'center'});
+
+      // ── PAGE 2: FINANCIALS ──
+      doc.addPage();
+      // Header
+      doc.setFillColor(250,247,242);
+      doc.rect(0,0,210,20,'F');
+      doc.setFillColor(184,150,12);
+      doc.rect(0,0,210,1.5,'F');
+      doc.setTextColor(28,28,28);
+      doc.setFontSize(13);
+      doc.setFont('helvetica','bold');
+      doc.text('Financial Overview',15,13);
+      doc.setTextColor(120,115,110);
+      doc.setFontSize(8);
+      doc.setFont('helvetica','normal');
+      doc.text(name+' — '+dateStr,195,13,{align:'right'});
+
+      let y=28;
+      function sectionTitle(title,yPos){
+        doc.setFillColor(184,150,12);
+        doc.rect(15,yPos-4,3,6,'F');
+        doc.setTextColor(28,28,28);
+        doc.setFontSize(11);
+        doc.setFont('helvetica','bold');
+        doc.text(title,21,yPos);
+        doc.setFont('helvetica','normal');
+        return yPos+8;
+      }
+      function metricRow(label,value,yPos,colored=false){
+        if(colored){doc.setFillColor(250,247,242);doc.rect(15,yPos-4,180,8,'F');}
+        doc.setTextColor(120,115,110);
+        doc.setFontSize(9);
+        doc.text(label,20,yPos);
+        doc.setTextColor(28,28,28);
+        doc.setFont('helvetica','bold');
+        doc.text(String(value),190,yPos,{align:'right'});
+        doc.setFont('helvetica','normal');
+        return yPos+7;
+      }
+
+      y=sectionTitle('Cash Flow Analysis',y);
+      y=metricRow('Total Monthly Income',fmt(income),y,true);
+      y=metricRow('Monthly Investable Surplus',fmt(surplus),y);
+      y=metricRow('Savings Rate',pct(savRate),y,true);
+      y=metricRow('EMI Burden',pct(window._cashflow?.emiRate||0),y);
+      y+=4;
+      y=sectionTitle('Net Worth',y);
+      y=metricRow('Total Assets',crores(window._netWorth?.totalAssets||0),y,true);
+      y=metricRow('Total Liabilities',crores(window._netWorth?.totalLiab||0),y);
+      y=metricRow('Net Worth',crores(netWorth),y,true);
+      y=metricRow('Financial Assets (Liquid)',crores(window._netWorth?.finAssets||0),y);
+      y+=4;
+      y=sectionTitle('Protection Status',y);
+      y=metricRow('Term Life Cover',crores(gv('ins-life',0)),y,true);
+      y=metricRow('Health Cover (Total)',crores(gv('ins-health-family',0)+gv('ins-health-ind',0)),y);
+      y=metricRow('Emergency Fund',gv('ins-emergency',0)+' months',y,true);
+      y+=4;
+      y=sectionTitle('Tax Planning',y);
+      const t80C=Math.min(150000,gv('tax-epf',0)+gv('tax-ppf',0)+gv('tax-elss',0)+gv('tax-lifeins',0)+gv('tax-tuition',0)+gv('tax-homeloan',0));
+      const tSlab=gvs('tax-slab','20');
+      y=metricRow('80C Utilised',fmt(t80C)+' of ₹1,50,000',y);
+      y=metricRow('Tax Saved (current)',fmt(Math.round(t80C*parseInt(tSlab)/100))+'/year',y,true);
+      y=metricRow('Additional Tax Saveable',fmt(Math.round(Math.max(0,150000-t80C)*parseInt(tSlab)/100))+'/year',y);
+      y+=4;
+      y=sectionTitle('Risk Profile',y);
+      y=metricRow('Risk Profile',riskProfile?riskProfile.name:'Not assessed',y,true);
+      y=metricRow('Recommended Equity Allocation',riskProfile?(riskProfile.eq+'%'):'—',y);
+      y=metricRow('Recommended Debt Allocation',riskProfile?(riskProfile.debt+'%'):'—',y,true);
+
+      // Footer
+      doc.setTextColor(160,152,144);
+      doc.setFontSize(8);
+      doc.text('Page 2 of 3  |  YoursWealth  |  viswateja.investments@gmail.com',105,288,{align:'center'});
+
+      // ── PAGE 3: GOALS & ACTION PLAN ──
+      doc.addPage();
+      doc.setFillColor(250,247,242);
+      doc.rect(0,0,210,20,'F');
+      doc.setFillColor(184,150,12);
+      doc.rect(0,0,210,1.5,'F');
+      doc.setTextColor(28,28,28);
+      doc.setFontSize(13);
+      doc.setFont('helvetica','bold');
+      doc.text('Goals & Action Plan',15,13);
+      doc.setTextColor(120,115,110);
+      doc.setFontSize(8);
+      doc.setFont('helvetica','normal');
+      doc.text(name+' — '+dateStr,195,13,{align:'right'});
+
+      // Goals table
+      doc.setFontSize(11);
+      doc.setFont('helvetica','bold');
+      doc.setTextColor(28,28,28);
+      doc.setFillColor(184,150,12);
+      doc.rect(15,24,3,6,'F');
+      doc.text('Financial Goals',21,29);
+      doc.setFont('helvetica','normal');
+
+      if(goals.length>0){
+        const pMap={critical:'Non-negotiable',high:'High priority',flexible:'Flexible'};
+        const catIcon={retirement:'Retirement',education:'Education',house:'Home',wedding:'Wedding',travel:'Travel',car:'Vehicle',business:'Business',emergency:'Emergency',wealth:'Wealth',other:'Other'};
+        const tableData=goals.map(g=>{
+          const needed=calcSIPNeeded(g.gap,g.years,12);
+          return [
+            g.name,
+            catIcon[g.category]||g.category,
+            crores(g.fv),
+            g.years+' yrs',
+            fmt(needed)+'/mo',
+            pMap[g.priority]||g.priority,
+          ];
+        });
+        doc.autoTable({
+          startY:34,
+          head:[['Goal','Category','Target (Inf.Adj.)','Timeline','SIP @ 12%','Priority']],
+          body:tableData,
+          headStyles:{fillColor:[28,28,28],textColor:[212,175,55],fontSize:8,fontStyle:'bold'},
+          bodyStyles:{fontSize:8,textColor:[28,28,28]},
+          alternateRowStyles:{fillColor:[250,247,242]},
+          columnStyles:{0:{cellWidth:45},1:{cellWidth:22},2:{cellWidth:32},3:{cellWidth:20},4:{cellWidth:30},5:{cellWidth:30}},
+          margin:{left:15,right:15},
+          tableWidth:180,
+        });
+        // Total row
+        const totalSIP=goals.reduce((s,g)=>s+calcSIPNeeded(g.gap,g.years,12),0);
+        const finalY=doc.lastAutoTable.finalY+2;
+        doc.setFillColor(184,150,12);
+        doc.roundedRect(15,finalY,180,10,2,2,'F');
+        doc.setTextColor(28,28,28);
+        doc.setFontSize(9);
+        doc.setFont('helvetica','bold');
+        doc.text('Total SIP Required for All Goals: '+fmt(totalSIP)+'/month',105,finalY+7,{align:'center'});
+        doc.setFont('helvetica','normal');
+      } else {
+        doc.setTextColor(120,115,110);
+        doc.setFontSize(9);
+        doc.text('No goals defined.',20,40);
+      }
+
+      // Action plan
+      const actionY=(doc.lastAutoTable?.finalY||50)+18;
+      doc.setFillColor(184,150,12);
+      doc.rect(15,actionY-4,3,6,'F');
+      doc.setTextColor(28,28,28);
+      doc.setFontSize(11);
+      doc.setFont('helvetica','bold');
+      doc.text('Prioritised Action Plan',21,actionY);
+      doc.setFont('helvetica','normal');
+
+      const actions=[];
+      if(gv('ins-emergency',0)<6) actions.push('Build emergency fund to 6 months of expenses — keep in liquid mutual fund.');
+      if((gv('ins-income',0)*15)>gv('ins-life',0)) actions.push(`Close life insurance gap of ${crores(Math.max(0,gv('ins-income',0)*15-gv('ins-life',0)))} — buy pure term plan.`);
+      if(sip>0) actions.push(`Start SIP of ${fmt(sip)}/month via auto-debit — no manual intervention.`);
+      const unused80C=Math.max(0,150000-t80C);
+      if(unused80C>0&&parseInt(tSlab)>=20) actions.push(`Claim ₹${(unused80C/1000).toFixed(0)}K unused 80C via ELSS — saves ₹${Math.round(unused80C*parseInt(tSlab)/100).toLocaleString()}/yr in tax.`);
+      actions.push(`Step up SIP by ${sipStepup||10}% every April along with salary increment.`);
+      actions.push('Schedule 6-monthly portfolio review (April & October) — rebalance if any asset class drifts ±5%.');
+
+      actions.forEach((a,i)=>{
+        const ay=actionY+8+i*10;
+        if(ay>270) return;
+        doc.setFillColor(i%2===0?250:245,i%2===0?247:242,i%2===0?242:238);
+        doc.roundedRect(15,ay-4,180,9,2,2,'F');
+        doc.setFillColor(184,150,12);
+        doc.circle(23,ay+0.5,2.5,'F');
+        doc.setTextColor(28,28,28);
+        doc.setFontSize(8);
+        doc.setFont('helvetica','bold');
+        doc.text(String(i+1),21.7,ay+1,{align:'center'});
+        doc.setFont('helvetica','normal');
+        doc.text(a,30,ay+1);
+      });
+
+      // Contact footer
+      const contactY=260;
+      doc.setFillColor(28,28,28);
+      doc.rect(0,contactY,210,37,'F');
+      doc.setFillColor(184,150,12);
+      doc.rect(0,contactY,210,1,'F');
+      doc.setTextColor(212,175,55);
+      doc.setFontSize(12);
+      doc.setFont('helvetica','bold');
+      doc.text('Viswateja — YoursWealth',105,contactY+10,{align:'center'});
+      doc.setTextColor(160,152,144);
+      doc.setFontSize(9);
+      doc.setFont('helvetica','normal');
+      doc.text('viswateja.investments@gmail.com  |  +91 70958 58488',105,contactY+18,{align:'center'});
+      doc.setTextColor(100,95,90);
+      doc.setFontSize(8);
+      doc.text('This report is for personal financial planning purposes only. Not a SEBI-registered investment advisory.',105,contactY+26,{align:'center'});
+
+      resolve(doc);
+    } catch(e) {
+      console.error('PDF generation error:',e);
+      resolve(null);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  CONTACT MODAL
+// ═══════════════════════════════════════════════
 function showContactModal(action){
-  // Pre-fill name from profile if available
   const profileName=document.getElementById('p-name')?.value?.trim();
   if(profileName && !document.getElementById('cm-name').value){
     document.getElementById('cm-name').value=profileName;
@@ -1720,189 +2255,110 @@ function showContactModal(action){
   document.getElementById('modal-sent-wrap').style.display='none';
   window._contactAction=action;
 }
-
 function closeModal(){
   document.getElementById('contact-modal').style.display='none';
 }
 
-function generateReportText(clientName, clientPhone, clientEmail){
-  const name=clientName||document.getElementById('p-name')?.value||'Client';
-  const age=gv('p-age',0);
-  const city=document.getElementById('p-city')?.value||'';
-  const employment=gvs('p-employment','');
-  const income=gv('inc-fixed',0)+gv('inc-var',0)+gv('inc-other',0)+gv('inc-spouse',0);
-  const surplus=window._cashflow?.surplus||0;
-  const savRate=window._cashflow?.savRate||0;
-  const sip=gv('pr-sip',0)||gv('sip-total',0);
-  const sipStepup=gv('pr-stepup',10)||gv('sip-stepup',10);
-  const netWorth=window._netWorth?.netWorth||0;
-  const healthScore=calcHealthScore();
-  const riskProfile=window.userRisk;
-  const r=gv('pr-return',12)||gv('sip-return',12);
-  const years=gv('pr-years',20);
-  const corpus=gv('pr-corpus',0);
-  const finalCorpus=fvSIP(sip,corpus,years,r,sipStepup);
-  let totalInvested=corpus;let s=sip;
-  for(let i=0;i<years;i++){totalInvested+=s*12;s*=(1+sipStepup/100);}
-  const total80C=gv('tax-epf',0)+gv('tax-ppf',0)+gv('tax-elss',0)+gv('tax-lifeins',0)+gv('tax-tuition',0)+gv('tax-homeloan',0);
-  const unused80C=Math.max(0,150000-Math.min(150000,total80C));
-  const taxSlab=gvs('tax-slab','20');
-
-  // Goal lines
-  let goalsLines='';
-  if(goals.length>0){
-    goalsLines=goals.map((g,i)=>{
-      const needed=calcSIPNeeded(g.gap,g.years,r);
-      const pMap={critical:'Non-negotiable',high:'High priority',flexible:'Flexible'};
-      return `  ${i+1}. ${g.name} [${pMap[g.priority]||g.priority}]
-     Today's value: Rs.${Math.round(g.amount).toLocaleString('en-IN')}
-     Inflation-adjusted target: Rs.${Math.round(g.fv).toLocaleString('en-IN')} in ${g.years} years
-     SIP required (@ ${r}%): Rs.${Math.round(needed).toLocaleString('en-IN')}/month`;
-    }).join('\n\n');
-  }else{
-    goalsLines='  No goals defined.';
-  }
-
-  const totalSIPNeeded=goals.reduce((s,g)=>s+calcSIPNeeded(g.gap,g.years,r),0);
-
-  // Insurance
-  const lifeExist=gv('ins-life',0);
-  const lifeNeeded=Math.max(gv('ins-income',0)*15,gv('ins-exp',0)*12*20+gv('ins-loans',0));
-  const lifeGap=Math.max(0,lifeNeeded-lifeExist);
-  const totalHealth=gv('ins-health-ind',0)+gv('ins-health-family',0)+gv('ins-health-employer',0);
-  const emg=gv('ins-emergency',0);
-
-  // Retirement
-  const retAge=gv('ret-age',60);
-  const curAgeVal=gv('ret-current-age',0)||age;
-  const retMonthly=gv('ret-monthly',0);
-  const retCorpus=retMonthly?inflAdjust(retMonthly,Math.max(1,retAge-curAgeVal),5)*12*20:0;
-  const retSIP=retCorpus?calcSIPNeeded(Math.max(0,retCorpus-gv('ret-epf',0)*Math.pow(1.085,retAge-curAgeVal)),Math.max(1,retAge-curAgeVal),r):0;
-
-  return `==========================================================
-  YOURSWEALTH — PERSONAL FINANCIAL PLAN REPORT
-==========================================================
-Client Name  : ${name}
-Phone        : ${clientPhone||'Not provided'}
-Email        : ${clientEmail||'Not provided'}
-Age          : ${age||'Not specified'}
-City         : ${city||'Not specified'}
-Employment   : ${employment||'Not specified'}
-Report Date  : ${new Date().toLocaleDateString('en-IN', {day:'2-digit',month:'long',year:'numeric'})}
-
-----------------------------------------------------------
-FINANCIAL HEALTH SCORE: ${healthScore}/100
-----------------------------------------------------------
-
-INCOME & CASH FLOW
-  Monthly Income        : Rs.${Math.round(income).toLocaleString('en-IN')}
-  Monthly Surplus       : Rs.${Math.round(surplus).toLocaleString('en-IN')}
-  Savings Rate          : ${pct(savRate)}
-  Monthly SIP Budget    : Rs.${Math.round(sip).toLocaleString('en-IN')}
-
-NET WORTH SNAPSHOT
-  Total Net Worth       : ${crores(netWorth)}
-  Financial Assets      : ${crores(window._netWorth?.finAssets||0)}
-  Physical Assets       : ${crores(window._netWorth?.physAssets||0)}
-  Total Liabilities     : ${crores(window._netWorth?.totalLiab||0)}
-
-RISK PROFILE
-  Profile               : ${riskProfile?riskProfile.name:'Not assessed'}
-  ${riskProfile?`Recommended Allocation: Equity ${riskProfile.eq}% | Debt ${riskProfile.debt}% | Gold ${riskProfile.gold}% | International ${riskProfile.intl}%`:''}
-
-----------------------------------------------------------
-FINANCIAL GOALS & SIP REQUIREMENTS
-----------------------------------------------------------
-${goalsLines}
-
-  TOTAL SIP NEEDED (all goals @ ${r}%): Rs.${Math.round(totalSIPNeeded).toLocaleString('en-IN')}/month
-  YOUR SIP BUDGET                      : Rs.${Math.round(sip).toLocaleString('en-IN')}/month
-  GAP                                  : Rs.${Math.max(0,Math.round(totalSIPNeeded-sip)).toLocaleString('en-IN')}/month
-
-----------------------------------------------------------
-WEALTH PROJECTION (${years} years)
-----------------------------------------------------------
-  Monthly SIP           : Rs.${Math.round(sip).toLocaleString('en-IN')} with ${sipStepup}% annual step-up
-  Return Assumption     : ${r}% p.a.
-  Total Invested        : ${crores(totalInvested)}
-  Expected Final Corpus : ${crores(finalCorpus)}
-  Wealth Multiple       : ${totalInvested?(finalCorpus/totalInvested).toFixed(1):'—'}x
-
-----------------------------------------------------------
-RETIREMENT PLANNING
-----------------------------------------------------------
-  Current Age           : ${curAgeVal}
-  Target Retirement Age : ${retAge}
-  Desired Monthly Income: Rs.${Math.round(retMonthly).toLocaleString('en-IN')} (today's value)
-  SIP needed for retirement: Rs.${Math.round(retSIP).toLocaleString('en-IN')}/month
-
-----------------------------------------------------------
-PROTECTION STATUS
-----------------------------------------------------------
-  Term Life Cover       : ${crores(lifeExist)} ${lifeGap>0?'(Gap: '+crores(lifeGap)+')':'(Adequate)'}
-  Total Health Cover    : ${crores(totalHealth)}
-  Emergency Fund        : ${emg} months ${emg<6?'(Needs improvement — target 6 months)':'(Adequate)'}
-
-----------------------------------------------------------
-TAX PLANNING (${taxSlab}% slab)
-----------------------------------------------------------
-  80C Utilised          : Rs.${Math.round(Math.min(150000,total80C)).toLocaleString('en-IN')} / Rs.1,50,000
-  80C Gap               : Rs.${Math.round(unused80C).toLocaleString('en-IN')}
-  Additional Tax Saveable: Rs.${Math.round(unused80C*parseInt(taxSlab)/100).toLocaleString('en-IN')}/year
-
-==========================================================
-  NEXT STEPS
-==========================================================
-  1. Discuss this plan with Viswateja at YoursWealth
-  2. Finalize SIP allocation and start date
-  3. Set up auto-debit SIPs for each goal
-  4. Review plan every 6 months
-
-Viswateja | YoursWealth
-Email : viswateja.investments@gmail.com
-Phone : +91 70958 58488
-
-==========================================================`;
-}
-
-function sendReport(){
+async function sendReport(){
   const clientName=document.getElementById('cm-name').value.trim();
   const clientEmail=document.getElementById('cm-email').value.trim();
   const clientPhone=document.getElementById('cm-phone').value.trim();
   const bestTime=document.getElementById('cm-time').value.trim();
   const errEl=document.getElementById('modal-err');
-
-  if(!clientName||!clientEmail||!clientPhone){
-    errEl.style.display='block';
-    return;
-  }
+  if(!clientName||!clientEmail||!clientPhone){errEl.style.display='block';return;}
   errEl.style.display='none';
+  // Close modal, show PDF overlay
+  document.getElementById('contact-modal').style.display='none';
+  document.getElementById('pdf-overlay').style.display='flex';
 
-  const reportText=generateReportText(clientName,clientPhone,clientEmail);
-  const subject=encodeURIComponent(`YoursWealth Financial Plan — ${clientName} | ${clientPhone}`);
-  const body=encodeURIComponent(
-    `Hi Viswateja,\n\nI have completed my financial plan on YoursWealth and would like to connect.\n\nMy details:\nName    : ${clientName}\nEmail   : ${clientEmail}\nPhone   : ${clientPhone}\nBest time to call: ${bestTime||'Anytime'}\n\n` +
-    `Please find my complete financial plan below:\n\n${reportText}\n\n---\nThis report was generated via YoursWealth Financial Planner.`
-  );
+  // Generate PDF
+  const doc=await generatePDF(clientName,clientPhone,clientEmail);
+  if(doc){
+    const filename=`YoursWealth_Plan_${clientName.replace(/\s+/g,'_')}.pdf`;
+    doc.save(filename);
+  }
 
-  // Open email to viswateja with report + client email in CC
-  const mailtoLink = `mailto:viswateja.investments@gmail.com?cc=${encodeURIComponent(clientEmail)}&subject=${subject}&body=${body}`;
-  window.location.href = mailtoLink;
+  // Short delay then open email
+  await new Promise(r=>setTimeout(r,1200));
+  document.getElementById('pdf-overlay').style.display='none';
 
-  // Show success state
+  // Build email body
+  const name=clientName;
+  const healthScore=calcHealthScore();
+  const sip=gv('pr-sip',0)||gv('sip-total',0);
+  const netWorth=window._netWorth?.netWorth||0;
+  const riskProfile=window.userRisk;
+  const r=gv('pr-return',12);const years=gv('pr-years',20);
+  const corpus=gv('pr-corpus',0);const sipStepup=gv('pr-stepup',10);
+  const finalCorpus=fvSIP(sip,corpus,years,r,sipStepup);
+  let totalInvested=corpus;let s=sip;
+  for(let i=0;i<years;i++){totalInvested+=s*12;s*=(1+sipStepup/100);}
+  const wealthMult=totalInvested?(finalCorpus/totalInvested).toFixed(1):'—';
+  const totalSIPNeeded=goals.reduce((s,g)=>s+calcSIPNeeded(g.gap,g.years,r||12),0);
+  const income=gv('inc-fixed',0)+gv('inc-var',0)+gv('inc-other',0)+gv('inc-spouse',0);
+  const surplus=window._cashflow?.surplus||0;
+
+  const emailBody=`Hi Viswateja,
+
+I have completed my YoursWealth Financial Plan and am attaching my PDF report to this email.
+
+CLIENT DETAILS
+==============
+Name      : ${name}
+Phone     : ${clientPhone}
+Email     : ${clientEmail}
+Best time : ${bestTime||'Anytime'}
+
+PLAN SUMMARY
+============
+Financial Health Score  : ${healthScore}/100
+Risk Profile            : ${riskProfile?riskProfile.name:'Not assessed'}
+Monthly Income          : ${fmt(income)}
+Monthly Surplus         : ${fmt(surplus)}
+Net Worth               : ${crores(netWorth)}
+Monthly SIP Budget      : ${fmt(sip)}
+Total SIP for All Goals : ${fmt(totalSIPNeeded)}/month
+
+WEALTH PROJECTION (${years} years)
+===========================
+SIP: ${fmt(sip)}/mo with ${sipStepup}% step-up at ${r}% p.a.
+Total invested    : ${crores(totalInvested)}
+Final corpus      : ${crores(finalCorpus)}
+Wealth multiple   : ${wealthMult}×
+
+GOALS SUMMARY
+=============
+${goals.length>0?goals.map((g,i)=>{
+  const needed=calcSIPNeeded(g.gap,g.years,r||12);
+  return `${i+1}. ${g.name} — Target: ${crores(g.fv)} in ${g.years} yrs — SIP needed: ${fmt(needed)}/mo`;
+}).join('\n'):'No goals defined.'}
+
+---
+NOTE: My detailed PDF report (YoursWealth_Plan_${name.replace(/\s+/g,'_')}.pdf) has been downloaded to my device. Please attach it to your response or discuss it in our call.
+
+Looking forward to connecting!
+
+${name}`;
+
+  const subject=encodeURIComponent(`YoursWealth Financial Plan — ${clientName} | Score: ${healthScore}/100 | ${clientPhone}`);
+  const mailtoLink=`mailto:viswateja.investments@gmail.com?cc=${encodeURIComponent(clientEmail)}&subject=${subject}&body=${encodeURIComponent(emailBody)}`;
+  window.location.href=mailtoLink;
+
+  // Show modal success
+  document.getElementById('contact-modal').style.display='flex';
   document.getElementById('modal-form-wrap').style.display='none';
   document.getElementById('modal-sent-wrap').style.display='block';
 
-  // Also open WhatsApp after a short delay
+  // WhatsApp after delay
   setTimeout(()=>{
-    const waMsg=encodeURIComponent(`Hi Viswateja! I'm ${clientName}. I've completed my financial plan on YoursWealth and sent the report to your email. Looking forward to connecting! My phone: ${clientPhone}`);
+    const waMsg=encodeURIComponent(`Hi Viswateja! I'm ${clientName}. I've completed my YoursWealth financial plan (Health Score: ${healthScore}/100) and emailed my PDF report. My phone: ${clientPhone}. Looking forward to connecting!`);
     window.open(`https://wa.me/917095858488?text=${waMsg}`,'_blank');
-  }, 2000);
+  },2500);
 }
 
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SECTION 11: FINAL SUMMARY
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function buildSummary(){
   const name=document.getElementById('p-name')?.value?.trim()||'Investor';
   const fi=gv('inc-fixed',0),vi=gv('inc-var',0),total=fi+vi;
@@ -1924,8 +2380,15 @@ function buildSummary(){
   let totalInvested=corpus;let s=sip;
   for(let i=0;i<years;i++){totalInvested+=s*12;s*=(1+stepup/100);}
   const wealthMult=totalInvested?(finalCorpus/totalInvested).toFixed(1):'—';
-
   const catIcon={retirement:'🌅',education:'🎓',house:'🏠',wedding:'💒',travel:'✈️',car:'🚗',business:'💼',emergency:'🔐',wealth:'📈',other:'🎯'};
+
+  // Score breakdown
+  const savingsScore=Math.min(25,Math.round((gv('sip-total',0)||gv('pr-sip',0))/Math.max(1,fi+vi)*100/30*25));
+  const emgScore=Math.min(20,Math.round(gv('ins-emergency',0)/6*20));
+  const lifeScore=gv('ins-life',0)>0?10:0;
+  const healthScore2=gv('ins-health-family',0)+gv('ins-health-ind',0)>=1000000?10:5;
+  const emiScore=15-Math.min(15,Math.round((gv('emi-home',0)+gv('emi-car',0)+gv('emi-personal',0))/(fi+vi||1)*100/50*15));
+  const goalsScore=goals.length>=1?6:0;
 
   // Goals table
   const goalsHtml=goals.length
@@ -1976,9 +2439,26 @@ function buildSummary(){
     <div class="health-score-wrap">
       <div class="health-score-label">Financial health score — ${name}</div>
       <div class="health-score-num">${healthScore}</div>
-      <div style="font-size:22px;font-family:'Cormorant Garamond',serif;color:white;margin:8px 0">${scoreLabel}</div>
-      <div class="health-score-text">${scoreDesc}</div>
-      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <div style="font-size:22px;font-family:'Cormorant Garamond',serif;color:white;margin:8px 0;position:relative;">${scoreLabel}</div>
+      <div class="health-score-text" style="position:relative;">${scoreDesc}</div>
+      <div style="margin-top:20px;position:relative;">
+        <div style="margin-bottom:8px;font-size:9px;color:rgba(255,255,255,0.4);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;">Score breakdown</div>
+        ${[
+          {label:'Savings rate',score:savingsScore,max:25},
+          {label:'Emergency fund',score:emgScore,max:20},
+          {label:'Debt management',score:Math.max(0,emiScore),max:15},
+          {label:'Life insurance',score:lifeScore,max:10},
+          {label:'Health insurance',score:healthScore2,max:10},
+          {label:'Goal planning',score:goalsScore,max:10},
+        ].map(x=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);font-family:'DM Mono',monospace;width:130px;text-align:right;flex-shrink:0">${x.label}</div>
+          <div style="flex:1;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${(x.score/x.max*100).toFixed(0)}%;background:${x.score>=x.max*0.8?'#6FCEA5':x.score>=x.max*0.5?'var(--gold-light)':'#E88C7D'};border-radius:3px;transition:width 0.8s ease"></div>
+          </div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.6);font-family:'DM Mono',monospace;width:45px">${x.score}/${x.max}</div>
+        </div>`).join('')}
+      </div>
+      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;">
         ${[
           {label:'Savings',score:((gv('sip-total',0)||gv('pr-sip',0))/Math.max(1,(gv('inc-fixed',0)+gv('inc-var',0)))*100).toFixed(0)+'%',ok:(gv('sip-total',0)||gv('pr-sip',0))/(gv('inc-fixed',0)+gv('inc-var',0)||1)>=0.2},
           {label:'Protection',score:(gv('ins-life',0)>0&&gv('ins-health-family',0)>0?'Covered':'Gaps'),ok:gv('ins-life',0)>0&&gv('ins-health-family',0)>0},
@@ -2005,6 +2485,12 @@ function buildSummary(){
         <div class="summary-card"><div class="sc-label">Investment horizon</div><div class="sc-val">${years} years</div></div>
         <div class="summary-card"><div class="sc-label">Goals defined</div><div class="sc-val">${goals.length}</div></div>
       </div>
+      ${total>0&&sip>0?`<div class="kpi-strip" style="margin-top:12px">
+        <div class="kpi-strip-item"><div class="ks-lbl">SIP as % of income</div><div class="ks-val" style="color:${sip/total>=0.2?'var(--success)':'var(--warn)'}">${pct(sip/total*100)}</div></div>
+        <div class="kpi-strip-item"><div class="ks-lbl">Annual SIP invest.</div><div class="ks-val">${crores(sip*12)}</div></div>
+        <div class="kpi-strip-item"><div class="ks-lbl">Return on invest.</div><div class="ks-val" style="color:var(--gold)">${wealthMult}× in ${years}y</div></div>
+        <div class="kpi-strip-item"><div class="ks-lbl">Health score</div><div class="ks-val" style="color:${healthScore>=70?'var(--success)':healthScore>=50?'var(--gold)':'var(--danger)'}">${healthScore}/100</div></div>
+      </div>`:''}
     </div>
 
     <!-- PROJECTION -->
@@ -2017,7 +2503,7 @@ function buildSummary(){
         </div>
         <div class="card-icon" style="background:rgba(212,175,55,0.15)">🏆</div>
       </div>
-      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:center;position:relative;">
         <div>
           <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;font-family:'DM Mono',monospace;margin-bottom:4px">Invested</div>
           <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:rgba(255,255,255,0.7)">${crores(totalInvested)}</div>
@@ -2064,12 +2550,13 @@ function buildSummary(){
     <!-- CTA -->
     <div class="cta-action">
       <div class="cta-title">Your plan is built. One step left.</div>
-      <div class="cta-sub">The most sophisticated plan is worthless without execution. Let's start together.</div>
-      <div class="cta-amount">${sip>0?fmt(sip)+'/month — start today':'Set your SIP amount and begin'}</div>
-      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-gold btn-lg" onclick="showContactModal('email')">📩 Get my report by email</button>
+      <div class="cta-sub">The most sophisticated plan is worthless without execution. Let's start together — PDF report generated instantly.</div>
+      <div class="cta-amount" style="position:relative">${sip>0?fmt(sip)+'/month — start today':'Set your SIP amount and begin'}</div>
+      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative">
+        <button class="btn btn-gold btn-lg" onclick="showContactModal('email')">📩 Get PDF Report by Email</button>
         <button class="btn btn-lg" style="background:rgba(255,255,255,0.1);color:white;border-color:rgba(255,255,255,0.2)" onclick="showContactModal('whatsapp')">💬 Connect on WhatsApp</button>
       </div>
+      <div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.3);position:relative">A 3-page PDF report of your plan is generated locally and ready to email.</div>
     </div>`;
 }
 </script>
