@@ -2025,7 +2025,7 @@ async function generatePDF(clientName, clientPhone, clientEmail){
       doc.setFont('helvetica','normal');
       doc.setTextColor(160,152,144);
       doc.text('FINANCIAL HEALTH SCORE /100',27,120);
-      // Key metrics boxes (2x2 grid) — use pfmt/pcrores, no rupee symbol
+      // Key metrics boxes (2x2 grid)  -  use pfmt/pcrores, no rupee symbol
       const boxes=[
         {label:'Monthly Income',  val:pcrores(income)},
         {label:'Monthly SIP',     val:pfmt(sip)},
@@ -2056,9 +2056,19 @@ async function generatePDF(clientName, clientPhone, clientEmail){
       doc.setFontSize(9);
       doc.setFont('helvetica','normal');
       doc.text(pfmt(sip)+'/mo SIP  |  '+sipStepup+'% step-up  |  '+r+'% return  |  '+years+' years',28,161);
-      doc.setFontSize(15);
+      // Projection values - two clear rows, no special characters
+      doc.setFontSize(9);
+      doc.setFont('helvetica','normal');
+      doc.setTextColor(80,60,20);
+      doc.text('TOTAL INVESTED',28,168);
+      doc.text('PROJECTED CORPUS',105,168);
+      doc.text('WEALTH MULTIPLE',165,168);
+      doc.setFontSize(17);
       doc.setFont('helvetica','bold');
-      doc.text(pcrores(totalInvested)+' invested  →  '+pcrores(finalCorpus),28,171);
+      doc.setTextColor(28,28,28);
+      doc.text(pcrores(totalInvested),28,177);
+      doc.text(pcrores(finalCorpus),105,177);
+      doc.text(wealthMult,165,177);
       doc.setFontSize(10);
       doc.setFont('helvetica','normal');
       doc.text('('+wealthMult+' wealth multiple)',28,179);
@@ -2263,14 +2273,14 @@ async function generatePDF(clientName, clientPhone, clientEmail){
       doc.setFont('helvetica','normal');
 
       const actions=[];
-      if(gv('ins-emergency',0)<6) actions.push({n:1,text:'Build emergency fund to 6 months of expenses — keep in liquid mutual fund. Target: '+pcrores((gv('ins-exp',0)||60000)*6)+'.'});
+      if(gv('ins-emergency',0)<6) actions.push({n:1,text:'Build emergency fund to 6 months of expenses  -  keep in liquid mutual fund. Target: '+pcrores((gv('ins-exp',0)||60000)*6)+'.'});
       const lifGap2=Math.max(0,(gv('ins-income',0)*15)-gv('ins-life',0));
       if(lifGap2>0) actions.push({n:2,text:'Close life insurance gap of '+pcrores(lifGap2)+'. Buy a pure term plan immediately.'});
-      if(sip>0) actions.push({n:3,text:'Start SIP of '+pfmt(sip)+'/month via auto-debit — remove manual steps from the process.'});
+      if(sip>0) actions.push({n:3,text:'Start SIP of '+pfmt(sip)+'/month via auto-debit  -  remove manual steps from the process.'});
       const unused80C2=Math.max(0,150000-t80C);
-      if(unused80C2>0&&tSlab>=20) actions.push({n:4,text:'Claim Rs.'+Math.round(unused80C2/1000)+'K unused 80C via ELSS — saves '+pfmt(Math.round(unused80C2*tSlab/100))+'/year in tax.'});
+      if(unused80C2>0&&tSlab>=20) actions.push({n:4,text:'Claim Rs.'+Math.round(unused80C2/1000)+'K unused 80C via ELSS  -  saves '+pfmt(Math.round(unused80C2*tSlab/100))+'/year in tax.'});
       actions.push({n:actions.length+1,text:'Step up SIP by '+(sipStepup||10)+'% every April on your increment date.'});
-      actions.push({n:actions.length+1,text:'Schedule 6-monthly portfolio review (April & October) — rebalance if allocation drifts +/-5%.'});
+      actions.push({n:actions.length+1,text:'Schedule 6-monthly portfolio review (April & October)  -  rebalance if allocation drifts +/-5%.'});
 
       actions.forEach((a,i)=>{
         const ay=actionStartY+8+i*12;
