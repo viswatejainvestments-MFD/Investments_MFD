@@ -1944,6 +1944,26 @@ async function generatePDF(clientName, clientPhone, clientEmail){
     try {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ unit:'mm', format:'a4' });
+
+      // PDF-SAFE HELPERS: Helvetica cannot render the Rupee symbol - use Rs. instead
+      function pfmt(n){
+        if(n===undefined||n===null||isNaN(n)) return '--';
+        return 'Rs.'+Math.round(n).toLocaleString('en-IN');
+      }
+      function pcrores(n){
+        if(!n||isNaN(n)) return '--';
+        if(n>=10000000) return 'Rs.'+(n/10000000).toFixed(2)+'Cr';
+        if(n>=100000)   return 'Rs.'+(n/100000).toFixed(1)+'L';
+        return pfmt(n);
+      }
+      function ppct(n,dec=0){ return (isNaN(n)||!isFinite(n))?'--':n.toFixed(dec)+'%'; }
+      // Strip any rupee symbol from a string (safety net for all text passed to jsPDF)
+      function safe(v){ return String(v===undefined||v===null?'--':v).replace(/\u20B9/g,'Rs.').replace(/[^\x00-\x7F\u0900-\u097F]/g,function(c){return c;}); }
+      function pdfSafe(str){ 
+        if(!str) return '--';
+        return String(str).replace(/₹/g,'Rs.');
+      }
+
       const name = clientName || document.getElementById('p-name')?.value || 'Client';
       const age = gv('p-age',0);
       const city = gvs('p-city','');
@@ -1959,10 +1979,12 @@ async function generatePDF(clientName, clientPhone, clientEmail){
       const years = gv('pr-years',20);
       const corpus = gv('pr-corpus',0);
       const finalCorpus = fvSIP(sip,corpus,years,r,sipStepup);
-      let totalInvested = corpus; let s = sip;
-      for(let i=0;i<years;i++){totalInvested+=s*12;s*=(1+sipStepup/100);}
-      const wealthMult = totalInvested?(finalCorpus/totalInvested).toFixed(1):'—';
-      const dateStr = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+      let totalInvested = corpus; let si = sip;
+      for(let i=0;i<years;i++){totalInvested+=si*12;si*=(1+sipStepup/100);}
+      const wealthMult = totalInvested?(finalCorpus/totalInvested).toFixed(1)+'x':'--';
+      const nowD = new Date();
+      const monthNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const dateStr = nowD.getDate()+' '+monthNames[nowD.getMonth()]+' '+nowD.getFullYear();
 
       // ── PAGE 1: COVER ──
       doc.setFillColor(28,28,28);
@@ -1970,7 +1992,7 @@ async function generatePDF(clientName, clientPhone, clientEmail){
       // Gold accent bar
       doc.setFillColor(184,150,12);
       doc.rect(0,0,210,2,'F');
-      // Brand
+      // Brand name
       doc.setTextColor(212,175,55);
       doc.setFontSize(28);
       doc.setFont('helvetica','bold');
@@ -1991,8 +2013,8 @@ async function generatePDF(clientName, clientPhone, clientEmail){
       doc.setFontSize(11);
       doc.setFont('helvetica','normal');
       doc.setTextColor(160,152,144);
-      doc.text(`Age: ${age||'—'}  |  City: ${city||'—'}  |  Date: ${dateStr}`,20,68);
-      // Health Score Big
+      doc.text('Age: '+(age||'--')+'  |  City: '+(city||'--')+'  |  Date: '+dateStr,20,68);
+      // Health Score box
       doc.setFillColor(40,40,40);
       doc.roundedRect(20,80,80,50,4,4,'F');
       doc.setTextColor(212,175,55);
@@ -2003,50 +2025,81 @@ async function generatePDF(clientName, clientPhone, clientEmail){
       doc.setFont('helvetica','normal');
       doc.setTextColor(160,152,144);
       doc.text('FINANCIAL HEALTH SCORE /100',27,120);
-      // Key metrics boxes
+      // Key metrics boxes (2x2 grid) — use pfmt/pcrores, no rupee symbol
       const boxes=[
-        {label:'Monthly Income',val:crores(income)},
-        {label:'Monthly SIP',val:fmt(sip)},
-        {label:'Net Worth',val:crores(netWorth)},
-        {label:'Risk Profile',val:riskProfile?riskProfile.name:'—'},
+        {label:'Monthly Income',  val:pcrores(income)},
+        {label:'Monthly SIP',     val:pfmt(sip)},
+        {label:'Net Worth',       val:pcrores(netWorth)},
+        {label:'Risk Profile',    val:riskProfile?riskProfile.name:'Not assessed'},
       ];
       boxes.forEach((b,i)=>{
-        const x=110+(i%2)*46,y=80+Math.floor(i/2)*26;
+        const bx=110+(i%2)*46, by=80+Math.floor(i/2)*26;
         doc.setFillColor(40,40,40);
-        doc.roundedRect(x,y,42,22,3,3,'F');
+        doc.roundedRect(bx,by,42,22,3,3,'F');
         doc.setTextColor(160,152,144);
         doc.setFontSize(7);
-        doc.text(b.label.toUpperCase(),x+3,y+7);
+        doc.setFont('helvetica','normal');
+        doc.text(b.label.toUpperCase(),bx+3,by+7);
         doc.setTextColor(255,255,255);
-        doc.setFontSize(11);
+        doc.setFontSize(10);
         doc.setFont('helvetica','bold');
-        doc.text(String(b.val||'—'),x+3,y+16);
+        doc.text(String(b.val||'--'),bx+3,by+17);
         doc.setFont('helvetica','normal');
       });
-      // Projection highlight
+      // Projection highlight box
       doc.setFillColor(184,150,12);
-      doc.roundedRect(20,140,170,35,4,4,'F');
+      doc.roundedRect(20,140,170,40,4,4,'F');
       doc.setTextColor(28,28,28);
       doc.setFontSize(10);
       doc.setFont('helvetica','bold');
-      doc.text('WEALTH PROJECTION',28,152);
+      doc.text('WEALTH PROJECTION',28,153);
       doc.setFontSize(9);
       doc.setFont('helvetica','normal');
-      doc.text(`${fmt(sip)}/mo SIP · ${sipStepup}% step-up · ${r}% return · ${years} years`,28,160);
-      doc.setFontSize(16);
+      doc.text(pfmt(sip)+'/mo SIP  |  '+sipStepup+'% step-up  |  '+r+'% return  |  '+years+' years',28,161);
+      doc.setFontSize(15);
       doc.setFont('helvetica','bold');
-      doc.text(`${crores(totalInvested)} invested  →  ${crores(finalCorpus)}`,28,170);
+      doc.text(pcrores(totalInvested)+' invested  →  '+pcrores(finalCorpus),28,171);
       doc.setFontSize(10);
-      doc.text(`(${wealthMult}× wealth multiple)`,28,177);
-      // Footer
-      doc.setTextColor(80,75,70);
+      doc.setFont('helvetica','normal');
+      doc.text('('+wealthMult+' wealth multiple)',28,179);
+      // Score breakdown bars on cover
+      const scoreBarY=195;
+      doc.setTextColor(160,152,144);
+      doc.setFontSize(9);
+      doc.setFont('helvetica','bold');
+      doc.text('FINANCIAL HEALTH BREAKDOWN',20,scoreBarY);
+      doc.setFont('helvetica','normal');
+      const scoreBands=[
+        {label:'Savings Rate',   score:Math.min(25,Math.round((sip/Math.max(1,income))*100/30*25)), max:25},
+        {label:'Emergency Fund', score:Math.min(20,Math.round(gv('ins-emergency',0)/6*20)), max:20},
+        {label:'Debt Management',score:Math.max(0,15-Math.round((gv('emi-home',0)+gv('emi-car',0)+gv('emi-personal',0))/Math.max(1,income)*100/50*15)), max:15},
+        {label:'Insurance',      score:(gv('ins-life',0)>0?10:0)+(gv('ins-health-family',0)+gv('ins-health-ind',0)>=1000000?10:5), max:20},
+        {label:'Goal Planning',  score:goals.length>=1?10:0, max:10},
+      ];
+      scoreBands.forEach((sb,i)=>{
+        const barY=scoreBarY+6+i*10;
+        const barW=120;
+        const fillW=Math.min(barW,sb.max>0?barW*(sb.score/sb.max):0);
+        const fillColor = sb.score>=sb.max*0.8?[46,125,82]:sb.score>=sb.max*0.5?[184,150,12]:[192,57,43];
+        doc.setTextColor(140,132,124);
+        doc.setFontSize(7.5);
+        doc.text(sb.label,20,barY+2);
+        doc.setFillColor(50,50,50);
+        doc.roundedRect(80,barY-2,barW,5,1,1,'F');
+        doc.setFillColor(...fillColor);
+        if(fillW>0) doc.roundedRect(80,barY-2,fillW,5,1,1,'F');
+        doc.setTextColor(180,150,12);
+        doc.setFontSize(7);
+        doc.text(sb.score+'/'+sb.max,204,barY+2,{align:'right'});
+      });
+      // Footer page 1
+      doc.setTextColor(70,65,60);
       doc.setFontSize(8);
       doc.setFont('helvetica','normal');
       doc.text('Generated by YoursWealth Financial Planner  |  viswateja.investments@gmail.com  |  +91 70958 58488',105,285,{align:'center'});
 
       // ── PAGE 2: FINANCIALS ──
       doc.addPage();
-      // Header
       doc.setFillColor(250,247,242);
       doc.rect(0,0,210,20,'F');
       doc.setFillColor(184,150,12);
@@ -2058,9 +2111,9 @@ async function generatePDF(clientName, clientPhone, clientEmail){
       doc.setTextColor(120,115,110);
       doc.setFontSize(8);
       doc.setFont('helvetica','normal');
-      doc.text(name+' — '+dateStr,195,13,{align:'right'});
+      doc.text(name+' | '+dateStr,195,13,{align:'right'});
 
-      let y=28;
+      let yy=28;
       function sectionTitle(title,yPos){
         doc.setFillColor(184,150,12);
         doc.rect(15,yPos-4,3,6,'F');
@@ -2069,52 +2122,66 @@ async function generatePDF(clientName, clientPhone, clientEmail){
         doc.setFont('helvetica','bold');
         doc.text(title,21,yPos);
         doc.setFont('helvetica','normal');
-        return yPos+8;
+        doc.setDrawColor(220,215,210);
+        doc.setLineWidth(0.2);
+        doc.line(15,yPos+2,195,yPos+2);
+        return yPos+10;
       }
-      function metricRow(label,value,yPos,colored=false){
-        if(colored){doc.setFillColor(250,247,242);doc.rect(15,yPos-4,180,8,'F');}
-        doc.setTextColor(120,115,110);
+      function metricRow(label,value,yPos,colored){
+        if(colored){doc.setFillColor(248,244,238);doc.rect(15,yPos-5,180,8,'F');}
+        doc.setTextColor(100,94,88);
         doc.setFontSize(9);
+        doc.setFont('helvetica','normal');
         doc.text(label,20,yPos);
         doc.setTextColor(28,28,28);
         doc.setFont('helvetica','bold');
-        doc.text(String(value),190,yPos,{align:'right'});
+        doc.text(String(value),192,yPos,{align:'right'});
         doc.setFont('helvetica','normal');
-        return yPos+7;
+        return yPos+8;
       }
 
-      y=sectionTitle('Cash Flow Analysis',y);
-      y=metricRow('Total Monthly Income',fmt(income),y,true);
-      y=metricRow('Monthly Investable Surplus',fmt(surplus),y);
-      y=metricRow('Savings Rate',pct(savRate),y,true);
-      y=metricRow('EMI Burden',pct(window._cashflow?.emiRate||0),y);
-      y+=4;
-      y=sectionTitle('Net Worth',y);
-      y=metricRow('Total Assets',crores(window._netWorth?.totalAssets||0),y,true);
-      y=metricRow('Total Liabilities',crores(window._netWorth?.totalLiab||0),y);
-      y=metricRow('Net Worth',crores(netWorth),y,true);
-      y=metricRow('Financial Assets (Liquid)',crores(window._netWorth?.finAssets||0),y);
-      y+=4;
-      y=sectionTitle('Protection Status',y);
-      y=metricRow('Term Life Cover',crores(gv('ins-life',0)),y,true);
-      y=metricRow('Health Cover (Total)',crores(gv('ins-health-family',0)+gv('ins-health-ind',0)),y);
-      y=metricRow('Emergency Fund',gv('ins-emergency',0)+' months',y,true);
-      y+=4;
-      y=sectionTitle('Tax Planning',y);
+      yy=sectionTitle('Cash Flow Analysis',yy);
+      yy=metricRow('Total Monthly Income',pfmt(income),yy,true);
+      yy=metricRow('Monthly Investable Surplus',pfmt(surplus),yy,false);
+      yy=metricRow('Savings Rate',ppct(savRate),yy,true);
+      yy=metricRow('EMI Burden Ratio',ppct(window._cashflow?.emiRate||0),yy,false);
+      yy=metricRow('Annual Investable Surplus',pcrores(Math.max(0,surplus)*12),yy,true);
+      yy+=4;
+      yy=sectionTitle('Net Worth Snapshot',yy);
+      yy=metricRow('Total Assets',pcrores(window._netWorth?.totalAssets||0),yy,true);
+      yy=metricRow('Total Liabilities',pcrores(window._netWorth?.totalLiab||0),yy,false);
+      yy=metricRow('Net Worth',pcrores(netWorth),yy,true);
+      yy=metricRow('Financial Assets (Liquid)',pcrores(window._netWorth?.finAssets||0),yy,false);
+      yy=metricRow('Physical Assets (Illiquid)',pcrores(window._netWorth?.physAssets||0),yy,true);
+      yy+=4;
+      yy=sectionTitle('Protection Status',yy);
+      const lifeNeededPDF=Math.max(gv('ins-income',0)*15,gv('ins-exp',0)*12*20+gv('ins-loans',0));
+      const lifeGapPDF=Math.max(0,lifeNeededPDF-gv('ins-life',0));
+      yy=metricRow('Term Life Cover (existing)',pcrores(gv('ins-life',0)),yy,true);
+      yy=metricRow('Recommended Life Cover',pcrores(lifeNeededPDF),yy,false);
+      yy=metricRow('Life Cover Gap',lifeGapPDF>0?pcrores(lifeGapPDF)+' (action needed)':'Adequate',yy,true);
+      yy=metricRow('Total Health Cover',pcrores(gv('ins-health-family',0)+gv('ins-health-ind',0)),yy,false);
+      yy=metricRow('Emergency Fund',gv('ins-emergency',0)+' months '+(gv('ins-emergency',0)>=6?'(Adequate)':'(Target: 6 months)'),yy,true);
+      yy+=4;
+      yy=sectionTitle('Tax Planning',yy);
       const t80C=Math.min(150000,gv('tax-epf',0)+gv('tax-ppf',0)+gv('tax-elss',0)+gv('tax-lifeins',0)+gv('tax-tuition',0)+gv('tax-homeloan',0));
-      const tSlab=gvs('tax-slab','20');
-      y=metricRow('80C Utilised',fmt(t80C)+' of ₹1,50,000',y);
-      y=metricRow('Tax Saved (current)',fmt(Math.round(t80C*parseInt(tSlab)/100))+'/year',y,true);
-      y=metricRow('Additional Tax Saveable',fmt(Math.round(Math.max(0,150000-t80C)*parseInt(tSlab)/100))+'/year',y);
-      y+=4;
-      y=sectionTitle('Risk Profile',y);
-      y=metricRow('Risk Profile',riskProfile?riskProfile.name:'Not assessed',y,true);
-      y=metricRow('Recommended Equity Allocation',riskProfile?(riskProfile.eq+'%'):'—',y);
-      y=metricRow('Recommended Debt Allocation',riskProfile?(riskProfile.debt+'%'):'—',y,true);
+      const tSlab=parseInt(gvs('tax-slab','20'))||20;
+      const tUnused=Math.max(0,150000-t80C);
+      yy=metricRow('80C Utilised',pfmt(t80C)+' of Rs.1,50,000',yy,false);
+      yy=metricRow('80C Remaining Gap',pfmt(tUnused),yy,true);
+      yy=metricRow('Tax Saved (current deductions)',pfmt(Math.round(t80C*tSlab/100))+'/year',yy,false);
+      yy=metricRow('Additional Tax Saveable',pfmt(Math.round(tUnused*tSlab/100))+'/year',yy,true);
+      yy+=4;
+      yy=sectionTitle('Risk Profile',yy);
+      yy=metricRow('Risk Profile Category',riskProfile?riskProfile.name:'Not assessed',yy,false);
+      yy=metricRow('Recommended Equity Allocation',riskProfile?(riskProfile.eq+'%'):'--',yy,true);
+      yy=metricRow('Recommended Debt Allocation',riskProfile?(riskProfile.debt+'%'):'--',yy,false);
+      yy=metricRow('Recommended Gold Allocation',riskProfile?(riskProfile.gold+'%'):'--',yy,true);
 
-      // Footer
+      // Page 2 footer
       doc.setTextColor(160,152,144);
       doc.setFontSize(8);
+      doc.setFont('helvetica','normal');
       doc.text('Page 2 of 3  |  YoursWealth  |  viswateja.investments@gmail.com',105,288,{align:'center'});
 
       // ── PAGE 3: GOALS & ACTION PLAN ──
@@ -2130,109 +2197,115 @@ async function generatePDF(clientName, clientPhone, clientEmail){
       doc.setTextColor(120,115,110);
       doc.setFontSize(8);
       doc.setFont('helvetica','normal');
-      doc.text(name+' — '+dateStr,195,13,{align:'right'});
+      doc.text(name+' | '+dateStr,195,13,{align:'right'});
 
       // Goals table
-      doc.setFontSize(11);
-      doc.setFont('helvetica','bold');
-      doc.setTextColor(28,28,28);
       doc.setFillColor(184,150,12);
       doc.rect(15,24,3,6,'F');
+      doc.setTextColor(28,28,28);
+      doc.setFontSize(11);
+      doc.setFont('helvetica','bold');
       doc.text('Financial Goals',21,29);
       doc.setFont('helvetica','normal');
 
       if(goals.length>0){
-        const pMap={critical:'Non-negotiable',high:'High priority',flexible:'Flexible'};
-        const catIcon={retirement:'Retirement',education:'Education',house:'Home',wedding:'Wedding',travel:'Travel',car:'Vehicle',business:'Business',emergency:'Emergency',wealth:'Wealth',other:'Other'};
+        const pMapPDF={critical:'Non-negotiable',high:'High priority',flexible:'Flexible'};
+        const catPDF={retirement:'Retirement',education:'Education',house:'Home Purchase',wedding:'Wedding',travel:'Travel',car:'Vehicle',business:'Business',emergency:'Emergency',wealth:'Wealth Creation',other:'Other'};
         const tableData=goals.map(g=>{
           const needed=calcSIPNeeded(g.gap,g.years,12);
           return [
             g.name,
-            catIcon[g.category]||g.category,
-            crores(g.fv),
+            catPDF[g.category]||g.category,
+            pcrores(g.fv),
             g.years+' yrs',
-            fmt(needed)+'/mo',
-            pMap[g.priority]||g.priority,
+            pfmt(needed)+'/mo',
+            pMapPDF[g.priority]||g.priority,
           ];
         });
         doc.autoTable({
           startY:34,
-          head:[['Goal','Category','Target (Inf.Adj.)','Timeline','SIP @ 12%','Priority']],
+          head:[['Goal Name','Category','Target (Inf-Adj)','Timeline','SIP @ 12%','Priority']],
           body:tableData,
-          headStyles:{fillColor:[28,28,28],textColor:[212,175,55],fontSize:8,fontStyle:'bold'},
-          bodyStyles:{fontSize:8,textColor:[28,28,28]},
+          headStyles:{fillColor:[28,28,28],textColor:[212,175,55],fontSize:8,fontStyle:'bold',halign:'left'},
+          bodyStyles:{fontSize:8,textColor:[28,28,28],halign:'left'},
           alternateRowStyles:{fillColor:[250,247,242]},
-          columnStyles:{0:{cellWidth:45},1:{cellWidth:22},2:{cellWidth:32},3:{cellWidth:20},4:{cellWidth:30},5:{cellWidth:30}},
+          columnStyles:{0:{cellWidth:42},1:{cellWidth:25},2:{cellWidth:32},3:{cellWidth:18},4:{cellWidth:30},5:{cellWidth:28}},
           margin:{left:15,right:15},
-          tableWidth:180,
+          tableWidth:175,
+          didDrawCell:(data)=>{
+            // no rupee symbols ever reach here since we used pfmt/pcrores
+          }
         });
-        // Total row
-        const totalSIP=goals.reduce((s,g)=>s+calcSIPNeeded(g.gap,g.years,12),0);
-        const finalY=doc.lastAutoTable.finalY+2;
+        // Total SIP summary
+        const totalSIPpdf=goals.reduce((sum,g)=>sum+calcSIPNeeded(g.gap,g.years,12),0);
+        const afterTableY=doc.lastAutoTable.finalY+3;
         doc.setFillColor(184,150,12);
-        doc.roundedRect(15,finalY,180,10,2,2,'F');
+        doc.roundedRect(15,afterTableY,175,11,2,2,'F');
         doc.setTextColor(28,28,28);
         doc.setFontSize(9);
         doc.setFont('helvetica','bold');
-        doc.text('Total SIP Required for All Goals: '+fmt(totalSIP)+'/month',105,finalY+7,{align:'center'});
+        doc.text('Total Monthly SIP Required for All Goals:  '+pfmt(totalSIPpdf)+'/month',105,afterTableY+7.5,{align:'center'});
         doc.setFont('helvetica','normal');
       } else {
         doc.setTextColor(120,115,110);
         doc.setFontSize(9);
-        doc.text('No goals defined.',20,40);
+        doc.text('No goals defined in this plan.',20,40);
       }
 
-      // Action plan
-      const actionY=(doc.lastAutoTable?.finalY||50)+18;
+      // Action Plan section
+      const actionStartY=(doc.lastAutoTable?.finalY||50)+20;
       doc.setFillColor(184,150,12);
-      doc.rect(15,actionY-4,3,6,'F');
+      doc.rect(15,actionStartY-4,3,6,'F');
       doc.setTextColor(28,28,28);
       doc.setFontSize(11);
       doc.setFont('helvetica','bold');
-      doc.text('Prioritised Action Plan',21,actionY);
+      doc.text('Prioritised Action Plan',21,actionStartY);
       doc.setFont('helvetica','normal');
 
       const actions=[];
-      if(gv('ins-emergency',0)<6) actions.push('Build emergency fund to 6 months of expenses — keep in liquid mutual fund.');
-      if((gv('ins-income',0)*15)>gv('ins-life',0)) actions.push(`Close life insurance gap of ${crores(Math.max(0,gv('ins-income',0)*15-gv('ins-life',0)))} — buy pure term plan.`);
-      if(sip>0) actions.push(`Start SIP of ${fmt(sip)}/month via auto-debit — no manual intervention.`);
-      const unused80C=Math.max(0,150000-t80C);
-      if(unused80C>0&&parseInt(tSlab)>=20) actions.push(`Claim ₹${(unused80C/1000).toFixed(0)}K unused 80C via ELSS — saves ₹${Math.round(unused80C*parseInt(tSlab)/100).toLocaleString()}/yr in tax.`);
-      actions.push(`Step up SIP by ${sipStepup||10}% every April along with salary increment.`);
-      actions.push('Schedule 6-monthly portfolio review (April & October) — rebalance if any asset class drifts ±5%.');
+      if(gv('ins-emergency',0)<6) actions.push({n:1,text:'Build emergency fund to 6 months of expenses — keep in liquid mutual fund. Target: '+pcrores((gv('ins-exp',0)||60000)*6)+'.'});
+      const lifGap2=Math.max(0,(gv('ins-income',0)*15)-gv('ins-life',0));
+      if(lifGap2>0) actions.push({n:2,text:'Close life insurance gap of '+pcrores(lifGap2)+'. Buy a pure term plan immediately.'});
+      if(sip>0) actions.push({n:3,text:'Start SIP of '+pfmt(sip)+'/month via auto-debit — remove manual steps from the process.'});
+      const unused80C2=Math.max(0,150000-t80C);
+      if(unused80C2>0&&tSlab>=20) actions.push({n:4,text:'Claim Rs.'+Math.round(unused80C2/1000)+'K unused 80C via ELSS — saves '+pfmt(Math.round(unused80C2*tSlab/100))+'/year in tax.'});
+      actions.push({n:actions.length+1,text:'Step up SIP by '+(sipStepup||10)+'% every April on your increment date.'});
+      actions.push({n:actions.length+1,text:'Schedule 6-monthly portfolio review (April & October) — rebalance if allocation drifts +/-5%.'});
 
       actions.forEach((a,i)=>{
-        const ay=actionY+8+i*10;
-        if(ay>270) return;
-        doc.setFillColor(i%2===0?250:245,i%2===0?247:242,i%2===0?242:238);
-        doc.roundedRect(15,ay-4,180,9,2,2,'F');
+        const ay=actionStartY+8+i*12;
+        if(ay>262) return;
+        doc.setFillColor(i%2===0?248:242,i%2===0?244:238,i%2===0?238:232);
+        doc.roundedRect(15,ay-4,175,10,2,2,'F');
         doc.setFillColor(184,150,12);
-        doc.circle(23,ay+0.5,2.5,'F');
+        doc.circle(23,ay+1,2.8,'F');
         doc.setTextColor(28,28,28);
         doc.setFontSize(8);
         doc.setFont('helvetica','bold');
-        doc.text(String(i+1),21.7,ay+1,{align:'center'});
+        doc.text(String(a.n),21.5,ay+1.5,{align:'center'});
         doc.setFont('helvetica','normal');
-        doc.text(a,30,ay+1);
+        doc.setTextColor(40,38,36);
+        const lines=doc.splitTextToSize(a.text,145);
+        doc.text(lines[0],30,ay+1.5);
       });
 
-      // Contact footer
-      const contactY=260;
+      // Contact footer page 3
+      const footY=265;
       doc.setFillColor(28,28,28);
-      doc.rect(0,contactY,210,37,'F');
+      doc.rect(0,footY,210,32,'F');
       doc.setFillColor(184,150,12);
-      doc.rect(0,contactY,210,1,'F');
+      doc.rect(0,footY,210,1,'F');
       doc.setTextColor(212,175,55);
       doc.setFontSize(12);
       doc.setFont('helvetica','bold');
-      doc.text('Viswateja — YoursWealth',105,contactY+10,{align:'center'});
+      doc.text('Viswateja  |  YoursWealth',105,footY+10,{align:'center'});
       doc.setTextColor(160,152,144);
       doc.setFontSize(9);
       doc.setFont('helvetica','normal');
-      doc.text('viswateja.investments@gmail.com  |  +91 70958 58488',105,contactY+18,{align:'center'});
-      doc.setTextColor(100,95,90);
-      doc.setFontSize(8);
-      doc.text('This report is for personal financial planning purposes only. Not a SEBI-registered investment advisory.',105,contactY+26,{align:'center'});
+      doc.text('viswateja.investments@gmail.com  |  +91 70958 58488',105,footY+18,{align:'center'});
+      doc.setTextColor(80,75,70);
+      doc.setFontSize(7.5);
+      doc.text('This report is for personal financial planning purposes only and is not SEBI-registered investment advice.',105,footY+25,{align:'center'});
 
       resolve(doc);
     } catch(e) {
