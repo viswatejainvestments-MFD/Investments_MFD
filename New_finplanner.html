@@ -1939,387 +1939,656 @@ function calcHealthScore(){
 // ═══════════════════════════════════════════════
 //  PDF GENERATION (jsPDF)
 // ═══════════════════════════════════════════════
-async function generatePDF(clientName, clientPhone, clientEmail){
+// ═══════════════════════════════════════════════════════════════
+//  REVISED generatePDF — drop-in replacement for YoursWealth
+//
+//  HOW TO USE:
+//  In your HTML file, find the block that starts with:
+//    // ═══════════════════════════════════════════════
+//    //  PDF GENERATION (jsPDF)
+//  and replace the entire  async function generatePDF(...)  
+//  with the function below (keep everything else the same).
+// ═══════════════════════════════════════════════════════════════
+
+async function generatePDF(clientName, clientPhone, clientEmail) {
   return new Promise((resolve) => {
     try {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ unit:'mm', format:'a4' });
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
 
-      // PDF-SAFE HELPERS: Helvetica cannot render the Rupee symbol - use Rs. instead
-      function pfmt(n){
-        if(n===undefined||n===null||isNaN(n)) return '--';
-        return 'Rs.'+Math.round(n).toLocaleString('en-IN');
+      // ─────────────────────────────────────────────
+      //  PDF-SAFE FORMATTERS  (NO rupee symbol — 
+      //  jsPDF's built-in Helvetica can't render ₹)
+      // ─────────────────────────────────────────────
+      function R(n) {                          // Rs.1,23,456
+        if (n == null || isNaN(n)) return '--';
+        return 'Rs.' + Math.round(Number(n)).toLocaleString('en-IN');
       }
-      function pcrores(n){
-        if(!n||isNaN(n)) return '--';
-        if(n>=10000000) return 'Rs.'+(n/10000000).toFixed(2)+'Cr';
-        if(n>=100000)   return 'Rs.'+(n/100000).toFixed(1)+'L';
-        return pfmt(n);
+      function Rc(n) {                         // Rs.1.23Cr / Rs.1.2L
+        if (!n || isNaN(n)) return '--';
+        if (n >= 10000000) return 'Rs.' + (n / 10000000).toFixed(2) + 'Cr';
+        if (n >= 100000)   return 'Rs.' + (n / 100000).toFixed(1) + 'L';
+        return R(n);
       }
-      function ppct(n,dec=0){ return (isNaN(n)||!isFinite(n))?'--':n.toFixed(dec)+'%'; }
-      // Strip any rupee symbol from a string (safety net for all text passed to jsPDF)
-      function safe(v){ return String(v===undefined||v===null?'--':v).replace(/\u20B9/g,'Rs.').replace(/[^\x00-\x7F\u0900-\u097F]/g,function(c){return c;}); }
-      function pdfSafe(str){ 
-        if(!str) return '--';
-        return String(str).replace(/₹/g,'Rs.');
+      function Rp(n, d = 0) {                  // 12.5%
+        return (isNaN(n) || !isFinite(n)) ? '--' : n.toFixed(d) + '%';
+      }
+      function safe(v) {                       // strip any stray ₹ chars
+        return String(v == null ? '--' : v).replace(/[\u20B9\u20A8]/g, 'Rs.');
       }
 
-      const name = clientName || document.getElementById('p-name')?.value || 'Client';
-      const age = gv('p-age',0);
-      const city = gvs('p-city','');
-      const income = gv('inc-fixed',0)+gv('inc-var',0)+gv('inc-other',0)+gv('inc-spouse',0);
-      const surplus = window._cashflow?.surplus||0;
-      const savRate = window._cashflow?.savRate||0;
-      const sip = gv('pr-sip',0)||gv('sip-total',0);
-      const sipStepup = gv('pr-stepup',10)||gv('sip-stepup',10);
-      const netWorth = window._netWorth?.netWorth||0;
-      const healthScore = calcHealthScore();
-      const riskProfile = window.userRisk;
-      const r = gv('pr-return',12)||gv('sip-return',12);
-      const years = gv('pr-years',20);
-      const corpus = gv('pr-corpus',0);
-      const finalCorpus = fvSIP(sip,corpus,years,r,sipStepup);
-      let totalInvested = corpus; let si = sip;
-      for(let i=0;i<years;i++){totalInvested+=si*12;si*=(1+sipStepup/100);}
-      const wealthMult = totalInvested?(finalCorpus/totalInvested).toFixed(1)+'x':'--';
-      const nowD = new Date();
-      const monthNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const dateStr = nowD.getDate()+' '+monthNames[nowD.getMonth()]+' '+nowD.getFullYear();
+      // ─────────────────────────────────────────────
+      //  DATA COLLECTION  (read all form fields now)
+      // ─────────────────────────────────────────────
+      const cName      = clientName || document.getElementById('p-name')?.value || 'Client';
+      const cPhone     = clientPhone || '';
+      const cEmail     = clientEmail || '';
+      const age        = gv('p-age', 0);
+      const city       = gvs('p-city', '');
+      const empType    = gvs('p-employment', '').replace(/-/g, ' ');
+      const retireYrs  = gv('p-retire-years', 0);
 
-      // ── PAGE 1: COVER ──
-      doc.setFillColor(28,28,28);
-      doc.rect(0,0,210,297,'F');
-      // Gold accent bar
-      doc.setFillColor(184,150,12);
-      doc.rect(0,0,210,2,'F');
-      // Brand name
-      doc.setTextColor(212,175,55);
-      doc.setFontSize(28);
-      doc.setFont('helvetica','bold');
-      doc.text('YoursWealth',20,30);
-      doc.setTextColor(120,115,110);
-      doc.setFontSize(10);
-      doc.setFont('helvetica','normal');
-      doc.text('COMPREHENSIVE FINANCIAL LIFE PLAN',20,38);
-      // Divider
-      doc.setDrawColor(184,150,12);
-      doc.setLineWidth(0.3);
-      doc.line(20,44,190,44);
-      // Client info
-      doc.setTextColor(255,255,255);
-      doc.setFontSize(22);
-      doc.setFont('helvetica','bold');
-      doc.text(name,20,60);
-      doc.setFontSize(11);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(160,152,144);
-      doc.text('Age: '+(age||'--')+'  |  City: '+(city||'--')+'  |  Date: '+dateStr,20,68);
-      // Health Score box
-      doc.setFillColor(40,40,40);
-      doc.roundedRect(20,80,80,50,4,4,'F');
-      doc.setTextColor(212,175,55);
-      doc.setFontSize(40);
-      doc.setFont('helvetica','bold');
-      doc.text(String(healthScore),32,112);
-      doc.setFontSize(11);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(160,152,144);
-      doc.text('FINANCIAL HEALTH SCORE /100',27,120);
-      // Key metrics boxes (2x2 grid)  -  use pfmt/pcrores, no rupee symbol
-      const boxes=[
-        {label:'Monthly Income',  val:pcrores(income)},
-        {label:'Monthly SIP',     val:pfmt(sip)},
-        {label:'Net Worth',       val:pcrores(netWorth)},
-        {label:'Risk Profile',    val:riskProfile?riskProfile.name:'Not assessed'},
+      // Income
+      const iFixed    = gv('inc-fixed',   0);
+      const iVar      = gv('inc-var',     0);
+      const iOther    = gv('inc-other',   0);
+      const iSpouse   = gv('inc-spouse',  0);
+      const iIncr     = gv('inc-increment', 8);
+      const totalInc  = iFixed + iVar + iOther + iSpouse;
+
+      // Expenses
+      const eRent     = gv('exp-rent',      0);
+      const eGroc     = gv('exp-grocery',   0);
+      const eUtil     = gv('exp-util',      0);
+      const eTrans    = gv('exp-transport', 0);
+      const eEdu      = gv('exp-edu',       0);
+      const eHealth   = gv('exp-health',    0);
+      const eDining   = gv('exp-dining',    0);
+      const eShop     = gv('exp-shop',      0);
+      const eMisc     = gv('exp-misc',      0);
+      const emiHome   = gv('emi-home',      0);
+      const emiCar    = gv('emi-car',       0);
+      const emiPers   = gv('emi-personal',  0);
+      const totalEMI  = emiHome + emiCar + emiPers;
+      const totalEss  = eRent + eGroc + eUtil + eTrans + eEdu + eHealth;
+      const totalDisc = eDining + eShop + eMisc;
+      const totalExp  = totalEss + totalDisc + totalEMI;
+      const surplus   = totalInc - totalExp;
+      const savRate   = totalInc ? Math.max(0, surplus) / totalInc * 100 : 0;
+      const emiRate   = totalInc ? totalEMI / totalInc * 100 : 0;
+
+      // Net worth (prefer live _netWorth cache, fallback to fields)
+      const nw        = window._netWorth || {};
+      const netWorth  = nw.netWorth  ?? 0;
+      const totAssets = nw.totalAssets ?? 0;
+      const totLiab   = nw.totalLiab   ?? 0;
+      const finAssets = nw.finAssets  ?? 0;
+      const phyAssets = nw.physAssets ?? 0;
+      const aMfEq     = nw.mfEq   ?? gv('a-mf-eq',   0);
+      const aMfDebt   = nw.mfDebt ?? gv('a-mf-debt', 0);
+      const aEPF      = nw.epf    ?? gv('a-epf',  0);
+      const aPPF      = nw.ppf    ?? gv('a-ppf',  0);
+      const aGold     = nw.gold   ?? gv('a-gold', 0);
+      const aCash     = nw.cash   ?? gv('a-cash', 0);
+      const aEquity   = gv('a-equity', 0);
+      const aFD       = gv('a-fd', 0);
+      const aHouse    = gv('a-house', 0);
+      const debtRatio = totAssets ? totLiab / totAssets * 100 : 0;
+
+      // Insurance
+      const insLife    = gv('ins-life',            0);
+      const insIncome  = gv('ins-income',          0);
+      const insExpM    = gv('ins-exp',             0);
+      const insLoans   = gv('ins-loans',           0);
+      const insHInd    = gv('ins-health-ind',      0);
+      const insHFam    = gv('ins-health-family',   0);
+      const insHEmp    = gv('ins-health-employer', 0);
+      const insCrit    = gv('ins-critical',        0);
+      const insAcc     = gv('ins-accident',        0);
+      const insEmg     = gv('ins-emergency',       0);
+      const totalHlth  = insHInd + insHFam + insHEmp;
+      const lifeNeeded = Math.max(insIncome * 15, insExpM * 12 * 20 + insLoans);
+      const lifeGap    = Math.max(0, lifeNeeded - insLife);
+      const hlthNeeded = 1500000;
+
+      // Tax
+      const taxEPF    = gv('tax-epf',        0);
+      const taxPPF    = gv('tax-ppf',        0);
+      const taxELSS   = gv('tax-elss',       0);
+      const taxLIns   = gv('tax-lifeins',    0);
+      const taxTuit   = gv('tax-tuition',    0);
+      const taxHL     = gv('tax-homeloan',   0);
+      const taxNPS    = gv('tax-nps',        0);
+      const taxHPrem  = gv('tax-health-prem',0);
+      const taxSlab   = parseInt(gvs('tax-slab', '20')) || 20;
+      const taxRegime = gvs('tax-regime', 'old');
+      const tot80C    = Math.min(150000, taxEPF + taxPPF + taxELSS + taxLIns + taxTuit + taxHL);
+      const unused80C = Math.max(0, 150000 - tot80C);
+      const taxSaved  = Math.round(tot80C * taxSlab / 100);
+      const addlSave  = Math.round(unused80C * taxSlab / 100);
+
+      // SIP / Projections
+      const sipAmt    = gv('pr-sip',    0) || gv('sip-total',  0);
+      const sipStepUp = gv('pr-stepup', 10)|| gv('sip-stepup', 10);
+      const sipRet    = gv('pr-return', 12)|| gv('sip-return', 12);
+      const projYrs   = gv('pr-years',  20);
+      const strtCorps = gv('pr-corpus', 0);
+      const lumpsumNw = gv('lumpsum-now', 0);
+
+      const finalCorps = fvSIP(sipAmt, strtCorps, projYrs, sipRet, sipStepUp);
+      const bullCorps  = fvSIP(sipAmt, strtCorps, projYrs, sipRet + 3, sipStepUp);
+      const bearCorps  = fvSIP(sipAmt, strtCorps, projYrs, Math.max(sipRet - 4, 2), sipStepUp);
+      let totInvested  = strtCorps;
+      let si = sipAmt;
+      for (let i = 0; i < projYrs; i++) { totInvested += si * 12; si *= (1 + sipStepUp / 100); }
+      const wMult = totInvested ? (finalCorps / totInvested).toFixed(1) : '--';
+
+      // Risk profile
+      const rp = window.userRisk;
+
+      // Health score
+      const hScore = calcHealthScore();
+
+      // Retirement
+      const retCurAge  = gv('ret-current-age', age || 32);
+      const retTgtAge  = gv('ret-age',         60);
+      const retLife    = gv('ret-life',         85);
+      const retMthly   = gv('ret-monthly',   80000);
+      const retInfl    = gv('ret-inflation',     5);
+      const retPostR   = gv('ret-post-return',   7);
+      const retPreR    = gv('ret-return',       12);
+      const retEPF     = gv('ret-epf',           0);
+      const retPension = gv('ret-pension',       0);
+      const retCorpNow = gv('ret-corpus-now',    0);
+      const yToRet     = Math.max(1, retTgtAge - retCurAge);
+      const retDur     = Math.max(1, retLife - retTgtAge);
+      const retMthFV   = retMthly * Math.pow(1 + retInfl / 100, yToRet);
+      const postMR     = retPostR / 12 / 100;
+      const retN       = retDur * 12;
+      const retCorpNd  = postMR > 0 ? retMthFV * (1 - Math.pow(1 + postMR, -retN)) / postMR : retMthFV * retN;
+      const retEPFat   = retEPF * Math.pow(1.085, yToRet);
+      const retGap     = Math.max(0, retCorpNd - retEPFat - retPension * 12 * 20);
+      const retCorpG   = Math.max(0, retGap - retCorpNow * Math.pow(1 + retPreR / 100, yToRet));
+      const retSIP     = calcSIPNeeded(retCorpG, yToRet, retPreR);
+
+      // Date
+      const nd  = new Date();
+      const mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const dt  = nd.getDate() + ' ' + mon[nd.getMonth()] + ' ' + nd.getFullYear();
+
+      // ─────────────────────────────────────────────
+      //  COLOUR PALETTE
+      // ─────────────────────────────────────────────
+      const C = {
+        black:     [28,  28,  28 ],
+        charcoal:  [38,  38,  38 ],
+        charcoal2: [52,  50,  46 ],
+        gold:      [184, 150, 12 ],
+        goldL:     [212, 175, 55 ],
+        goldPale:  [252, 248, 236],
+        cream:     [250, 247, 242],
+        ivory:     [242, 238, 230],
+        white:     [255, 255, 255],
+        muted:     [120, 115, 110],
+        mutedL:    [160, 152, 144],
+        success:   [46,  125, 82 ],
+        successBg: [232, 245, 238],
+        warn:      [184, 92,  12 ],
+        warnBg:    [254, 243, 230],
+        danger:    [192, 57,  43 ],
+        dangerBg:  [250, 232, 230],
+        blue:      [50,  102, 173],
+        blueBg:    [230, 237, 250],
+        purple:    [120, 60,  170],
+      };
+
+      // ─────────────────────────────────────────────
+      //  LOW-LEVEL DRAWING HELPERS
+      // ─────────────────────────────────────────────
+      const sf = (style, size, col) => {
+        doc.setFont('helvetica', style);
+        doc.setFontSize(size);
+        doc.setTextColor(...col);
+      };
+      const fill = (col)       => doc.setFillColor(...col);
+      const drw  = (col, w=.2) => { doc.setDrawColor(...col); doc.setLineWidth(w); };
+      const T    = (v)         => safe(String(v));
+
+      const rr = (x, y, w, h, r, bg, bdr) => {
+        if (bg)  { fill(bg);  doc.roundedRect(x, y, w, h, r, r, bdr ? 'FD' : 'F'); }
+        else if (bdr) { drw(bdr, .25); doc.roundedRect(x, y, w, h, r, r, 'S'); }
+      };
+      const ln  = (x1,y1,x2,y2,col=C.ivory,w=.2) => { drw(col,w); doc.line(x1,y1,x2,y2); };
+      const bar = (x, y, w, h, pct, fg, bg=C.ivory) => {
+        rr(x, y, w, h, h/2, bg);
+        const fw = Math.max(0, Math.min(w, w * pct / 100));
+        if (fw > .5) rr(x, y, fw, h, h/2, fg);
+      };
+
+      // ─────────────────────────────────────────────
+      //  SECTION HEADER
+      // ─────────────────────────────────────────────
+      function secHead(x, y, title, sub) {
+        fill(C.gold); doc.rect(x, y-1, 2.5, 7, 'F');
+        sf('bold', 10, C.black);
+        doc.text(title, x+5, y+5);
+        if (sub) {
+          sf('normal', 7, C.muted);
+          doc.text(T(sub), x+5, y+11);
+        }
+        ln(x, y+(sub?14:8), 195, y+(sub?14:8), C.ivory, .3);
+        return y + (sub ? 18 : 12);
+      }
+
+      // ─────────────────────────────────────────────
+      //  METRIC TILE (fixed height 14mm)
+      // ─────────────────────────────────────────────
+      function tile(x, y, w, lbl, val, sub, bg=C.white, vc=C.black) {
+        rr(x, y, w, 14, 2.5, bg);
+        sf('normal', 6, C.muted); doc.text(lbl.toUpperCase(), x+3, y+5.5);
+        sf('bold',  10, vc);      doc.text(T(val),             x+3, y+12 );
+        if (sub) { sf('normal', 6, C.muted); doc.text(T(sub), x+3, y+13.5); }
+      }
+
+      // ─────────────────────────────────────────────
+      //  PAGE HEADER (pages 2 & 3)
+      // ─────────────────────────────────────────────
+      function pageHead(title) {
+        fill(C.white); doc.rect(0, 0, 210, 14, 'F');
+        fill(C.gold);  doc.rect(0, 0, 210, 1.5, 'F');
+        sf('bold', 11, C.black); doc.text(title, 15, 10);
+        sf('normal', 7.5, C.muted);
+        doc.text(cName + '   |   ' + dt, 195, 10, {align:'right'});
+        ln(0, 14, 210, 14, C.ivory, .4);
+      }
+
+      // ─────────────────────────────────────────────
+      //  PAGE FOOTER
+      // ─────────────────────────────────────────────
+      function pageFooter(pg) {
+        fill(C.black); doc.rect(0, 278, 210, 19, 'F');
+        ln(0, 278, 210, 278, C.gold, .5);
+        sf('normal', 7.5, C.mutedL);
+        doc.text('Page '+pg+'   |   YoursWealth   |   viswateja.investments@gmail.com   |   +91 70958 58488', 105, 287, {align:'center'});
+        sf('normal', 6.5, [70,65,60]);
+        doc.text('For personal financial planning purposes only. Not SEBI-registered investment advice.', 105, 292, {align:'center'});
+      }
+
+
+      // ═══════════════════════════════════════════
+      //  PAGE 1 — COVER
+      // ═══════════════════════════════════════════
+      fill(C.black); doc.rect(0, 0, 210, 297, 'F');
+      fill(C.gold);  doc.rect(0, 0, 210, 2.5,  'F');
+
+      // faint grid texture
+      doc.setDrawColor(184,150,12); doc.setLineWidth(.06);
+      for (let i=0;i<210;i+=22) doc.line(i,0,i,297);
+      for (let j=0;j<297;j+=22) doc.line(0,j,210,j);
+
+      // Brand
+      sf('bold', 28, C.goldL); doc.text('YoursWealth', 20, 30);
+      sf('normal', 9, C.mutedL); doc.text('COMPREHENSIVE FINANCIAL LIFE PLAN', 20, 38);
+      ln(20, 43, 190, 43, C.gold, .5);
+
+      // Client identity
+      sf('bold', 20, C.white); doc.text(cName, 20, 57);
+      sf('normal', 9, C.mutedL);
+      doc.text('Age: '+(age||'--')+'   |   City: '+(city||'--')+'   |   Date: '+dt, 20, 65);
+      if (empType) { sf('normal', 8, [90,85,80]); doc.text(empType, 20, 72); }
+
+      // ── HEALTH SCORE RING ──
+      rr(20, 80, 85, 56, 4, C.charcoal);
+      // ring background
+      doc.setDrawColor(65,62,58); doc.setLineWidth(5);
+      doc.circle(53, 113, 18, 'S');
+      // ring fill (draw arc as many short segments)
+      const sc = hScore >= 80 ? C.success : hScore >= 60 ? C.gold : hScore >= 40 ? C.warn : C.danger;
+      doc.setDrawColor(...sc); doc.setLineWidth(5);
+      const arcDeg = hScore / 100 * 360;
+      for (let a = -90; a < -90 + arcDeg; a += 4) {
+        const r1 = a * Math.PI / 180, r2 = (a+4) * Math.PI / 180;
+        doc.line(53+18*Math.cos(r1), 113+18*Math.sin(r1), 53+18*Math.cos(r2), 113+18*Math.sin(r2));
+      }
+      sf('bold', 22, sc);    doc.text(String(hScore), 53, 117, {align:'center'});
+      sf('normal', 6.5, C.mutedL); doc.text('/100', 53, 123, {align:'center'});
+      const sLbl = hScore>=80?'EXCELLENT':hScore>=60?'GOOD':hScore>=40?'FAIR':'NEEDS ATTENTION';
+      sf('bold', 8, sc); doc.text(sLbl, 53, 129, {align:'center'});
+      sf('normal', 6, C.mutedL); doc.text('FINANCIAL HEALTH SCORE', 53, 133, {align:'center'});
+
+      // ── 4 KEY METRIC BOXES ──
+      const kBoxes = [
+        {lbl:'Monthly Income',  val:Rc(totalInc), sub:'Take-home (all sources)'},
+        {lbl:'Monthly SIP',     val:R(sipAmt),    sub: sipAmt&&totalInc ? Rp(sipAmt/totalInc*100)+' of income':''},
+        {lbl:'Net Worth',       val:Rc(netWorth), sub: netWorth>0?'Assets minus liabilities':''},
+        {lbl:'Risk Profile',    val:rp?rp.name:'Not Assessed', sub:rp?'Eq '+rp.eq+'% | Debt '+rp.debt+'% | Gold '+rp.gold+'%':'Complete risk section'},
       ];
-      boxes.forEach((b,i)=>{
-        const bx=110+(i%2)*46, by=80+Math.floor(i/2)*26;
-        doc.setFillColor(40,40,40);
-        doc.roundedRect(bx,by,42,22,3,3,'F');
-        doc.setTextColor(160,152,144);
-        doc.setFontSize(7);
-        doc.setFont('helvetica','normal');
-        doc.text(b.label.toUpperCase(),bx+3,by+7);
-        doc.setTextColor(255,255,255);
-        doc.setFontSize(10);
-        doc.setFont('helvetica','bold');
-        doc.text(String(b.val||'--'),bx+3,by+17);
-        doc.setFont('helvetica','normal');
+      kBoxes.forEach((b,i) => {
+        const bx = 111+(i%2)*48, by = 80+Math.floor(i/2)*29;
+        rr(bx, by, 44, 25, 3, C.charcoal);
+        sf('normal',6.5,C.mutedL); doc.text(b.lbl.toUpperCase(), bx+3, by+7);
+        sf('bold',10,C.white);     doc.text(T(b.val),            bx+3, by+16);
+        if (b.sub) { sf('normal',6,[90,85,80]); doc.text(T(b.sub), bx+3, by+22); }
       });
-      // Projection highlight box
-      doc.setFillColor(184,150,12);
-      doc.roundedRect(20,140,170,40,4,4,'F');
-      doc.setTextColor(28,28,28);
-      doc.setFontSize(10);
-      doc.setFont('helvetica','bold');
-      doc.text('WEALTH PROJECTION',28,153);
-      doc.setFontSize(9);
-      doc.setFont('helvetica','normal');
-      doc.text(pfmt(sip)+'/mo SIP  |  '+sipStepup+'% step-up  |  '+r+'% return  |  '+years+' years',28,161);
-      // Projection values - two clear rows, no special characters
-      doc.setFontSize(9);
-      doc.setFont('helvetica','normal');
-      doc.setTextColor(80,60,20);
-      doc.text('TOTAL INVESTED',28,168);
-      doc.text('PROJECTED CORPUS',105,168);
-      doc.text('WEALTH MULTIPLE',165,168);
-      doc.setFontSize(17);
-      doc.setFont('helvetica','bold');
-      doc.setTextColor(28,28,28);
-      doc.text(pcrores(totalInvested),28,177);
-      doc.text(pcrores(finalCorpus),105,177);
-      doc.text(wealthMult,165,177);
-      doc.setFontSize(10);
-      doc.setFont('helvetica','normal');
-      doc.text('('+wealthMult+' wealth multiple)',28,179);
-      // Score breakdown bars on cover
-      const scoreBarY=195;
-      doc.setTextColor(160,152,144);
-      doc.setFontSize(9);
-      doc.setFont('helvetica','bold');
-      doc.text('FINANCIAL HEALTH BREAKDOWN',20,scoreBarY);
-      doc.setFont('helvetica','normal');
-      const scoreBands=[
-        {label:'Savings Rate',   score:Math.min(25,Math.round((sip/Math.max(1,income))*100/30*25)), max:25},
-        {label:'Emergency Fund', score:Math.min(20,Math.round(gv('ins-emergency',0)/6*20)), max:20},
-        {label:'Debt Management',score:Math.max(0,15-Math.round((gv('emi-home',0)+gv('emi-car',0)+gv('emi-personal',0))/Math.max(1,income)*100/50*15)), max:15},
-        {label:'Insurance',      score:(gv('ins-life',0)>0?10:0)+(gv('ins-health-family',0)+gv('ins-health-ind',0)>=1000000?10:5), max:20},
-        {label:'Goal Planning',  score:goals.length>=1?10:0, max:10},
+
+      // ── SCORE BREAKDOWN BARS ──
+      const sItems = [
+        {lbl:'Savings Rate',    pct:Math.min(100,savRate/30*100),       sc:Math.min(25,Math.round(savRate/30*25)),       mx:25},
+        {lbl:'Emergency Fund',  pct:Math.min(100,insEmg/6*100),         sc:Math.min(20,Math.round(insEmg/6*20)),         mx:20},
+        {lbl:'Debt Management', pct:Math.min(100,Math.max(0,(1-emiRate/50))*100), sc:Math.max(0,15-Math.round(emiRate/50*15)), mx:15},
+        {lbl:'Life Insurance',  pct:insLife>=lifeNeeded?100:insLife/Math.max(1,lifeNeeded)*100, sc:insLife>0?(insLife>=lifeNeeded?10:5):0, mx:10},
+        {lbl:'Health Insurance',pct:totalHlth>=hlthNeeded?100:totalHlth/hlthNeeded*100,         sc:totalHlth>=hlthNeeded?10:(totalHlth>0?5:0), mx:10},
+        {lbl:'Goals Defined',   pct:Math.min(100,goals.length/3*100),   sc:goals.length>=3?10:goals.length>=1?6:0,       mx:10},
       ];
-      scoreBands.forEach((sb,i)=>{
-        const barY=scoreBarY+6+i*10;
-        const barW=120;
-        const fillW=Math.min(barW,sb.max>0?barW*(sb.score/sb.max):0);
-        const fillColor = sb.score>=sb.max*0.8?[46,125,82]:sb.score>=sb.max*0.5?[184,150,12]:[192,57,43];
-        doc.setTextColor(140,132,124);
-        doc.setFontSize(7.5);
-        doc.text(sb.label,20,barY+2);
-        doc.setFillColor(50,50,50);
-        doc.roundedRect(80,barY-2,barW,5,1,1,'F');
-        doc.setFillColor(...fillColor);
-        if(fillW>0) doc.roundedRect(80,barY-2,fillW,5,1,1,'F');
-        doc.setTextColor(180,150,12);
-        doc.setFontSize(7);
-        doc.text(sb.score+'/'+sb.max,204,barY+2,{align:'right'});
+      sf('bold',7.5,C.mutedL); doc.text('SCORE BREAKDOWN', 20, 148);
+      ln(20,150,107,150,C.charcoal2,.3);
+      sItems.forEach((s,i) => {
+        const sy = 154 + i*9;
+        sf('normal',7,[110,105,100]); doc.text(s.lbl, 20, sy);
+        bar(77, sy-4, 65, 4, s.pct, s.pct>=80?C.success:s.pct>=50?C.gold:C.danger, C.charcoal2);
+        sf('bold',7,C.goldL); doc.text(s.sc+'/'+s.mx, 145, sy, {align:'right'});
       });
-      // Footer page 1
-      doc.setTextColor(70,65,60);
-      doc.setFontSize(8);
-      doc.setFont('helvetica','normal');
-      doc.text('Generated by YoursWealth Financial Planner  |  viswateja.investments@gmail.com  |  +91 70958 58488',105,285,{align:'center'});
 
-      // ── PAGE 2: FINANCIALS ──
+      // ── WEALTH PROJECTION BANNER ──
+      rr(20, 210, 170, 48, 4, C.gold);
+      fill([155,122,8]); doc.roundedRect(20,210,170,10,4,4,'F');
+      sf('bold',8,[30,20,0]);
+      doc.text('WEALTH PROJECTION  —  '+projYrs+'-YEAR SIMULATION', 105, 217.5, {align:'center'});
+      sf('normal',7.5,[90,65,0]);
+      doc.text(R(sipAmt)+'/mo SIP   '+sipStepUp+'% annual step-up   '+sipRet+'% expected return', 105, 224, {align:'center'});
+
+      // 3 columns
+      [[Rc(totInvested),'TOTAL INVESTED','Capital deployed',35],
+       [Rc(finalCorps), 'PROJECTED CORPUS','At '+sipRet+'% return',103],
+       [wMult+'x',     'WEALTH MULTIPLE','Return on capital', 163],
+      ].forEach(([val,lbl,sub,cx]) => {
+        sf('normal',6.5,[90,65,0]); doc.text(lbl, cx, 231);
+        sf('bold',  16,[20,12,0]);  doc.text(T(val), cx, 241);
+        sf('normal', 6,[100,78,10]);doc.text(sub,   cx, 246);
+      });
+
+      // Scenario row
+      rr(20,251,170,8,3,C.charcoal);
+      [
+        {lbl:'Bull (+'+(sipRet+3)+'%)',val:Rc(bullCorps),c:C.success,x:30},
+        {lbl:'Expected ('+sipRet+'%)', val:Rc(finalCorps),c:C.goldL, x:82},
+        {lbl:'Bear (-'+(sipRet-Math.max(sipRet-4,2))+'%)',val:Rc(bearCorps),c:C.danger,x:150},
+      ].forEach(s => {
+        sf('normal',6.5,C.mutedL); doc.text(s.lbl, s.x, 256);
+        sf('bold',9,s.c); doc.text(T(s.val), s.x, 256.5);
+      });
+
+      fill(C.black); doc.rect(0,272,210,25,'F');
+      ln(0,272,210,272,C.gold,.5);
+      sf('normal',7.5,C.mutedL);
+      doc.text('Generated by YoursWealth   |   viswateja.investments@gmail.com   |   +91 70958 58488', 105,281,{align:'center'});
+      sf('normal',6.5,[70,65,60]);
+      doc.text('For personal financial planning only. Not SEBI-registered investment advice.', 105,287,{align:'center'});
+
+
+      // ═══════════════════════════════════════════
+      //  PAGE 2 — FINANCIAL DETAILS
+      // ═══════════════════════════════════════════
       doc.addPage();
-      doc.setFillColor(250,247,242);
-      doc.rect(0,0,210,20,'F');
-      doc.setFillColor(184,150,12);
-      doc.rect(0,0,210,1.5,'F');
-      doc.setTextColor(28,28,28);
-      doc.setFontSize(13);
-      doc.setFont('helvetica','bold');
-      doc.text('Financial Overview',15,13);
-      doc.setTextColor(120,115,110);
-      doc.setFontSize(8);
-      doc.setFont('helvetica','normal');
-      doc.text(name+' | '+dateStr,195,13,{align:'right'});
+      fill(C.cream); doc.rect(0,0,210,297,'F');
+      pageHead('Financial Details');
 
-      let yy=28;
-      function sectionTitle(title,yPos){
-        doc.setFillColor(184,150,12);
-        doc.rect(15,yPos-4,3,6,'F');
-        doc.setTextColor(28,28,28);
-        doc.setFontSize(11);
-        doc.setFont('helvetica','bold');
-        doc.text(title,21,yPos);
-        doc.setFont('helvetica','normal');
-        doc.setDrawColor(220,215,210);
-        doc.setLineWidth(0.2);
-        doc.line(15,yPos+2,195,yPos+2);
-        return yPos+10;
-      }
-      function metricRow(label,value,yPos,colored){
-        if(colored){doc.setFillColor(248,244,238);doc.rect(15,yPos-5,180,8,'F');}
-        doc.setTextColor(100,94,88);
-        doc.setFontSize(9);
-        doc.setFont('helvetica','normal');
-        doc.text(label,20,yPos);
-        doc.setTextColor(28,28,28);
-        doc.setFont('helvetica','bold');
-        doc.text(String(value),192,yPos,{align:'right'});
-        doc.setFont('helvetica','normal');
-        return yPos+8;
+      let y = 20;
+
+      // ── CASH FLOW ──
+      y = secHead(15, y, 'Cash Flow Analysis', 'Income vs expenses vs investable surplus');
+
+      // stacked allocation bar
+      if (totalInc > 0) {
+        const cfSegs = [
+          {lbl:'Essential',   val:totalEss,           col:C.blue},
+          {lbl:'EMIs',        val:totalEMI,           col:C.danger},
+          {lbl:'Discretionary',val:totalDisc,         col:C.warn},
+          {lbl:'Surplus',     val:Math.max(0,surplus),col:C.success},
+        ].filter(s=>s.val>0);
+        let bx = 15;
+        cfSegs.forEach(s => {
+          const w = s.val/totalInc*175;
+          if (w>.5) { fill(s.col); doc.rect(bx,y,w,7,'F'); bx+=w; }
+        });
+        y += 9;
+        cfSegs.forEach((s,i) => {
+          const lx=15+(i%2)*90, ly=y+Math.floor(i/2)*6.5;
+          rr(lx,ly-3,3,3,1,s.col);
+          sf('normal',6.5,C.muted);
+          doc.text(s.lbl+': '+R(s.val)+' ('+Rp(s.val/totalInc*100)+')', lx+5, ly);
+        });
+        y += Math.ceil(cfSegs.length/2)*6.5 + 3;
       }
 
-      yy=sectionTitle('Cash Flow Analysis',yy);
-      yy=metricRow('Total Monthly Income',pfmt(income),yy,true);
-      yy=metricRow('Monthly Investable Surplus',pfmt(surplus),yy,false);
-      yy=metricRow('Savings Rate',ppct(savRate),yy,true);
-      yy=metricRow('EMI Burden Ratio',ppct(window._cashflow?.emiRate||0),yy,false);
-      yy=metricRow('Annual Investable Surplus',pcrores(Math.max(0,surplus)*12),yy,true);
-      yy+=4;
-      yy=sectionTitle('Net Worth Snapshot',yy);
-      yy=metricRow('Total Assets',pcrores(window._netWorth?.totalAssets||0),yy,true);
-      yy=metricRow('Total Liabilities',pcrores(window._netWorth?.totalLiab||0),yy,false);
-      yy=metricRow('Net Worth',pcrores(netWorth),yy,true);
-      yy=metricRow('Financial Assets (Liquid)',pcrores(window._netWorth?.finAssets||0),yy,false);
-      yy=metricRow('Physical Assets (Illiquid)',pcrores(window._netWorth?.physAssets||0),yy,true);
-      yy+=4;
-      yy=sectionTitle('Protection Status',yy);
-      const lifeNeededPDF=Math.max(gv('ins-income',0)*15,gv('ins-exp',0)*12*20+gv('ins-loans',0));
-      const lifeGapPDF=Math.max(0,lifeNeededPDF-gv('ins-life',0));
-      yy=metricRow('Term Life Cover (existing)',pcrores(gv('ins-life',0)),yy,true);
-      yy=metricRow('Recommended Life Cover',pcrores(lifeNeededPDF),yy,false);
-      yy=metricRow('Life Cover Gap',lifeGapPDF>0?pcrores(lifeGapPDF)+' (action needed)':'Adequate',yy,true);
-      yy=metricRow('Total Health Cover',pcrores(gv('ins-health-family',0)+gv('ins-health-ind',0)),yy,false);
-      yy=metricRow('Emergency Fund',gv('ins-emergency',0)+' months '+(gv('ins-emergency',0)>=6?'(Adequate)':'(Target: 6 months)'),yy,true);
-      yy+=4;
-      yy=sectionTitle('Tax Planning',yy);
-      const t80C=Math.min(150000,gv('tax-epf',0)+gv('tax-ppf',0)+gv('tax-elss',0)+gv('tax-lifeins',0)+gv('tax-tuition',0)+gv('tax-homeloan',0));
-      const tSlab=parseInt(gvs('tax-slab','20'))||20;
-      const tUnused=Math.max(0,150000-t80C);
-      yy=metricRow('80C Utilised',pfmt(t80C)+' of Rs.1,50,000',yy,false);
-      yy=metricRow('80C Remaining Gap',pfmt(tUnused),yy,true);
-      yy=metricRow('Tax Saved (current deductions)',pfmt(Math.round(t80C*tSlab/100))+'/year',yy,false);
-      yy=metricRow('Additional Tax Saveable',pfmt(Math.round(tUnused*tSlab/100))+'/year',yy,true);
-      yy+=4;
-      yy=sectionTitle('Risk Profile',yy);
-      yy=metricRow('Risk Profile Category',riskProfile?riskProfile.name:'Not assessed',yy,false);
-      yy=metricRow('Recommended Equity Allocation',riskProfile?(riskProfile.eq+'%'):'--',yy,true);
-      yy=metricRow('Recommended Debt Allocation',riskProfile?(riskProfile.debt+'%'):'--',yy,false);
-      yy=metricRow('Recommended Gold Allocation',riskProfile?(riskProfile.gold+'%'):'--',yy,true);
+      // metrics row
+      const cfTiles = [
+        {lbl:'Total Income',     val:R(totalInc),   sub:'',                bg:C.white,   vc:C.black},
+        {lbl:'Total Expenses',   val:R(totalExp),   sub:'',                bg:C.white,   vc:C.black},
+        {lbl:'Monthly Surplus',  val:R(surplus),    sub:Rp(savRate)+'  saved',bg:surplus>0?C.successBg:C.dangerBg, vc:surplus>0?C.success:C.danger},
+        {lbl:'EMI Burden',       val:Rp(emiRate),   sub:'Safe limit: 40%', bg:emiRate<30?C.successBg:emiRate<40?C.warnBg:C.dangerBg, vc:emiRate<30?C.success:emiRate<40?C.warn:C.danger},
+        {lbl:'Annual Investable',val:Rc(Math.max(0,surplus)*12), sub:'', bg:C.goldPale, vc:C.black},
+        {lbl:'3-Year Income',    val:Rc(totalInc*Math.pow(1+iIncr/100,3)), sub:'At '+iIncr+'% increment', bg:C.white, vc:C.black},
+      ];
+      const tw6 = (175-10)/6;
+      cfTiles.forEach((t,i) => tile(15+i*(tw6+2), y, tw6, t.lbl, t.val, t.sub, t.bg, t.vc));
+      y += 18;
 
-      // Page 2 footer
-      doc.setTextColor(160,152,144);
-      doc.setFontSize(8);
-      doc.setFont('helvetica','normal');
-      doc.text('Page 2 of 3  |  YoursWealth  |  viswateja.investments@gmail.com',105,288,{align:'center'});
+      // ── NET WORTH ──
+      y = secHead(15, y, 'Net Worth & Asset Allocation', 'All assets minus liabilities');
 
-      // ── PAGE 3: GOALS & ACTION PLAN ──
+      const nwTiles = [
+        {lbl:'Total Assets',   val:Rc(totAssets), sub:'',bg:C.white,     vc:C.black},
+        {lbl:'Total Liabilities',val:Rc(totLiab), sub:'',bg:totLiab===0?C.successBg:C.dangerBg, vc:totLiab===0?C.success:C.danger},
+        {lbl:'Net Worth',      val:Rc(netWorth),  sub:'',bg:netWorth>0?C.goldPale:C.dangerBg,   vc:netWorth>0?C.black:C.danger},
+        {lbl:'Financial Assets',val:Rc(finAssets),sub:'liquid',bg:C.white,vc:C.black},
+        {lbl:'Physical Assets', val:Rc(phyAssets),sub:'illiquid',bg:C.white,vc:C.black},
+        {lbl:'Debt Ratio',     val:Rp(debtRatio), sub:'<30% is healthy', bg:debtRatio<30?C.successBg:C.warnBg, vc:debtRatio<30?C.success:C.warn},
+      ];
+      nwTiles.forEach((t,i) => tile(15+i*(tw6+2), y, tw6, t.lbl, t.val, t.sub, t.bg, t.vc));
+      y += 18;
+
+      // allocation bar
+      if (totAssets > 0) {
+        const aSegs = [
+          {lbl:'Eq MF',  val:aMfEq+aEquity, col:C.blue},
+          {lbl:'Debt MF',val:aMfDebt+aFD,   col:C.success},
+          {lbl:'EPF/NPS',val:aEPF,           col:[22,160,133]},
+          {lbl:'PPF',    val:aPPF,           col:[41,128,185]},
+          {lbl:'Gold',   val:aGold,          col:C.gold},
+          {lbl:'Cash',   val:aCash,          col:C.muted},
+          {lbl:'Realty', val:aHouse,         col:C.purple},
+        ].filter(a=>a.val>0);
+        sf('normal',6.5,C.muted); doc.text('Portfolio Allocation (all assets):', 15, y);
+        y += 3;
+        let ax=15;
+        aSegs.forEach(a => {
+          const w = Math.max(1,(a.val/totAssets)*175);
+          fill(a.col); doc.rect(ax,y,w,7,'F'); ax+=w;
+        });
+        y += 9;
+        aSegs.forEach((a,i) => {
+          const lx=15+(i%4)*45, ly=y+Math.floor(i/4)*6;
+          rr(lx,ly-3,3,3,1,a.col);
+          sf('normal',6,C.muted);
+          doc.text(a.lbl+': '+Rp(a.val/totAssets*100), lx+5, ly);
+        });
+        y += Math.ceil(aSegs.length/4)*6 + 3;
+      }
+
+      // ── PROTECTION STATUS ──
+      y = secHead(15, y, 'Insurance & Protection', '');
+
+      const checks2 = [
+        {lbl:'Term Life Insurance', ok:insLife>=lifeNeeded, warn:insLife>0&&insLife<lifeNeeded,
+         detail: insLife>=lifeNeeded ? 'Adequate — '+Rc(insLife)+' (need '+Rc(lifeNeeded)+')'
+                                     : 'Gap: '+Rc(lifeGap)+' more needed  |  Have: '+Rc(insLife)},
+        {lbl:'Health Insurance',    ok:totalHlth>=hlthNeeded, warn:totalHlth>0&&totalHlth<hlthNeeded,
+         detail: totalHlth>=hlthNeeded ? 'Adequate — '+Rc(totalHlth)+' total cover'
+                                       : 'Gap: '+Rc(Math.max(0,hlthNeeded-totalHlth))+' needed  |  Have: '+Rc(totalHlth)},
+        {lbl:'Emergency Fund',      ok:insEmg>=6, warn:insEmg>=3&&insEmg<6,
+         detail: insEmg>=6 ? insEmg+' months secured — target met'
+                           : insEmg+' months saved. Target: 6 months = '+Rc((insExpM||60000)*6)},
+        {lbl:'Critical Illness',    ok:insCrit>0, warn:false,
+         detail: insCrit>0 ? Rc(insCrit)+' cover in place' : 'Not in place — Rs.30-50L policy costs ~Rs.5,000-10,000/yr'},
+        {lbl:'Personal Accident',   ok:insAcc>0,  warn:false,
+         detail: insAcc>0  ? Rc(insAcc)+' cover in place'  : 'Not in place — Rs.1Cr policy costs ~Rs.2,000-4,000/yr'},
+      ];
+      checks2.forEach((ch,i) => {
+        const cy = y + i*10;
+        const bg = ch.ok ? C.successBg : ch.warn ? C.warnBg : C.dangerBg;
+        const dc = ch.ok ? C.success   : ch.warn ? C.warn   : C.danger;
+        rr(15, cy, 180, 8.5, 2, bg);
+        fill(dc); doc.circle(21, cy+4.3, 2.2, 'F');
+        sf('bold',7.5,C.white); doc.text(ch.ok?'V':ch.warn?'!':'X', 21, cy+5.3, {align:'center'});
+        sf('bold',8,C.black);   doc.text(ch.lbl, 27, cy+5.3);
+        sf('normal',7,C.muted);
+        const det = '  -  ' + ch.detail;
+        doc.text(det.length>72 ? det.slice(0,70)+'..' : det, 27+doc.getTextWidth(ch.lbl), cy+5.3);
+      });
+      y += checks2.length*10 + 3;
+
+      // ── TAX ──
+      y = secHead(15, y, 'Tax Planning — Section 80C', '');
+
+      // utilisation bar
+      sf('normal',7,C.muted); doc.text('80C Utilisation: '+R(tot80C)+' of Rs.1,50,000', 15, y);
+      bar(15, y+2, 175, 5.5, (tot80C/150000)*100,
+          tot80C>=150000?C.success:tot80C>=75000?C.gold:C.danger);
+      y += 10;
+
+      const txTiles = [
+        {lbl:'80C Utilised',        val:R(tot80C),        sub:'of Rs.1,50,000', bg:tot80C>=150000?C.successBg:C.warnBg},
+        {lbl:'80C Remaining',       val:R(unused80C),     sub:unused80C===0?'Fully utilised':'Action needed', bg:unused80C===0?C.successBg:C.dangerBg},
+        {lbl:'Tax Saved (current)', val:R(taxSaved)+'/yr',sub:'At '+taxSlab+'% slab', bg:C.white},
+        {lbl:'Additional Saveable', val:R(addlSave)+'/yr',sub:'via ELSS / NPS', bg:addlSave>0?C.warnBg:C.successBg},
+        {lbl:'Tax Regime',          val:taxRegime==='old'?'Old Regime':taxRegime==='new'?'New Regime':'Unsure',sub:'', bg:C.white},
+        {lbl:'NPS Deduction Used',  val:R(Math.min(50000,taxNPS)),sub:'of Rs.50,000 limit', bg:C.white},
+      ];
+      txTiles.forEach((t,i) => tile(15+i*(tw6+2), y, tw6, t.lbl, t.val, t.sub, t.bg));
+      y += 16;
+
+      pageFooter(2);
+
+
+      // ═══════════════════════════════════════════
+      //  PAGE 3 — GOALS & ACTION PLAN
+      // ═══════════════════════════════════════════
       doc.addPage();
-      doc.setFillColor(250,247,242);
-      doc.rect(0,0,210,20,'F');
-      doc.setFillColor(184,150,12);
-      doc.rect(0,0,210,1.5,'F');
-      doc.setTextColor(28,28,28);
-      doc.setFontSize(13);
-      doc.setFont('helvetica','bold');
-      doc.text('Goals & Action Plan',15,13);
-      doc.setTextColor(120,115,110);
-      doc.setFontSize(8);
-      doc.setFont('helvetica','normal');
-      doc.text(name+' | '+dateStr,195,13,{align:'right'});
+      fill(C.cream); doc.rect(0,0,210,297,'F');
+      pageHead('Goals & Action Plan');
 
-      // Goals table
-      doc.setFillColor(184,150,12);
-      doc.rect(15,24,3,6,'F');
-      doc.setTextColor(28,28,28);
-      doc.setFontSize(11);
-      doc.setFont('helvetica','bold');
-      doc.text('Financial Goals',21,29);
-      doc.setFont('helvetica','normal');
+      y = 20;
 
-      if(goals.length>0){
-        const pMapPDF={critical:'Non-negotiable',high:'High priority',flexible:'Flexible'};
-        const catPDF={retirement:'Retirement',education:'Education',house:'Home Purchase',wedding:'Wedding',travel:'Travel',car:'Vehicle',business:'Business',emergency:'Emergency',wealth:'Wealth Creation',other:'Other'};
-        const tableData=goals.map(g=>{
-          const needed=calcSIPNeeded(g.gap,g.years,12);
-          return [
-            g.name,
-            catPDF[g.category]||g.category,
-            pcrores(g.fv),
-            g.years+' yrs',
-            pfmt(needed)+'/mo',
-            pMapPDF[g.priority]||g.priority,
-          ];
+      // ── GOALS TABLE ──
+      y = secHead(15, y, 'Financial Goals', 'Inflation-adjusted targets with required monthly SIPs at 12% p.a.');
+
+      if (goals.length > 0) {
+        // header row
+        rr(15, y, 180, 9, 2, C.black);
+        sf('bold',7.5,C.goldL);
+        [['Goal Name',18],['Category',72],['Inf-Adj Target',103],['Timeline',135],['SIP @ 12%',157],['SIP @ 14%',177]].forEach(([l,x]) => doc.text(l,x,y+6));
+        y += 11;
+
+        let totalSIPNeeded = 0;
+        goals.forEach((g,i) => {
+          const gy = y + i*12;
+          if (gy > 218) return;
+          rr(15, gy, 180, 10, 2, i%2===0?C.white:C.cream);
+          const n12 = calcSIPNeeded(g.gap, g.years, 12);
+          const n14 = calcSIPNeeded(g.gap, g.years, 14);
+          totalSIPNeeded += n12;
+          const pC = {critical:C.danger, high:C.warn, flexible:C.success};
+          const pL = {critical:'Critical', high:'High', flexible:'Flexible'};
+          sf('bold',8,C.black); doc.text(g.name.length>22?g.name.slice(0,20)+'..':g.name, 18, gy+7);
+          sf('normal',7.5,C.muted); doc.text(g.category||'--', 72, gy+7);
+          sf('bold',7.5,C.black);   doc.text(Rc(g.fv), 103, gy+7);
+          sf('normal',7.5,C.muted); doc.text(g.years+' yrs', 135, gy+7);
+          sf('bold',8,C.gold);      doc.text(R(n12)+'/mo', 157, gy+7);
+          sf('normal',7.5,C.muted); doc.text(R(n14)+'/mo', 177, gy+7);
         });
-        doc.autoTable({
-          startY:34,
-          head:[['Goal Name','Category','Target (Inf-Adj)','Timeline','SIP @ 12%','Priority']],
-          body:tableData,
-          headStyles:{fillColor:[28,28,28],textColor:[212,175,55],fontSize:8,fontStyle:'bold',halign:'left'},
-          bodyStyles:{fontSize:8,textColor:[28,28,28],halign:'left'},
-          alternateRowStyles:{fillColor:[250,247,242]},
-          columnStyles:{0:{cellWidth:42},1:{cellWidth:25},2:{cellWidth:32},3:{cellWidth:18},4:{cellWidth:30},5:{cellWidth:28}},
-          margin:{left:15,right:15},
-          tableWidth:175,
-          didDrawCell:(data)=>{
-            // no rupee symbols ever reach here since we used pfmt/pcrores
-          }
-        });
-        // Total SIP summary
-        const totalSIPpdf=goals.reduce((sum,g)=>sum+calcSIPNeeded(g.gap,g.years,12),0);
-        const afterTableY=doc.lastAutoTable.finalY+3;
-        doc.setFillColor(184,150,12);
-        doc.roundedRect(15,afterTableY,175,11,2,2,'F');
-        doc.setTextColor(28,28,28);
-        doc.setFontSize(9);
-        doc.setFont('helvetica','bold');
-        doc.text('Total Monthly SIP Required for All Goals:  '+pfmt(totalSIPpdf)+'/month',105,afterTableY+7.5,{align:'center'});
-        doc.setFont('helvetica','normal');
+        y += goals.length * 12 + 3;
+
+        // total row
+        const tSIP = goals.reduce((s,g)=>s+calcSIPNeeded(g.gap,g.years,12),0);
+        rr(15, y, 180, 11, 2, C.gold);
+        sf('bold',8,[25,18,0]); doc.text('TOTAL MONTHLY SIP FOR ALL GOALS:', 19, y+7.5);
+        sf('bold',11,[25,18,0]); doc.text(R(tSIP)+'/month', 191, y+7.5, {align:'right'});
+        y += 14;
+
+        // feasibility insight
+        if (sipAmt > 0) {
+          const ok = sipAmt >= tSIP;
+          rr(15, y, 180, 10, 2, ok?C.successBg:C.warnBg);
+          sf('bold',8,ok?C.success:C.warn);
+          const msg = ok
+            ? 'Budget covers all goals. Surplus '+R(sipAmt-tSIP)+'/mo — deploy in Nifty 50 index fund or NPS.'
+            : 'Gap: '+R(tSIP-sipAmt)+'/mo — fund non-negotiable goals first; grow SIP with each annual increment.';
+          doc.text(msg.length>80?msg.slice(0,78)+'..':msg, 19, y+7);
+          y += 13;
+        }
       } else {
-        doc.setTextColor(120,115,110);
-        doc.setFontSize(9);
-        doc.text('No goals defined in this plan.',20,40);
+        rr(15, y, 180, 12, 2, C.cream);
+        sf('normal',9,C.muted); doc.text('No financial goals were defined in this plan.', 105, y+8.5, {align:'center'});
+        y += 15;
       }
 
-      // Action Plan section
-      const actionStartY=(doc.lastAutoTable?.finalY||50)+20;
-      doc.setFillColor(184,150,12);
-      doc.rect(15,actionStartY-4,3,6,'F');
-      doc.setTextColor(28,28,28);
-      doc.setFontSize(11);
-      doc.setFont('helvetica','bold');
-      doc.text('Prioritised Action Plan',21,actionStartY);
-      doc.setFont('helvetica','normal');
+      // ── RETIREMENT SNAPSHOT ──
+      if (retTgtAge && retCurAge) {
+        y = secHead(15, y, 'Retirement Planning Snapshot', yToRet+' years to retirement at age '+retTgtAge+'   |   Life expectancy: '+retLife);
+        const retTiles = [
+          {lbl:"Monthly expense at "+retTgtAge+" (today's Rs.)", val:R(retMthly),    bg:C.white},
+          {lbl:'Inflation-adjusted monthly need',val:R(Math.round(retMthFV)), bg:C.white},
+          {lbl:'Total corpus needed at age '+retTgtAge, val:Rc(retCorpNd), bg:[235,230,248], vc:C.purple},
+          {lbl:'SIP for retirement',  val:R(retSIP)+'/mo', bg:retSIP<10000?C.successBg:C.warnBg, vc:retSIP<10000?C.success:C.warn},
+          {lbl:'EPF at retirement',   val:Rc(retEPFat),   bg:C.white},
+          {lbl:'Retirement gap',      val:Rc(retCorpG),   bg:retCorpG<1?C.successBg:C.dangerBg, vc:retCorpG<1?C.success:C.danger},
+        ];
+        retTiles.forEach((t,i) => tile(15+i*(tw6+2), y, tw6, t.lbl, t.val, t.sub||'', t.bg, t.vc||C.black));
+        y += 18;
+      }
 
-      const actions=[];
-      if(gv('ins-emergency',0)<6) actions.push({n:1,text:'Build emergency fund to 6 months of expenses  -  keep in liquid mutual fund. Target: '+pcrores((gv('ins-exp',0)||60000)*6)+'.'});
-      const lifGap2=Math.max(0,(gv('ins-income',0)*15)-gv('ins-life',0));
-      if(lifGap2>0) actions.push({n:2,text:'Close life insurance gap of '+pcrores(lifGap2)+'. Buy a pure term plan immediately.'});
-      if(sip>0) actions.push({n:3,text:'Start SIP of '+pfmt(sip)+'/month via auto-debit  -  remove manual steps from the process.'});
-      const unused80C2=Math.max(0,150000-t80C);
-      if(unused80C2>0&&tSlab>=20) actions.push({n:4,text:'Claim Rs.'+Math.round(unused80C2/1000)+'K unused 80C via ELSS  -  saves '+pfmt(Math.round(unused80C2*tSlab/100))+'/year in tax.'});
-      actions.push({n:actions.length+1,text:'Step up SIP by '+(sipStepup||10)+'% every April on your increment date.'});
-      actions.push({n:actions.length+1,text:'Schedule 6-monthly portfolio review (April & October)  -  rebalance if allocation drifts +/-5%.'});
+      // ── PRIORITY ACTION PLAN ──
+      y = secHead(15, y, 'Prioritised Action Plan', 'Execute in order — each step builds the foundation for the next');
 
-      actions.forEach((a,i)=>{
-        const ay=actionStartY+8+i*12;
-        if(ay>262) return;
-        doc.setFillColor(i%2===0?248:242,i%2===0?244:238,i%2===0?238:232);
-        doc.roundedRect(15,ay-4,175,10,2,2,'F');
-        doc.setFillColor(184,150,12);
-        doc.circle(23,ay+1,2.8,'F');
-        doc.setTextColor(28,28,28);
-        doc.setFontSize(8);
-        doc.setFont('helvetica','bold');
-        doc.text(String(a.n),21.5,ay+1.5,{align:'center'});
-        doc.setFont('helvetica','normal');
-        doc.setTextColor(40,38,36);
-        const lines=doc.splitTextToSize(a.text,145);
-        doc.text(lines[0],30,ay+1.5);
+      const acts = [];
+      if (insEmg < 6) acts.push({txt:'Build emergency fund to 6 months of expenses. Target: '+Rc((insExpM||60000)*6)+'. Keep in a liquid mutual fund for instant, penalty-free access.', ok:false});
+      if (lifeGap > 0) acts.push({txt:'Close life insurance gap of '+Rc(lifeGap)+'. Buy a pure term plan now — at age '+age+', premiums are at their lowest.', ok:false});
+      if (sipAmt>0)    acts.push({txt:'Start SIP of '+R(sipAmt)+'/month via auto-debit from salary day. Remove all manual steps — automation eliminates human error.', ok:true});
+      if (unused80C>0 && taxSlab>=20) acts.push({txt:'Claim Rs.'+Math.round(unused80C/1000)+'K unused 80C via ELSS — saves Rs.'+addlSave.toLocaleString('en-IN')+'/year in tax. ELSS also gives equity market exposure.', ok:false});
+      acts.push({txt:'Step up SIP by '+(sipStepUp||10)+'% every April along with your salary increment. This habit alone can nearly double your final corpus vs a flat SIP.', ok:true});
+      acts.push({txt:'Schedule 6-monthly portfolio review each April and October. Rebalance if any asset class drifts more than 5% from target allocation.', ok:true});
+
+      acts.slice(0,6).forEach((a,i) => {
+        const ay = y + i*13;
+        if (ay > 243) return;
+        rr(15, ay, 180, 11, 2, i%2===0?C.white:C.cream);
+        rr(17, ay+2, 7, 7, 2, a.ok?C.success:C.black);
+        sf('bold',8,C.white); doc.text(String(i+1), 20.5, ay+7.5, {align:'center'});
+        sf(a.ok?'normal':'bold', 7.5, C.black);
+        const lines = doc.splitTextToSize(a.txt, 157);
+        doc.text(lines[0], 27, ay+6.5);
+        if (lines[1]) { sf('normal',7,C.muted); doc.text(lines[1], 27, ay+11); }
       });
 
-      // Contact footer page 3
-      const footY=265;
-      doc.setFillColor(28,28,28);
-      doc.rect(0,footY,210,32,'F');
-      doc.setFillColor(184,150,12);
-      doc.rect(0,footY,210,1,'F');
-      doc.setTextColor(212,175,55);
-      doc.setFontSize(12);
-      doc.setFont('helvetica','bold');
-      doc.text('Viswateja  |  YoursWealth',105,footY+10,{align:'center'});
-      doc.setTextColor(160,152,144);
-      doc.setFontSize(9);
-      doc.setFont('helvetica','normal');
-      doc.text('viswateja.investments@gmail.com  |  +91 70958 58488',105,footY+18,{align:'center'});
-      doc.setTextColor(80,75,70);
-      doc.setFontSize(7.5);
-      doc.text('This report is for personal financial planning purposes only and is not SEBI-registered investment advice.',105,footY+25,{align:'center'});
+      y += acts.length*13 + 3;
+
+      // ── BOTTOM CTA ──
+      if (y < 255) {
+        rr(15, y, 180, 22, 4, C.black);
+        fill(C.gold); doc.roundedRect(15,y,180,5,4,4,'F');
+        sf('bold',10,C.goldL);
+        doc.text('Your plan is built. One step left — execute it.', 105, y+14, {align:'center'});
+        sf('normal',7.5,C.mutedL);
+        doc.text('viswateja.investments@gmail.com   |   WhatsApp: +91 70958 58488', 105, y+20, {align:'center'});
+      }
+
+      pageFooter(3);
 
       resolve(doc);
-    } catch(e) {
-      console.error('PDF generation error:',e);
+
+    } catch(err) {
+      console.error('PDF generation error:', err);
       resolve(null);
     }
   });
