@@ -3,896 +3,743 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YoursWealth — Portfolio Diagnosis System</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<title>MF Screener — Yours Wealth</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
+/* ─── ROOT (matching Yours Wealth exactly) ─── */
 :root {
-  --gold:#B8960C;
-  --gold-light:#D4AF37;
-  --ivory:#FAF7F2;
-  --cream:#F5F0E8;
-  --charcoal:#1C1C1C;
-  --muted:#7A736A;
-  --border:rgba(184,150,12,.18);
-  --success:#2E7D52;
-  --warn:#B85C0C;
-  --danger:#C0392B;
-  --radius:18px;
-  --shadow:0 12px 40px rgba(0,0,0,.05);
+  --cream: #F5F0E8;
+  --ivory: #FAF7F2;
+  --gold: #B8960C;
+  --gold-light: #D4AF37;
+  --gold-pale: #F0E6B8;
+  --gold-glow: rgba(212,175,55,0.15);
+  --charcoal: #1C1C1C;
+  --dark: #0D0D0D;
+  --mid: #3A3630;
+  --muted: #7A736A;
+  --border: rgba(184,150,12,0.18);
+  --border-light: rgba(184,150,12,0.08);
+  --easing: cubic-bezier(0.16,1,0.3,1);
+  --easing-back: cubic-bezier(0.34,1.56,0.64,1);
 }
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--ivory); color:var(--charcoal); overflow-x:hidden; cursor:none; }
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+/* ─── CURSOR ─── */
+#cursor-dot { width:6px; height:6px; background:var(--gold); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:transform .1s var(--easing),width .3s var(--easing),height .3s var(--easing),background .3s; mix-blend-mode:multiply; }
+#cursor-ring { width:36px; height:36px; border:1px solid rgba(184,150,12,0.5); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:transform .18s var(--easing),width .4s var(--easing),height .4s var(--easing),opacity .3s,border-color .3s; }
+body:has(a:hover) #cursor-dot, body:has(button:hover) #cursor-dot { width:10px; height:10px; background:var(--gold-light); }
+body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring { width:56px; height:56px; border-color:var(--gold); }
+
+/* ─── CANVAS ─── */
+#particle-canvas { position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.5; }
+
+/* ─── LOADER ─── */
+#loader { position:fixed; inset:0; z-index:10000; background:var(--dark); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px; }
+.loader-logo { font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:300; color:rgba(255,255,255,0.15); letter-spacing:.08em; overflow:hidden; }
+.loader-logo-fill { color:white; clip-path:inset(0 100% 0 0); animation:fillText 1.4s .3s var(--easing) forwards; }
+.loader-logo-fill span { color:var(--gold-light); }
+@keyframes fillText { to { clip-path:inset(0 0% 0 0); } }
+.loader-bar-track { width:180px; height:1px; background:rgba(255,255,255,0.08); position:relative; overflow:hidden; }
+.loader-bar-fill { height:100%; background:var(--gold); animation:barFill 1.6s var(--easing) forwards; width:0; }
+@keyframes barFill { to { width:100%; } }
+#loader.exit { animation:loaderExit .8s .2s var(--easing) forwards; }
+@keyframes loaderExit { to { opacity:0; transform:translateY(-100%); pointer-events:none; } }
+
+/* ─── NAV ─── */
+nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:28px 60px; transition:padding .4s var(--easing),background .4s,box-shadow .4s; }
+nav.scrolled { padding:16px 60px; background:rgba(250,247,242,0.94); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); box-shadow:0 1px 0 var(--border-light),0 8px 32px rgba(0,0,0,0.04); }
+.nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; letter-spacing:.04em; color:var(--charcoal); text-decoration:none; position:relative; }
+.nav-logo span { color:var(--gold); }
+.nav-logo::after { content:''; position:absolute; bottom:-2px; left:0; right:0; height:1px; background:var(--gold); transform:scaleX(0); transform-origin:left; transition:transform .4s var(--easing); }
+.nav-logo:hover::after { transform:scaleX(1); }
+.nav-links { display:flex; gap:36px; list-style:none; }
+.nav-links a { font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; text-decoration:none; color:var(--mid); position:relative; transition:color .3s; padding:4px 0; }
+.nav-links a::before { content:attr(data-text); position:absolute; top:0; left:0; color:var(--gold); clip-path:inset(0 100% 0 0); transition:clip-path .4s var(--easing); white-space:nowrap; }
+.nav-links a:hover::before { clip-path:inset(0 0% 0 0); }
+.nav-actions { display:flex; gap:12px; align-items:center; }
+.nav-cta { font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; padding:10px 22px; border:1px solid var(--gold); background:transparent; color:var(--gold); text-decoration:none; cursor:none; transition:all .35s var(--easing); position:relative; overflow:hidden; }
+.nav-cta::before { content:''; position:absolute; inset:0; background:var(--gold); transform:translateX(-101%); transition:transform .35s var(--easing); z-index:-1; }
+.nav-cta:hover::before { transform:translateX(0); }
+.nav-cta:hover { color:white; }
+.nav-cta.solid { background:var(--charcoal); color:var(--cream); border-color:var(--charcoal); }
+.nav-cta.solid::before { background:var(--gold); }
+.nav-cta.solid:hover { color:white; }
+
+/* ─── SHARED SECTION STYLES ─── */
+.section-tag { font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.25em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; display:flex; align-items:center; gap:14px; }
+.section-tag::before { content:''; width:28px; height:1px; background:var(--gold); }
+.section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2.4rem,4.5vw,3.8rem); font-weight:300; line-height:1.12; color:var(--dark); margin-bottom:18px; }
+.section-title em { font-style:italic; color:var(--gold); }
+.section-sub { font-size:.95rem; color:var(--muted); line-height:1.85; max-width:520px; font-weight:300; }
+.reveal { opacity:0; transform:translateY(40px); transition:opacity .8s var(--easing),transform .8s var(--easing); }
+.reveal.visible { opacity:1; transform:translateY(0); }
+.d1 { transition-delay:.1s; } .d2 { transition-delay:.2s; } .d3 { transition-delay:.3s; }
+
+/* ─── PAGE HEADER ─── */
+.screener-header {
+  padding: 160px 60px 80px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
 }
-
-body{
-  background:var(--ivory);
-  color:var(--charcoal);
-  font-family:'DM Sans',sans-serif;
+.screener-header-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 92% 50%, rgba(212,175,55,0.07), transparent 65%);
+  pointer-events: none;
 }
-
-nav{
-  position:sticky;
-  top:0;
-  z-index:100;
-  padding:20px 40px;
-  background:rgba(250,247,242,.92);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.screener-header-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(184,150,12,0.04) 1px, transparent 1px), linear-gradient(90deg,rgba(184,150,12,0.04) 1px,transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
 }
+.screener-header-inner { position:relative; z-index:2; max-width:700px; }
+.screener-header p { font-size:1rem; color:var(--muted); line-height:1.8; font-weight:300; margin-top:16px; max-width:480px; }
 
-.logo{
-  font-family:'Cormorant Garamond',serif;
-  font-size:30px;
-  font-weight:500;
+/* ─── SCREENER BODY ─── */
+.screener-body { padding: 60px 60px 160px; position: relative; z-index: 1; }
+
+/* ─── SEARCH BAR ─── */
+.search-wrap { margin-bottom: 40px; }
+.search-label { font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; display:flex; align-items:center; gap:12px; }
+.search-label::before { content:''; width:22px; height:1px; background:var(--gold); }
+.search-field-wrap { position:relative; }
+.search-icon { position:absolute; left:20px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:20px; pointer-events:none; line-height:1; }
+#searchInput {
+  width:100%; background:white; border:1px solid var(--border);
+  color:var(--charcoal); font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:400;
+  padding:18px 20px 18px 54px;
+  outline:none; transition:border-color .3s,box-shadow .3s;
 }
+#searchInput::placeholder { color:var(--muted); font-weight:300; }
+#searchInput:focus { border-color:var(--gold); box-shadow:0 0 0 4px var(--gold-glow); }
+.search-hint { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.12em; color:var(--muted); margin-top:10px; text-transform:uppercase; }
 
-.logo span{
-  color:var(--gold);
+/* ─── STATUS ─── */
+.status-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; min-height:20px; }
+.result-count { font-family:'DM Mono',monospace; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+.result-count span { color:var(--gold); font-weight:400; }
+
+/* ─── FUND CARDS GRID ─── */
+.funds-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--border); border:1px solid var(--border); }
+
+.fund-card {
+  background:white; padding:28px 32px;
+  display:flex; align-items:flex-start; gap:22px;
+  position:relative; overflow:hidden;
+  transition:background .3s, transform .4s var(--easing);
+  cursor:default;
 }
+.fund-card::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); transform:scaleX(0); transition:transform .5s var(--easing); }
+.fund-card:hover { background:var(--cream); }
+.fund-card:hover::after { transform:scaleX(1); }
+.fund-card.selected { background:rgba(184,150,12,0.04); }
+.fund-card.selected::after { transform:scaleX(1); }
 
-.nav-links{
-  display:flex;
-  gap:10px;
+/* Checkbox */
+.fund-check-wrap { position:relative; width:20px; height:20px; flex-shrink:0; margin-top:3px; }
+.fund-check-wrap input { opacity:0; position:absolute; width:100%; height:100%; cursor:pointer; z-index:2; margin:0; }
+.fund-check-box { width:20px; height:20px; border:1px solid var(--border); background:transparent; display:flex; align-items:center; justify-content:center; transition:all .2s var(--easing); pointer-events:none; }
+.fund-check-wrap input:checked ~ .fund-check-box { background:var(--gold); border-color:var(--gold); }
+.fund-check-wrap input:checked ~ .fund-check-box::after { content:'✓'; font-size:11px; color:white; font-weight:600; }
+
+.fund-info { flex:1; min-width:0; }
+.fund-name { font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:400; color:var(--charcoal); line-height:1.3; margin-bottom:10px; }
+.fund-badges { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+.badge {
+  font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.12em;
+  padding:3px 8px; text-transform:uppercase;
 }
+.badge-house { border:1px solid var(--border); color:var(--muted); background:transparent; }
+.badge-equity { border:1px solid rgba(0,150,80,0.2); color:#007848; background:rgba(0,150,80,0.05); }
+.badge-debt { border:1px solid rgba(60,100,200,0.2); color:#2050A0; background:rgba(60,100,200,0.05); }
+.badge-hybrid { border:1px solid var(--border); color:var(--gold); background:rgba(184,150,12,0.05); }
+.badge-other { border:1px solid var(--border); color:var(--muted); background:transparent; }
 
-.nav-btn{
-  padding:10px 16px;
-  border-radius:30px;
-  border:none;
-  background:transparent;
-  color:var(--muted);
-  font-size:12px;
-  letter-spacing:.05em;
-  cursor:pointer;
-  transition:.2s;
-}
+.fund-nav { text-align:right; flex-shrink:0; padding-top:2px; }
+.nav-val { font-family:'DM Mono',monospace; font-size:.95rem; color:var(--charcoal); }
+.nav-dt { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.08em; color:var(--muted); margin-top:4px; text-transform:uppercase; }
 
-.nav-btn.active,
-.nav-btn:hover{
+/* Loading dots */
+.ldots { display:inline-flex; gap:3px; align-items:center; }
+.ldots span { width:4px; height:4px; background:var(--muted); border-radius:50%; animation:ldotPulse 1.2s ease-in-out infinite; opacity:.4; }
+.ldots span:nth-child(2) { animation-delay:.2s; }
+.ldots span:nth-child(3) { animation-delay:.4s; }
+@keyframes ldotPulse { 0%,80%,100% { opacity:.2; transform:scale(.8); } 40% { opacity:.8; transform:scale(1); } }
+
+/* ─── Empty / Loading ─── */
+.state-box { background:white; border:1px solid var(--border); padding:80px 40px; text-align:center; }
+.state-icon { font-size:2.4rem; opacity:.3; margin-bottom:18px; }
+.state-title { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300; color:var(--mid); margin-bottom:8px; }
+.state-sub { font-size:.85rem; color:var(--muted); font-weight:300; }
+.spinner { width:28px; height:28px; border:1px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin .75s linear infinite; margin:0 auto 18px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ─── COMPARE BAR (fixed bottom, charcoal strip) ─── */
+#compareBar {
+  position:fixed; bottom:0; left:0; right:0; z-index:200;
   background:var(--charcoal);
-  color:#fff;
+  border-top:2px solid var(--gold);
+  padding:16px 60px;
+  display:none; align-items:center; gap:20px;
+  box-shadow:0 -12px 40px rgba(0,0,0,0.18);
 }
-
-.container{
-  max-width:1180px;
-  margin:auto;
-  padding:40px 22px 80px;
+#compareBar.visible { display:flex; }
+.compare-chips { display:flex; gap:8px; flex:1; flex-wrap:wrap; }
+.compare-chip {
+  border:1px solid rgba(184,150,12,0.25); padding:7px 14px 7px 16px;
+  display:flex; align-items:center; gap:10px; background:rgba(212,175,55,0.06);
+  animation:chipIn .2s var(--easing);
+  max-width:240px;
 }
-
-.hero{
-  background:#fff;
-  border-radius:30px;
-  border:1px solid var(--border);
-  padding:60px;
-  position:relative;
-  overflow:hidden;
-  margin-bottom:30px;
+@keyframes chipIn { from { opacity:0; transform:scale(.9); } to { opacity:1; transform:scale(1); } }
+.chip-name { font-family:'DM Sans',sans-serif; font-size:.78rem; color:rgba(255,255,255,0.75); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:300; }
+.chip-remove { font-size:18px; line-height:1; color:rgba(255,255,255,0.3); cursor:pointer; flex-shrink:0; transition:color .2s; }
+.chip-remove:hover { color:rgba(212,175,55,0.8); }
+.compare-bar-right { display:flex; align-items:center; gap:16px; flex-shrink:0; }
+.compare-hint { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,0.28); }
+.btn-compare-bar {
+  font-family:'DM Sans',sans-serif; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; font-weight:500;
+  padding:12px 30px; background:transparent; border:1px solid var(--gold);
+  color:var(--gold); cursor:pointer;
+  position:relative; overflow:hidden; transition:color .35s;
 }
+.btn-compare-bar::before { content:''; position:absolute; inset:0; background:var(--gold); transform:translateX(-101%); transition:transform .4s var(--easing); }
+.btn-compare-bar:hover::before { transform:translateX(0); }
+.btn-compare-bar:hover { color:var(--dark); }
+.btn-compare-bar span { position:relative; z-index:1; }
 
-.hero::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background-image:
-    linear-gradient(rgba(184,150,12,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(184,150,12,.03) 1px, transparent 1px);
-  background-size:30px 30px;
+/* ─── COMPARISON MODAL ─── */
+#cmpModal {
+  position:fixed; inset:0; z-index:9000;
+  display:none; align-items:center; justify-content:center; padding:24px;
+  opacity:0; transition:opacity .4s var(--easing);
 }
-
-.hero-content{
-  position:relative;
-  z-index:2;
+#cmpModal.open { display:flex; opacity:1; }
+.cmp-backdrop { position:absolute; inset:0; background:rgba(8,8,8,0.88); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); cursor:pointer; }
+.cmp-card {
+  position:relative; z-index:1; width:100%; max-width:1000px;
+  transform:translateY(28px) scale(.97); transition:transform .5s var(--easing);
 }
-
-.hero-label{
-  font-family:'DM Mono',monospace;
-  font-size:11px;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  color:var(--gold);
-  margin-bottom:18px;
+#cmpModal.open .cmp-card { transform:translateY(0) scale(1); }
+.cmp-glass {
+  background:rgba(18,16,12,0.94); backdrop-filter:blur(32px); -webkit-backdrop-filter:blur(32px);
+  border:1px solid rgba(212,175,55,0.22);
+  padding:48px 48px 40px; position:relative; overflow:hidden;
+  max-height:82vh; overflow-y:auto;
 }
+.cmp-glass::before { content:''; position:absolute; top:-60px; left:-60px; width:240px; height:240px; border-radius:50%; background:radial-gradient(circle,rgba(212,175,55,0.06),transparent 70%); pointer-events:none; }
+.cmp-accent-bar { position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent 0%,var(--gold) 40%,var(--gold-light) 60%,transparent 100%); transform:scaleX(0); transform-origin:left; transition:transform .8s .1s var(--easing); }
+#cmpModal.open .cmp-accent-bar { transform:scaleX(1); }
+.cmp-close { position:absolute; top:20px; right:20px; width:32px; height:32px; border:1px solid rgba(212,175,55,0.2); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.4); transition:border-color .3s,color .3s,background .3s; z-index:2; }
+.cmp-close:hover { border-color:rgba(212,175,55,0.5); color:var(--gold-light); background:rgba(212,175,55,0.06); }
+.cmp-eyebrow { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.26em; text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.cmp-eyebrow::before { content:''; width:24px; height:1px; background:var(--gold); }
+.cmp-title { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:white; line-height:1.15; margin-bottom:32px; }
+.cmp-title em { font-style:italic; color:var(--gold-light); }
+.cmp-loading { text-align:center; padding:56px; color:rgba(255,255,255,0.4); font-size:.85rem; font-weight:300; }
+.cmp-card-footer { margin-top:18px; display:flex; align-items:center; gap:12px; }
+.cmp-footer-line { flex:1; height:1px; background:rgba(255,255,255,0.05); }
+.cmp-footer-note { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,0.14); white-space:nowrap; }
 
-.hero h1{
-  font-family:'Cormorant Garamond',serif;
-  font-size:72px;
-  line-height:.95;
-  font-weight:400;
-  margin-bottom:18px;
+/* ─── Compare Table ─── */
+.cmp-table-scroll { overflow-x:auto; }
+.cmp-table { width:100%; border-collapse:collapse; min-width:680px; }
+.cmp-table th {
+  font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(255,255,255,0.3); padding:12px 18px; text-align:center;
+  border:1px solid rgba(255,255,255,0.05); background:rgba(255,255,255,0.02);
 }
-
-.hero h1 em{
-  color:var(--gold);
-  font-style:italic;
+.cmp-table th:first-child { text-align:left; min-width:220px; }
+.cmp-table td { padding:18px; text-align:center; border:1px solid rgba(255,255,255,0.05); vertical-align:top; }
+.cmp-table td:first-child { text-align:left; }
+.cmp-table tbody tr:hover { background:rgba(212,175,55,0.03); }
+.cmp-fund-name { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:400; color:white; line-height:1.3; margin-bottom:5px; }
+.cmp-fund-house { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,0.28); }
+.ret-val { font-family:'DM Mono',monospace; font-size:.95rem; display:inline-block; }
+.ret-val.pos { color:#6FCF97; }
+.ret-val.neg { color:#EB5757; }
+.ret-val.na { color:rgba(255,255,255,0.2); font-size:.8rem; }
+.ret-bar-wrap { margin-top:6px; height:2px; background:rgba(255,255,255,0.06); }
+.ret-bar { height:100%; transition:width .8s cubic-bezier(.23,1,.32,1); }
+.ret-bar.pos { background:linear-gradient(90deg,rgba(111,207,151,.5),#6FCF97); }
+.ret-bar.neg { background:linear-gradient(90deg,rgba(235,87,87,.5),#EB5757); }
+.best-mark {
+  display:inline-block; font-family:'DM Mono',monospace;
+  font-size:.5rem; letter-spacing:.08em; text-transform:uppercase;
+  border:1px solid rgba(212,175,55,0.3); color:rgba(212,175,55,0.7);
+  padding:1px 5px; margin-left:5px; vertical-align:middle;
 }
+.cmp-nav-val { font-family:'DM Mono',monospace; font-size:.9rem; color:white; }
+.cmp-nav-dt { font-family:'DM Mono',monospace; font-size:.6rem; color:rgba(255,255,255,0.3); margin-top:3px; text-transform:uppercase; letter-spacing:.06em; }
+.cmp-disclaimer { font-family:'DM Mono',monospace; font-size:.58rem; color:rgba(255,255,255,0.18); line-height:1.75; letter-spacing:.08em; text-transform:uppercase; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px; margin-top:24px; }
 
-.hero p{
-  max-width:680px;
-  color:var(--muted);
-  line-height:1.8;
-  font-size:15px;
-}
+/* ─── MARQUEE (reused) ─── */
+.marquee-strip { border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:var(--charcoal); padding:14px 0; overflow:hidden; position:relative; z-index:2; }
+.marquee-inner { display:flex; gap:72px; animation:marquee 28s linear infinite; white-space:nowrap; }
+.marquee-strip:hover .marquee-inner { animation-play-state:paused; }
+.marquee-item { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; color:rgba(240,230,184,0.4); display:flex; align-items:center; gap:28px; transition:color .3s; }
+.marquee-item:hover { color:var(--gold-light); }
+.marquee-item::after { content:'◆'; opacity:.25; font-size:.38rem; }
+@keyframes marquee { from { transform:translateX(0); } to { transform:translateX(-50%); } }
 
-.hero-metrics{
-  margin-top:40px;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:18px;
-}
+/* ─── FOOTER ─── */
+footer { background:var(--dark); padding:80px 60px 48px; position:relative; }
+footer::before { content:''; position:absolute; top:0; left:60px; right:60px; height:1px; background:linear-gradient(90deg,transparent,rgba(184,150,12,0.3),transparent); }
+.footer-top { display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:60px; padding-bottom:52px; border-bottom:1px solid rgba(255,255,255,0.05); }
+.footer-logo { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:600; color:white; margin-bottom:18px; letter-spacing:.04em; display:inline-block; }
+.footer-logo span { color:var(--gold); }
+.footer-desc { font-size:.78rem; color:rgba(255,255,255,0.3); line-height:1.8; max-width:220px; }
+.footer-col-title { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.25em; text-transform:uppercase; color:var(--gold); margin-bottom:22px; }
+.footer-links { list-style:none; display:flex; flex-direction:column; gap:12px; }
+.footer-links a { font-size:.78rem; color:rgba(255,255,255,0.35); text-decoration:none; transition:color .3s,padding-left .3s var(--easing); display:inline-block; }
+.footer-links a:hover { color:rgba(255,255,255,0.85); padding-left:6px; }
+.footer-bottom { padding-top:32px; display:flex; justify-content:space-between; align-items:center; }
+.footer-copy { font-family:'DM Mono',monospace; font-size:.65rem; color:rgba(255,255,255,0.2); }
+.footer-legal { display:flex; gap:24px; }
+.footer-legal a { font-family:'DM Mono',monospace; font-size:.65rem; color:rgba(255,255,255,0.2); text-decoration:none; transition:color .3s; }
+.footer-legal a:hover { color:rgba(255,255,255,0.6); }
 
-.metric{
-  background:var(--cream);
-  border-radius:16px;
-  padding:20px;
-  border:1px solid rgba(184,150,12,.1);
-}
+/* ─── CURSOR FIX inside modal ─── */
+#cmpModal, #cmpModal * { cursor:auto; }
+#cmpModal .cmp-close, #cmpModal .cmp-backdrop { cursor:pointer; }
 
-.metric-label{
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.1em;
-  color:var(--muted);
-  margin-bottom:8px;
-  font-family:'DM Mono',monospace;
-}
-
-.metric-value{
-  font-family:'Cormorant Garamond',serif;
-  font-size:38px;
-}
-
-.metric-sub{
-  margin-top:6px;
-  color:var(--muted);
-  font-size:12px;
-}
-
-.section{
-  margin-bottom:28px;
-}
-
-.section-header{
-  margin-bottom:18px;
-}
-
-.section-label{
-  font-size:10px;
-  letter-spacing:.2em;
-  text-transform:uppercase;
-  color:var(--gold);
-  font-family:'DM Mono',monospace;
-  margin-bottom:8px;
-}
-
-.section-header h2{
-  font-family:'Cormorant Garamond',serif;
-  font-size:42px;
-  font-weight:400;
-}
-
-.section-header p{
-  margin-top:4px;
-  color:var(--muted);
-}
-
-.grid-2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
-}
-
-.grid-3{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px;
-}
-
-.card{
-  background:#fff;
-  border-radius:24px;
-  border:1px solid var(--border);
-  padding:28px;
-  box-shadow:var(--shadow);
-}
-
-.card-header{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:22px;
-}
-
-.card-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:28px;
-}
-
-.card-sub{
-  color:var(--muted);
-  font-size:13px;
-  margin-top:5px;
-}
-
-.icon{
-  width:46px;
-  height:46px;
-  border-radius:14px;
-  background:rgba(184,150,12,.08);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:var(--gold);
-  font-size:20px;
-}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-
-.input-group{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.input-group label{
-  font-size:11px;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  font-family:'DM Mono',monospace;
-}
-
-.input-group input,
-.input-group select{
-  padding:14px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:#fff;
-  outline:none;
-}
-
-.input-group input:focus,
-.input-group select:focus{
-  border-color:var(--gold);
-}
-
-.table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-.table th{
-  text-align:left;
-  padding:12px;
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  color:var(--muted);
-  border-bottom:1px solid var(--border);
-}
-
-.table td{
-  padding:16px 12px;
-  border-bottom:1px solid rgba(184,150,12,.08);
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  padding:5px 10px;
-  border-radius:100px;
-  font-size:11px;
-  font-weight:600;
-}
-
-.badge-success{
-  background:rgba(46,125,82,.1);
-  color:var(--success);
-}
-
-.badge-warn{
-  background:rgba(184,92,12,.1);
-  color:var(--warn);
-}
-
-.badge-danger{
-  background:rgba(192,57,43,.1);
-  color:var(--danger);
-}
-
-.goal-card{
-  background:var(--cream);
-  border-radius:18px;
-  padding:18px;
-  margin-bottom:14px;
-}
-
-.goal-top{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:12px;
-}
-
-.goal-name{
-  font-weight:600;
-}
-
-.progress{
-  height:8px;
-  background:rgba(184,150,12,.12);
-  border-radius:20px;
-  overflow:hidden;
-}
-
-.progress-fill{
-  height:100%;
-  background:linear-gradient(90deg,var(--gold),var(--gold-light));
-}
-
-.strategy-box{
-  background:var(--cream);
-  border-radius:18px;
-  padding:22px;
-}
-
-.strategy-box h3{
-  font-family:'Cormorant Garamond',serif;
-  font-size:28px;
-  margin-bottom:8px;
-}
-
-.strategy-box p{
-  color:var(--muted);
-  line-height:1.7;
-  margin-bottom:16px;
-}
-
-.strategy-box ul{
-  padding-left:18px;
-  line-height:2;
-  color:var(--muted);
-}
-
-.priority-list{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.priority-item{
-  display:flex;
-  gap:14px;
-  align-items:flex-start;
-  background:var(--cream);
-  border-radius:16px;
-  padding:18px;
-}
-
-.priority-num{
-  min-width:30px;
-  width:30px;
-  height:30px;
-  border-radius:50%;
-  background:var(--charcoal);
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:12px;
-}
-
-.cta{
-  background:var(--charcoal);
-  border-radius:30px;
-  padding:60px;
-  text-align:center;
-  color:#fff;
-}
-
-.cta h2{
-  font-family:'Cormorant Garamond',serif;
-  font-size:56px;
-  font-weight:400;
-  margin-bottom:14px;
-}
-
-.cta h2 span{
-  color:var(--gold-light);
-}
-
-.cta p{
-  max-width:700px;
-  margin:auto;
-  color:rgba(255,255,255,.65);
-  line-height:1.8;
-}
-
-.cta-btn{
-  margin-top:30px;
-  padding:16px 30px;
-  border:none;
-  border-radius:14px;
-  background:var(--gold);
-  color:#fff;
-  font-size:14px;
-  cursor:pointer;
-}
-
-@media(max-width:900px){
-  .hero h1{
-    font-size:48px;
-  }
-
-  .hero,
-  .cta{
-    padding:35px;
-  }
-
-  .hero-metrics,
-  .grid-2,
-  .grid-3,
-  .form-grid{
-    grid-template-columns:1fr;
-  }
-
-  nav{
-    flex-direction:column;
-    gap:16px;
-    padding:20px;
-  }
+/* ─── RESPONSIVE ─── */
+@media (max-width:960px) {
+  body { cursor:auto; }
+  #cursor-dot, #cursor-ring { display:none; }
+  nav { padding:18px 28px; }
+  nav.scrolled { padding:14px 28px; }
+  .nav-links { display:none; }
+  .screener-header, .screener-body { padding-left:24px; padding-right:24px; }
+  .screener-header { padding-top:110px; padding-bottom:48px; }
+  .funds-grid { grid-template-columns:1fr; }
+  #compareBar { padding:12px 20px; flex-wrap:wrap; gap:10px; }
+  .cmp-glass { padding:36px 22px 28px; }
+  .cmp-title { font-size:1.7rem; }
+  .footer-top { grid-template-columns:1fr 1fr; gap:36px; }
+  .footer-bottom { flex-direction:column; gap:12px; text-align:center; }
 }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="logo">Yours<span>Wealth</span></div>
+<!-- Cursor -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<canvas id="particle-canvas"></canvas>
 
-  <div class="nav-links">
-    <button class="nav-btn active">Overview</button>
-    <button class="nav-btn">Diagnosis</button>
-    <button class="nav-btn">Goals</button>
-    <button class="nav-btn">Strategy</button>
-    <button class="nav-btn">Action Plan</button>
+<!-- Loader -->
+<div id="loader">
+  <div class="loader-logo">
+    <div class="loader-logo-fill">Yours<span>Wealth</span></div>
+  </div>
+  <div class="loader-bar-track"><div class="loader-bar-fill"></div></div>
+</div>
+
+<!-- ═══ COMPARISON MODAL ═══ -->
+<div id="cmpModal" role="dialog" aria-modal="true" aria-label="Fund Comparison">
+  <div class="cmp-backdrop" id="cmpBackdrop"></div>
+  <div class="cmp-card">
+    <div class="cmp-glass">
+      <div class="cmp-accent-bar"></div>
+      <button class="cmp-close" id="cmpCloseBtn" aria-label="Close">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+      <div class="cmp-eyebrow">Fund Research</div>
+      <div class="cmp-title">Side-by-side <em>comparison.</em></div>
+      <div id="cmpContent">
+        <div class="cmp-loading"><div class="spinner"></div>Fetching NAV history…</div>
+      </div>
+    </div>
+    <div class="cmp-card-footer">
+      <div class="cmp-footer-line"></div>
+      <div class="cmp-footer-note">Data via mfapi.in · Updated daily</div>
+      <div class="cmp-footer-line"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">Yours<span>Wealth</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#about" data-text="About">About</a></li>
+    <li><a href="index.html#services" data-text="Services">Services</a></li>
+    <li><a href="index.html#process" data-text="Our Process">Our Process</a></li>
+    <li><a href="mf-screener.html" data-text="MF Screener" style="color:var(--gold)">MF Screener</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="financial-planner.html" class="nav-cta">Get Your Goal Plan</a>
+    <a href="index.html#contact" class="nav-cta solid">Book Consultation</a>
   </div>
 </nav>
 
-<div class="container">
-
-<section class="hero">
-
-  <div class="hero-content">
-
-    <div class="hero-label">Professional Portfolio Diagnosis Dashboard</div>
-
-    <h1>
-      Know your portfolio.<br>
-      <em>Structure your wealth.</em>
-    </h1>
-
-    <p>
-      A premium advisory platform designed to evaluate portfolio quality, identify inefficiencies, optimize mutual fund allocation and align investments with long-term financial goals.
-    </p>
-
-    <div class="hero-metrics">
-
-      <div class="metric">
-        <div class="metric-label">Monthly Surplus</div>
-        <div class="metric-value">₹1.8L</div>
-        <div class="metric-sub">Strong monthly savings capacity</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-label">Net Worth</div>
-        <div class="metric-value">₹4.2Cr</div>
-        <div class="metric-sub">Across financial assets</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-label">Portfolio Score</div>
-        <div class="metric-value">68/100</div>
-        <div class="metric-sub">Needs optimization</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-label">Goal Readiness</div>
-        <div class="metric-value">42%</div>
-        <div class="metric-sub">Current preparedness level</div>
-      </div>
-
-    </div>
-
+<!-- ═══ PAGE HEADER ═══ -->
+<section class="screener-header">
+  <div class="screener-header-bg"></div>
+  <div class="screener-header-grid"></div>
+  <div class="screener-header-inner">
+    <div class="section-tag reveal">Fund Research</div>
+    <h1 class="section-title reveal d1">Mutual Fund <em>Screener</em></h1>
+    <p class="reveal d2">Search and compare funds from India's leading AMCs — NAV, category, returns — all in one place.</p>
   </div>
-
 </section>
 
-<section class="section">
-
-  <div class="section-header">
-    <div class="section-label">Client Information</div>
-    <h2>Financial Snapshot</h2>
-    <p>Basic client and cashflow information for portfolio structuring.</p>
+<!-- ═══ MARQUEE ═══ -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <div class="marquee-item">Equity Funds</div>
+    <div class="marquee-item">Debt Funds</div>
+    <div class="marquee-item">Hybrid Funds</div>
+    <div class="marquee-item">Index Funds</div>
+    <div class="marquee-item">ELSS</div>
+    <div class="marquee-item">Flexi Cap</div>
+    <div class="marquee-item">Large Cap</div>
+    <div class="marquee-item">Mid Cap</div>
+    <div class="marquee-item">Liquid Funds</div>
+    <div class="marquee-item">Gilt Funds</div>
+    <div class="marquee-item">Equity Funds</div>
+    <div class="marquee-item">Debt Funds</div>
+    <div class="marquee-item">Hybrid Funds</div>
+    <div class="marquee-item">Index Funds</div>
+    <div class="marquee-item">ELSS</div>
+    <div class="marquee-item">Flexi Cap</div>
+    <div class="marquee-item">Large Cap</div>
+    <div class="marquee-item">Mid Cap</div>
+    <div class="marquee-item">Liquid Funds</div>
+    <div class="marquee-item">Gilt Funds</div>
   </div>
-
-  <div class="card">
-
-    <div class="card-header">
-      <div>
-        <div class="card-title">Personal & Income Details</div>
-        <div class="card-sub">Used for portfolio diagnosis and recommendations</div>
-      </div>
-
-      <div class="icon">◎</div>
-    </div>
-
-    <div class="form-grid">
-
-      <div class="input-group">
-        <label>Client Name</label>
-        <input type="text" placeholder="Enter client name">
-      </div>
-
-      <div class="input-group">
-        <label>Age</label>
-        <input type="number" placeholder="35">
-      </div>
-
-      <div class="input-group">
-        <label>Monthly Income</label>
-        <input type="number" placeholder="250000">
-      </div>
-
-      <div class="input-group">
-        <label>Monthly Expenses</label>
-        <input type="number" placeholder="90000">
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<section class="section">
-
-  <div class="section-header">
-    <div class="section-label">Portfolio Review</div>
-    <h2>Portfolio Health Diagnosis</h2>
-    <p>Professional analysis of diversification, risk and goal alignment.</p>
-  </div>
-
-  <div class="card">
-
-    <table class="table">
-
-      <thead>
-        <tr>
-          <th>Metric</th>
-          <th>Status</th>
-          <th>Observation</th>
-        </tr>
-      </thead>
-
-      <tbody>
-
-        <tr>
-          <td>Diversification</td>
-          <td><span class="badge badge-warn">Moderate</span></td>
-          <td>Large cap concentration is relatively high</td>
-        </tr>
-
-        <tr>
-          <td>Debt Allocation</td>
-          <td><span class="badge badge-danger">Low</span></td>
-          <td>Emergency reserves are insufficient</td>
-        </tr>
-
-        <tr>
-          <td>Goal Alignment</td>
-          <td><span class="badge badge-danger">Weak</span></td>
-          <td>Current investments are not goal mapped</td>
-        </tr>
-
-        <tr>
-          <td>Tax Efficiency</td>
-          <td><span class="badge badge-success">Good</span></td>
-          <td>Reasonably optimized tax structure</td>
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </div>
-
-</section>
-
-<section class="section">
-
-  <div class="grid-2">
-
-    <div class="card">
-
-      <div class="card-header">
-        <div>
-          <div class="card-title">Asset Allocation</div>
-          <div class="card-sub">Current portfolio composition</div>
-        </div>
-
-        <div class="icon">◔</div>
-      </div>
-
-      <canvas id="allocationChart"></canvas>
-
-    </div>
-
-    <div class="card">
-
-      <div class="card-header">
-        <div>
-          <div class="card-title">Mutual Fund Overlap</div>
-          <div class="card-sub">Identification of duplication and concentration risks</div>
-        </div>
-
-        <div class="icon">◈</div>
-      </div>
-
-      <div class="goal-card">
-        <div class="goal-top">
-          <div class="goal-name">Portfolio Overlap</div>
-          <div>43%</div>
-        </div>
-        <div class="progress">
-          <div class="progress-fill" style="width:43%"></div>
-        </div>
-      </div>
-
-      <div class="goal-card">
-        <div class="goal-top">
-          <div class="goal-name">AMC Concentration</div>
-          <div>68%</div>
-        </div>
-        <div class="progress">
-          <div class="progress-fill" style="width:68%"></div>
-        </div>
-      </div>
-
-      <div class="goal-card">
-        <div class="goal-top">
-          <div class="goal-name">Goal Mapping</div>
-          <div>32%</div>
-        </div>
-        <div class="progress">
-          <div class="progress-fill" style="width:32%"></div>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<section class="section">
-
-  <div class="section-header">
-    <div class="section-label">Goal Planning</div>
-    <h2>Goal Readiness Analysis</h2>
-    <p>Assessment of preparedness for major life goals.</p>
-  </div>
-
-  <div class="card">
-
-    <table class="table">
-
-      <thead>
-        <tr>
-          <th>Goal</th>
-          <th>Target Corpus</th>
-          <th>Preparedness</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-
-      <tbody>
-
-        <tr>
-          <td>Child Education</td>
-          <td>₹48 Lakhs</td>
-          <td>31%</td>
-          <td><span class="badge badge-warn">Needs Attention</span></td>
-        </tr>
-
-        <tr>
-          <td>Retirement</td>
-          <td>₹6.2 Crores</td>
-          <td>18%</td>
-          <td><span class="badge badge-danger">Underfunded</span></td>
-        </tr>
-
-        <tr>
-          <td>House Purchase</td>
-          <td>₹80 Lakhs</td>
-          <td>72%</td>
-          <td><span class="badge badge-success">On Track</span></td>
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </div>
-
-</section>
-
-<section class="section">
-
-  <div class="section-header">
-    <div class="section-label">Advisory Strategy</div>
-    <h2>Recommended Investment Structure</h2>
-    <p>Customized mutual fund strategy based on risk profile and financial goals.</p>
-  </div>
-
-  <div class="grid-3">
-
-    <div class="strategy-box">
-      <h3>Emergency Allocation</h3>
-      <p>Capital safety and liquidity optimization.</p>
-
-      <ul>
-        <li>Liquid Funds</li>
-        <li>Arbitrage Funds</li>
-        <li>Short Duration Debt</li>
-      </ul>
-    </div>
-
-    <div class="strategy-box">
-      <h3>Long-Term Wealth</h3>
-      <p>Growth-focused equity strategy.</p>
-
-      <ul>
-        <li>Flexi Cap Funds</li>
-        <li>Index Funds</li>
-        <li>Mid Cap Exposure</li>
-        <li>International Allocation</li>
-      </ul>
-    </div>
-
-    <div class="strategy-box">
-      <h3>Tax Efficiency</h3>
-      <p>Optimization and long-term compounding.</p>
-
-      <ul>
-        <li>ELSS Allocation</li>
-        <li>Debt Diversification</li>
-        <li>Annual Rebalancing</li>
-        <li>Goal Segregation</li>
-      </ul>
-    </div>
-
-  </div>
-
-</section>
-
-<section class="section">
-
-  <div class="section-header">
-    <div class="section-label">Execution Plan</div>
-    <h2>Priority Action Plan</h2>
-    <p>Recommended next steps for optimization.</p>
-  </div>
-
-  <div class="card">
-
-    <div class="priority-list">
-
-      <div class="priority-item">
-        <div class="priority-num">1</div>
-        <div>Build emergency reserve equivalent to 6 months expenses.</div>
-      </div>
-
-      <div class="priority-item">
-        <div class="priority-num">2</div>
-        <div>Restructure overlapping mutual fund exposure.</div>
-      </div>
-
-      <div class="priority-item">
-        <div class="priority-num">3</div>
-        <div>Start goal-based SIP allocation aligned to long-term objectives.</div>
-      </div>
-
-      <div class="priority-item">
-        <div class="priority-num">4</div>
-        <div>Improve international and debt diversification.</div>
-      </div>
-
-      <div class="priority-item">
-        <div class="priority-num">5</div>
-        <div>Conduct annual portfolio review and rebalancing.</div>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<section class="cta">
-
-  <h2>
-    Get your personalized <span>investment strategy.</span>
-  </h2>
-
-  <p>
-    Receive a professional portfolio review, mutual fund restructuring recommendations and a goal-based investment framework tailored to your financial profile.
-  </p>
-
-  <button class="cta-btn">
-    Schedule Portfolio Consultation
-  </button>
-
-</section>
-
 </div>
 
+<!-- ═══ SCREENER BODY ═══ -->
+<section class="screener-body">
+  <!-- Search -->
+  <div class="search-wrap reveal">
+    <div class="search-label">Search Funds</div>
+    <div class="search-field-wrap">
+      <div class="search-icon">⌕</div>
+      <input type="text" id="searchInput"
+        placeholder="Search by fund name or AMC — HDFC, Axis, Mirae, Kotak, SBI…"
+        autocomplete="off" spellcheck="false"/>
+    </div>
+    <div class="search-hint">Type at least 3 characters &nbsp;·&nbsp; Select up to 4 funds to compare</div>
+  </div>
+
+  <!-- Status + results -->
+  <div class="status-bar">
+    <div class="result-count" id="resultCount"></div>
+  </div>
+  <div id="tableWrap">
+    <div class="state-box">
+      <div class="state-icon">◈</div>
+      <div class="state-title">Search for mutual funds</div>
+      <div class="state-sub">Enter a fund name or AMC name to begin</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMPARE BAR ═══ -->
+<div id="compareBar">
+  <div class="compare-chips" id="compareChips"></div>
+  <div class="compare-bar-right">
+    <div class="compare-hint" id="compareHint"></div>
+    <button class="btn-compare-bar" onclick="openCompare()">
+      <span>⇄ Compare Funds</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">Yours<span>Wealth</span></div>
+      <div class="footer-desc">"Yours Wealth" helps you turn goals into reality. We don't just manage investments — we celebrate your milestones. AMFI-registered Mutual Fund Distributor. — Viswateja Poreddy.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <ul class="footer-links">
+        <li><a href="financial-planning.html">Financial Planning</a></li>
+        <li><a href="investment-advisory.html">Investment Advisory</a></li>
+        <li><a href="retirement-planning.html">Retirement Planning</a></li>
+        <li><a href="tax-optimisation.html">Tax Optimisation</a></li>
+        <li><a href="estate-planning.html">Estate Planning</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Our Team</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Media & Press</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <ul class="footer-links">
+        <li><a href="mailto:viswateja.investments@gmail.com">viswateja.investments@gmail.com</a></li>
+        <li><a href="tel:+917095858488">+91 70958 58488</a></li>
+        <li><a href="#">Hyderabad, Telangana</a></li>
+        <li><a href="#">Hyderabad | Bengaluru</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Yours Wealth. All rights reserved.</div>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Disclaimer</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══ SCRIPTS ═══ -->
 <script>
-const ctx = document.getElementById('allocationChart');
-
-new Chart(ctx, {
-  type: 'doughnut',
-  data: {
-    labels: ['Equity', 'Mutual Funds', 'Debt', 'Gold'],
-    datasets: [{
-      data: [45, 30, 15, 10],
-      backgroundColor: [
-        '#1C1C1C',
-        '#B8960C',
-        '#D4AF37',
-        '#D8C8A0'
-      ],
-      borderWidth:0
-    }]
-  },
-  options: {
-    plugins:{
-      legend:{
-        position:'bottom'
-      }
-    }
-  }
+/* ── LOADER ── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('exit');
+    setTimeout(() => document.getElementById('loader').style.display='none', 1000);
+  }, 1600);
 });
-</script>
 
+/* ── CURSOR ── */
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+function animCursor(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; if(dot){dot.style.left=mx+'px';dot.style.top=my+'px';} if(ring){ring.style.left=rx+'px';ring.style.top=ry+'px';} requestAnimationFrame(animCursor); }
+animCursor();
+
+/* ── PARTICLES ── */
+const canvas=document.getElementById('particle-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,parts=[];
+function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+resize(); window.addEventListener('resize',resize);
+class P{ constructor(){ this.reset(); } reset(){ this.x=Math.random()*W; this.y=Math.random()*H; this.sz=Math.random()*1.2+0.3; this.vx=(Math.random()-.5)*.25; this.vy=-Math.random()*.35-.1; this.op=Math.random()*.3+.1; this.life=0; this.maxLife=Math.random()*300+200; } update(){ this.x+=this.vx; this.y+=this.vy; this.life++; if(this.life>this.maxLife||this.y<-10) this.reset(); } draw(){ const t=this.life/this.maxLife; const a=this.op*(t<.1?t*10:t>.8?(1-t)*5:1); ctx.globalAlpha=a; ctx.fillStyle='rgba(184,150,12,1)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.sz,0,Math.PI*2); ctx.fill(); } }
+for(let i=0;i<60;i++){ const p=new P(); p.life=Math.random()*p.maxLife; parts.push(p); }
+function animP(){ ctx.clearRect(0,0,W,H); parts.forEach(p=>{p.update();p.draw();}); ctx.globalAlpha=1; requestAnimationFrame(animP); }
+animP();
+
+/* ── NAV SCROLL ── */
+const nav=document.getElementById('main-nav');
+window.addEventListener('scroll',()=>{ nav.classList.toggle('scrolled',window.scrollY>60); });
+
+/* ── SCROLL REVEAL ── */
+const ro=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);} }); },{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+/* ── API ── */
+const API='https://api.mfapi.in';
+let timer=null, selected={}, results=[];
+
+/* ── SEARCH ── */
+document.getElementById('searchInput').addEventListener('input',function(){
+  clearTimeout(timer);
+  const q=this.value.trim();
+  if(!q){ showEmpty(); return; }
+  if(q.length<3) return;
+  timer=setTimeout(()=>doSearch(q),420);
+});
+
+async function doSearch(q){
+  showLoading();
+  try{
+    const r=await fetch(`${API}/mf/search?q=${encodeURIComponent(q)}`);
+    const data=await r.json();
+    results=Array.isArray(data)?data.slice(0,40):[];
+    renderResults(results);
+    if(results.length) loadMeta(results.slice(0,20));
+  }catch(e){ showErr('Could not reach mfapi.in. Please check your connection.'); }
+}
+
+async function loadMeta(funds){
+  await Promise.allSettled(funds.map(async f=>{
+    try{
+      const r=await fetch(`${API}/mf/${f.schemeCode}/latest`);
+      const d=await r.json();
+      if(d.status!=='SUCCESS') return;
+      const m=results.find(x=>x.schemeCode===f.schemeCode);
+      if(m){ m.meta=d.meta; m.latest=d.data&&d.data[0]; }
+      if(selected[f.schemeCode]){ selected[f.schemeCode].meta=d.meta; selected[f.schemeCode].latest=d.data&&d.data[0]; }
+      const card=document.querySelector(`.fund-card[data-code="${f.schemeCode}"]`);
+      if(!card) return;
+      if(d.meta){
+        const bc=card.querySelector('.fund-badges');
+        if(bc) bc.innerHTML=`<span class="badge badge-house">${esc(d.meta.fund_house||'')}</span><span class="badge ${catCls(d.meta.scheme_category)}">${esc(d.meta.scheme_category||'')}</span>`;
+      }
+      if(d.data&&d.data[0]){
+        const nc=card.querySelector('.fund-nav');
+        if(nc) nc.innerHTML=`<div class="nav-val">₹${parseFloat(d.data[0].nav).toFixed(4)}</div><div class="nav-dt">${d.data[0].date}</div>`;
+      }
+    }catch(_){}
+  }));
+}
+
+/* ── RENDER ── */
+function renderResults(funds){
+  const ce=document.getElementById('resultCount');
+  if(!funds.length){
+    ce.innerHTML='';
+    document.getElementById('tableWrap').innerHTML=`<div class="state-box"><div class="state-icon">◈</div><div class="state-title">No funds found</div><div class="state-sub">Try a different search term or AMC name</div></div>`;
+    return;
+  }
+  ce.innerHTML=`Showing <span>${funds.length}</span> result${funds.length!==1?'s':''}`;
+  const cards=funds.map(f=>{
+    const sel=!!selected[f.schemeCode];
+    return `<div class="fund-card${sel?' selected':''}" data-code="${f.schemeCode}">
+      <label class="fund-check-wrap">
+        <input type="checkbox"${sel?' checked':''} onchange="toggleFund(${f.schemeCode},this.checked)">
+        <div class="fund-check-box"></div>
+      </label>
+      <div class="fund-info">
+        <div class="fund-name">${esc(f.schemeName)}</div>
+        <div class="fund-badges"><div class="ldots"><span></span><span></span><span></span></div></div>
+      </div>
+      <div class="fund-nav"><div class="ldots"><span></span><span></span><span></span></div></div>
+    </div>`;
+  }).join('');
+  document.getElementById('tableWrap').innerHTML=`<div class="funds-grid">${cards}</div>`;
+}
+
+function catCls(cat){
+  if(!cat) return 'badge-other';
+  const c=cat.toLowerCase();
+  if(c.includes('equity')) return 'badge-equity';
+  if(c.includes('debt')||c.includes('liquid')||c.includes('bond')||c.includes('credit')) return 'badge-debt';
+  if(c.includes('hybrid')||c.includes('balanced')||c.includes('arbitrage')) return 'badge-hybrid';
+  return 'badge-other';
+}
+
+/* ── SELECTION ── */
+function toggleFund(code,checked){
+  const fund=results.find(f=>f.schemeCode===code);
+  if(!fund) return;
+  if(checked){
+    if(Object.keys(selected).length>=4){
+      alert('You can compare up to 4 funds at a time.');
+      const card=document.querySelector(`.fund-card[data-code="${code}"]`);
+      if(card) card.querySelector('input').checked=false;
+      return;
+    }
+    selected[code]={...fund};
+  } else { delete selected[code]; }
+  const card=document.querySelector(`.fund-card[data-code="${code}"]`);
+  if(card) card.classList.toggle('selected',checked);
+  syncBar();
+}
+
+function removeChip(code){
+  delete selected[code];
+  const card=document.querySelector(`.fund-card[data-code="${code}"]`);
+  if(card){ card.classList.remove('selected'); card.querySelector('input').checked=false; }
+  syncBar();
+}
+
+function syncBar(){
+  const bar=document.getElementById('compareBar');
+  const chips=document.getElementById('compareChips');
+  const hint=document.getElementById('compareHint');
+  const funds=Object.values(selected);
+  if(!funds.length){ bar.classList.remove('visible'); return; }
+  bar.classList.add('visible');
+  hint.textContent=`${funds.length} of 4 selected`;
+  chips.innerHTML=funds.map(f=>`<div class="compare-chip"><span class="chip-name">${esc(f.schemeName)}</span><span class="chip-remove" onclick="removeChip(${f.schemeCode})">×</span></div>`).join('');
+}
+
+/* ── COMPARE ── */
+const PERIODS=[{l:'1M',d:30},{l:'3M',d:90},{l:'6M',d:180},{l:'1Y',d:365},{l:'3Y',d:1095}];
+
+async function openCompare(){
+  const modal=document.getElementById('cmpModal');
+  const content=document.getElementById('cmpContent');
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+  content.innerHTML=`<div class="cmp-loading"><div class="spinner"></div>Fetching NAV history…</div>`;
+  try{
+    const funds=await Promise.all(
+      Object.values(selected).map(f=>
+        fetch(`${API}/mf/${f.schemeCode}`)
+          .then(r=>r.json())
+          .then(d=>({...f,history:d.data||[],meta:d.meta||f.meta}))
+      )
+    );
+    renderCompare(funds);
+  }catch(e){
+    content.innerHTML=`<div style="text-align:center;padding:48px;color:#EB5757;font-size:.85rem">Failed to load comparison data. Please try again.</div>`;
+  }
+}
+
+function renderCompare(funds){
+  const comp=funds.map(f=>({...f,returns:Object.fromEntries(PERIODS.map(p=>[p.l,calcReturn(f.history,p.d)])),latest:f.history&&f.history[0]}));
+  const best={};
+  PERIODS.forEach(p=>{ const vs=comp.map(f=>f.returns[p.l]).filter(v=>v!==null); if(vs.length) best[p.l]=Math.max(...vs); });
+  const maxAbs={};
+  PERIODS.forEach(p=>{ const vs=comp.map(f=>f.returns[p.l]).filter(v=>v!==null); maxAbs[p.l]=vs.length?Math.max(...vs.map(Math.abs)):1; });
+
+  const thead=`<tr><th>Fund</th><th>Latest NAV</th>${PERIODS.map(p=>`<th>${p.l}</th>`).join('')}</tr>`;
+  const tbody=comp.map(f=>{
+    const navHtml=f.latest?`<div class="cmp-nav-val">₹${parseFloat(f.latest.nav).toFixed(4)}</div><div class="cmp-nav-dt">${f.latest.date}</div>`:'<span style="color:rgba(255,255,255,0.2)">—</span>';
+    const retCells=PERIODS.map(p=>{
+      const r=f.returns[p.l];
+      if(r===null) return `<td><span class="ret-val na">N/A</span></td>`;
+      const isBest=comp.length>1&&r===best[p.l];
+      const cls=r>=0?'pos':'neg';
+      const bw=Math.min(100,Math.abs(r)/(maxAbs[p.l]||1)*100);
+      return `<td><span class="ret-val ${cls}">${r>=0?'+':''}${r.toFixed(2)}%</span>${isBest?'<span class="best-mark">best</span>':''}<div class="ret-bar-wrap"><div class="ret-bar ${cls}" style="width:${bw}%"></div></div></td>`;
+    }).join('');
+    const house=f.meta?(f.meta.fund_house||''):'';
+    const cat=f.meta?(f.meta.scheme_category||''):'';
+    return `<tr><td><div class="cmp-fund-name">${esc(f.schemeName)}</div><div class="cmp-fund-house">${esc(house)}</div>${cat?`<div style="margin-top:6px"><span class="badge ${catCls(cat)}" style="font-size:.55rem">${esc(cat)}</span></div>`:''}</td><td>${navHtml}</td>${retCells}</tr>`;
+  }).join('');
+
+  document.getElementById('cmpContent').innerHTML=`
+    <div class="cmp-table-scroll"><table class="cmp-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>
+    <div class="cmp-disclaimer">Returns calculated from historical NAV data via mfapi.in · Past performance is not indicative of future results · Not investment advice</div>`;
+}
+
+function calcReturn(history,days){
+  if(!history||history.length<2) return null;
+  const latest=parseFloat(history[0].nav);
+  const latestMs=nd(history[0].date);
+  const targetMs=latestMs-days*86400000;
+  let best=null,bestDiff=Infinity;
+  for(const e of history){ const ms=nd(e.date); const diff=Math.abs(ms-targetMs); if(diff<bestDiff){bestDiff=diff;best=e;} if(ms<targetMs-10*86400000) break; }
+  if(!best||bestDiff>15*86400000) return null;
+  return (latest-parseFloat(best.nav))/parseFloat(best.nav)*100;
+}
+function nd(s){ const[d,m,y]=s.split('-'); return new Date(`${y}-${m}-${d}`).getTime(); }
+
+function closeCompare(){
+  document.getElementById('cmpModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+document.getElementById('cmpCloseBtn').addEventListener('click',closeCompare);
+document.getElementById('cmpBackdrop').addEventListener('click',closeCompare);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeCompare(); });
+
+/* ── STATES ── */
+function showEmpty(){
+  document.getElementById('resultCount').innerHTML='';
+  document.getElementById('tableWrap').innerHTML=`<div class="state-box"><div class="state-icon">◈</div><div class="state-title">Search for mutual funds</div><div class="state-sub">Enter a fund name or AMC name to begin</div></div>`;
+}
+function showLoading(){
+  document.getElementById('resultCount').innerHTML='';
+  document.getElementById('tableWrap').innerHTML=`<div class="state-box"><div class="spinner"></div><div style="font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--muted);font-weight:300">Searching…</div></div>`;
+}
+function showErr(msg){
+  document.getElementById('tableWrap').innerHTML=`<div class="state-box"><div class="state-icon">⚠</div><div class="state-title">Something went wrong</div><div class="state-sub">${esc(msg)}</div></div>`;
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
 </body>
 </html>
