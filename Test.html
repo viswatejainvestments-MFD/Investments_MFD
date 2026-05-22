@@ -980,7 +980,7 @@ function drawRollingChart(funds,years){
 
 /* ── HELPERS ──
 
-/* ── HELPERS ──
+/* ── HELPERS ──*/
 function nd(s){const[d,m,y]=s.split('-');return new Date(`${y}-${m}-${d}`).getTime();}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function showEmpty(){document.getElementById('resultCount').innerHTML='';document.getElementById('tableWrap').innerHTML=`<div class="state-box"><div class="state-icon">◈</div><div class="state-title">Search for mutual funds</div><div class="state-sub">Enter a fund name or AMC name to begin</div></div>`;}
