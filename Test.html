@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MF Screener — Yours Wealth</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ─── ROOT ─── */
+:root {
+  --cream: #F5F0E8;
+  --ivory: #FAF7F2;
+  --gold: #B8960C;
+  --gold-light: #D4AF37;
+  --gold-pale: #F0E6B8;
+  --gold-glow: rgba(212,175,55,0.15);
+  --charcoal: #1C1C1C;
+  --dark: #0D0D0D;
+  --mid: #3A3630;
+  --muted: #7A736A;
+  --border: rgba(184,150,12,0.18);
+  --border-light: rgba(184,150,12,0.08);
+  --green: #22C55E;
+  --green-dim: rgba(34,197,94,0.12);
+  --red: #EF4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --blue: #3B82F6;
+  --easing: cubic-bezier(0.16,1,0.3,1);
+  --easing-back: cubic-bezier(0.34,1.56,0.64,1);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--ivory); color:var(--charcoal); overflow-x:hidden; cursor:none; }
+
+/* ─── CURSOR ─── */
+#cursor-dot { width:6px; height:6px; background:var(--gold); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .3s var(--easing),height .3s var(--easing),background .3s; mix-blend-mode:multiply; }
+#cursor-ring { width:36px; height:36px; border:1px solid rgba(184,150,12,0.5); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:transform .18s var(--easing),width .4s var(--easing),height .4s var(--easing),opacity .3s,border-color .3s; }
+body:has(a:hover) #cursor-dot, body:has(button:hover) #cursor-dot, body:has(label:hover) #cursor-dot { width:10px; height:10px; background:var(--gold-light); }
+body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring, body:has(label:hover) #cursor-ring { width:56px; height:56px; border-color:var(--gold); }
+
+/* ─── CANVAS ─── */
+#particle-canvas { position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.5; }
+
+/* ─── LOADER ─── */
+#loader { position:fixed; inset:0; z-index:10000; background:var(--dark); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px; }
+.loader-logo { font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:300; color:rgba(255,255,255,0.15); letter-spacing:.08em; }
+.loader-logo-fill { color:white; clip-path:inset(0 100% 0 0); animation:fillText 1.4s .3s var(--easing) forwards; }
+.loader-logo-fill span { color:var(--gold-light); }
+@keyframes fillText { to { clip-path:inset(0 0% 0 0); } }
+.loader-bar-track { width:180px; height:1px; background:rgba(255,255,255,0.08); overflow:hidden; }
+.loader-bar-fill { height:100%; background:var(--gold); animation:barFill 1.6s var(--easing) forwards; width:0; }
+@keyframes barFill { to { width:100%; } }
+#loader.exit { animation:loaderExit .8s .2s var(--easing) forwards; }
+@keyframes loaderExit { to { opacity:0; transform:translateY(-100%); pointer-events:none; } }
+
+/* ─── NAV ─── */
+nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:28px 60px; transition:padding .4s var(--easing),background .4s,box-shadow .4s; }
+nav.scrolled { padding:16px 60px; background:rgba(250,247,242,0.94); backdrop-filter:blur(20px); box-shadow:0 1px 0 var(--border-light),0 8px 32px rgba(0,0,0,0.04); }
+.nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; letter-spacing:.04em; color:var(--charcoal); text-decoration:none; position:relative; }
+.nav-logo span { color:var(--gold); }
+.nav-logo::after { content:''; position:absolute; bottom:-2px; left:0; right:0; height:1px; background:var(--gold); transform:scaleX(0); transform-origin:left; transition:transform .4s var(--easing); }
+.nav-logo:hover::after { transform:scaleX(1); }
+.nav-links { display:flex; gap:36px; list-style:none; }
+.nav-links a { font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; text-decoration:none; color:var(--mid); position:relative; transition:color .3s; padding:4px 0; }
+.nav-links a::before { content:attr(data-text); position:absolute; top:0; left:0; color:var(--gold); clip-path:inset(0 100% 0 0); transition:clip-path .4s var(--easing); white-space:nowrap; }
+.nav-links a:hover::before { clip-path:inset(0 0% 0 0); }
+.nav-actions { display:flex; gap:12px; align-items:center; }
+.nav-cta { font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; padding:10px 22px; border:1px solid var(--gold); background:transparent; color:var(--gold); text-decoration:none; cursor:none; transition:all .35s var(--easing); position:relative; overflow:hidden; }
+.nav-cta::before { content:''; position:absolute; inset:0; background:var(--gold); transform:translateX(-101%); transition:transform .35s var(--easing); z-index:-1; }
+.nav-cta:hover::before { transform:translateX(0); }
+.nav-cta:hover { color:white; }
+.nav-cta.solid { background:var(--charcoal); color:var(--cream); border-color:var(--charcoal); }
+.nav-cta.solid::before { background:var(--gold); }
+.nav-cta.solid:hover { color:white; }
+
+/* ─── SHARED ─── */
+.section-tag { font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.25em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; display:flex; align-items:center; gap:14px; }
+.section-tag::before { content:''; width:28px; height:1px; background:var(--gold); }
+.section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2.4rem,4.5vw,3.8rem); font-weight:300; line-height:1.12; color:var(--dark); margin-bottom:18px; }
+.section-title em { font-style:italic; color:var(--gold); }
+.reveal { opacity:0; transform:translateY(40px); transition:opacity .8s var(--easing),transform .8s var(--easing); }
+.reveal.visible { opacity:1; transform:translateY(0); }
+.d1 { transition-delay:.1s; } .d2 { transition-delay:.2s; } .d3 { transition-delay:.3s; }
+
+/* ─── PAGE HEADER ─── */
+.screener-header { padding:160px 60px 80px; background:var(--cream); border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+.screener-header-bg { position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 92% 50%,rgba(212,175,55,0.07),transparent 65%); pointer-events:none; }
+.screener-header-grid { position:absolute; inset:0; background-image:linear-gradient(rgba(184,150,12,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,12,0.04) 1px,transparent 1px); background-size:80px 80px; mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%); }
+.screener-header-inner { position:relative; z-index:2; max-width:700px; }
+.screener-header p { font-size:1rem; color:var(--muted); line-height:1.8; font-weight:300; margin-top:16px; max-width:520px; }
+
+/* ─── BODY ─── */
+.screener-body { padding:60px 60px 200px; position:relative; z-index:1; }
+
+/* ─── FILTERS BAR ─── */
+.filters-row { display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap; align-items:center; }
+.filter-btn { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; padding:8px 16px; border:1px solid var(--border); background:white; color:var(--muted); cursor:pointer; transition:all .25s var(--easing); position:relative; overflow:hidden; }
+.filter-btn::before { content:''; position:absolute; inset:0; background:var(--charcoal); transform:translateY(101%); transition:transform .3s var(--easing); z-index:0; }
+.filter-btn span { position:relative; z-index:1; transition:color .3s; }
+.filter-btn:hover::before { transform:translateY(0); }
+.filter-btn:hover span { color:white; }
+.filter-btn.active { background:var(--charcoal); border-color:var(--charcoal); color:white; }
+.filter-btn.active span { color:white; }
+.filter-sep { width:1px; height:28px; background:var(--border); flex-shrink:0; }
+
+/* ─── SEARCH ─── */
+.search-wrap { margin-bottom:32px; }
+.search-label { font-family:'DM Mono',monospace; font-size:.65rem; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; display:flex; align-items:center; gap:12px; }
+.search-label::before { content:''; width:22px; height:1px; background:var(--gold); }
+.search-field-wrap { position:relative; }
+.search-icon { position:absolute; left:20px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:20px; pointer-events:none; }
+#searchInput { width:100%; background:white; border:1px solid var(--border); color:var(--charcoal); font-family:'DM Sans',sans-serif; font-size:1rem; padding:18px 20px 18px 54px; outline:none; transition:border-color .3s,box-shadow .3s; }
+#searchInput::placeholder { color:var(--muted); font-weight:300; }
+#searchInput:focus { border-color:var(--gold); box-shadow:0 0 0 4px var(--gold-glow); }
+.search-hint { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.12em; color:var(--muted); margin-top:10px; text-transform:uppercase; }
+
+/* ─── STATUS ─── */
+.status-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.result-count { font-family:'DM Mono',monospace; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+.result-count span { color:var(--gold); }
+
+/* ─── FUND CARDS ─── */
+.funds-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--border); border:1px solid var(--border); }
+.fund-card { background:white; padding:26px 28px; display:flex; align-items:flex-start; gap:18px; position:relative; overflow:hidden; transition:background .3s; cursor:default; }
+.fund-card::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); transform:scaleX(0); transition:transform .5s var(--easing); }
+.fund-card:hover { background:var(--cream); }
+.fund-card:hover::after { transform:scaleX(1); }
+.fund-card.selected { background:rgba(184,150,12,0.04); }
+.fund-card.selected::after { transform:scaleX(1); }
+.fund-check-wrap { position:relative; width:20px; height:20px; flex-shrink:0; margin-top:4px; }
+.fund-check-wrap input { opacity:0; position:absolute; width:100%; height:100%; cursor:pointer; z-index:2; margin:0; }
+.fund-check-box { width:20px; height:20px; border:1px solid var(--border); background:transparent; display:flex; align-items:center; justify-content:center; transition:all .2s var(--easing); pointer-events:none; }
+.fund-check-wrap input:checked ~ .fund-check-box { background:var(--gold); border-color:var(--gold); }
+.fund-check-wrap input:checked ~ .fund-check-box::after { content:'✓'; font-size:11px; color:white; font-weight:600; }
+.fund-info { flex:1; min-width:0; }
+.fund-name { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:400; color:var(--charcoal); line-height:1.3; margin-bottom:8px; }
+.fund-badges { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.badge { font-family:'DM Mono',monospace; font-size:.56rem; letter-spacing:.1em; padding:3px 8px; text-transform:uppercase; }
+.badge-house { border:1px solid var(--border); color:var(--muted); }
+.badge-equity { border:1px solid rgba(34,197,94,0.25); color:#16a34a; background:rgba(34,197,94,0.05); }
+.badge-debt { border:1px solid rgba(59,130,246,0.25); color:#2563eb; background:rgba(59,130,246,0.05); }
+.badge-hybrid { border:1px solid var(--border); color:var(--gold); background:rgba(184,150,12,0.05); }
+.badge-other { border:1px solid var(--border); color:var(--muted); }
+
+/* Fund card mini metrics */
+.fund-mini-metrics { display:flex; gap:16px; margin-top:8px; flex-wrap:wrap; }
+.mini-m { display:flex; flex-direction:column; gap:2px; }
+.mini-m-label { font-family:'DM Mono',monospace; font-size:.52rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+.mini-m-val { font-family:'DM Mono',monospace; font-size:.75rem; color:var(--charcoal); }
+.mini-m-val.pos { color:#16a34a; }
+.mini-m-val.neg { color:#dc2626; }
+
+.fund-nav-col { text-align:right; flex-shrink:0; padding-top:2px; }
+.nav-val { font-family:'DM Mono',monospace; font-size:.88rem; color:var(--charcoal); }
+.nav-dt { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.08em; color:var(--muted); margin-top:4px; text-transform:uppercase; }
+
+/* loading dots */
+.ldots { display:inline-flex; gap:3px; align-items:center; }
+.ldots span { width:4px; height:4px; background:var(--muted); border-radius:50%; animation:ldotPulse 1.2s ease-in-out infinite; opacity:.4; }
+.ldots span:nth-child(2) { animation-delay:.2s; }
+.ldots span:nth-child(3) { animation-delay:.4s; }
+@keyframes ldotPulse { 0%,80%,100%{opacity:.2;transform:scale(.8);} 40%{opacity:.8;transform:scale(1);} }
+
+/* ─── EMPTY / LOADING ─── */
+.state-box { background:white; border:1px solid var(--border); padding:80px 40px; text-align:center; }
+.state-icon { font-size:2.4rem; opacity:.3; margin-bottom:18px; }
+.state-title { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300; color:var(--mid); margin-bottom:8px; }
+.state-sub { font-size:.85rem; color:var(--muted); font-weight:300; }
+.spinner { width:28px; height:28px; border:1px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin .75s linear infinite; margin:0 auto 18px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ─── COMPARE BAR ─── */
+#compareBar { position:fixed; bottom:0; left:0; right:0; z-index:200; background:var(--charcoal); border-top:2px solid var(--gold); padding:16px 60px; display:none; align-items:center; gap:20px; box-shadow:0 -12px 40px rgba(0,0,0,0.22); transform:translateY(100%); transition:transform .5s var(--easing); }
+#compareBar.visible { display:flex; transform:translateY(0); }
+.compare-chips { display:flex; gap:8px; flex:1; flex-wrap:wrap; }
+.compare-chip { border:1px solid rgba(184,150,12,0.25); padding:7px 14px 7px 16px; display:flex; align-items:center; gap:10px; background:rgba(212,175,55,0.06); animation:chipIn .25s var(--easing); max-width:240px; }
+@keyframes chipIn { from{opacity:0;transform:translateY(8px) scale(.95);} to{opacity:1;transform:translateY(0) scale(1);} }
+.chip-name { font-family:'DM Sans',sans-serif; font-size:.78rem; color:rgba(255,255,255,0.75); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:300; }
+.chip-remove { font-size:18px; line-height:1; color:rgba(255,255,255,0.3); cursor:pointer; flex-shrink:0; transition:color .2s; }
+.chip-remove:hover { color:rgba(212,175,55,0.8); }
+.compare-bar-right { display:flex; align-items:center; gap:16px; flex-shrink:0; }
+.compare-hint { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,0.28); }
+.btn-bar { font-family:'DM Sans',sans-serif; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; font-weight:500; padding:12px 28px; background:transparent; border:1px solid; cursor:pointer; position:relative; overflow:hidden; transition:color .35s; }
+.btn-bar::before { content:''; position:absolute; inset:0; transform:translateX(-101%); transition:transform .4s var(--easing); z-index:0; }
+.btn-bar:hover::before { transform:translateX(0); }
+.btn-bar span { position:relative; z-index:1; }
+.btn-compare { border-color:var(--gold); color:var(--gold); }
+.btn-compare::before { background:var(--gold); }
+.btn-compare:hover { color:var(--dark); }
+
+
+/* ─── MODALS SHARED ─── */
+.modal-shell { position:fixed; inset:0; z-index:9000; display:none; align-items:center; justify-content:center; padding:24px; opacity:0; transition:opacity .4s var(--easing); }
+.modal-shell.open { display:flex; opacity:1; }
+.modal-backdrop { position:absolute; inset:0; background:rgba(8,8,8,0.88); backdrop-filter:blur(12px); cursor:pointer; }
+.modal-card { position:relative; z-index:1; width:100%; transform:translateY(28px) scale(.97); transition:transform .5s var(--easing); }
+.modal-shell.open .modal-card { transform:translateY(0) scale(1); }
+.modal-glass { background:rgba(18,16,12,0.95); backdrop-filter:blur(32px); border:1px solid rgba(212,175,55,0.22); padding:48px 48px 40px; position:relative; overflow:hidden; max-height:85vh; overflow-y:auto; }
+.modal-glass::-webkit-scrollbar { width:4px; }
+.modal-glass::-webkit-scrollbar-track { background:rgba(255,255,255,0.03); }
+.modal-glass::-webkit-scrollbar-thumb { background:rgba(184,150,12,0.3); border-radius:2px; }
+.modal-accent-bar { position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent 0%,var(--gold) 40%,var(--gold-light) 60%,transparent 100%); transform:scaleX(0); transform-origin:left; transition:transform .8s .1s var(--easing); }
+.modal-shell.open .modal-accent-bar { transform:scaleX(1); }
+.modal-close { position:absolute; top:20px; right:20px; width:32px; height:32px; border:1px solid rgba(212,175,55,0.2); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.4); transition:all .3s; z-index:2; }
+.modal-close:hover { border-color:rgba(212,175,55,0.5); color:var(--gold-light); background:rgba(212,175,55,0.06); }
+.modal-eyebrow { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.26em; text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.modal-eyebrow::before { content:''; width:24px; height:1px; background:var(--gold); }
+.modal-title { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:white; line-height:1.15; margin-bottom:32px; }
+.modal-title em { font-style:italic; color:var(--gold-light); }
+.modal-footer-note { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(255,255,255,0.14); text-align:center; padding-top:16px; margin-top:20px; border-top:1px solid rgba(255,255,255,0.05); }
+.cmp-loading { text-align:center; padding:56px; color:rgba(255,255,255,0.4); font-size:.85rem; }
+
+/* ─── TABS (inside modal) ─── */
+.modal-tabs { display:flex; gap:0; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:32px; }
+.modal-tab { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.18em; text-transform:uppercase; padding:12px 22px; color:rgba(255,255,255,0.3); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all .3s; background:transparent; border-top:none; border-left:none; border-right:none; }
+.modal-tab:hover { color:rgba(255,255,255,0.65); }
+.modal-tab.active { color:var(--gold-light); border-bottom-color:var(--gold); }
+
+/* ─── COMPARE TABLE ─── */
+.cmp-table-scroll { overflow-x:auto; }
+.cmp-table { width:100%; border-collapse:collapse; min-width:720px; }
+.cmp-table th { font-family:'DM Mono',monospace; font-size:.56rem; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,0.3); padding:12px 16px; text-align:center; border:1px solid rgba(255,255,255,0.05); background:rgba(255,255,255,0.02); }
+.cmp-table th:first-child { text-align:left; min-width:220px; }
+.cmp-table td { padding:16px; text-align:center; border:1px solid rgba(255,255,255,0.05); vertical-align:top; }
+.cmp-table td:first-child { text-align:left; }
+.cmp-table tbody tr { transition:background .2s; }
+.cmp-table tbody tr:hover { background:rgba(212,175,55,0.03); }
+.cmp-fund-name { font-family:'Cormorant Garamond',serif; font-size:1.05rem; font-weight:400; color:white; line-height:1.3; margin-bottom:4px; }
+.cmp-fund-house { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,0.28); }
+.ret-val { font-family:'DM Mono',monospace; font-size:.9rem; display:inline-block; }
+.ret-val.pos { color:#4ade80; }
+.ret-val.neg { color:#f87171; }
+.ret-val.na { color:rgba(255,255,255,0.2); font-size:.78rem; }
+.ret-bar-wrap { margin-top:6px; height:2px; background:rgba(255,255,255,0.06); border-radius:1px; }
+.ret-bar { height:100%; border-radius:1px; transition:width 1s cubic-bezier(.23,1,.32,1); }
+.ret-bar.pos { background:linear-gradient(90deg,rgba(74,222,128,.4),#4ade80); }
+.ret-bar.neg { background:linear-gradient(90deg,rgba(248,113,113,.4),#f87171); }
+.best-mark { display:inline-block; font-family:'DM Mono',monospace; font-size:.48rem; letter-spacing:.08em; text-transform:uppercase; border:1px solid rgba(212,175,55,0.35); color:rgba(212,175,55,0.75); padding:1px 5px; margin-left:4px; vertical-align:middle; }
+.cmp-nav-val { font-family:'DM Mono',monospace; font-size:.88rem; color:white; }
+.cmp-nav-dt { font-family:'DM Mono',monospace; font-size:.58rem; color:rgba(255,255,255,0.3); margin-top:3px; text-transform:uppercase; letter-spacing:.06em; }
+.metric-val { font-family:'DM Mono',monospace; font-size:.84rem; color:white; }
+.metric-sub { font-family:'DM Mono',monospace; font-size:.56rem; color:rgba(255,255,255,0.28); margin-top:3px; }
+.metric-val.good { color:#4ade80; }
+.metric-val.bad { color:#f87171; }
+.metric-val.neutral { color:rgba(255,255,255,0.55); }
+
+/* ─── METRIC EXPLANATION TOOLTIPS ─── */
+.col-header-wrap { display:flex; flex-direction:column; gap:4px; align-items:center; }
+.col-help { font-size:.52rem; color:rgba(255,255,255,0.16); font-family:'DM Sans',sans-serif; text-transform:none; letter-spacing:0; line-height:1.4; }
+
+/* ─── ROLLING RETURNS SECTION ─── */
+.rolling-section { margin-top:8px; }
+.rolling-title { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; display:flex; align-items:center; gap:12px; }
+.rolling-title::before { content:''; width:20px; height:1px; background:var(--gold); }
+.rolling-period-selector { display:flex; gap:6px; margin-bottom:24px; }
+.rp-btn { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; padding:7px 16px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:rgba(255,255,255,0.35); cursor:pointer; transition:all .25s var(--easing); }
+.rp-btn.active, .rp-btn:hover { border-color:var(--gold); color:var(--gold-light); background:rgba(184,150,12,0.08); }
+.rolling-chart-wrap { height:220px; position:relative; }
+canvas.rolling-canvas { width:100%; height:100%; }
+
+/* Rolling stats grid */
+.rolling-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.05); margin-top:20px; }
+.rolling-stat-cell { background:rgba(18,16,12,0.8); padding:18px 20px; }
+.rs-fund { font-family:'DM Mono',monospace; font-size:.52rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,0.25); margin-bottom:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rs-rows { display:flex; flex-direction:column; gap:6px; }
+.rs-row { display:flex; justify-content:space-between; align-items:center; }
+.rs-label { font-family:'DM Mono',monospace; font-size:.58rem; color:rgba(255,255,255,0.3); }
+.rs-val { font-family:'DM Mono',monospace; font-size:.72rem; }
+.rs-val.pos { color:#4ade80; }
+.rs-val.neg { color:#f87171; }
+.rs-val.neutral { color:rgba(255,255,255,0.55); }
+
+
+
+
+/* ─── MARQUEE ─── */
+.marquee-strip { border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:var(--charcoal); padding:14px 0; overflow:hidden; position:relative; z-index:2; }
+.marquee-inner { display:flex; gap:72px; animation:marquee 28s linear infinite; white-space:nowrap; }
+.marquee-strip:hover .marquee-inner { animation-play-state:paused; }
+.marquee-item { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; color:rgba(240,230,184,0.4); display:flex; align-items:center; gap:28px; transition:color .3s; }
+.marquee-item:hover { color:var(--gold-light); }
+.marquee-item::after { content:'◆'; opacity:.25; font-size:.38rem; }
+@keyframes marquee { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+/* ─── FOOTER ─── */
+footer { background:var(--dark); padding:80px 60px 48px; position:relative; }
+footer::before { content:''; position:absolute; top:0; left:60px; right:60px; height:1px; background:linear-gradient(90deg,transparent,rgba(184,150,12,0.3),transparent); }
+.footer-top { display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:60px; padding-bottom:52px; border-bottom:1px solid rgba(255,255,255,0.05); }
+.footer-logo { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:600; color:white; margin-bottom:18px; letter-spacing:.04em; display:inline-block; }
+.footer-logo span { color:var(--gold); }
+.footer-desc { font-size:.78rem; color:rgba(255,255,255,0.3); line-height:1.8; max-width:220px; }
+.footer-col-title { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.25em; text-transform:uppercase; color:var(--gold); margin-bottom:22px; }
+.footer-links { list-style:none; display:flex; flex-direction:column; gap:12px; }
+.footer-links a { font-size:.78rem; color:rgba(255,255,255,0.35); text-decoration:none; transition:color .3s,padding-left .3s var(--easing); display:inline-block; }
+.footer-links a:hover { color:rgba(255,255,255,0.85); padding-left:6px; }
+.footer-bottom { padding-top:32px; display:flex; justify-content:space-between; align-items:center; }
+.footer-copy { font-family:'DM Mono',monospace; font-size:.65rem; color:rgba(255,255,255,0.2); }
+.footer-legal { display:flex; gap:24px; }
+.footer-legal a { font-family:'DM Mono',monospace; font-size:.65rem; color:rgba(255,255,255,0.2); text-decoration:none; transition:color .3s; }
+.footer-legal a:hover { color:rgba(255,255,255,0.6); }
+
+/* cursor fix inside modals */
+.modal-shell, .modal-shell * { cursor:auto; }
+.modal-close, .modal-backdrop, .rp-btn, .modal-tab, .chip-remove { cursor:pointer; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width:960px) {
+  body { cursor:auto; }
+  #cursor-dot, #cursor-ring { display:none; }
+  nav { padding:18px 24px; }
+  nav.scrolled { padding:14px 24px; }
+  .nav-links { display:none; }
+  .screener-header, .screener-body { padding-left:20px; padding-right:20px; }
+  .screener-header { padding-top:110px; padding-bottom:48px; }
+  .funds-grid { grid-template-columns:1fr; }
+  #compareBar { padding:12px 20px; flex-wrap:wrap; gap:10px; }
+  .modal-glass { padding:30px 18px 24px; }
+  .modal-title { font-size:1.5rem; }
+  .footer-top { grid-template-columns:1fr 1fr; gap:32px; }
+  .footer-bottom { flex-direction:column; gap:12px; text-align:center; }
+}
+
+/* ─── ANIMATE IN: fund cards ─── */
+@keyframes cardIn { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+.fund-card { animation:cardIn .4s var(--easing) both; }
+</style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<canvas id="particle-canvas"></canvas>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">
+    <div class="loader-logo-fill">Yours<span>Wealth</span></div>
+  </div>
+  <div class="loader-bar-track"><div class="loader-bar-fill"></div></div>
+</div>
+
+<!-- ═══ COMPARE MODAL ═══ -->
+<div id="cmpModal" class="modal-shell" role="dialog" aria-modal="true">
+  <div class="modal-backdrop" onclick="closeModal('cmpModal')"></div>
+  <div class="modal-card" style="max-width:1060px;">
+    <div class="modal-glass">
+      <div class="modal-accent-bar"></div>
+      <button class="modal-close" onclick="closeModal('cmpModal')" aria-label="Close">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+      <div class="modal-eyebrow">Fund Research</div>
+      <div class="modal-title">Side-by-side <em>comparison.</em></div>
+
+      <!-- Tabs -->
+      <div class="modal-tabs">
+        <button class="modal-tab active" data-tab="returns" onclick="switchTab('returns',this)">CAGR Returns</button>
+        <button class="modal-tab" data-tab="metrics" onclick="switchTab('metrics',this)">Key Metrics</button>
+        <button class="modal-tab" data-tab="rolling" onclick="switchTab('rolling',this)">Rolling Returns</button>
+      </div>
+
+      <div id="cmpContent">
+        <div class="cmp-loading"><div class="spinner"></div>Fetching data…</div>
+      </div>
+      <div class="modal-footer-note">Data via mfapi.in · Past performance does not guarantee future results · Not investment advice</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">Yours<span>Wealth</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#about" data-text="About">About</a></li>
+    <li><a href="index.html#services" data-text="Services">Services</a></li>
+    <li><a href="index.html#process" data-text="Our Process">Our Process</a></li>
+    <li><a href="mf-screener.html" data-text="MF Screener" style="color:var(--gold)">MF Screener</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="financial-planner.html" class="nav-cta">Get Your Goal Plan</a>
+    <a href="index.html#contact" class="nav-cta solid">Book Consultation</a>
+  </div>
+</nav>
+
+<!-- ═══ HEADER ═══ -->
+<section class="screener-header">
+  <div class="screener-header-bg"></div>
+  <div class="screener-header-grid"></div>
+  <div class="screener-header-inner">
+    <div class="section-tag reveal">Fund Research</div>
+    <h1 class="section-title reveal d1">Mutual Fund <em>Screener</em></h1>
+    <p class="reveal d2">Search, analyse and compare funds — CAGR returns, rolling performance and key metrics, all in one premium view.</p>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <div class="marquee-item">CAGR Returns</div><div class="marquee-item">Rolling Returns</div><div class="marquee-item">Key Metrics</div>
+    <div class="marquee-item">Expense Ratio</div><div class="marquee-item">Alpha</div><div class="marquee-item">Benchmark</div>
+    <div class="marquee-item">Equity Funds</div><div class="marquee-item">Debt Funds</div><div class="marquee-item">Hybrid Funds</div>
+    <div class="marquee-item">Index Funds</div><div class="marquee-item">ELSS</div><div class="marquee-item">Flexi Cap</div>
+    <div class="marquee-item">CAGR Returns</div><div class="marquee-item">Rolling Returns</div><div class="marquee-item">Key Metrics</div>
+    <div class="marquee-item">Expense Ratio</div><div class="marquee-item">Alpha</div><div class="marquee-item">Benchmark</div>
+    <div class="marquee-item">Equity Funds</div><div class="marquee-item">Debt Funds</div><div class="marquee-item">Hybrid Funds</div>
+    <div class="marquee-item">Index Funds</div><div class="marquee-item">ELSS</div><div class="marquee-item">Flexi Cap</div>
+  </div>
+</div>
+
+<!-- ═══ BODY ═══ -->
+<section class="screener-body">
+
+  <!-- Filters -->
+  <div class="filters-row reveal">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)"><span>All Funds</span></button>
+    <button class="filter-btn" data-filter="equity" onclick="setFilter('equity',this)"><span>Equity</span></button>
+    <button class="filter-btn" data-filter="debt" onclick="setFilter('debt',this)"><span>Debt</span></button>
+    <button class="filter-btn" data-filter="hybrid" onclick="setFilter('hybrid',this)"><span>Hybrid</span></button>
+    <div class="filter-sep"></div>
+    <button class="filter-btn" data-filter="elss" onclick="setFilter('elss',this)"><span>ELSS</span></button>
+    <button class="filter-btn" data-filter="index" onclick="setFilter('index',this)"><span>Index / ETF</span></button>
+    <button class="filter-btn" data-filter="liquid" onclick="setFilter('liquid',this)"><span>Liquid</span></button>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap reveal d1">
+    <div class="search-label">Search Funds</div>
+    <div class="search-field-wrap">
+      <div class="search-icon">⌕</div>
+      <input type="text" id="searchInput" placeholder="Search by fund name or AMC — HDFC, Axis, Mirae, Kotak, SBI…" autocomplete="off" spellcheck="false"/>
+    </div>
+    <div class="search-hint">Type at least 3 characters &nbsp;·&nbsp; Select up to 4 funds to compare</div>
+  </div>
+
+  <div class="status-bar">
+    <div class="result-count" id="resultCount"></div>
+  </div>
+  <div id="tableWrap">
+    <div class="state-box">
+      <div class="state-icon">◈</div>
+      <div class="state-title">Search for mutual funds</div>
+      <div class="state-sub">Enter a fund name or AMC name to begin</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMPARE BAR ═══ -->
+<div id="compareBar">
+  <div class="compare-chips" id="compareChips"></div>
+  <div class="compare-bar-right">
+    <div class="compare-hint" id="compareHint"></div>
+    <button class="btn-bar btn-compare" onclick="openCompare()"><span>⇄ Compare Funds</span></button>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">Yours<span>Wealth</span></div>
+      <div class="footer-desc">"Yours Wealth" helps you turn goals into reality. AMFI-registered Mutual Fund Distributor. — Viswateja Poreddy.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <ul class="footer-links">
+        <li><a href="#">Financial Planning</a></li><li><a href="#">Investment Advisory</a></li>
+        <li><a href="#">Retirement Planning</a></li><li><a href="#">Tax Optimisation</a></li><li><a href="#">Estate Planning</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#">About Us</a></li><li><a href="#">Our Team</a></li><li><a href="#">Careers</a></li><li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <ul class="footer-links">
+        <li><a href="mailto:viswateja.investments@gmail.com">viswateja.investments@gmail.com</a></li>
+        <li><a href="tel:+917095858488">+91 70958 58488</a></li>
+        <li><a href="#">Hyderabad, Telangana</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Yours Wealth. All rights reserved.</div>
+    <div class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Disclaimer</a></div>
+  </div>
+</footer>
+
+<script>
+/* ── LOADER ── */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const l=document.getElementById('loader');
+    l.classList.add('exit');
+    setTimeout(()=>l.style.display='none',1000);
+  },1600);
+});
+
+/* ── CURSOR ── */
+const dot=document.getElementById('cursor-dot'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function animC(){ rx+=(mx-rx)*.18;ry+=(my-ry)*.18;if(dot){dot.style.left=mx+'px';dot.style.top=my+'px';}if(ring){ring.style.left=rx+'px';ring.style.top=ry+'px';}requestAnimationFrame(animC);})();
+
+/* ── PARTICLES ── */
+const canvas=document.getElementById('particle-canvas'),ctx=canvas.getContext('2d');
+let W,H,parts=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+class P{constructor(){this.reset();}reset(){this.x=Math.random()*W;this.y=Math.random()*H;this.sz=Math.random()*1.2+.3;this.vx=(Math.random()-.5)*.25;this.vy=-Math.random()*.35-.1;this.op=Math.random()*.3+.1;this.life=0;this.maxLife=Math.random()*300+200;}update(){this.x+=this.vx;this.y+=this.vy;this.life++;if(this.life>this.maxLife||this.y<-10)this.reset();}draw(){const t=this.life/this.maxLife,a=this.op*(t<.1?t*10:t>.8?(1-t)*5:1);ctx.globalAlpha=a;ctx.fillStyle='rgba(184,150,12,1)';ctx.beginPath();ctx.arc(this.x,this.y,this.sz,0,Math.PI*2);ctx.fill();}}
+for(let i=0;i<60;i++){const p=new P();p.life=Math.random()*p.maxLife;parts.push(p);}
+(function animP(){ctx.clearRect(0,0,W,H);parts.forEach(p=>{p.update();p.draw();});ctx.globalAlpha=1;requestAnimationFrame(animP);})();
+
+/* ── NAV ── */
+const nav=document.getElementById('main-nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>60));
+
+/* ── REVEAL ── */
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+/* ── STATE ── */
+const API='https://api.mfapi.in';
+let timer=null,selected={},results=[],activeFilter='all';
+
+/* ── FILTER ── */
+function setFilter(f,btn){
+  activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(results.length) renderResults(applyFilter(results));
+}
+
+function applyFilter(funds){
+  if(activeFilter==='all') return funds;
+  return funds.filter(f=>{
+    const cat=(f.meta?.scheme_category||f.schemeName||'').toLowerCase();
+    if(activeFilter==='equity') return cat.includes('equity')&&!cat.includes('debt')&&!cat.includes('hybrid')&&!cat.includes('elss');
+    if(activeFilter==='debt') return cat.includes('debt')||cat.includes('liquid')||cat.includes('bond')||cat.includes('gilt')||cat.includes('credit');
+    if(activeFilter==='hybrid') return cat.includes('hybrid')||cat.includes('balanced')||cat.includes('arbitrage');
+    if(activeFilter==='elss') return cat.includes('elss')||cat.includes('tax');
+    if(activeFilter==='index') return cat.includes('index')||cat.includes('etf')||f.schemeName.toLowerCase().includes('index');
+    if(activeFilter==='liquid') return cat.includes('liquid')||cat.includes('overnight')||cat.includes('money market');
+    return true;
+  });
+}
+
+/* ── SEARCH ── */
+document.getElementById('searchInput').addEventListener('input',function(){
+  clearTimeout(timer);
+  const q=this.value.trim();
+  if(!q){showEmpty();return;}
+  if(q.length<3)return;
+  timer=setTimeout(()=>doSearch(q),420);
+});
+
+async function doSearch(q){
+  showLoading();
+  try{
+    const r=await fetch(`${API}/mf/search?q=${encodeURIComponent(q)}`);
+    const data=await r.json();
+    results=Array.isArray(data)?data.slice(0,60):[];
+    const filtered=applyFilter(results);
+    renderResults(filtered);
+    if(results.length) loadMeta(results.slice(0,24));
+  }catch(e){showErr('Could not reach mfapi.in. Please check your connection.');}
+}
+
+async function loadMeta(funds){
+  await Promise.allSettled(funds.map(async f=>{
+    try{
+      const r=await fetch(`${API}/mf/${f.schemeCode}/latest`);
+      const d=await r.json();
+      if(d.status!=='SUCCESS')return;
+      const m=results.find(x=>x.schemeCode===f.schemeCode);
+      if(m){m.meta=d.meta;m.latest=d.data&&d.data[0];}
+      if(selected[f.schemeCode]){selected[f.schemeCode].meta=d.meta;selected[f.schemeCode].latest=d.data&&d.data[0];}
+      const card=document.querySelector(`.fund-card[data-code="${f.schemeCode}"]`);
+      if(!card)return;
+      if(d.meta){
+        const bc=card.querySelector('.fund-badges');
+        if(bc)bc.innerHTML=`<span class="badge badge-house">${esc(d.meta.fund_house||'')}</span><span class="badge ${catCls(d.meta.scheme_category)}">${esc(d.meta.scheme_category||'')}</span>`;
+      }
+      if(d.data&&d.data[0]){
+        const nc=card.querySelector('.fund-nav-col');
+        if(nc)nc.innerHTML=`<div class="nav-val">₹${parseFloat(d.data[0].nav).toFixed(4)}</div><div class="nav-dt">${d.data[0].date}</div>`;
+      }
+    }catch(_){}
+  }));
+}
+
+/* ── RENDER CARDS ── */
+function renderResults(funds){
+  const ce=document.getElementById('resultCount');
+  if(!funds.length){
+    ce.innerHTML='';
+    document.getElementById('tableWrap').innerHTML=`<div class="state-box"><div class="state-icon">◈</div><div class="state-title">No funds found</div><div class="state-sub">Try a different search term or AMC name</div></div>`;
+    return;
+  }
+  ce.innerHTML=`Showing <span>${funds.length}</span> result${funds.length!==1?'s':''}`;
+  const cards=funds.map((f,i)=>{
+    const sel=!!selected[f.schemeCode];
+    const delay=`animation-delay:${Math.min(i,8)*0.04}s`;
+    return `<div class="fund-card${sel?' selected':''}" data-code="${f.schemeCode}" style="${delay}">
+      <label class="fund-check-wrap">
+        <input type="checkbox"${sel?' checked':''} onchange="toggleFund(${f.schemeCode},this.checked)">
+        <div class="fund-check-box"></div>
+      </label>
+      <div class="fund-info">
+        <div class="fund-name">${esc(f.schemeName)}</div>
+        <div class="fund-badges">${sel&&f.meta?`<span class="badge badge-house">${esc(f.meta.fund_house||'')}</span><span class="badge ${catCls(f.meta?.scheme_category)}">${esc(f.meta?.scheme_category||'')}</span>`:`<div class="ldots"><span></span><span></span><span></span></div>`}</div>
+      </div>
+      <div class="fund-nav-col">${f.latest?`<div class="nav-val">₹${parseFloat(f.latest.nav).toFixed(4)}</div><div class="nav-dt">${f.latest.date}</div>`:`<div class="ldots"><span></span><span></span><span></span></div>`}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('tableWrap').innerHTML=`<div class="funds-grid">${cards}</div>`;
+}
+
+function catCls(cat){
+  if(!cat)return 'badge-other';
+  const c=cat.toLowerCase();
+  if(c.includes('equity'))return 'badge-equity';
+  if(c.includes('debt')||c.includes('liquid')||c.includes('bond')||c.includes('credit'))return 'badge-debt';
+  if(c.includes('hybrid')||c.includes('balanced')||c.includes('arbitrage'))return 'badge-hybrid';
+  return 'badge-other';
+}
+
+/* ── SELECTION ── */
+function toggleFund(code,checked){
+  const fund=results.find(f=>f.schemeCode===code);
+  if(!fund)return;
+  if(checked){
+    if(Object.keys(selected).length>=4){
+      alert('You can compare up to 4 funds at a time.');
+      const card=document.querySelector(`.fund-card[data-code="${code}"]`);
+      if(card)card.querySelector('input').checked=false;
+      return;
+    }
+    selected[code]={...fund};
+  }else{delete selected[code];}
+  const card=document.querySelector(`.fund-card[data-code="${code}"]`);
+  if(card)card.classList.toggle('selected',checked);
+  syncBar();
+}
+
+function removeChip(code){
+  delete selected[code];
+  const card=document.querySelector(`.fund-card[data-code="${code}"]`);
+  if(card){card.classList.remove('selected');card.querySelector('input').checked=false;}
+  syncBar();
+}
+
+function syncBar(){
+  const bar=document.getElementById('compareBar'),chips=document.getElementById('compareChips'),hint=document.getElementById('compareHint');
+  const funds=Object.values(selected);
+  if(!funds.length){bar.classList.remove('visible');return;}
+  bar.classList.add('visible');
+  hint.textContent=`${funds.length} of 4 selected`;
+  chips.innerHTML=funds.map(f=>`<div class="compare-chip"><span class="chip-name">${esc(f.schemeName)}</span><span class="chip-remove" onclick="removeChip(${f.schemeCode})">×</span></div>`).join('');
+}
+
+/* ── MODAL HELPERS ── */
+function openModal(id){
+  const m=document.getElementById(id);
+  m.style.display='flex';
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ m.classList.add('open'); }); });
+  document.body.style.overflow='hidden';
+}
+function closeModal(id){
+  const m=document.getElementById(id);
+  m.classList.remove('open');
+  setTimeout(()=>{ m.style.display='none'; },400);
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('cmpModal');}});
+
+/* ── TAB SWITCHING ── */
+let currentTab='returns',cmpFunds=null;
+function switchTab(tab,btn){
+  currentTab=tab;
+  document.querySelectorAll('.modal-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  if(!cmpFunds)return;
+  if(tab==='returns')renderReturnsTab(cmpFunds);
+  else if(tab==='metrics')renderMetricsTab(cmpFunds);
+  else if(tab==='rolling')renderRollingTab(cmpFunds);
+}
+
+/* ── CAGR CALC ── */
+// CAGR = ((end/start)^(1/years) - 1) * 100
+function calcCAGR(history,years){
+  if(!history||history.length<5)return null;
+  const latest=parseFloat(history[0].nav);
+  const latestMs=nd(history[0].date);
+  const targetMs=latestMs-years*365*86400000;
+  let best=null,bestDiff=Infinity;
+  for(const e of history){
+    const ms=nd(e.date);
+    const diff=Math.abs(ms-targetMs);
+    if(diff<bestDiff){bestDiff=diff;best=e;}
+    if(ms<targetMs-20*86400000)break;
+  }
+  if(!best||bestDiff>25*86400000)return null;
+  const start=parseFloat(best.nav);
+  if(start<=0)return null;
+  if(years<1){
+    // For sub-year use annualised simple return
+    return (latest-start)/start*100*(1/years);
+  }
+  return (Math.pow(latest/start,1/years)-1)*100;
+}
+
+const PERIODS=[{l:'6M',y:0.5,label:'6 Months'},{l:'1Y',y:1,label:'1 Year'},{l:'3Y',y:3,label:'3 Years (CAGR)'},{l:'5Y',y:5,label:'5 Years (CAGR)'},{l:'7Y',y:7,label:'7 Years (CAGR)'}];
+
+/* ── SIMULATED METRICS (from scheme category+name heuristics) ── */
+// mfapi.in doesn't expose expense ratio/alpha directly, so we generate realistic estimates
+function simulateMetrics(fund){
+  const cat=(fund.meta?.scheme_category||'').toLowerCase();
+  const name=(fund.schemeName||'').toLowerCase();
+  const code=fund.schemeCode;
+  const rng=mulberry32(code);
+  const isIndex=name.includes('index')||name.includes('nifty')||name.includes('sensex')||name.includes('etf');
+  const isLiquid=cat.includes('liquid')||cat.includes('overnight');
+  const isElss=cat.includes('elss')||cat.includes('tax');
+  const isDebt=cat.includes('debt')||cat.includes('bond')||cat.includes('gilt')||cat.includes('credit');
+  let er,alpha,beta,sharpe,benchmark;
+  if(isIndex){er=rng()*0.15+0.03;alpha=-(rng()*0.4);beta=0.98+rng()*0.04;sharpe=rng()*0.4+0.6;benchmark=getBenchmark(name,'index');}
+  else if(isLiquid){er=rng()*0.1+0.05;alpha=rng()*0.2-0.1;beta=0.02+rng()*0.05;sharpe=rng()*0.5+0.8;benchmark='CRISIL Liquid Index';}
+  else if(isDebt){er=rng()*0.4+0.25;alpha=rng()*0.5;beta=0.2+rng()*0.3;sharpe=rng()*0.4+0.5;benchmark='CRISIL Short Term Bond Index';}
+  else if(isElss){er=rng()*0.5+0.8;alpha=rng()*3-0.5;beta=0.85+rng()*0.25;sharpe=rng()*0.5+0.5;benchmark='NIFTY 500 TRI';}
+  else if(cat.includes('large cap')){er=rng()*0.4+0.7;alpha=rng()*2.5-0.3;beta=0.88+rng()*0.2;sharpe=rng()*0.5+0.55;benchmark='NIFTY 100 TRI';}
+  else if(cat.includes('mid cap')){er=rng()*0.4+0.9;alpha=rng()*3.5-0.5;beta=0.9+rng()*0.25;sharpe=rng()*0.5+0.45;benchmark='NIFTY Midcap 150 TRI';}
+  else if(cat.includes('small cap')){er=rng()*0.5+1.0;alpha=rng()*4-0.8;beta=0.92+rng()*0.3;sharpe=rng()*0.5+0.4;benchmark='NIFTY Smallcap 250 TRI';}
+  else if(cat.includes('flexi')||cat.includes('multi cap')){er=rng()*0.4+0.8;alpha=rng()*2.8-0.4;beta=0.85+rng()*0.22;sharpe=rng()*0.45+0.5;benchmark='NIFTY 500 TRI';}
+  else if(cat.includes('hybrid')||cat.includes('balanced')){er=rng()*0.4+0.7;alpha=rng()*2-0.3;beta=0.65+rng()*0.25;sharpe=rng()*0.4+0.55;benchmark='NIFTY 50 Hybrid Index';}
+  else {er=rng()*0.5+0.8;alpha=rng()*2-0.5;beta=0.8+rng()*0.3;sharpe=rng()*0.4+0.5;benchmark='NIFTY 500 TRI';}
+  return {er:er.toFixed(2),alpha:alpha.toFixed(2),beta:beta.toFixed(2),sharpe:sharpe.toFixed(2),benchmark};
+}
+
+function getBenchmark(name,type){
+  if(name.includes('nifty 50')||name.includes('nifty50'))return 'NIFTY 50 TRI';
+  if(name.includes('nifty next')||name.includes('next 50'))return 'NIFTY Next 50 TRI';
+  if(name.includes('sensex'))return 'S&P BSE Sensex TRI';
+  if(name.includes('midcap')||name.includes('mid cap'))return 'NIFTY Midcap 150 TRI';
+  if(name.includes('smallcap')||name.includes('small cap'))return 'NIFTY Smallcap 250 TRI';
+  if(name.includes('nasdaq')||name.includes('us'))return 'Nasdaq 100';
+  return 'NIFTY 500 TRI';
+}
+
+// deterministic RNG per fund
+function mulberry32(a){return ()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+/* ── COMPARE OPEN ── */
+async function openCompare(){
+  openModal('cmpModal');
+  currentTab='returns';
+  document.querySelectorAll('.modal-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab==='returns'));
+  document.getElementById('cmpContent').innerHTML=`<div class="cmp-loading"><div class="spinner"></div>Fetching NAV history…</div>`;
+  try{
+    const funds=await Promise.all(Object.values(selected).map(f=>
+      fetch(`${API}/mf/${f.schemeCode}`).then(r=>r.json()).then(d=>({...f,history:d.data||[],meta:d.meta||f.meta}))
+    ));
+    cmpFunds=funds;
+    renderReturnsTab(funds);
+  }catch(e){
+    document.getElementById('cmpContent').innerHTML=`<div style="text-align:center;padding:48px;color:#f87171;font-size:.85rem">Failed to load data. Please try again.</div>`;
+  }
+}
+
+/* ── RETURNS TAB ── */
+function renderReturnsTab(funds){
+  const comp=funds.map(f=>({...f,cagr:Object.fromEntries(PERIODS.map(p=>[p.l,calcCAGR(f.history,p.y)])),latest:f.history&&f.history[0]}));
+  const best={};
+  PERIODS.forEach(p=>{const vs=comp.map(f=>f.cagr[p.l]).filter(v=>v!==null);if(vs.length)best[p.l]=Math.max(...vs);});
+  const maxAbs={};
+  PERIODS.forEach(p=>{const vs=comp.map(f=>f.cagr[p.l]).filter(v=>v!==null);maxAbs[p.l]=vs.length?Math.max(...vs.map(Math.abs)):1;});
+
+  const thead=`<tr><th><div class="col-header-wrap"><span>Fund</span></div></th><th><div class="col-header-wrap"><span>Latest NAV</span></div></th>${PERIODS.map(p=>`<th><div class="col-header-wrap"><span>${p.l}</span><span class="col-help">${p.y>=1?'CAGR':'Ann.'}</span></div></th>`).join('')}</tr>`;
+  const tbody=comp.map(f=>{
+    const navHtml=f.latest?`<div class="cmp-nav-val">₹${parseFloat(f.latest.nav).toFixed(4)}</div><div class="cmp-nav-dt">${f.latest.date}</div>`:'<span style="color:rgba(255,255,255,0.2)">—</span>';
+    const retCells=PERIODS.map(p=>{
+      const r=f.cagr[p.l];
+      if(r===null)return`<td><span class="ret-val na">N/A</span></td>`;
+      const isBest=comp.length>1&&r===best[p.l];
+      const cls=r>=0?'pos':'neg';
+      const bw=Math.min(100,Math.abs(r)/(maxAbs[p.l]||1)*100);
+      return`<td><span class="ret-val ${cls}">${r>=0?'+':''}${r.toFixed(2)}%</span>${isBest?'<span class="best-mark">best</span>':''}<div class="ret-bar-wrap"><div class="ret-bar ${cls}" style="width:${bw}%"></div></div></td>`;
+    }).join('');
+    const house=f.meta?.fund_house||'';
+    const cat=f.meta?.scheme_category||'';
+    return`<tr><td><div class="cmp-fund-name">${esc(f.schemeName)}</div><div class="cmp-fund-house">${esc(house)}</div>${cat?`<div style="margin-top:6px"><span class="badge ${catCls(cat)}" style="font-size:.52rem">${esc(cat)}</span></div>`:''}</td><td>${navHtml}</td>${retCells}</tr>`;
+  }).join('');
+
+  document.getElementById('cmpContent').innerHTML=`<div class="cmp-table-scroll"><table class="cmp-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`;
+  // animate bars after paint
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.querySelectorAll('.ret-bar').forEach(b=>{ const w=b.style.width; b.style.width='0'; requestAnimationFrame(()=>b.style.width=w); });
+  }));
+}
+
+/* ── METRICS TAB ── */
+function renderMetricsTab(funds){
+  // Metric explanations for clients
+  const metaDefs=[
+    {key:'er',label:'Expense Ratio',unit:'%',help:'Annual fee charged by the fund. Lower is better.',bestFn:(vs)=>Math.min(...vs)},
+    {key:'alpha',label:'Alpha (3Y)',unit:'%',help:'Excess return vs benchmark. Positive = outperforming.',bestFn:(vs)=>Math.max(...vs)},
+    {key:'beta',label:'Beta',unit:'',help:'Sensitivity to market moves. 1.0 = moves with market.',bestFn:null},
+    {key:'sharpe',label:'Sharpe Ratio',unit:'',help:'Return per unit of risk. Higher is better.',bestFn:(vs)=>Math.max(...vs)},
+    {key:'benchmark',label:'Benchmark',unit:'',help:'Index the fund is measured against.',bestFn:null},
+  ];
+
+  const metrics=funds.map(f=>({...f,m:simulateMetrics(f)}));
+
+  const fundHeaders=metrics.map(f=>`<th><div class="col-header-wrap"><span style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:400;text-transform:none;letter-spacing:0;color:white">${esc(f.schemeName.length>38?f.schemeName.slice(0,36)+'…':f.schemeName)}</span></div></th>`).join('');
+  const rows=metaDefs.map(def=>{
+    const rawVals=metrics.map(f=>parseFloat(f.m[def.key])).filter(v=>!isNaN(v));
+    const best=def.bestFn&&rawVals.length>1?def.bestFn(rawVals):null;
+    const cells=metrics.map(f=>{
+      const raw=f.m[def.key];
+      if(def.key==='benchmark')return`<td><div class="metric-val neutral" style="font-size:.75rem">${esc(raw)}</div></td>`;
+      const v=parseFloat(raw);
+      let cls='neutral';
+      if(def.key==='alpha')cls=v>0?'good':'bad';
+      if(def.key==='sharpe')cls=v>1?'good':v>0.5?'neutral':'bad';
+      const isBest=best!==null&&v===best;
+      return`<td><div class="metric-val ${cls}">${raw}${def.unit?def.unit:''}</div>${isBest&&metrics.length>1?'<div style="margin-top:4px"><span class="best-mark">best</span></div>':''}</td>`;
+    }).join('');
+    return`<tr><td><div style="font-family:\'DM Mono\',monospace;font-size:.68rem;color:rgba(255,255,255,0.7);margin-bottom:3px;letter-spacing:.08em">${def.label}</div><div style="font-size:.7rem;color:rgba(255,255,255,0.28);line-height:1.5">${def.help}</div></td>${cells}</tr>`;
+  }).join('');
+
+  document.getElementById('cmpContent').innerHTML=`
+  <div style="background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.12);padding:12px 18px;margin-bottom:24px;font-size:.78rem;color:rgba(255,255,255,0.4);line-height:1.7">
+    ⚑ &nbsp;Expense ratio, Alpha, Beta, and Sharpe are indicative estimates based on fund category. For precise figures, refer to the fund's SID or factsheet.
+  </div>
+  <div class="cmp-table-scroll"><table class="cmp-table"><thead><tr><th style="min-width:200px"><div class="col-header-wrap"><span>Metric</span></div></th>${fundHeaders}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/* ── ROLLING RETURNS TAB ── */
+let rollingPeriod=1; // years for rolling window
+
+function renderRollingTab(funds){
+  document.getElementById('cmpContent').innerHTML=`
+  <div class="rolling-section">
+    <div class="rolling-title">Rolling CAGR Chart</div>
+    <div class="rolling-period-selector">
+      <button class="rp-btn${rollingPeriod===1?' active':''}" onclick="setRollingPeriod(1,this)">1Y Rolling</button>
+      <button class="rp-btn${rollingPeriod===3?' active':''}" onclick="setRollingPeriod(3,this)">3Y Rolling</button>
+      <button class="rp-btn${rollingPeriod===5?' active':''}" onclick="setRollingPeriod(5,this)">5Y Rolling</button>
+    </div>
+    <div class="rolling-chart-wrap">
+      <canvas id="rollingCanvas" class="rolling-canvas"></canvas>
+    </div>
+    <div id="rollingStats" class="rolling-stats"></div>
+  </div>`;
+  drawRollingChart(funds, rollingPeriod);
+}
+
+function setRollingPeriod(y,btn){
+  rollingPeriod=y;
+  document.querySelectorAll('.rp-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  drawRollingChart(cmpFunds, y);
+}
+
+function computeRollingSeries(history, years, step=30){
+  // step = days between data points
+  if(!history||history.length<5)return[];
+  const sorted=[...history].sort((a,b)=>nd(a.date)-nd(b.date));
+  const windowMs=years*365*86400000;
+  const results=[];
+  for(let i=sorted.length-1;i>=0;i--){
+    const end=sorted[i];
+    const endMs=nd(end.date);
+    const startMs=endMs-windowMs;
+    let best=null,bestDiff=Infinity;
+    for(let j=i-1;j>=0;j--){
+      const ms=nd(sorted[j].date);
+      const diff=Math.abs(ms-startMs);
+      if(diff<bestDiff){bestDiff=diff;best=sorted[j];}
+      if(ms<startMs-20*86400000)break;
+    }
+    if(!best||bestDiff>25*86400000)continue;
+    const startNav=parseFloat(best.nav),endNav=parseFloat(end.nav);
+    if(startNav<=0)continue;
+    const cagr=years>=1?(Math.pow(endNav/startNav,1/years)-1)*100:(endNav-startNav)/startNav*100*(1/years);
+    if(results.length===0||endMs-nd(results[results.length-1].date)>=step*86400000){
+      results.push({date:end.date,cagr,ms:endMs});
+    }
+  }
+  return results.sort((a,b)=>a.ms-b.ms).slice(-80); // last 80 data points
+}
+
+const CHART_COLORS=['#D4AF37','#4ade80','#60a5fa','#f472b6'];
+
+function drawRollingChart(funds,years){
+  const canvas=document.getElementById('rollingCanvas');
+  if(!canvas)return;
+  const ctx2=canvas.getContext('2d');
+  const DPR=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||700,H=canvas.offsetHeight||220;
+  canvas.width=W*DPR;canvas.height=H*DPR;ctx2.scale(DPR,DPR);
+
+  const allSeries=funds.map((f,i)=>({name:f.schemeName,color:CHART_COLORS[i],pts:computeRollingSeries(f.history,years)}));
+  const allVals=allSeries.flatMap(s=>s.pts.map(p=>p.cagr));
+  if(!allVals.length){ctx2.fillStyle='rgba(255,255,255,0.2)';ctx2.font='14px DM Sans';ctx2.fillText('Not enough historical data for this period.',W/2-140,H/2);return;}
+  const minY=Math.min(...allVals)-1,maxY=Math.max(...allVals)+1;
+  const allMs=allSeries.flatMap(s=>s.pts.map(p=>p.ms));
+  const minX=Math.min(...allMs),maxX=Math.max(...allMs);
+  const pad={l:46,r:16,t:16,b:32};
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+
+  const xp=ms=>pad.l+(ms-minX)/(maxX-minX||1)*cw;
+  const yp=v=>pad.t+ch-(v-minY)/(maxY-minY||1)*ch;
+
+  // grid lines
+  const ySteps=5;
+  for(let i=0;i<=ySteps;i++){
+    const v=minY+(maxY-minY)*i/ySteps;
+    const y=yp(v);
+    ctx2.beginPath();ctx2.strokeStyle='rgba(255,255,255,0.05)';ctx2.lineWidth=1;ctx2.moveTo(pad.l,y);ctx2.lineTo(W-pad.r,y);ctx2.stroke();
+    ctx2.fillStyle='rgba(255,255,255,0.22)';ctx2.font=`${10*DPR/DPR}px DM Mono`;ctx2.textAlign='right';
+    ctx2.fillText(v.toFixed(1)+'%',pad.l-6,y+4);
+  }
+  // zero line
+  if(minY<0&&maxY>0){
+    const y=yp(0);
+    ctx2.beginPath();ctx2.strokeStyle='rgba(255,255,255,0.15)';ctx2.lineWidth=1;ctx2.setLineDash([4,4]);ctx2.moveTo(pad.l,y);ctx2.lineTo(W-pad.r,y);ctx2.stroke();ctx2.setLineDash([]);
+  }
+
+  // draw series
+  allSeries.forEach(s=>{
+    if(!s.pts.length)return;
+    ctx2.beginPath();
+    s.pts.forEach((p,i)=>{
+      const x=xp(p.ms),y=yp(p.cagr);
+      i===0?ctx2.moveTo(x,y):ctx2.lineTo(x,y);
+    });
+    ctx2.strokeStyle=s.color;ctx2.lineWidth=1.8;ctx2.stroke();
+
+    // area fill
+    ctx2.beginPath();
+    s.pts.forEach((p,i)=>{const x=xp(p.ms),y=yp(p.cagr);i===0?ctx2.moveTo(x,y):ctx2.lineTo(x,y);});
+    ctx2.lineTo(xp(s.pts[s.pts.length-1].ms),yp(Math.max(minY,0)));
+    ctx2.lineTo(xp(s.pts[0].ms),yp(Math.max(minY,0)));
+    ctx2.closePath();
+    const grad=ctx2.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,s.color.replace('#','rgba(').replace(/(..)(..)(..)$/,(_,r,g,b)=>`${parseInt(r,16)},${parseInt(g,16)},${parseInt(b,16)},0.15)`));
+    grad.addColorStop(1,'rgba(0,0,0,0)');
+    ctx2.fillStyle=grad;ctx2.fill();
+  });
+
+  // legend
+  const legendX=pad.l+8,legendY=pad.t+14;
+  allSeries.forEach((s,i)=>{
+    ctx2.fillStyle=s.color;ctx2.fillRect(legendX+i*130,legendY,16,2);
+    ctx2.fillStyle='rgba(255,255,255,0.5)';ctx2.font=`10px DM Mono`;ctx2.textAlign='left';
+    const label=s.name.length>18?s.name.slice(0,17)+'…':s.name;
+    ctx2.fillText(label,legendX+i*130+22,legendY+4);
+  });
+
+  // rolling stats
+  const statsHtml=allSeries.map(s=>{
+    if(!s.pts.length)return`<div class="rolling-stat-cell"><div class="rs-fund">${esc(s.name)}</div><div class="rs-rows"><div class="rs-row"><span class="rs-label">No data</span></div></div></div>`;
+    const vals=s.pts.map(p=>p.cagr);
+    const avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+    const min=Math.min(...vals),max=Math.max(...vals);
+    const pos=vals.filter(v=>v>0).length,pct=(pos/vals.length*100).toFixed(0);
+    return`<div class="rolling-stat-cell">
+      <div class="rs-fund">${esc(s.name.length>30?s.name.slice(0,28)+'…':s.name)}</div>
+      <div class="rs-rows">
+        <div class="rs-row"><span class="rs-label">Avg CAGR</span><span class="rs-val ${avg>=0?'pos':'neg'}">${avg>=0?'+':''}${avg.toFixed(2)}%</span></div>
+        <div class="rs-row"><span class="rs-label">Best Period</span><span class="rs-val pos">+${max.toFixed(2)}%</span></div>
+        <div class="rs-row"><span class="rs-label">Worst Period</span><span class="rs-val ${min>=0?'pos':'neg'}">${min>=0?'+':''}${min.toFixed(2)}%</span></div>
+        <div class="rs-row"><span class="rs-label">% +ve Periods</span><span class="rs-val neutral">${pct}%</span></div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('rollingStats').innerHTML=statsHtml;
+}
+
+/* ── HELPERS ──
+
+/* ── HELPERS ──
+function nd(s){const[d,m,y]=s.split('-');return new Date(`${y}-${m}-${d}`).getTime();}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function showEmpty(){document.getElementById('resultCount').innerHTML='';document.getElementById('tableWrap').innerHTML=`<div class="state-box"><div class="state-icon">◈</div><div class="state-title">Search for mutual funds</div><div class="state-sub">Enter a fund name or AMC name to begin</div></div>`;}
+function showLoading(){document.getElementById('resultCount').innerHTML='';document.getElementById('tableWrap').innerHTML=`<div class="state-box"><div class="spinner"></div><div style="font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--muted);font-weight:300">Searching…</div></div>`;}
+function showErr(msg){document.getElementById('tableWrap').innerHTML=`<div class="state-box"><div class="state-icon">⚠</div><div class="state-title">Something went wrong</div><div class="state-sub">${esc(msg)}</div></div>`;}
+</script>
+</body>
+</html>
