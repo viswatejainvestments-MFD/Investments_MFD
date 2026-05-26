@@ -8,21 +8,14 @@
 
 <!-- Firebase SDKs -->
 <script type="module">
-  import { initializeApp }                    from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-  import { getAnalytics }                     from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
+  import { initializeApp }       from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+  import { getAnalytics }        from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
   import {
     getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    sendEmailVerification,
     RecaptchaVerifier,
     signInWithPhoneNumber,
-    updateProfile,
-    updatePassword,
-    onAuthStateChanged,
-    PhoneAuthProvider,
-    signInWithCredential
-  }                                           from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+    onAuthStateChanged
+  }                              from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey:            "AIzaSyA5GXozMPvV8yuD1uLPUixFF6pxva_-Vz4",
@@ -39,24 +32,17 @@
   const auth = getAuth(app);
   auth.languageCode = 'en';
 
-  /* ─── expose to global scope so inline handlers can reach them ─── */
+  /* Expose to global scope */
   window._ywAuth = auth;
   window._ywFB  = {
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    sendEmailVerification,
     RecaptchaVerifier,
     signInWithPhoneNumber,
-    updateProfile,
-    updatePassword,
-    onAuthStateChanged,
-    PhoneAuthProvider,
-    signInWithCredential
+    onAuthStateChanged
   };
 
   /* Redirect if already signed in */
   onAuthStateChanged(auth, user => {
-    if (user && user.emailVerified) {
+    if (user) {
       window.location.href = 'index.html';
     }
   });
@@ -217,7 +203,6 @@ body:has(a:hover)      #cursor-ring { width:52px; height:52px; }
 }
 @keyframes accentGrow { to { transform:scaleX(1); } }
 
-/* Corner ornament */
 .auth-glass::after {
   content:''; position:absolute; bottom:-1px; right:-1px;
   width:60px; height:60px;
@@ -246,7 +231,7 @@ body:has(a:hover)      #cursor-ring { width:52px; height:52px; }
   line-height:1.75; margin-bottom:32px;
 }
 
-/* ─── STEP PROGRESS ─── */
+/* ─── STEP PROGRESS (2 steps only) ─── */
 .step-nav {
   display:flex; align-items:center; gap:0;
   margin-bottom:32px; position:relative;
@@ -327,34 +312,14 @@ body:has(a:hover)      #cursor-ring { width:52px; height:52px; }
 .field.valid  .field-input { border-color:rgba(111,191,142,.35); }
 .field.error  .field-input { border-color:rgba(224,112,112,.5); box-shadow:0 0 0 4px rgba(224,112,112,.05); }
 
-/* Password suffix toggle */
-.field-suffix {
-  position:absolute; right:14px; top:50%; transform:translateY(-50%);
-  cursor:pointer; color:rgba(255,255,255,.25);
-  transition:color .3s; user-select:none; font-size:.75rem;
-  font-family:'DM Mono',monospace; letter-spacing:.06em; z-index:2;
+/* Field error message */
+.field-err {
+  font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.1em;
+  color:var(--error); margin-top:4px; padding-left:2px;
+  max-height:0; overflow:hidden; opacity:0;
+  transition:max-height .3s, opacity .3s;
 }
-.field-suffix:hover { color:var(--gold); }
-
-/* OTP row */
-.otp-row {
-  display:flex; gap:10px; justify-content:center; margin-bottom:14px;
-}
-.otp-cell {
-  width:48px; height:58px; text-align:center;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.09);
-  color:white; font-family:'Cormorant Garamond',serif;
-  font-size:1.8rem; font-weight:300; outline:none; border-radius:0;
-  transition: border-color .3s, background .3s, box-shadow .3s;
-  caret-color:var(--gold);
-}
-.otp-cell:focus {
-  border-color:rgba(212,175,55,.55);
-  background:rgba(212,175,55,.04);
-  box-shadow:0 0 0 4px rgba(212,175,55,.08);
-}
-.otp-cell.filled { border-color:rgba(212,175,55,.3); }
+.field.error .field-err { max-height:20px; opacity:1; }
 
 /* Phone prefix */
 .phone-wrap { display:flex; }
@@ -372,29 +337,25 @@ body:has(a:hover)      #cursor-ring { width:52px; height:52px; }
 .phone-wrap .field-input { padding-left:10px; }
 .phone-wrap .field-label { left:calc(52px + 10px); }
 
-/* Field error message */
-.field-err {
-  font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.1em;
-  color:var(--error); margin-top:4px; padding-left:2px;
-  max-height:0; overflow:hidden; opacity:0;
-  transition:max-height .3s, opacity .3s;
+/* OTP row */
+.otp-row {
+  display:flex; gap:10px; justify-content:center; margin-bottom:20px;
 }
-.field.error .field-err { max-height:20px; opacity:1; }
-
-/* Password strength bar */
-.pw-strength { margin-top:8px; }
-.pw-strength-track {
-  height:3px; background:rgba(255,255,255,.07); border-radius:2px;
-  overflow:hidden; margin-bottom:5px;
+.otp-cell {
+  width:48px; height:58px; text-align:center;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.09);
+  color:white; font-family:'Cormorant Garamond',serif;
+  font-size:1.8rem; font-weight:300; outline:none; border-radius:0;
+  transition: border-color .3s, background .3s, box-shadow .3s;
+  caret-color:var(--gold);
 }
-.pw-strength-fill {
-  height:100%; border-radius:2px; width:0;
-  transition:width .4s var(--easing), background .4s;
+.otp-cell:focus {
+  border-color:rgba(212,175,55,.55);
+  background:rgba(212,175,55,.04);
+  box-shadow:0 0 0 4px rgba(212,175,55,.08);
 }
-.pw-strength-label {
-  font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.12em;
-  color:rgba(255,255,255,.28); text-transform:uppercase;
-}
+.otp-cell.filled { border-color:rgba(212,175,55,.3); }
 
 /* ─── BUTTONS ─── */
 .btn-primary {
@@ -452,43 +413,6 @@ body:has(a:hover)      #cursor-ring { width:52px; height:52px; }
 .helper-link:hover { color:var(--gold); }
 .helper-link:disabled { opacity:.35; pointer-events:none; }
 
-/* ─── DIVIDER ─── */
-.auth-divider {
-  display:flex; align-items:center; gap:14px; margin:22px 0;
-}
-.auth-divider-line { flex:1; height:1px; background:rgba(255,255,255,.06); }
-.auth-divider-text {
-  font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.2em;
-  text-transform:uppercase; color:rgba(255,255,255,.2);
-}
-
-/* ─── TOGGLE MODE (sign in / sign up) ─── */
-.mode-toggle {
-  margin-top:18px; text-align:center;
-  font-size:.78rem; color:rgba(255,255,255,.28);
-}
-.mode-toggle button {
-  background:none; border:none; color:var(--gold); cursor:none;
-  font-family:inherit; font-size:inherit; font-weight:500;
-  text-decoration:underline; transition:color .3s;
-}
-.mode-toggle button:hover { color:var(--gold-light); }
-
-/* ─── PASSKEY BUTTON ─── */
-.passkey-btn {
-  width:100%; padding:14px 24px;
-  background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.09);
-  color:rgba(255,255,255,.55); font-family:'DM Sans',sans-serif;
-  font-size:.75rem; letter-spacing:.08em;
-  cursor:none; display:flex; align-items:center; justify-content:center; gap:10px;
-  transition:border-color .3s, background .3s, color .3s;
-}
-.passkey-btn:hover {
-  border-color:rgba(212,175,55,.3); background:rgba(212,175,55,.04); color:white;
-}
-.passkey-btn svg { opacity:.6; transition:opacity .3s; }
-.passkey-btn:hover svg { opacity:1; }
-
 /* ─── TOAST ─── */
 .toast-wrap {
   position:fixed; bottom:32px; left:50%; transform:translateX(-50%);
@@ -513,40 +437,6 @@ body:has(a:hover)      #cursor-ring { width:52px; height:52px; }
 
 /* ─── RECAPTCHA badge hide ─── */
 .grecaptcha-badge { visibility:hidden !important; }
-
-/* ─── SUCCESS CARD ─── */
-.success-card {
-  text-align:center; padding:10px 0;
-  display:none;
-}
-.success-card.show { display:block; animation:stepFade .6s var(--easing); }
-.success-ring {
-  width:72px; height:72px; border:1px solid rgba(212,175,55,.2);
-  border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
-  margin:0 auto 22px; position:relative;
-}
-.success-ring::before {
-  content:''; position:absolute; inset:-8px;
-  border:1px solid rgba(212,175,55,.1); border-radius:50%;
-  animation:ringPulse 2s ease-in-out infinite;
-}
-@keyframes ringPulse { 0%,100%{transform:scale(1);opacity:.6;} 50%{transform:scale(1.15);opacity:.15;} }
-.success-check { width:32px; height:32px; }
-.check-path {
-  stroke:var(--gold-light); stroke-width:2; fill:none;
-  stroke-dasharray:52; stroke-dashoffset:52; stroke-linecap:round;
-  transition:stroke-dashoffset .7s .3s var(--easing);
-}
-.success-card.show .check-path { stroke-dashoffset:0; }
-.success-title {
-  font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300;
-  color:white; margin-bottom:8px;
-}
-.success-title em { font-style:italic; color:var(--gold-light); }
-.success-sub {
-  font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.18em;
-  text-transform:uppercase; color:rgba(255,255,255,.25); margin-bottom:28px;
-}
 
 /* ─── FOOTER ─── */
 .auth-footer {
@@ -599,210 +489,89 @@ body:has(a:hover)      #cursor-ring { width:52px; height:52px; }
 
     <div class="auth-badge">
       <div class="auth-badge-line"></div>
-      <div class="auth-badge-text" id="badge-text">New Account</div>
+      <div class="auth-badge-text" id="badge-text">Sign In</div>
       <div class="auth-badge-line"></div>
     </div>
 
     <div class="auth-glass">
 
       <!-- Header -->
-      <div class="auth-eyebrow" id="auth-eyebrow">Create Account</div>
+      <div class="auth-eyebrow" id="auth-eyebrow">Secure Access</div>
       <h1 class="auth-title" id="auth-title">Your wealth journey<br>starts <em>here.</em></h1>
-      <p class="auth-sub" id="auth-sub">Three quick steps — then you're in.</p>
+      <p class="auth-sub" id="auth-sub">Enter your mobile number to receive a one-time code.</p>
 
-      <!-- Step progress -->
+      <!-- Step progress — 2 steps -->
       <div class="step-nav" id="step-nav">
         <div class="step-pip active" id="pip-1"><span>1</span></div>
         <div class="step-connector" id="con-1"><div class="fill"></div></div>
         <div class="step-pip" id="pip-2"><span>2</span></div>
-        <div class="step-connector" id="con-2"><div class="fill"></div></div>
-        <div class="step-pip" id="pip-3"><span>3</span></div>
       </div>
 
-      <!-- ═══ STEP 1 — Name + Email + Password ═══ -->
+      <!-- ═══ STEP 1 — Name + Phone ═══ -->
       <div class="step-block active" id="step-1">
         <div class="field-group">
+
           <div class="field" id="f-name">
             <input type="text" class="field-input" id="inp-name" placeholder="Full Name" autocomplete="name">
             <label class="field-label" for="inp-name">Full Name</label>
             <div class="field-err">Please enter your full name</div>
           </div>
-          <div class="field" id="f-email">
-            <input type="email" class="field-input" id="inp-email" placeholder="Email Address" autocomplete="email">
-            <label class="field-label" for="inp-email">Email Address</label>
-            <div class="field-err">Please enter a valid email</div>
-          </div>
-          <div class="field" id="f-pw">
-            <input type="password" class="field-input" id="inp-pw" placeholder="Create Password" autocomplete="new-password">
-            <label class="field-label" for="inp-pw">Create Password</label>
-            <div class="field-suffix" id="pw-toggle" tabindex="-1">SHOW</div>
-            <div class="field-err">Min 8 chars, 1 number, 1 uppercase</div>
-          </div>
-        </div>
-        <!-- PW strength -->
-        <div class="pw-strength" id="pw-strength-wrap">
-          <div class="pw-strength-track">
-            <div class="pw-strength-fill" id="pw-fill"></div>
-          </div>
-          <div class="pw-strength-label" id="pw-label">—</div>
-        </div>
 
-        <div style="margin-top:20px;">
-          <button class="btn-primary" id="btn-step1">
-            <span class="btn-text">Continue to Verify</span>
-            <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
-              <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <div class="btn-spinner"></div>
-          </button>
-        </div>
-      </div>
-
-      <!-- ═══ STEP 2 — Phone OTP ═══ -->
-      <div class="step-block" id="step-2">
-        <p style="font-size:.82rem;color:rgba(255,255,255,.35);line-height:1.75;margin-bottom:20px;">
-          Enter your mobile number. We'll send a one-time code to verify it's really you.
-        </p>
-        <div class="field-group">
           <div class="field phone-wrap" id="f-phone">
             <div class="phone-prefix">🇮🇳 +91</div>
-            <input type="tel" class="field-input" id="inp-phone" placeholder="Mobile Number"
-                   autocomplete="tel" maxlength="10">
+            <input type="tel" class="field-input" id="inp-phone"
+                   placeholder="Mobile Number" autocomplete="tel" maxlength="10"
+                   inputmode="numeric">
             <label class="field-label" for="inp-phone">Mobile Number</label>
             <div class="field-err">Please enter a valid 10-digit number</div>
           </div>
+
         </div>
-        <!-- reCAPTCHA container (invisible) -->
+
+        <!-- reCAPTCHA invisible container -->
         <div id="recaptcha-container"></div>
 
-        <button class="btn-primary" id="btn-send-otp" style="margin-bottom:14px;">
+        <button class="btn-primary" id="btn-send-otp">
           <span class="btn-text">Send OTP</span>
           <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
             <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
           <div class="btn-spinner"></div>
         </button>
-
-        <!-- OTP entry (hidden until sent) -->
-        <div id="otp-entry" style="display:none;">
-          <p style="font-size:.75rem;color:rgba(255,255,255,.3);text-align:center;margin-bottom:14px;">
-            Enter the 6-digit code sent to +91 <span id="otp-phone-hint"></span>
-          </p>
-          <div class="otp-row" id="otp-row">
-            <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="0">
-            <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="1">
-            <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="2">
-            <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="3">
-            <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="4">
-            <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="5">
-          </div>
-
-          <button class="btn-primary" id="btn-verify-otp" style="margin-bottom:4px;">
-            <span class="btn-text">Verify &amp; Continue</span>
-            <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
-              <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <div class="btn-spinner"></div>
-          </button>
-
-          <div class="helper-row">
-            <button class="helper-link" id="btn-change-phone">Change number</button>
-            <button class="helper-link" id="btn-resend-otp" disabled>Resend in <span id="resend-timer">30</span>s</button>
-          </div>
-        </div>
       </div>
 
-      <!-- ═══ STEP 3 — Email Verification ═══ -->
-      <div class="step-block" id="step-3">
-        <div style="text-align:center;padding:8px 0;">
-          <div style="font-size:2.4rem;margin-bottom:18px;">📧</div>
-          <p style="font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:300;color:white;line-height:1.3;margin-bottom:10px;">
-            Check your inbox, <em style="color:var(--gold-light)">almost there.</em>
-          </p>
-          <p style="font-size:.8rem;color:rgba(255,255,255,.32);line-height:1.75;margin-bottom:24px;">
-            A verification link has been sent to<br>
-            <strong style="color:rgba(255,255,255,.7);" id="email-hint-display"></strong>
-          </p>
-          <button class="btn-primary" id="btn-check-verified" style="margin-bottom:10px;">
-            <span class="btn-text">I've Verified — Continue</span>
-            <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
-              <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <div class="btn-spinner"></div>
-          </button>
-          <div class="helper-row" style="justify-content:center;gap:24px;">
-            <button class="helper-link" id="btn-resend-email">Resend email</button>
-            <button class="helper-link" id="btn-back-step2">Go back</button>
-          </div>
-        </div>
-      </div>
+      <!-- ═══ STEP 2 — OTP Entry ═══ -->
+      <div class="step-block" id="step-2">
+        <p style="font-size:.82rem;color:rgba(255,255,255,.35);line-height:1.75;margin-bottom:6px;">
+          Enter the 6-digit code sent to
+        </p>
+        <p style="font-family:'DM Mono',monospace;font-size:.85rem;color:var(--gold-light);letter-spacing:.12em;margin-bottom:22px;" id="otp-phone-display">
+          +91 ••••••••••
+        </p>
 
-      <!-- ═══ SUCCESS / DONE ═══ -->
-      <div class="success-card" id="success-card">
-        <div class="success-ring">
-          <svg class="success-check" viewBox="0 0 36 36">
-            <path class="check-path" d="M9 19l7 7 11-14"/>
-          </svg>
-        </div>
-        <div class="success-title">Welcome to<br><em>Yours Wealth.</em></div>
-        <div class="success-sub">Account created &amp; verified</div>
-        <button class="btn-primary" id="btn-go-dashboard">
-          <span class="btn-text">Enter Dashboard</span>
-          <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
-            <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- ─── SIGN-IN MODE BLOCKS ─── -->
-      <div class="step-block" id="signin-block">
-        <div class="field-group">
-          <div class="field" id="f-si-email">
-            <input type="email" class="field-input" id="inp-si-email" placeholder="Email Address" autocomplete="email">
-            <label class="field-label" for="inp-si-email">Email Address</label>
-            <div class="field-err">Please enter a valid email</div>
-          </div>
-          <div class="field" id="f-si-pw">
-            <input type="password" class="field-input" id="inp-si-pw" placeholder="Password" autocomplete="current-password">
-            <label class="field-label" for="inp-si-pw">Password</label>
-            <div class="field-suffix" id="si-pw-toggle">SHOW</div>
-            <div class="field-err">Incorrect password</div>
-          </div>
+        <div class="otp-row" id="otp-row">
+          <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="0">
+          <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="1">
+          <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="2">
+          <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="3">
+          <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="4">
+          <input class="otp-cell" maxlength="1" type="tel" inputmode="numeric" data-idx="5">
         </div>
 
-        <div style="text-align:right;margin-bottom:18px;">
-          <button class="helper-link" id="btn-forgot" style="font-size:.62rem;">Forgot password?</button>
-        </div>
-
-        <button class="btn-primary" id="btn-signin" style="margin-bottom:14px;">
-          <span class="btn-text">Sign In</span>
+        <button class="btn-primary" id="btn-verify-otp" style="margin-bottom:4px;">
+          <span class="btn-text">Verify &amp; Enter Dashboard</span>
           <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
             <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
           <div class="btn-spinner"></div>
         </button>
 
-        <div class="auth-divider">
-          <div class="auth-divider-line"></div>
-          <div class="auth-divider-text">or</div>
-          <div class="auth-divider-line"></div>
+        <div class="helper-row">
+          <button class="helper-link" id="btn-change-phone">Change number</button>
+          <button class="helper-link" id="btn-resend-otp" disabled>
+            Resend in <span id="resend-timer">30</span>s
+          </button>
         </div>
-
-        <button class="passkey-btn" id="btn-passkey">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M4 20c0-4 3.58-7 8-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M17 14l1 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="19" cy="17" r="4" stroke="currentColor" stroke-width="1.2"/>
-          </svg>
-          Sign in with Passkey
-        </button>
-      </div>
-
-      <!-- Mode toggle -->
-      <div class="mode-toggle" id="mode-toggle">
-        Already have an account?
-        <button id="btn-mode-toggle">Sign In</button>
       </div>
 
     </div><!-- /auth-glass -->
@@ -815,424 +584,296 @@ body:has(a:hover)      #cursor-ring { width:52px; height:52px; }
 <!-- ═══════ SCRIPTS ═══════ -->
 <script>
 /* ─── CURSOR ─── */
-const dot = document.getElementById('cursor-dot');
+const dot  = document.getElementById('cursor-dot');
 const ring = document.getElementById('cursor-ring');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove', e=>{mx=e.clientX;my=e.clientY;});
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 (function animCursor(){
-  rx+=(mx-rx)*.18; ry+=(my-ry)*.18;
-  dot.style.left=mx+'px'; dot.style.top=my+'px';
-  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  rx += (mx - rx) * .18;
+  ry += (my - ry) * .18;
+  dot.style.left  = mx + 'px'; dot.style.top  = my + 'px';
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
   requestAnimationFrame(animCursor);
 })();
 
 /* ─── PARTICLES ─── */
-const cvs=document.getElementById('bg-canvas'),ctx2=cvs.getContext('2d');
-let W,H,pts=[];
-function resize2(){W=cvs.width=innerWidth;H=cvs.height=innerHeight;}
-resize2(); addEventListener('resize',resize2);
-class P{
-  constructor(){this.reset();}
-  reset(){this.x=Math.random()*W;this.y=Math.random()*H;this.sz=Math.random()*1.2+.3;this.vx=(Math.random()-.5)*.25;this.vy=-Math.random()*.3-.05;this.op=Math.random()*.35+.08;this.life=0;this.max=Math.random()*280+180;}
-  update(){this.x+=this.vx;this.y+=this.vy;this.life++;if(this.life>this.max||this.y<-8)this.reset();}
-  draw(){const t=this.life/this.max,a=this.op*(t<.1?t*10:t>.8?(1-t)*5:1);ctx2.globalAlpha=a;ctx2.fillStyle='rgba(212,175,55,1)';ctx2.beginPath();ctx2.arc(this.x,this.y,this.sz,0,6.28);ctx2.fill();}
+const cvs = document.getElementById('bg-canvas');
+const ctx2 = cvs.getContext('2d');
+let W, H, pts = [];
+function resize2(){ W = cvs.width = innerWidth; H = cvs.height = innerHeight; }
+resize2(); addEventListener('resize', resize2);
+class P {
+  constructor(){ this.reset(); }
+  reset(){
+    this.x   = Math.random() * W;
+    this.y   = Math.random() * H;
+    this.sz  = Math.random() * 1.2 + .3;
+    this.vx  = (Math.random() - .5) * .25;
+    this.vy  = -Math.random() * .3 - .05;
+    this.op  = Math.random() * .35 + .08;
+    this.life = 0;
+    this.max = Math.random() * 280 + 180;
+  }
+  update(){ this.x += this.vx; this.y += this.vy; this.life++; if(this.life > this.max || this.y < -8) this.reset(); }
+  draw(){
+    const t = this.life / this.max;
+    const a = this.op * (t < .1 ? t * 10 : t > .8 ? (1 - t) * 5 : 1);
+    ctx2.globalAlpha = a;
+    ctx2.fillStyle = 'rgba(212,175,55,1)';
+    ctx2.beginPath(); ctx2.arc(this.x, this.y, this.sz, 0, 6.28); ctx2.fill();
+  }
 }
-for(let i=0;i<70;i++){const p=new P();p.life=Math.random()*p.max;pts.push(p);}
-(function animP(){ctx2.clearRect(0,0,W,H);pts.forEach(p=>{p.update();p.draw();});ctx2.globalAlpha=1;requestAnimationFrame(animP);})();
+for(let i = 0; i < 70; i++){ const p = new P(); p.life = Math.random() * p.max; pts.push(p); }
+(function animP(){
+  ctx2.clearRect(0, 0, W, H);
+  pts.forEach(p => { p.update(); p.draw(); });
+  ctx2.globalAlpha = 1;
+  requestAnimationFrame(animP);
+})();
 
 /* ─── TOAST ─── */
-function toast(msg, type='info'){
-  const tw=document.getElementById('toast-wrap');
-  const t=document.createElement('div');
-  t.className='toast '+(type==='success'?'success':type==='error'?'error':'');
-  t.innerHTML=`<div class="toast-dot"></div><span>${msg}</span>`;
+function toast(msg, type = 'info'){
+  const tw = document.getElementById('toast-wrap');
+  const t  = document.createElement('div');
+  t.className = 'toast ' + (type === 'success' ? 'success' : type === 'error' ? 'error' : '');
+  t.innerHTML = `<div class="toast-dot"></div><span>${msg}</span>`;
   tw.appendChild(t);
-  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateY(8px)'; t.style.transition='all .4s'; setTimeout(()=>t.remove(),400); }, 3400);
+  setTimeout(() => {
+    t.style.opacity   = '0';
+    t.style.transform = 'translateY(8px)';
+    t.style.transition = 'all .4s';
+    setTimeout(() => t.remove(), 400);
+  }, 3400);
 }
-
-/* ─── PASSWORD SHOW/HIDE ─── */
-function setupPwToggle(inputId, toggleId){
-  const inp=document.getElementById(inputId), tog=document.getElementById(toggleId);
-  if(!inp||!tog) return;
-  tog.addEventListener('click',()=>{
-    const show=inp.type==='password';
-    inp.type=show?'text':'password';
-    tog.textContent=show?'HIDE':'SHOW';
-  });
-}
-setupPwToggle('inp-pw','pw-toggle');
-setupPwToggle('inp-si-pw','si-pw-toggle');
-
-/* ─── PASSWORD STRENGTH ─── */
-document.getElementById('inp-pw').addEventListener('input',function(){
-  const v=this.value, fill=document.getElementById('pw-fill'), lbl=document.getElementById('pw-label');
-  let score=0;
-  if(v.length>=8) score++;
-  if(/[A-Z]/.test(v)) score++;
-  if(/[0-9]/.test(v)) score++;
-  if(/[^A-Za-z0-9]/.test(v)) score++;
-  const cfg=[
-    {w:'0%',  bg:'transparent', l:'—'},
-    {w:'25%', bg:'#E07070',     l:'Weak'},
-    {w:'50%', bg:'#E0A870',     l:'Fair'},
-    {w:'75%', bg:'#D4AF37',     l:'Good'},
-    {w:'100%',bg:'#6FBF8E',     l:'Strong'},
-  ];
-  const c=cfg[score];
-  fill.style.width=c.w; fill.style.background=c.bg; lbl.textContent=c.l;
-  lbl.style.color=c.bg!=='transparent'?c.bg:'rgba(255,255,255,.28)';
-});
 
 /* ─── OTP CELLS ─── */
-const otpCells=[...document.querySelectorAll('.otp-cell')];
-otpCells.forEach((cell,i)=>{
-  cell.addEventListener('input',e=>{
-    const v=e.target.value.replace(/\D/g,'');
-    e.target.value=v.slice(-1);
+const otpCells = [...document.querySelectorAll('.otp-cell')];
+otpCells.forEach((cell, i) => {
+  cell.addEventListener('input', e => {
+    const v = e.target.value.replace(/\D/g, '');
+    e.target.value = v.slice(-1);
     if(v) cell.classList.add('filled');
-    if(v&&i<5) otpCells[i+1].focus();
+    if(v && i < 5) otpCells[i + 1].focus();
   });
-  cell.addEventListener('keydown',e=>{
-    if(e.key==='Backspace'&&!cell.value&&i>0){ otpCells[i-1].focus(); otpCells[i-1].value=''; otpCells[i-1].classList.remove('filled'); }
-    if(e.key==='ArrowLeft'&&i>0) otpCells[i-1].focus();
-    if(e.key==='ArrowRight'&&i<5) otpCells[i+1].focus();
+  cell.addEventListener('keydown', e => {
+    if(e.key === 'Backspace' && !cell.value && i > 0){
+      otpCells[i - 1].focus(); otpCells[i - 1].value = ''; otpCells[i - 1].classList.remove('filled');
+    }
+    if(e.key === 'ArrowLeft'  && i > 0) otpCells[i - 1].focus();
+    if(e.key === 'ArrowRight' && i < 5) otpCells[i + 1].focus();
   });
-  cell.addEventListener('paste',e=>{
+  cell.addEventListener('paste', e => {
     e.preventDefault();
-    const paste=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
-    paste.split('').forEach((ch,j)=>{ if(otpCells[i+j]){ otpCells[i+j].value=ch; otpCells[i+j].classList.add('filled'); }});
-    const next=Math.min(i+paste.length,5); otpCells[next].focus();
+    const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+    paste.split('').forEach((ch, j) => {
+      if(otpCells[i + j]){ otpCells[i + j].value = ch; otpCells[i + j].classList.add('filled'); }
+    });
+    const next = Math.min(i + paste.length, 5); otpCells[next].focus();
   });
 });
-function getOTP(){ return otpCells.map(c=>c.value).join(''); }
-function clearOTP(){ otpCells.forEach(c=>{c.value='';c.classList.remove('filled');}); }
+function getOTP(){ return otpCells.map(c => c.value).join(''); }
+function clearOTP(){ otpCells.forEach(c => { c.value = ''; c.classList.remove('filled'); }); }
 
-/* ─── FIELD VALIDATION HELPERS ─── */
-function setValid(id){ const el=document.getElementById(id); if(el){el.classList.remove('error');el.classList.add('valid');} }
-function setError(id){ const el=document.getElementById(id); if(el){el.classList.add('error');el.classList.remove('valid');} }
-function clear2(id){ const el=document.getElementById(id); if(el) el.classList.remove('error','valid'); }
+/* ─── FIELD HELPERS ─── */
+function setValid(id){ const el = document.getElementById(id); if(el){ el.classList.remove('error'); el.classList.add('valid'); } }
+function setError(id){ const el = document.getElementById(id); if(el){ el.classList.add('error'); el.classList.remove('valid'); } }
+function clearField(id){ const el = document.getElementById(id); if(el) el.classList.remove('error','valid'); }
 
-/* ─── STEP NAVIGATION UI ─── */
-let isSignup=true;
-let currentStep=1;
-
+/* ─── STEP UI ─── */
 function updateStepUI(step){
-  currentStep=step;
-  // pips
-  [1,2,3].forEach(n=>{
-    const pip=document.getElementById('pip-'+n);
+  const pips = { 1: document.getElementById('pip-1'), 2: document.getElementById('pip-2') };
+  const con1 = document.getElementById('con-1');
+
+  [1, 2].forEach(n => {
+    const pip = pips[n];
     if(!pip) return;
-    pip.className='step-pip' + (n===step?' active':n<step?' done':'');
-    if(n<step){ pip.innerHTML=''; } else { pip.innerHTML='<span>'+n+'</span>'; }
+    if(n < step){
+      pip.className = 'step-pip done'; pip.innerHTML = '';
+    } else if(n === step){
+      pip.className = 'step-pip active'; pip.innerHTML = '<span>' + n + '</span>';
+    } else {
+      pip.className = 'step-pip'; pip.innerHTML = '<span>' + n + '</span>';
+    }
   });
-  // connectors
-  [1,2].forEach(n=>{
-    const c=document.getElementById('con-'+n);
-    if(c) c.classList.toggle('filled', step>n);
-  });
+  if(con1) con1.classList.toggle('filled', step > 1);
 }
 
 function showStep(id){
-  document.querySelectorAll('.step-block').forEach(el=>el.classList.remove('active'));
-  const el=document.getElementById(id);
+  document.querySelectorAll('.step-block').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById(id);
   if(el) el.classList.add('active');
 }
 
-/* ─── MODE TOGGLE (signup <-> signin) ─── */
-function setMode(signup){
-  isSignup=signup;
-  const eyebrow=document.getElementById('auth-eyebrow');
-  const title=document.getElementById('auth-title');
-  const sub=document.getElementById('auth-sub');
-  const badge=document.getElementById('badge-text');
-  const toggle=document.getElementById('btn-mode-toggle');
-  const modeRow=document.getElementById('mode-toggle');
-  const stepNav=document.getElementById('step-nav');
+/* ─── PHONE INPUT — digits only ─── */
+document.getElementById('inp-phone').addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+  if(e.target.value.length === 10) setValid('f-phone');
+  else if(e.target.value.length > 0) clearField('f-phone');
+  else clearField('f-phone');
+});
 
-  if(signup){
-    eyebrow.textContent='Create Account';
-    title.innerHTML='Your wealth journey<br>starts <em>here.</em>';
-    sub.textContent='Three quick steps — then you\'re in.';
-    badge.textContent='New Account';
-    toggle.textContent='Sign In';
-    modeRow.innerHTML='Already have an account? <button id="btn-mode-toggle">Sign In</button>';
-    stepNav.style.display='flex';
-    showStep('step-1');
-    updateStepUI(1);
-    // re-bind toggle after innerHTML reset
-    document.getElementById('btn-mode-toggle').addEventListener('click',()=>setMode(false));
-  } else {
-    eyebrow.textContent='Welcome Back';
-    title.innerHTML='Sign in to your<br><em>wealth dashboard.</em>';
-    sub.textContent='Your financial journey continues here.';
-    badge.textContent='Sign In';
-    toggle.textContent='Create Account';
-    modeRow.innerHTML='New to Yours Wealth? <button id="btn-mode-toggle">Create Account</button>';
-    stepNav.style.display='none';
-    showStep('signin-block');
-    // re-bind toggle after innerHTML reset
-    document.getElementById('btn-mode-toggle').addEventListener('click',()=>setMode(true));
-  }
-  // hide success card
-  document.getElementById('success-card').classList.remove('show');
+/* ─── RESEND TIMER ─── */
+let resendInterval = null;
+function startResendTimer(){
+  const btn     = document.getElementById('btn-resend-otp');
+  const timerEl = document.getElementById('resend-timer');
+  btn.disabled  = true;
+  let t = 30;
+  timerEl.textContent = t;
+  btn.innerHTML = 'Resend in <span id="resend-timer">' + t + '</span>s';
+  clearInterval(resendInterval);
+  resendInterval = setInterval(() => {
+    t--;
+    const span = document.getElementById('resend-timer');
+    if(span) span.textContent = t;
+    if(t <= 0){
+      clearInterval(resendInterval);
+      btn.disabled   = false;
+      btn.textContent = 'Resend OTP';
+    }
+  }, 1000);
 }
 
-document.getElementById('btn-mode-toggle').addEventListener('click',()=>setMode(false));
-
 /* ══════════════════════════════════════
-   FIREBASE LOGIC  (runs after module load)
+   FIREBASE LOGIC
 ══════════════════════════════════════ */
 let confirmationResult = null;
-let userAfterStep1     = null;
-let resendCooldown     = null;
 
-window.addEventListener('ywFirebaseReady', init);
-
-/* Fallback — poll until Firebase module sets up window._ywAuth */
-const fbWait = setInterval(()=>{
-  if(window._ywAuth){ clearInterval(fbWait); init(); }
-},120);
+/* Poll until Firebase module finishes loading */
+const fbWait = setInterval(() => {
+  if(window._ywAuth && window._ywFB){ clearInterval(fbWait); init(); }
+}, 120);
 
 function init(){
   const auth = window._ywAuth;
   const fb   = window._ywFB;
 
-  /* ── STEP 1: Email + Password ── */
-  document.getElementById('btn-step1').addEventListener('click', async ()=>{
-    const name  = document.getElementById('inp-name').value.trim();
-    const email = document.getElementById('inp-email').value.trim();
-    const pw    = document.getElementById('inp-pw').value;
-    let ok=true;
-
-    if(name.length<2){ setError('f-name'); ok=false; } else setValid('f-name');
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setError('f-si-email'); setError('f-email'); ok=false; } else { setValid('f-email'); clear2('f-si-email'); }
-    if(!/(?=.*[A-Z])(?=.*\d).{8,}/.test(pw)){ setError('f-pw'); ok=false; } else setValid('f-pw');
-    if(!ok) return;
-
-    const btn=document.getElementById('btn-step1');
-    btn.classList.add('is-loading'); btn.disabled=true;
-
-    try {
-      const cred = await fb.createUserWithEmailAndPassword(auth, email, pw);
-      userAfterStep1 = cred.user;
-      await fb.updateProfile(userAfterStep1, { displayName: name });
-      // Send verification email
-      await fb.sendEmailVerification(userAfterStep1);
-      toast('Account created! Verify your email next.','success');
-      updateStepUI(2);
-      showStep('step-2');
-    } catch(err){
-      if(err.code==='auth/email-already-in-use'){
-        setError('f-email');
-        document.querySelector('#f-email .field-err').textContent='Email already registered. Sign in instead.';
-        toast('Email already in use — try signing in.','error');
-      } else {
-        toast(err.message||'Something went wrong.','error');
-      }
-    } finally {
-      btn.classList.remove('is-loading'); btn.disabled=false;
-    }
-  });
-
-  /* ── STEP 2: Phone OTP ── */
-  // Setup invisible reCAPTCHA
-  function setupRecaptcha(){
+  /* ── Setup invisible reCAPTCHA once ── */
+  function ensureRecaptcha(){
     if(window.recaptchaVerifier) return;
-    window.recaptchaVerifier = new fb.RecaptchaVerifier(auth, 'recaptcha-container',{
-      size:'invisible',
-      callback:()=>{},
-      'expired-callback':()=>{ window.recaptchaVerifier=null; }
+    window.recaptchaVerifier = new fb.RecaptchaVerifier(auth, 'recaptcha-container', {
+      size: 'invisible',
+      callback: () => {},
+      'expired-callback': () => { window.recaptchaVerifier = null; }
     });
   }
 
-  document.getElementById('btn-send-otp').addEventListener('click', async ()=>{
+  /* ── STEP 1: Send OTP ── */
+  document.getElementById('btn-send-otp').addEventListener('click', async () => {
+    const name  = document.getElementById('inp-name').value.trim();
     const phone = document.getElementById('inp-phone').value.trim();
-    if(!/^\d{10}$/.test(phone)){ setError('f-phone'); return; }
-    setValid('f-phone');
+    let ok = true;
 
-    const btn=document.getElementById('btn-send-otp');
-    btn.classList.add('is-loading'); btn.disabled=true;
+    /* Validate name */
+    if(name.length < 2){ setError('f-name'); ok = false; } else setValid('f-name');
 
-    try {
-      setupRecaptcha();
-      const full='+91'+phone;
-      confirmationResult = await fb.signInWithPhoneNumber(auth, full, window.recaptchaVerifier);
-      document.getElementById('otp-phone-hint').textContent = phone.replace(/(\d{5})(\d{5})/,'$1 $2');
-      document.getElementById('otp-entry').style.display='block';
-      otpCells[0].focus();
-      toast('OTP sent to +91 '+phone,'success');
-      startResendTimer();
-    } catch(err){
-      toast(err.message||'Failed to send OTP.','error');
-      if(window.recaptchaVerifier){ window.recaptchaVerifier.clear(); window.recaptchaVerifier=null; }
-    } finally {
-      btn.classList.remove('is-loading'); btn.disabled=false;
-    }
-  });
+    /* Validate phone */
+    if(!/^\d{10}$/.test(phone)){ setError('f-phone'); ok = false; } else setValid('f-phone');
 
-  document.getElementById('btn-verify-otp').addEventListener('click', async ()=>{
-    const code=getOTP();
-    if(code.length!==6){ toast('Enter the complete 6-digit OTP.','error'); return; }
-    const btn=document.getElementById('btn-verify-otp');
-    btn.classList.add('is-loading'); btn.disabled=true;
-    try {
-      await confirmationResult.confirm(code);
-      toast('Phone verified!','success');
-      updateStepUI(3);
-      showStep('step-3');
-      document.getElementById('email-hint-display').textContent = document.getElementById('inp-email').value.trim();
-    } catch(err){
-      toast('Invalid OTP — please try again.','error');
-      clearOTP(); otpCells[0].focus();
-    } finally {
-      btn.classList.remove('is-loading'); btn.disabled=false;
-    }
-  });
-
-  document.getElementById('btn-change-phone').addEventListener('click',()=>{
-    document.getElementById('otp-entry').style.display='none';
-    clearOTP();
-    document.getElementById('inp-phone').value='';
-    clear2('f-phone');
-    if(window.recaptchaVerifier){ window.recaptchaVerifier.clear(); window.recaptchaVerifier=null; }
-    confirmationResult=null;
-    clearInterval(resendCooldown);
-  });
-
-  document.getElementById('btn-resend-otp').addEventListener('click', async ()=>{
-    const phone=document.getElementById('inp-phone').value.trim();
-    try {
-      if(window.recaptchaVerifier){window.recaptchaVerifier.clear();window.recaptchaVerifier=null;}
-      setupRecaptcha();
-      confirmationResult=await fb.signInWithPhoneNumber(auth,'+91'+phone,window.recaptchaVerifier);
-      clearOTP(); otpCells[0].focus();
-      toast('OTP resent!','success');
-      startResendTimer();
-    } catch(err){ toast(err.message||'Failed.','error'); }
-  });
-
-  function startResendTimer(){
-    const btn=document.getElementById('btn-resend-otp');
-    const timerEl=document.getElementById('resend-timer');
-    btn.disabled=true; let t=30;
-    timerEl.textContent=t;
-    clearInterval(resendCooldown);
-    resendCooldown=setInterval(()=>{
-      t--;
-      timerEl.textContent=t;
-      if(t<=0){
-        clearInterval(resendCooldown);
-        btn.disabled=false;
-        btn.textContent='Resend OTP';
-      }
-    },1000);
-  }
-
-  /* ── STEP 3: Email verification check ── */
-  document.getElementById('btn-check-verified').addEventListener('click', async ()=>{
-    const btn=document.getElementById('btn-check-verified');
-    btn.classList.add('is-loading'); btn.disabled=true;
-    try {
-      await auth.currentUser.reload();
-      if(auth.currentUser.emailVerified){
-        showSuccessCard();
-      } else {
-        toast('Email not verified yet. Please check your inbox.','error');
-      }
-    } catch(err){ toast(err.message||'Error checking verification.','error'); }
-    finally { btn.classList.remove('is-loading'); btn.disabled=false; }
-  });
-
-  document.getElementById('btn-resend-email').addEventListener('click', async ()=>{
-    try {
-      await fb.sendEmailVerification(auth.currentUser);
-      toast('Verification email resent!','success');
-    } catch(err){ toast(err.message||'Error.','error'); }
-  });
-
-  document.getElementById('btn-back-step2').addEventListener('click',()=>{
-    updateStepUI(2); showStep('step-2');
-  });
-
-  /* ── SUCCESS ── */
-  function showSuccessCard(){
-    document.querySelectorAll('.step-block').forEach(el=>el.classList.remove('active'));
-    document.getElementById('step-nav').style.display='none';
-    document.getElementById('auth-eyebrow').textContent='Verified';
-    document.getElementById('auth-title').innerHTML='Your account is<br><em>ready.</em>';
-    document.getElementById('auth-sub').textContent='';
-    document.getElementById('badge-text').textContent='All Done';
-    document.getElementById('mode-toggle').style.display='none';
-    const sc=document.getElementById('success-card');
-    sc.style.display='block';
-    requestAnimationFrame(()=>sc.classList.add('show'));
-    toast('Welcome to Yours Wealth!','success');
-  }
-
-  document.getElementById('btn-go-dashboard').addEventListener('click',()=>{
-    window.location.href='index.html';
-  });
-
-  /* ── SIGN IN ── */
-  document.getElementById('btn-signin').addEventListener('click', async ()=>{
-    const email=document.getElementById('inp-si-email').value.trim();
-    const pw=document.getElementById('inp-si-pw').value;
-    let ok=true;
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setError('f-si-email');ok=false;} else setValid('f-si-email');
-    if(!pw){setError('f-si-pw');ok=false;} else setValid('f-si-pw');
     if(!ok) return;
 
-    const btn=document.getElementById('btn-signin');
-    btn.classList.add('is-loading'); btn.disabled=true;
+    const btn = document.getElementById('btn-send-otp');
+    btn.classList.add('is-loading'); btn.disabled = true;
+
     try {
-      const cred=await fb.signInWithEmailAndPassword(auth,email,pw);
-      if(!cred.user.emailVerified){
-        toast('Please verify your email before signing in.','error');
-        await fb.sendEmailVerification(cred.user);
-        toast('Verification email re-sent.','info');
-      } else {
-        toast('Signed in!','success');
-        setTimeout(()=>window.location.href='index.html',900);
-      }
+      ensureRecaptcha();
+      const fullPhone = '+91' + phone;
+      confirmationResult = await fb.signInWithPhoneNumber(auth, fullPhone, window.recaptchaVerifier);
+
+      /* Show masked phone on step 2 */
+      const masked = phone.slice(0,2) + '••••••' + phone.slice(-2);
+      document.getElementById('otp-phone-display').textContent = '+91 ' + masked;
+
+      /* Update header */
+      document.getElementById('auth-eyebrow').textContent = 'Verify Identity';
+      document.getElementById('auth-title').innerHTML = 'One code to unlock<br><em>your dashboard.</em>';
+      document.getElementById('auth-sub').textContent = 'Check your messages for the 6-digit OTP.';
+      document.getElementById('badge-text').textContent = 'OTP Sent';
+
+      updateStepUI(2);
+      showStep('step-2');
+      otpCells[0].focus();
+      toast('OTP sent to +91 ' + phone, 'success');
+      startResendTimer();
+
     } catch(err){
-      const msg=err.code==='auth/wrong-password'||err.code==='auth/invalid-credential'
-        ? 'Incorrect email or password.' : err.message||'Sign-in failed.';
-      setError('f-si-pw');
-      toast(msg,'error');
-    } finally { btn.classList.remove('is-loading'); btn.disabled=false; }
-  });
-
-  /* ── PASSKEY ── */
-  document.getElementById('btn-passkey').addEventListener('click', async ()=>{
-    if(!window.PublicKeyCredential){
-      toast('Passkeys not supported in this browser.','error'); return;
+      /* reCAPTCHA needs reset on failure */
+      if(window.recaptchaVerifier){ window.recaptchaVerifier.clear(); window.recaptchaVerifier = null; }
+      toast(err.message || 'Failed to send OTP. Please try again.', 'error');
+    } finally {
+      btn.classList.remove('is-loading'); btn.disabled = false;
     }
-    toast('Passkey authentication coming soon.','info');
   });
 
-  /* ── FORGOT PASSWORD ── */
-  document.getElementById('btn-forgot').addEventListener('click', async ()=>{
-    const email=document.getElementById('inp-si-email').value.trim();
-    if(!email){ setError('f-si-email'); toast('Enter your email first.','error'); return; }
+  /* ── STEP 2: Verify OTP ── */
+  document.getElementById('btn-verify-otp').addEventListener('click', async () => {
+    const code = getOTP();
+    if(code.length !== 6){
+      toast('Please enter the complete 6-digit code.', 'error');
+      otpCells[0].focus();
+      return;
+    }
+
+    const btn = document.getElementById('btn-verify-otp');
+    btn.classList.add('is-loading'); btn.disabled = true;
+
     try {
-      const { sendPasswordResetEmail } = await import("https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js");
-      await sendPasswordResetEmail(window._ywAuth, email);
-      toast('Password reset email sent!','success');
-    } catch(err){ toast(err.message||'Error sending reset email.','error'); }
+      await confirmationResult.confirm(code);
+      toast('Verified! Redirecting…', 'success');
+      /* Small delay so the toast is visible */
+      setTimeout(() => { window.location.href = 'index.html'; }, 900);
+    } catch(err){
+      toast('Invalid OTP — please try again.', 'error');
+      clearOTP();
+      otpCells[0].focus();
+      btn.classList.remove('is-loading'); btn.disabled = false;
+    }
   });
 
-  /* ── Live phone validation ── */
-  document.getElementById('inp-phone').addEventListener('input', e=>{
-    e.target.value=e.target.value.replace(/\D/g,'').slice(0,10);
-    if(e.target.value.length===10) setValid('f-phone');
-    else if(e.target.value.length>0) clear2('f-phone');
+  /* ── Change number ── */
+  document.getElementById('btn-change-phone').addEventListener('click', () => {
+    clearOTP();
+    confirmationResult = null;
+    clearInterval(resendInterval);
+    if(window.recaptchaVerifier){ window.recaptchaVerifier.clear(); window.recaptchaVerifier = null; }
+
+    /* Reset header back */
+    document.getElementById('auth-eyebrow').textContent = 'Secure Access';
+    document.getElementById('auth-title').innerHTML = 'Your wealth journey<br>starts <em>here.</em>';
+    document.getElementById('auth-sub').textContent = 'Enter your mobile number to receive a one-time code.';
+    document.getElementById('badge-text').textContent = 'Sign In';
+
+    /* Clear phone field */
+    document.getElementById('inp-phone').value = '';
+    clearField('f-phone');
+
+    updateStepUI(1);
+    showStep('step-1');
   });
 
-  /* Enter key handling */
-  document.addEventListener('keydown',e=>{
-    if(e.key!=='Enter') return;
-    if(!isSignup) { document.getElementById('btn-signin').click(); return; }
-    if(currentStep===1) document.getElementById('btn-step1').click();
+  /* ── Resend OTP ── */
+  document.getElementById('btn-resend-otp').addEventListener('click', async () => {
+    const phone = document.getElementById('inp-phone').value.trim();
+    try {
+      if(window.recaptchaVerifier){ window.recaptchaVerifier.clear(); window.recaptchaVerifier = null; }
+      ensureRecaptcha();
+      confirmationResult = await fb.signInWithPhoneNumber(auth, '+91' + phone, window.recaptchaVerifier);
+      clearOTP(); otpCells[0].focus();
+      toast('OTP resent!', 'success');
+      startResendTimer();
+    } catch(err){
+      if(window.recaptchaVerifier){ window.recaptchaVerifier.clear(); window.recaptchaVerifier = null; }
+      toast(err.message || 'Failed to resend OTP.', 'error');
+    }
+  });
+
+  /* ── Enter key shortcuts ── */
+  document.addEventListener('keydown', e => {
+    if(e.key !== 'Enter') return;
+    const step1 = document.getElementById('step-1');
+    const step2 = document.getElementById('step-2');
+    if(step1.classList.contains('active')) document.getElementById('btn-send-otp').click();
+    if(step2.classList.contains('active')) document.getElementById('btn-verify-otp').click();
   });
 }
 </script>
