@@ -18,7 +18,8 @@
     updateProfile,
     onAuthStateChanged,
     fetchSignInMethodsForEmail,
-    reload
+    reload,
+    updatePassword
   } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
   const firebaseConfig = {
@@ -44,7 +45,8 @@
     updateProfile,
     onAuthStateChanged,
     fetchSignInMethodsForEmail,
-    reload
+    reload,
+    updatePassword
   };
 
   onAuthStateChanged(auth, user => {
@@ -1000,7 +1002,7 @@ function initAuth(){
 
     try {
       /* Update the password from the temp one to the user's choice */
-      await tempUser.updatePassword(pw);
+      await fb.updatePassword(tempUser, pw);
       toast('Account secured! Redirecting…', 'ok');
       setTimeout(() => { window.location.href = 'index.html'; }, 1000);
     } catch(err){
