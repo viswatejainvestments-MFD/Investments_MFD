@@ -750,13 +750,21 @@ function init(){
 
   /* ── Setup invisible reCAPTCHA once ── */
   function ensureRecaptcha(){
-    if(window.recaptchaVerifier) return;
-    window.recaptchaVerifier = new fb.RecaptchaVerifier(auth, 'recaptcha-container', {
-      size: 'invisible',
-      callback: () => {},
-      'expired-callback': () => { window.recaptchaVerifier = null; }
-    });
+
+  if(window.recaptchaVerifier){
+    return;
   }
+
+  window.recaptchaVerifier =
+    new fb.RecaptchaVerifier(
+      auth,
+      'recaptcha-container',
+      {
+        size: 'normal'
+      }
+    );
+
+}
 
   /* ── STEP 1: Send OTP ── */
   document.getElementById('btn-send-otp').addEventListener('click', async () => {
