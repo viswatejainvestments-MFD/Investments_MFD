@@ -806,7 +806,7 @@ function init(){
 
     } catch(err){
       /* reCAPTCHA needs reset on failure */
-      if(window.recaptchaVerifier){ window.recaptchaVerifier.clear(); window.recaptchaVerifier = null; }
+      if(window.recaptchaVerifier){ }
       toast(err.message || 'Failed to send OTP. Please try again.', 'error');
     } finally {
       btn.classList.remove('is-loading'); btn.disabled = false;
