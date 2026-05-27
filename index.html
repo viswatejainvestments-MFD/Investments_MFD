@@ -605,18 +605,30 @@ nav.scrolled {
 .service-card:hover .service-title { color: var(--mid); }
 .service-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.78; }
 .service-arrow {
-  display: flex; align-items: center; gap: 10px;
+  display: inline-flex; align-items: center; gap: 10px;
   margin-top: 32px;
   font-family: 'DM Mono', monospace;
   font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--gold); text-decoration: none;
-  transform: translateX(-10px); opacity: 0;
-  transition: opacity 0.3s, transform 0.4s var(--easing);
+  opacity: 1; transform: translateX(0);
+  border: 1px solid var(--border);
+  padding: 10px 16px;
+  transition: background 0.3s var(--easing), border-color 0.3s, color 0.3s, transform 0.3s var(--easing), box-shadow 0.3s;
+  position: relative; overflow: hidden;
 }
+.service-arrow::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--gold);
+  transform: translateX(-101%);
+  transition: transform 0.35s var(--easing);
+  z-index: 0;
+}
+.service-arrow:hover::before { transform: translateX(0); }
+.service-arrow:hover { color: white; border-color: var(--gold); box-shadow: 0 4px 20px rgba(184,150,12,0.25); }
+.service-arrow span, .service-arrow svg { position: relative; z-index: 1; }
 .service-arrow svg { transition: transform 0.3s var(--easing); }
-.service-card:hover .service-arrow { opacity: 1; transform: translateX(0); }
-.service-card:hover .service-arrow svg { transform: translateX(4px); }
-
+.service-arrow:hover svg { transform: translateX(4px); }
+.service-card:hover .service-arrow { border-color: rgba(184,150,12,0.5); }
 /* ─────────────────────────────────────────
    PROCESS
 ───────────────────────────────────────── */
@@ -1734,7 +1746,7 @@ footer::before {
       <div class="service-num">01</div>
       <div class="service-title">Financial Planning</div>
       <div class="service-desc">A comprehensive roadmap for your finances — budgeting, savings goals, debt management, and milestone planning. We map where you are and architect where you want to be.</div>
-      <a href="financial-planning.html" class="service-arrow">Know More
+      <a href="financial-planning.html" class="service-arrow"><span>Know More</span>
         <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </a>
     </div>
@@ -1743,7 +1755,7 @@ footer::before {
       <div class="service-num">02</div>
       <div class="service-title">Investment Advisory</div>
       <div class="service-desc">Research-backed investment strategies across equity, debt, mutual funds, and alternative assets. We build portfolios that grow intelligently over time while managing downside risk.</div>
-      <a href="investment-advisory.html" class="service-arrow">Know More
+      <a href="investment-advisory.html" class="service-arrow"><span>Know More</span>
         <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </a>
     </div>
@@ -1752,7 +1764,7 @@ footer::before {
       <div class="service-num">03</div>
       <div class="service-title">Retirement Planning</div>
       <div class="service-desc">Whether retirement is 5 years or 25 years away, we create a plan that ensures you never outlive your money — and retire on your own terms, not someone else's timeline.</div>
-      <a href="retirement-planning.html" class="service-arrow">Know More
+      <a href="retirement-planning.html" class="service-arrow"><span>Know More</span>
         <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </a>
     </div>
@@ -1761,7 +1773,7 @@ footer::before {
       <div class="service-num">04</div>
       <div class="service-title">Tax Optimisation</div>
       <div class="service-desc">Legal, smart strategies to reduce your tax burden and keep more of what you earn. From ELSS to NPS to efficient asset structuring, we ensure your money works harder post-tax.</div>
-      <a href="tax-optimisation.html" class="service-arrow">Know More
+      <a href="tax-optimisation.html" class="service-arrow"><span>Know More</span>
         <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </a>
     </div>
@@ -1770,7 +1782,7 @@ footer::before {
       <div class="service-num">05</div>
       <div class="service-title">Risk & Insurance Planning</div>
       <div class="service-desc">Protecting wealth is as critical as building it. We assess your risk exposure — health, life, income, liability — and design the right coverage so life's uncertainties don't derail your plans.</div>
-      <a href="risk-insurance.html" class="service-arrow">Know More
+      <a href="risk-insurance.html" class="service-arrow"><span>Know More</span>
         <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </a>
     </div>
@@ -1779,7 +1791,7 @@ footer::before {
       <div class="service-num">06</div>
       <div class="service-title">Estate & Legacy Planning</div>
       <div class="service-desc">Ensure your wealth transitions smoothly across generations. We help structure your assets, create wills, set up trusts, and design a legacy that reflects your values and wishes.</div>
-      <a href="estate-planning.html" class="service-arrow">Know More
+      <a href="estate-planning.html" class="service-arrow"><span>Know More</span>
         <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 4.5h12M8 1l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </a>
     </div>
