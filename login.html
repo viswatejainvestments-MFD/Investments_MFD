@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yours Wealth — Sign In</title>
+<title>Yours Wealth — Access</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 
 <!-- Firebase SDKs -->
@@ -19,7 +19,8 @@
     onAuthStateChanged,
     fetchSignInMethodsForEmail,
     reload,
-    updatePassword
+    updatePassword,
+    sendPasswordResetEmail
   } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
   const firebaseConfig = {
@@ -46,17 +47,16 @@
     onAuthStateChanged,
     fetchSignInMethodsForEmail,
     reload,
-    updatePassword
+    updatePassword,
+    sendPasswordResetEmail
   };
 
   onAuthStateChanged(auth, user => {
-  // Redirect ONLY after proper login
-  const isLoggedIn = sessionStorage.getItem("userLoggedIn", "true");
-
-  if (user && user.emailVerified && isLoggedIn === "true") {
-    window.location.href = "financial-planner.html";
-  }
-});
+    const isLoggedIn = sessionStorage.getItem("userLoggedIn");
+    if (user && user.emailVerified && isLoggedIn === "true") {
+      window.location.href = "financial-planner.html";
+    }
+  });
 </script>
 
 <style>
@@ -149,7 +149,6 @@ body:has(a:hover)      #cursor-ring { width: 54px; height: 54px; border-color: r
   mask-image: radial-gradient(ellipse 65% 65% at 50% 50%, black 20%, transparent 100%);
 }
 
-/* Diagonal accent lines */
 .accent-lines {
   position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
 }
@@ -229,7 +228,6 @@ body:has(a:hover)      #cursor-ring { width: 54px; height: 54px; border-color: r
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Top accent bar */
 .glass-panel::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: linear-gradient(90deg, transparent, var(--gold) 35%, var(--gold-light) 65%, transparent);
@@ -238,7 +236,6 @@ body:has(a:hover)      #cursor-ring { width: 54px; height: 54px; border-color: r
 }
 @keyframes barGrow { to { transform: scaleX(1); } }
 
-/* Corner ornament */
 .glass-panel::after {
   content: ''; position: absolute; bottom: -1px; right: -1px;
   width: 56px; height: 56px;
@@ -246,12 +243,39 @@ body:has(a:hover)      #cursor-ring { width: 54px; height: 54px; border-color: r
   border-right:  1px solid rgba(212,175,55,.2);
 }
 
-/* Inner shimmer line */
 .panel-shimmer {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
   background: radial-gradient(ellipse 50% 30% at 50% 0%, rgba(212,175,55,.04), transparent 60%);
   pointer-events: none;
 }
+
+/* ─── MODE TOGGLE ─── */
+.mode-toggle {
+  display: flex;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  padding: 4px;
+  margin-bottom: 30px;
+  position: relative;
+}
+.mode-btn {
+  flex: 1; padding: 10px 16px;
+  background: none; border: none;
+  font-family: 'DM Mono', monospace; font-size: .62rem;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(255,255,255,.28); cursor: none;
+  transition: color .35s; position: relative; z-index: 1;
+}
+.mode-btn.active { color: var(--dark); }
+.mode-slider {
+  position: absolute; top: 4px; bottom: 4px; left: 4px;
+  width: calc(50% - 4px);
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  transition: transform .4s var(--ease);
+  z-index: 0;
+  box-shadow: 0 0 16px rgba(212,175,55,.25);
+}
+.mode-slider.right { transform: translateX(100%); }
 
 /* ─── HEADER ─── */
 .auth-eyebrow {
@@ -275,7 +299,7 @@ body:has(a:hover)      #cursor-ring { width: 54px; height: 54px; border-color: r
   font-weight: 300;
 }
 
-/* ─── STEP PROGRESS ─── */
+/* ─── STEP PROGRESS (signup only) ─── */
 .step-track {
   display: flex; align-items: center;
   margin-bottom: 32px; position: relative;
@@ -403,6 +427,34 @@ body:has(a:hover)      #cursor-ring { width: 54px; height: 54px; border-color: r
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ─── MODE SECTIONS ─── */
+.mode-section { display: none; }
+.mode-section.active { display: block; animation: stepIn .4s var(--ease); }
+
+/* ─── FORGOT PASSWORD LINK ─── */
+.forgot-link {
+  font-family: 'DM Mono', monospace; font-size: .58rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(255,255,255,.2); background: none; border: none;
+  cursor: none; padding: 0; float: right; margin-top: -8px; margin-bottom: 20px;
+  display: block; text-align: right;
+  transition: color .3s;
+}
+.forgot-link:hover { color: var(--gold); }
+
+/* ─── DIVIDER ─── */
+.or-divider {
+  display: flex; align-items: center; gap: 16px;
+  margin: 18px 0;
+}
+.or-divider::before,
+.or-divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,.06); }
+.or-divider span {
+  font-family: 'DM Mono', monospace; font-size: .52rem;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(255,255,255,.15);
+}
+
 /* ─── BUTTONS ─── */
 .btn-primary {
   width: 100%; padding: 17px 24px;
@@ -426,7 +478,7 @@ body:has(a:hover)      #cursor-ring { width: 54px; height: 54px; border-color: r
 .btn-primary svg { transition: transform .3s var(--ease); }
 .btn-primary:hover svg { transform: translateX(5px); }
 
-.sp { /* spinner */
+.sp {
   width: 14px; height: 14px;
   border: 1.5px solid rgba(212,175,55,.25); border-top-color: var(--gold-light);
   border-radius: 50%; animation: spin .6s linear infinite;
@@ -567,140 +619,195 @@ body:has(a:hover)      #cursor-ring { width: 54px; height: 54px; border-color: r
 
     <div class="card-badge">
       <div class="badge-line"></div>
-      <div class="badge-label" id="badge-label">Create Account</div>
+      <div class="badge-label" id="badge-label">Secure Access</div>
       <div class="badge-line"></div>
     </div>
 
     <div class="glass-panel">
       <div class="panel-shimmer"></div>
 
+      <!-- ── MODE TOGGLE ── -->
+      <div class="mode-toggle" id="mode-toggle">
+        <button class="mode-btn active" id="btn-mode-signin" onclick="switchMode('signin')">Sign In</button>
+        <button class="mode-btn" id="btn-mode-signup" onclick="switchMode('signup')">Create Account</button>
+        <div class="mode-slider" id="mode-slider"></div>
+      </div>
+
       <!-- Header -->
-      <div class="auth-eyebrow" id="auth-eyebrow">Secure Access</div>
-      <h1 class="auth-title" id="auth-title">Begin your wealth<br>journey <em>today.</em></h1>
-      <p class="auth-sub" id="auth-sub">Enter your details below. We'll verify your email before you proceed.</p>
+      <div class="auth-eyebrow" id="auth-eyebrow">Welcome Back</div>
+      <h1 class="auth-title" id="auth-title">Access your<br>wealth <em>dashboard.</em></h1>
+      <p class="auth-sub" id="auth-sub">Sign in to continue your journey to financial clarity.</p>
 
-      <!-- Step tracker — 3 steps -->
-      <div class="step-track" id="step-track">
-        <div class="pip active" id="pip-1"><span class="n">1</span></div>
-        <div class="step-seg" id="seg-1"><div class="fill"></div></div>
-        <div class="pip" id="pip-2"><span class="n">2</span></div>
-        <div class="step-seg" id="seg-2"><div class="fill"></div></div>
-        <div class="pip" id="pip-3"><span class="n">3</span></div>
-      </div>
+      <!-- ══════════════════════════════════════ -->
+      <!-- ════  SIGN IN MODE  ════════════════  -->
+      <!-- ══════════════════════════════════════ -->
+      <div class="mode-section active" id="mode-signin">
 
-      <!-- ══ STEP 1 — Name & Email ══ -->
-      <div class="step-block active" id="step-1">
         <div class="field-group">
-
-          <div class="field" id="f-name">
-            <input type="text" class="f-input" id="inp-name"
-                   placeholder="Full Name" autocomplete="name">
-            <label class="f-label" for="inp-name">Full Name</label>
-            <div class="f-err">Please enter your full name</div>
-          </div>
-
-          <div class="field" id="f-email">
-            <input type="email" class="f-input" id="inp-email"
+          <div class="field" id="si-f-email">
+            <input type="email" class="f-input" id="si-email"
                    placeholder="Email Address" autocomplete="email">
-            <label class="f-label" for="inp-email">Email Address</label>
-            <div class="f-err" id="email-err">Please enter a valid email</div>
+            <label class="f-label" for="si-email">Email Address</label>
+            <div class="f-err" id="si-email-err">Please enter a valid email</div>
           </div>
 
-        </div>
-
-        <button class="btn-primary" id="btn-continue">
-          <span class="btn-text">Continue</span>
-          <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
-            <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-          </svg>
-          <div class="sp"></div>
-        </button>
-      </div>
-
-      <!-- ══ STEP 2 — Verify Email ══ -->
-      <div class="step-block" id="step-2">
-
-        <div class="verify-icon">
-          <div class="verify-pulse"></div>
-          <svg width="26" height="22" viewBox="0 0 26 22" fill="none">
-            <path d="M2 2h22l-11 10L2 2z" stroke="rgba(212,175,55,.8)" stroke-width="1.4" stroke-linejoin="round"/>
-            <path d="M2 2v16a1 1 0 001 1h20a1 1 0 001-1V2" stroke="rgba(212,175,55,.8)" stroke-width="1.4"/>
-          </svg>
-        </div>
-
-        <p class="verify-email-display" id="verify-email-display">user@example.com</p>
-
-        <p class="verify-hint">
-          A verification link has been sent to your inbox.<br>
-          Click the link, then return here and press <em style="color:var(--gold-light);font-style:normal;">Confirmed</em>.
-        </p>
-
-        <button class="btn-primary" id="btn-email-confirmed" style="margin-bottom:4px;">
-          <span class="btn-text">I've Confirmed My Email</span>
-          <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
-            <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-          </svg>
-          <div class="sp"></div>
-        </button>
-
-        <div class="helper-row">
-          <button class="helper-btn" id="btn-change-email">Change email</button>
-          <button class="helper-btn" id="btn-resend-email" disabled>
-            Resend in <span id="resend-timer">60</span>s
-          </button>
-        </div>
-      </div>
-
-      <!-- ══ STEP 3 — Set Password ══ -->
-      <div class="step-block" id="step-3">
-        <div class="field-group">
-
-          <div class="field pass-wrap" id="f-pw">
-            <input type="password" class="f-input" id="inp-pw"
-                   placeholder="Create Password" autocomplete="new-password">
-            <label class="f-label" for="inp-pw">Create Password</label>
-            <button type="button" class="pass-toggle" id="toggle-pw" tabindex="-1">
-              <svg id="eye-icon" width="18" height="14" viewBox="0 0 18 14" fill="none">
-                <path d="M1 7s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.3"/>
-                <circle cx="9" cy="7" r="2.5" stroke="currentColor" stroke-width="1.3"/>
-              </svg>
-            </button>
-            <div class="f-err">Minimum 8 characters required</div>
-          </div>
-
-          <div class="pw-strength" id="pw-bars">
-            <div class="pw-bar" id="bar-1"></div>
-            <div class="pw-bar" id="bar-2"></div>
-            <div class="pw-bar" id="bar-3"></div>
-            <div class="pw-bar" id="bar-4"></div>
-          </div>
-          <div class="pw-label" id="pw-label">Enter a strong password</div>
-
-          <div class="field pass-wrap" id="f-pw2">
-            <input type="password" class="f-input" id="inp-pw2"
-                   placeholder="Confirm Password" autocomplete="new-password">
-            <label class="f-label" for="inp-pw2">Confirm Password</label>
-            <button type="button" class="pass-toggle" id="toggle-pw2" tabindex="-1">
+          <div class="field pass-wrap" id="si-f-pw">
+            <input type="password" class="f-input" id="si-pw"
+                   placeholder="Password" autocomplete="current-password">
+            <label class="f-label" for="si-pw">Password</label>
+            <button type="button" class="pass-toggle" id="si-toggle-pw" tabindex="-1">
               <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
                 <path d="M1 7s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.3"/>
                 <circle cx="9" cy="7" r="2.5" stroke="currentColor" stroke-width="1.3"/>
               </svg>
             </button>
-            <div class="f-err" id="pw2-err">Passwords do not match</div>
+            <div class="f-err">Incorrect password</div>
           </div>
-
         </div>
 
-        <button class="btn-primary" id="btn-set-password">
-          <span class="btn-text">Secure My Account</span>
+        <button class="forgot-link" id="btn-forgot">Forgot password?</button>
+
+        <button class="btn-primary" id="btn-signin" style="margin-top: 8px;">
+          <span class="btn-text">Sign In</span>
           <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
             <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
           </svg>
           <div class="sp"></div>
         </button>
 
-        <button class="btn-ghost" id="btn-back-to-email">Go back</button>
-      </div>
+        <div class="or-divider"><span>or</span></div>
+        <button class="btn-ghost" onclick="switchMode('signup')">Create a new account</button>
+
+      </div><!-- /mode-signin -->
+
+
+      <!-- ══════════════════════════════════════ -->
+      <!-- ════  SIGN UP MODE  ════════════════  -->
+      <!-- ══════════════════════════════════════ -->
+      <div class="mode-section" id="mode-signup">
+
+        <!-- Step tracker — 3 steps -->
+        <div class="step-track" id="step-track">
+          <div class="pip active" id="pip-1"><span class="n">1</span></div>
+          <div class="step-seg" id="seg-1"><div class="fill"></div></div>
+          <div class="pip" id="pip-2"><span class="n">2</span></div>
+          <div class="step-seg" id="seg-2"><div class="fill"></div></div>
+          <div class="pip" id="pip-3"><span class="n">3</span></div>
+        </div>
+
+        <!-- ── STEP 1: Name & Email ── -->
+        <div class="step-block active" id="step-1">
+          <div class="field-group">
+            <div class="field" id="f-name">
+              <input type="text" class="f-input" id="inp-name"
+                     placeholder="Full Name" autocomplete="name">
+              <label class="f-label" for="inp-name">Full Name</label>
+              <div class="f-err">Please enter your full name</div>
+            </div>
+
+            <div class="field" id="f-email">
+              <input type="email" class="f-input" id="inp-email"
+                     placeholder="Email Address" autocomplete="email">
+              <label class="f-label" for="inp-email">Email Address</label>
+              <div class="f-err" id="email-err">Please enter a valid email</div>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="btn-continue">
+            <span class="btn-text">Continue</span>
+            <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
+              <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <div class="sp"></div>
+          </button>
+
+          <div class="or-divider"><span>or</span></div>
+          <button class="btn-ghost" onclick="switchMode('signin')">Already have an account</button>
+        </div>
+
+        <!-- ── STEP 2: Verify Email ── -->
+        <div class="step-block" id="step-2">
+          <div class="verify-icon">
+            <div class="verify-pulse"></div>
+            <svg width="26" height="22" viewBox="0 0 26 22" fill="none">
+              <path d="M2 2h22l-11 10L2 2z" stroke="rgba(212,175,55,.8)" stroke-width="1.4" stroke-linejoin="round"/>
+              <path d="M2 2v16a1 1 0 001 1h20a1 1 0 001-1V2" stroke="rgba(212,175,55,.8)" stroke-width="1.4"/>
+            </svg>
+          </div>
+
+          <p class="verify-email-display" id="verify-email-display">user@example.com</p>
+
+          <p class="verify-hint">
+            A verification link has been sent to your inbox.<br>
+            Click the link, then return here and press <em style="color:var(--gold-light);font-style:normal;">Confirmed</em>.
+          </p>
+
+          <button class="btn-primary" id="btn-email-confirmed" style="margin-bottom:4px;">
+            <span class="btn-text">I've Confirmed My Email</span>
+            <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
+              <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <div class="sp"></div>
+          </button>
+
+          <div class="helper-row">
+            <button class="helper-btn" id="btn-change-email">Change email</button>
+            <button class="helper-btn" id="btn-resend-email" disabled>
+              Resend in <span id="resend-timer">60</span>s
+            </button>
+          </div>
+        </div>
+
+        <!-- ── STEP 3: Set Password ── -->
+        <div class="step-block" id="step-3">
+          <div class="field-group">
+            <div class="field pass-wrap" id="f-pw">
+              <input type="password" class="f-input" id="inp-pw"
+                     placeholder="Create Password" autocomplete="new-password">
+              <label class="f-label" for="inp-pw">Create Password</label>
+              <button type="button" class="pass-toggle" id="toggle-pw" tabindex="-1">
+                <svg id="eye-icon" width="18" height="14" viewBox="0 0 18 14" fill="none">
+                  <path d="M1 7s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.3"/>
+                  <circle cx="9" cy="7" r="2.5" stroke="currentColor" stroke-width="1.3"/>
+                </svg>
+              </button>
+              <div class="f-err">Minimum 8 characters required</div>
+            </div>
+
+            <div class="pw-strength" id="pw-bars">
+              <div class="pw-bar" id="bar-1"></div>
+              <div class="pw-bar" id="bar-2"></div>
+              <div class="pw-bar" id="bar-3"></div>
+              <div class="pw-bar" id="bar-4"></div>
+            </div>
+            <div class="pw-label" id="pw-label">Enter a strong password</div>
+
+            <div class="field pass-wrap" id="f-pw2">
+              <input type="password" class="f-input" id="inp-pw2"
+                     placeholder="Confirm Password" autocomplete="new-password">
+              <label class="f-label" for="inp-pw2">Confirm Password</label>
+              <button type="button" class="pass-toggle" id="toggle-pw2" tabindex="-1">
+                <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+                  <path d="M1 7s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.3"/>
+                  <circle cx="9" cy="7" r="2.5" stroke="currentColor" stroke-width="1.3"/>
+                </svg>
+              </button>
+              <div class="f-err" id="pw2-err">Passwords do not match</div>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="btn-set-password">
+            <span class="btn-text">Secure My Account</span>
+            <svg class="btn-icon" width="16" height="10" viewBox="0 0 16 10" fill="none">
+              <path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <div class="sp"></div>
+          </button>
+
+          <button class="btn-ghost" id="btn-back-to-email">Go back</button>
+        </div>
+
+      </div><!-- /mode-signup -->
 
     </div><!-- /glass-panel -->
 
@@ -709,10 +816,11 @@ body:has(a:hover)      #cursor-ring { width: 54px; height: 54px; border-color: r
   </div>
 </div>
 
+
 <!-- ── SCRIPTS ── -->
 <script>
 /* ─── CURSOR ─── */
-const dot = document.getElementById('cursor-dot');
+const dot  = document.getElementById('cursor-dot');
 const ring = document.getElementById('cursor-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
 document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
@@ -724,7 +832,7 @@ document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; })
 })();
 
 /* ─── PARTICLES ─── */
-const cvs = document.getElementById('bg-canvas');
+const cvs  = document.getElementById('bg-canvas');
 const pctx = cvs.getContext('2d');
 let W, H, pts = [];
 function resizeCvs(){ W = cvs.width = innerWidth; H = cvs.height = innerHeight; }
@@ -779,7 +887,32 @@ function setOk(id){ const e = document.getElementById(id); e && (e.className = e
 function setErr(id){ const e = document.getElementById(id); e && (e.className = e.className.replace(' err','').replace(' ok','') + ' err'); }
 function clrFld(id){ const e = document.getElementById(id); e && (e.className = e.className.replace(' err','').replace(' ok','')); }
 
-/* ─── STEP UI ─── */
+/* ─── MODE SWITCH ─── */
+function switchMode(mode){
+  const isSignin = mode === 'signin';
+  const slider   = document.getElementById('mode-slider');
+
+  document.getElementById('btn-mode-signin').classList.toggle('active', isSignin);
+  document.getElementById('btn-mode-signup').classList.toggle('active', !isSignin);
+  slider.classList.toggle('right', !isSignin);
+
+  document.getElementById('mode-signin').classList.toggle('active', isSignin);
+  document.getElementById('mode-signup').classList.toggle('active', !isSignin);
+
+  if(isSignin){
+    document.getElementById('auth-eyebrow').textContent  = 'Welcome Back';
+    document.getElementById('auth-title').innerHTML      = 'Access your<br>wealth <em>dashboard.</em>';
+    document.getElementById('auth-sub').textContent      = 'Sign in to continue your journey to financial clarity.';
+    document.getElementById('badge-label').textContent   = 'Secure Access';
+  } else {
+    document.getElementById('auth-eyebrow').textContent  = 'New Account';
+    document.getElementById('auth-title').innerHTML      = 'Begin your wealth<br>journey <em>today.</em>';
+    document.getElementById('auth-sub').textContent      = 'Enter your details below. We\'ll verify your email before you proceed.';
+    document.getElementById('badge-label').textContent   = 'Create Account';
+  }
+}
+
+/* ─── SIGNUP: STEP UI ─── */
 function goStep(n){
   [1,2,3].forEach(i => {
     const pip = document.getElementById('pip-'+i);
@@ -791,14 +924,14 @@ function goStep(n){
     const seg = document.getElementById('seg-'+i);
     seg.classList.toggle('lit', i < n);
   });
-  document.querySelectorAll('.step-block').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('#mode-signup .step-block').forEach(el => el.classList.remove('active'));
   document.getElementById('step-'+n).classList.add('active');
 }
 
 /* ─── PASSWORD STRENGTH ─── */
 function pwStrength(pw){
   let score = 0;
-  if(pw.length >= 8) score++;
+  if(pw.length >= 8)  score++;
   if(pw.length >= 12) score++;
   if(/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
   if(/[0-9]/.test(pw) && /[^A-Za-z0-9]/.test(pw)) score++;
@@ -812,19 +945,24 @@ function renderStrength(pw){
     document.getElementById(id).className = 'pw-bar ' + (i < score ? lvl : '');
   });
   const lbl = document.getElementById('pw-label');
-  lbl.textContent = pw.length === 0 ? 'Enter a strong password' : lvl === 'weak' ? 'Weak — add numbers & symbols' : lvl === 'fair' ? 'Fair — getting there' : 'Strong password';
-  lbl.style.color = pw.length === 0 ? 'rgba(255,255,255,.2)' : lvl === 'weak' ? 'var(--error)' : lvl === 'fair' ? '#E09A30' : 'var(--success)';
+  lbl.textContent = pw.length === 0 ? 'Enter a strong password' :
+                    lvl === 'weak'  ? 'Weak — add numbers & symbols' :
+                    lvl === 'fair'  ? 'Fair — getting there' : 'Strong password';
+  lbl.style.color = pw.length === 0 ? 'rgba(255,255,255,.2)' :
+                    lvl === 'weak'  ? 'var(--error)' :
+                    lvl === 'fair'  ? '#E09A30' : 'var(--success)';
 }
 
-/* ─── TOGGLE PASSWORD VISIBILITY ─── */
+/* ─── TOGGLE PASSWORD ─── */
 function makeToggle(btnId, inpId){
   document.getElementById(btnId).addEventListener('click', () => {
     const inp = document.getElementById(inpId);
-    inp.type = inp.type === 'password' ? 'text' : 'password';
+    inp.type  = inp.type === 'password' ? 'text' : 'password';
   });
 }
-makeToggle('toggle-pw', 'inp-pw');
-makeToggle('toggle-pw2', 'inp-pw2');
+makeToggle('toggle-pw',    'inp-pw');
+makeToggle('toggle-pw2',   'inp-pw2');
+makeToggle('si-toggle-pw', 'si-pw');
 
 /* ─── RESEND TIMER ─── */
 let resendIv = null;
@@ -840,7 +978,7 @@ function startResendTimer(){
     if(sp) sp.textContent = t;
     if(t <= 0){
       clearInterval(resendIv);
-      btn.disabled = false;
+      btn.disabled  = false;
       btn.textContent = 'Resend email';
     }
   }, 1000);
@@ -857,10 +995,76 @@ const fbReady = setInterval(() => {
 function initAuth(){
   const auth = window._ywAuth;
   const fb   = window._ywFB;
-  let   tempUser = null;
+  let   tempUser    = null;
   let   currentEmail = '';
 
-  /* Realtime field events */
+  /* ════════════════════════════════════════
+     SIGN IN
+  ════════════════════════════════════════ */
+  document.getElementById('si-email').addEventListener('input', e => {
+    if(isValidEmail(e.target.value)) setOk('si-f-email'); else clrFld('si-f-email');
+  });
+
+  document.getElementById('btn-signin').addEventListener('click', async () => {
+    const email = document.getElementById('si-email').value.trim();
+    const pw    = document.getElementById('si-pw').value;
+    let ok = true;
+
+    if(!isValidEmail(email)){ setErr('si-f-email'); ok = false; } else setOk('si-f-email');
+    if(pw.length < 1){ setErr('si-f-pw'); ok = false; } else clrFld('si-f-pw');
+    if(!ok) return;
+
+    const btn = document.getElementById('btn-signin');
+    btn.classList.add('loading'); btn.disabled = true;
+
+    try {
+      const cred = await fb.signInWithEmailAndPassword(auth, email, pw);
+      const user = cred.user;
+
+      if(!user.emailVerified){
+        await fb.sendEmailVerification(user);
+        toast('Please verify your email first. A link has been re-sent.', 'bad');
+        btn.classList.remove('loading'); btn.disabled = false;
+        return;
+      }
+
+      sessionStorage.setItem("userLoggedIn", "true");
+      toast('Welcome back! Redirecting…', 'ok');
+      setTimeout(() => { window.location.href = 'financial-planner.html'; }, 900);
+
+    } catch(err){
+      btn.classList.remove('loading'); btn.disabled = false;
+      let msg = 'Sign in failed. Please try again.';
+      if(err.code === 'auth/user-not-found')      msg = 'No account found with this email.';
+      if(err.code === 'auth/wrong-password')       msg = 'Incorrect password.';
+      if(err.code === 'auth/invalid-credential')   msg = 'Invalid email or password.';
+      if(err.code === 'auth/too-many-requests')    msg = 'Too many attempts. Please try again later.';
+      if(err.code === 'auth/invalid-email')        msg = 'Please enter a valid email address.';
+      toast(msg, 'bad');
+    }
+  });
+
+  /* Forgot password */
+  document.getElementById('btn-forgot').addEventListener('click', async () => {
+    const email = document.getElementById('si-email').value.trim();
+    if(!isValidEmail(email)){
+      setErr('si-f-email');
+      document.getElementById('si-email-err').textContent = 'Enter your email above first';
+      toast('Enter your email address first.', 'bad');
+      return;
+    }
+    try {
+      await fb.sendPasswordResetEmail(auth, email);
+      toast('Password reset email sent!', 'ok');
+    } catch(err){
+      toast(err.message || 'Could not send reset email.', 'bad');
+    }
+  });
+
+
+  /* ════════════════════════════════════════
+     SIGN UP — realtime field events
+  ════════════════════════════════════════ */
   document.getElementById('inp-pw').addEventListener('input', e => {
     renderStrength(e.target.value);
     if(e.target.value.length >= 8) setOk('f-pw'); else clrFld('f-pw');
@@ -892,21 +1096,18 @@ function initAuth(){
     btn.classList.add('loading'); btn.disabled = true;
 
     try {
-      /* Check if email already has an account */
       const methods = await fb.fetchSignInMethodsForEmail(auth, email);
       if(methods.length > 0){
-        /* Existing user — direct them to sign-in flow instead */
-        document.getElementById('email-err').textContent = 'This email is already registered. Try signing in.';
+        document.getElementById('email-err').textContent = 'Email already registered — sign in instead.';
         setErr('f-email');
-        toast('Account exists — please sign in instead.', 'bad');
+        toast('Account exists. Use Sign In above.', 'bad');
         btn.classList.remove('loading'); btn.disabled = false;
         return;
       }
 
-      /* Create account with a temp random password — we'll update it in step 3 */
       const tempPw = Math.random().toString(36).slice(-12) + 'Aa1!';
       const cred   = await fb.createUserWithEmailAndPassword(auth, email, tempPw);
-      tempUser = cred.user;
+      tempUser     = cred.user;
 
       await fb.updateProfile(tempUser, { displayName: name });
       await fb.sendEmailVerification(tempUser);
@@ -914,9 +1115,9 @@ function initAuth(){
       currentEmail = email;
       document.getElementById('verify-email-display').textContent = email;
       document.getElementById('auth-eyebrow').textContent = 'Verify Email';
-      document.getElementById('auth-title').innerHTML = 'Check your<br><em>inbox.</em>';
-      document.getElementById('auth-sub').textContent = '';
-      document.getElementById('badge-label').textContent = 'Verification Sent';
+      document.getElementById('auth-title').innerHTML     = 'Check your<br><em>inbox.</em>';
+      document.getElementById('auth-sub').textContent     = '';
+      document.getElementById('badge-label').textContent  = 'Verification Sent';
 
       goStep(2);
       toast('Verification email sent to ' + email, 'ok');
@@ -924,8 +1125,8 @@ function initAuth(){
 
     } catch(err){
       let msg = err.message || 'Something went wrong.';
-      if(err.code === 'auth/email-already-in-use') {
-        document.getElementById('email-err').textContent = 'This email is already registered.';
+      if(err.code === 'auth/email-already-in-use'){
+        document.getElementById('email-err').textContent = 'Email already registered.';
         setErr('f-email');
         msg = 'Email already in use. Please sign in instead.';
       }
@@ -935,7 +1136,7 @@ function initAuth(){
     }
   });
 
-  /* ── STEP 2: Confirmed button ── */
+  /* ── STEP 2: Email Confirmed ── */
   document.getElementById('btn-email-confirmed').addEventListener('click', async () => {
     if(!tempUser){ toast('Session lost — please start again.', 'bad'); goStep(1); return; }
 
@@ -946,12 +1147,12 @@ function initAuth(){
       await fb.reload(tempUser);
       if(tempUser.emailVerified){
         document.getElementById('auth-eyebrow').textContent = 'Secure Access';
-        document.getElementById('auth-title').innerHTML = 'Set your<br><em>password.</em>';
-        document.getElementById('badge-label').textContent = 'Almost Done';
+        document.getElementById('auth-title').innerHTML     = 'Set your<br><em>password.</em>';
+        document.getElementById('badge-label').textContent  = 'Almost Done';
         goStep(3);
         toast('Email verified! Now set your password.', 'ok');
       } else {
-        toast('Email not verified yet — please check your inbox.', 'bad');
+        toast('Not verified yet — please check your inbox.', 'bad');
         btn.classList.remove('loading'); btn.disabled = false;
       }
     } catch(err){
@@ -974,7 +1175,6 @@ function initAuth(){
 
   /* ── STEP 2: Change email ── */
   document.getElementById('btn-change-email').addEventListener('click', async () => {
-    /* Delete the temp account so they can restart with a different email */
     if(tempUser){
       try { await tempUser.delete(); } catch(e){}
       tempUser = null;
@@ -983,10 +1183,10 @@ function initAuth(){
     document.getElementById('inp-email').value = '';
     document.getElementById('inp-name').value  = '';
     clrFld('f-email'); clrFld('f-name');
-    document.getElementById('auth-eyebrow').textContent = 'Secure Access';
-    document.getElementById('auth-title').innerHTML = 'Begin your wealth<br>journey <em>today.</em>';
-    document.getElementById('auth-sub').textContent = 'Enter your details below. We\'ll verify your email before you proceed.';
-    document.getElementById('badge-label').textContent = 'Create Account';
+    document.getElementById('auth-eyebrow').textContent = 'New Account';
+    document.getElementById('auth-title').innerHTML     = 'Begin your wealth<br>journey <em>today.</em>';
+    document.getElementById('auth-sub').textContent     = 'Enter your details below. We\'ll verify your email before you proceed.';
+    document.getElementById('badge-label').textContent  = 'Create Account';
     goStep(1);
   });
 
@@ -997,15 +1197,19 @@ function initAuth(){
     let ok = true;
 
     if(pw.length < 8){ setErr('f-pw'); ok = false; } else setOk('f-pw');
-    if(pw !== pw2){ setErr('f-pw2'); document.getElementById('pw2-err').textContent='Passwords do not match'; ok = false; } else if(pw2.length > 0) setOk('f-pw2');
+    if(pw !== pw2){
+      setErr('f-pw2');
+      document.getElementById('pw2-err').textContent = 'Passwords do not match';
+      ok = false;
+    } else if(pw2.length > 0) setOk('f-pw2');
     if(!ok) return;
 
     const btn = document.getElementById('btn-set-password');
     btn.classList.add('loading'); btn.disabled = true;
 
     try {
-      /* Update the password from the temp one to the user's choice */
       await fb.updatePassword(tempUser, pw);
+      sessionStorage.setItem("userLoggedIn", "true");
       toast('Account secured! Redirecting…', 'ok');
       setTimeout(() => { window.location.href = 'financial-planner.html'; }, 1000);
     } catch(err){
@@ -1017,14 +1221,19 @@ function initAuth(){
   /* ── Back to email ── */
   document.getElementById('btn-back-to-email').addEventListener('click', () => {
     document.getElementById('auth-eyebrow').textContent = 'Verify Email';
-    document.getElementById('auth-title').innerHTML = 'Check your<br><em>inbox.</em>';
-    document.getElementById('badge-label').textContent = 'Verification Sent';
+    document.getElementById('auth-title').innerHTML     = 'Check your<br><em>inbox.</em>';
+    document.getElementById('badge-label').textContent  = 'Verification Sent';
     goStep(2);
   });
 
   /* ── Enter key ── */
   document.addEventListener('keydown', e => {
     if(e.key !== 'Enter') return;
+    const siActive = document.getElementById('mode-signin').classList.contains('active');
+    if(siActive){
+      document.getElementById('btn-signin').click();
+      return;
+    }
     if(document.getElementById('step-1').classList.contains('active')) document.getElementById('btn-continue').click();
     if(document.getElementById('step-2').classList.contains('active')) document.getElementById('btn-email-confirmed').click();
     if(document.getElementById('step-3').classList.contains('active')) document.getElementById('btn-set-password').click();
