@@ -364,6 +364,10 @@ input[type="range"]::-moz-range-thumb {
   font-family: 'Cormorant Garamond', serif; font-size: 1.2rem;
   color: var(--gold); margin-top: 12px; min-height: 1.5rem;
 }
+.phase-card-note {
+  font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.22); margin-top: 6px; line-height: 1.6; min-height: 1rem;
+}
 
 /* SWP BAR CHART */
 .surplus-years { display: flex; gap: 4px; align-items: flex-end; height: 90px; position: relative; }
@@ -557,6 +561,28 @@ input[type="range"]::-moz-range-thumb {
         <input type="range" id="inf-rate" min="3" max="12" value="6" step="0.5">
       </div>
 
+      <div style="height:1px; background:linear-gradient(90deg,transparent,rgba(184,150,12,0.18),transparent); margin:10px 0 22px;"></div>
+
+      <div class="slider-row">
+        <div class="slider-head">
+          <span class="slider-lbl">SIP Annual Step-Up</span>
+          <span class="slider-val" id="sip-stepup-val">10 <span>%/yr</span></span>
+        </div>
+        <div class="slider-track"><div class="slider-fill" id="sip-stepup-fill" style="width:50%"></div></div>
+        <input type="range" id="sip-stepup" min="0" max="25" value="10" step="1">
+        <div class="field-hint" style="margin-top:6px">SIP increases by this % every year — boosts corpus significantly</div>
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-head">
+          <span class="slider-lbl">SWP Annual Top-Up</span>
+          <span class="slider-val" id="swp-topup-val">0 <span>%/yr</span></span>
+        </div>
+        <div class="slider-track"><div class="slider-fill" id="swp-topup-fill" style="width:0%"></div></div>
+        <input type="range" id="swp-topup" min="0" max="15" value="0" step="0.5">
+        <div class="field-hint" style="margin-top:6px">Withdrawal amount increases by this % each year — over &amp; above inflation</div>
+      </div>
+
       <button class="calc-btn" id="calc-btn">
         <span>Calculate My Retirement Plan</span>
         <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
@@ -652,18 +678,21 @@ input[type="range"]::-moz-range-thumb {
           <div class="phase-card-title">Accumulation Phase</div>
           <div class="phase-card-desc">SIP + Lumpsum compounds at pre-retirement returns until your target retirement date.</div>
           <div class="phase-card-val" id="pc-accum-val">—</div>
+          <div class="phase-card-note" id="pc-accum-note"></div>
         </div>
         <div class="phase-card">
           <div class="phase-card-num">02</div>
           <div class="phase-card-title">SWP Phase</div>
           <div class="phase-card-desc">Corpus shifts to a conservative allocation, funding inflation-adjusted monthly withdrawals.</div>
           <div class="phase-card-val" id="pc-swp-val">—</div>
+          <div class="phase-card-note" id="pc-swp-note"></div>
         </div>
         <div class="phase-card">
           <div class="phase-card-num">03</div>
           <div class="phase-card-title">Inflation-Adjusted Need</div>
           <div class="phase-card-desc">Your monthly requirement grows each year. We model the full compounding impact on your withdrawals.</div>
           <div class="phase-card-val" id="pc-inf-val">—</div>
+          <div class="phase-card-note" id="pc-inf-note"></div>
         </div>
         <div class="phase-card">
           <div class="phase-card-num">04</div>
@@ -764,52 +793,59 @@ function getInputs() {
     retRate:    +document.getElementById('ret-rate').value / 100,
     postRate:   +document.getElementById('post-rate').value / 100,
     infRate:    +document.getElementById('inf-rate').value / 100,
+    sipStepUp:  +document.getElementById('sip-stepup').value / 100,
+    swpTopUp:   +document.getElementById('swp-topup').value / 100,
   };
 }
 
 /* ── CORE CALCULATION ── */
 function calcCorpus(inp) {
-  const { req, lumpsum, sip, accumYears, swpYears, retRate, postRate, infRate } = inp;
+  const { req, lumpsum, sip, accumYears, swpYears, retRate, postRate, infRate, sipStepUp, swpTopUp } = inp;
   const rm = retRate / 12;
 
-  /* Accumulation */
-  const lumpsumFV = lumpsum * Math.pow(1 + retRate, accumYears);
-  const sipFV = sip * (Math.pow(1 + rm, accumYears * 12) - 1) / rm * (1 + rm);
-  const corpus = lumpsumFV + sipFV;
+  /* ── ACCUMULATION: step-up SIP simulated year by year ── */
+  const accumYearData = [];
+  let accCorpus = lumpsum;
+  let currentSIP = sip;
 
-  /* Inflation-adjusted monthly at retirement */
+  for (let y = 1; y <= accumYears; y++) {
+    for (let m = 0; m < 12; m++) {
+      accCorpus = accCorpus * (1 + rm) + currentSIP;
+    }
+    accumYearData.push({ year: y, corpus: accCorpus, sip: currentSIP });
+    currentSIP = currentSIP * (1 + sipStepUp);
+  }
+
+  const corpus = accCorpus;
+  const finalSIP = accumYearData[accumYears - 1]?.sip || sip;
+
+  /* ── Inflation-adjusted monthly need at retirement ── */
   const monthlyAtRetirement = req * Math.pow(1 + infRate, accumYears);
 
   const pr = postRate / 12;
+  /* Combined annual escalation on SWP: inflation + extra top-up */
+  const swpEscalation = infRate + swpTopUp;
 
-  /* Year-by-year accumulation track */
-  const accumYearData = [];
-  for (let y = 1; y <= accumYears; y++) {
-    const lFV = lumpsum * Math.pow(1 + retRate, y);
-    const sFV = sip * (Math.pow(1 + rm, y * 12) - 1) / rm * (1 + rm);
-    accumYearData.push({ year: y, corpus: lFV + sFV });
-  }
-
-  /* SWP phase: monthly simulation */
+  /* ── SWP phase: monthly simulation with combined escalation ── */
   const yearlyData = [];
   let currentCorpus = corpus;
   let totalWithdrawn = 0;
 
   for (let y = 1; y <= swpYears; y++) {
-    const inflatedMonthly = monthlyAtRetirement * Math.pow(1 + infRate, y - 1);
+    const escalatedMonthly = monthlyAtRetirement * Math.pow(1 + swpEscalation, y - 1);
     for (let m = 0; m < 12; m++) {
-      currentCorpus = currentCorpus * (1 + pr) - inflatedMonthly;
+      currentCorpus = currentCorpus * (1 + pr) - escalatedMonthly;
       if (currentCorpus < 0) { currentCorpus = 0; }
     }
-    totalWithdrawn += inflatedMonthly * 12;
+    totalWithdrawn += escalatedMonthly * 12;
     yearlyData.push({
       year: y,
       corpus: Math.max(0, currentCorpus),
-      monthly: inflatedMonthly
+      monthly: escalatedMonthly
     });
   }
 
-  return { corpus, monthlyAtRetirement, yearlyData, accumYearData, totalWithdrawn, finalCorpus: currentCorpus };
+  return { corpus, monthlyAtRetirement, yearlyData, accumYearData, totalWithdrawn, finalCorpus: currentCorpus, finalSIP };
 }
 
 /* ── BUILD CHART ── */
@@ -971,17 +1007,24 @@ function runCalc() {
 
   /* KPI cards */
   document.getElementById('kpi-corpus').textContent     = fmt(res.corpus);
-  document.getElementById('kpi-corpus-note').textContent = 'At retirement in ' + retYear;
+  document.getElementById('kpi-corpus-note').textContent = 'At retirement in ' + retYear + (inp.sipStepUp > 0 ? ' · SIP steps up ' + (inp.sipStepUp*100).toFixed(0) + '%/yr' : '');
   document.getElementById('kpi-withdraw').textContent   = fmt(res.monthlyAtRetirement);
-  document.getElementById('kpi-withdraw-note').textContent = 'After ' + inp.accumYears + 'yr inflation @ ' + (inp.infRate*100).toFixed(1) + '%';
+  const swpEscTotal = ((inp.infRate + inp.swpTopUp)*100).toFixed(1);
+  document.getElementById('kpi-withdraw-note').textContent = 'Escalates ' + swpEscTotal + '%/yr' + (inp.swpTopUp > 0 ? ' (inf+topup)' : ' (inflation only)');
   document.getElementById('kpi-remain').textContent     = fmt(res.finalCorpus);
   document.getElementById('kpi-remain-note').textContent = res.finalCorpus > 0 ? 'Legacy preserved ✦' : '⚠ Corpus depleted';
   document.getElementById('kpi-remain').style.color     = res.finalCorpus > 0 ? 'white' : 'rgba(220,80,60,0.95)';
 
   /* Phase cards */
+  const sipStepNote = inp.sipStepUp > 0 ? ' · steps up ' + (inp.sipStepUp*100).toFixed(0) + '%/yr → ' + fmt(res.finalSIP) + '/mo by retirement' : '';
   document.getElementById('pc-accum-val').textContent   = fmt(res.corpus) + ' corpus';
+  document.getElementById('pc-accum-note').textContent  = 'Starts at ' + fmt(inp.sip) + '/mo SIP' + sipStepNote;
   document.getElementById('pc-swp-val').textContent     = inp.swpYears + ' years of withdrawals';
+  const swpTopUpNote = inp.swpTopUp > 0 ? 'Inf ' + (inp.infRate*100).toFixed(1) + '% + top-up ' + (inp.swpTopUp*100).toFixed(1) + '% = ' + swpEscTotal + '%/yr total escalation' : 'Escalates at inflation (' + (inp.infRate*100).toFixed(1) + '%/yr)';
+  document.getElementById('pc-swp-note').textContent    = swpTopUpNote;
   document.getElementById('pc-inf-val').textContent     = fmt(res.monthlyAtRetirement) + '/mo (Year 1)';
+  const lastWithdrawal = res.yearlyData[inp.swpYears-1]?.monthly || res.monthlyAtRetirement;
+  document.getElementById('pc-inf-note').textContent    = 'Grows to ' + fmt(lastWithdrawal) + '/mo by Year ' + inp.swpYears;
   document.getElementById('pc-legacy-val').textContent  = res.finalCorpus > 0 ? fmt(res.finalCorpus) + ' remaining' : 'Fully utilised';
 
   buildChart(inp, res);
@@ -1005,11 +1048,13 @@ function bindSlider(sliderId, displayId, fillId, min, max, suffix, dec) {
   slider.addEventListener('input', update);
 }
 
-bindSlider('accum-years', 'accum-val',    'accum-fill', 1,  35, 'yrs', 0);
-bindSlider('swp-years',   'swp-dur-val',  'swp-fill',   5,  40, 'yrs', 0);
-bindSlider('ret-rate',    'ret-val',      'ret-fill',   6,  18, '%',   1);
-bindSlider('post-rate',   'post-val',     'post-fill',  5,  12, '%',   1);
-bindSlider('inf-rate',    'inf-val',      'inf-fill',   3,  12, '%',   1);
+bindSlider('accum-years', 'accum-val',      'accum-fill',     1,  35, 'yrs',  0);
+bindSlider('swp-years',   'swp-dur-val',    'swp-fill',       5,  40, 'yrs',  0);
+bindSlider('ret-rate',    'ret-val',        'ret-fill',       6,  18, '%',    1);
+bindSlider('post-rate',   'post-val',       'post-fill',      5,  12, '%',    1);
+bindSlider('inf-rate',    'inf-val',        'inf-fill',       3,  12, '%',    1);
+bindSlider('sip-stepup',  'sip-stepup-val', 'sip-stepup-fill',0,  25, '%/yr', 0);
+bindSlider('swp-topup',   'swp-topup-val',  'swp-topup-fill', 0,  15, '%/yr', 1);
 
 document.getElementById('calc-btn').addEventListener('click', runCalc);
 ['monthly-req','lumpsum','sip'].forEach(id => {
