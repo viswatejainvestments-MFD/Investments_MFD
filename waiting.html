@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>yours. — every rupee, one app. Join the waitlist.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════ */
+:root{
+  --bg:#0A0A0E;
+  --bg-soft:#111116;
+  --surface:rgba(255,255,255,0.045);
+  --surface-hi:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.10);
+  --border-soft:rgba(255,255,255,0.06);
+  --text:#F3F3F6;
+  --muted:#8B8B96;
+  --muted-dim:#5C5C66;
+  --lime:#D6FF3F;
+  --lime-dim:rgba(214,255,63,0.14);
+  --violet:#6C5CE7;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ease-back:cubic-bezier(.34,1.56,.64,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--lime);color:#0A0A0E;}
+h1,h2,h3,.disp{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.02em;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{color:inherit;}
+img,svg{display:block;}
+
+/* ambient background glow */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.ambient::before{
+  content:'';position:absolute;top:-20%;right:-10%;width:60vw;height:60vw;border-radius:50%;
+  background:radial-gradient(circle,rgba(108,92,231,0.16),transparent 65%);
+  filter:blur(40px);
+}
+.ambient::after{
+  content:'';position:absolute;bottom:-25%;left:-15%;width:55vw;height:55vw;border-radius:50%;
+  background:radial-gradient(circle,rgba(214,255,63,0.06),transparent 65%);
+  filter:blur(60px);
+}
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:24px 56px;
+  transition:padding .4s var(--ease),background .4s,backdrop-filter .4s;
+}
+nav.scrolled{
+  padding:14px 56px;
+  background:rgba(10,10,14,0.72);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border-soft);
+}
+.logo{
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;
+  text-decoration:none;letter-spacing:-0.02em;
+}
+.logo .dot{color:var(--lime);}
+.nav-links{display:flex;gap:34px;list-style:none;}
+.nav-links a{
+  font-size:0.82rem;color:var(--muted);text-decoration:none;
+  transition:color .3s;
+}
+.nav-links a:hover{color:var(--text);}
+.nav-cta{
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.8rem;
+  background:var(--lime);color:#0A0A0E;
+  padding:11px 22px;border-radius:100px;border:none;cursor:pointer;
+  text-decoration:none;letter-spacing:-0.01em;
+  transition:transform .3s var(--ease-back),box-shadow .3s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.nav-cta:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 24px rgba(214,255,63,0.25);}
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:grid;grid-template-columns:1.05fr 0.95fr;
+  align-items:center;gap:40px;
+  padding:150px 56px 80px;
+}
+.hero-grid-bg{
+  position:absolute;inset:0;z-index:-1;
+  background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
+                    linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse 70% 60% at 30% 40%,black 30%,transparent 100%);
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:28px;
+  opacity:0;animation:fadeUp .7s .3s var(--ease) forwards;
+}
+.eyebrow .pulse{
+  width:6px;height:6px;border-radius:50%;background:var(--lime);
+  box-shadow:0 0 0 0 rgba(214,255,63,0.6);
+  animation:pulseDot 2s infinite;
+}
+@keyframes pulseDot{
+  0%{box-shadow:0 0 0 0 rgba(214,255,63,0.5);}
+  70%{box-shadow:0 0 0 9px rgba(214,255,63,0);}
+  100%{box-shadow:0 0 0 0 rgba(214,255,63,0);}
+}
+.hero h1{
+  font-size:clamp(2.9rem,5vw,4.6rem);
+  font-weight:700;line-height:1.02;margin-bottom:26px;
+}
+.hero h1 .line{display:block;overflow:hidden;}
+.hero h1 .line span{
+  display:inline-block;opacity:0;transform:translateY(100%);
+  animation:lineUp .8s var(--ease) forwards;
+}
+.hero h1 .accent{color:var(--lime);}
+@keyframes lineUp{to{opacity:1;transform:translateY(0);}}
+.hero p.sub{
+  font-size:1.02rem;color:var(--muted);line-height:1.75;max-width:460px;margin-bottom:38px;
+  opacity:0;animation:fadeUp .8s 1.1s var(--ease) forwards;
+}
+.hero-actions{
+  display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+  opacity:0;animation:fadeUp .8s 1.3s var(--ease) forwards;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.btn-lime{
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.92rem;
+  background:var(--lime);color:#0A0A0E;border:none;border-radius:100px;
+  padding:17px 30px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;
+  transition:transform .35s var(--ease-back),box-shadow .35s;
+}
+.btn-lime:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 14px 34px rgba(214,255,63,0.28);}
+.btn-lime svg{transition:transform .3s var(--ease);}
+.btn-lime:hover svg{transform:translateX(4px);}
+.waitlist-count{
+  display:flex;align-items:center;gap:10px;
+  font-size:0.8rem;color:var(--muted);
+}
+.avatar-stack{display:flex;}
+.avatar-stack span{
+  width:26px;height:26px;border-radius:50%;
+  background:linear-gradient(135deg,var(--violet),#a08bff);
+  border:2px solid var(--bg);margin-left:-8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.6rem;font-weight:600;
+}
+.avatar-stack span:first-child{margin-left:0;}
+.waitlist-count b{color:var(--text);font-family:'JetBrains Mono',monospace;font-weight:500;}
+
+/* ── HERO PHONE SCENE (signature element) ── */
+.phone-scene{
+  position:relative;height:640px;
+  perspective:1400px;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;animation:fadeUp 1s 0.6s var(--ease) forwards;
+}
+.phone-3d{
+  position:relative;width:290px;height:590px;
+  transform-style:preserve-3d;
+  transform:rotateY(-16deg) rotateX(6deg);
+  transition:transform .3s var(--ease);
+  will-change:transform;
+}
+.phone-body{
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,#1a1a20,#0c0c10);
+  border-radius:42px;border:1px solid rgba(255,255,255,0.14);
+  box-shadow:0 50px 100px -20px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.15);
+  padding:12px;
+  transform:translateZ(0);
+}
+.phone-screen{
+  width:100%;height:100%;border-radius:32px;overflow:hidden;position:relative;
+  background:linear-gradient(180deg,#131318,#0c0c10);
+  display:flex;flex-direction:column;
+}
+.phone-notch{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:90px;height:22px;background:#0A0A0E;border-radius:14px;z-index:5;
+}
+.ph-statusbar{
+  display:flex;justify-content:space-between;padding:16px 20px 4px;
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:rgba(255,255,255,0.5);
+}
+.ph-content{padding:18px 18px 0;flex:1;display:flex;flex-direction:column;gap:16px;overflow:hidden;}
+.ph-greet{font-size:0.68rem;color:var(--muted);}
+.ph-greet b{color:var(--text);font-weight:500;}
+.ph-balance-label{font-size:0.6rem;color:var(--muted-dim);text-transform:uppercase;letter-spacing:0.08em;margin-top:6px;}
+.ph-balance{font-family:'Space Grotesk',sans-serif;font-size:1.9rem;font-weight:700;margin-top:2px;}
+.ph-delta{
+  display:inline-flex;align-items:center;gap:4px;margin-top:6px;
+  font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--lime);
+  background:var(--lime-dim);padding:4px 9px;border-radius:20px;width:fit-content;
+}
+.ph-chips{display:flex;gap:7px;overflow:hidden;margin-top:4px;}
+.ph-chip{
+  font-size:0.6rem;padding:7px 12px;border-radius:20px;white-space:nowrap;
+  background:var(--surface);border:1px solid var(--border-soft);color:var(--muted);
+}
+.ph-chip.on{background:var(--text);color:#0A0A0E;font-weight:600;border-color:var(--text);}
+.ph-chart{
+  height:70px;display:flex;align-items:flex-end;gap:5px;padding:0 2px;
+}
+.ph-chart i{
+  flex:1;background:linear-gradient(180deg,var(--lime),rgba(214,255,63,0.15));
+  border-radius:3px 3px 0 0;opacity:0.85;
+}
+.ph-goals{display:flex;flex-direction:column;gap:10px;margin-top:2px;}
+.ph-goal-row{display:flex;flex-direction:column;gap:5px;}
+.ph-goal-top{display:flex;justify-content:space-between;font-size:0.62rem;color:var(--muted);}
+.ph-goal-top b{color:var(--text);font-weight:500;}
+.ph-goal-track{height:4px;background:var(--surface);border-radius:4px;overflow:hidden;}
+.ph-goal-fill{height:100%;background:var(--lime);border-radius:4px;}
+.ph-tabbar{
+  margin-top:auto;display:flex;justify-content:space-around;
+  padding:14px 10px 20px;border-top:1px solid var(--border-soft);
+}
+.ph-tabbar svg{width:16px;height:16px;color:var(--muted-dim);}
+.ph-tabbar .active svg{color:var(--lime);}
+
+/* orbit cards */
+.orbit-card{
+  position:absolute;background:rgba(20,20,26,0.75);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--border);border-radius:16px;
+  padding:12px 16px;transform-style:preserve-3d;
+  box-shadow:0 20px 40px rgba(0,0,0,0.35);
+  animation:float 5s ease-in-out infinite;
+}
+.orbit-card .oc-label{font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+.orbit-card .oc-val{font-family:'Space Grotesk',sans-serif;font-size:0.98rem;font-weight:600;margin-top:2px;}
+.orbit-card .oc-val.up{color:var(--lime);}
+.oc1{top:2%;left:-14%;animation-delay:0s;transform:translateZ(80px);}
+.oc2{top:18%;right:-18%;animation-delay:.7s;transform:translateZ(60px);}
+.oc3{bottom:22%;left:-20%;animation-delay:1.4s;transform:translateZ(70px);}
+.oc4{bottom:4%;right:-10%;animation-delay:2.1s;transform:translateZ(50px);}
+@keyframes float{
+  0%,100%{transform:translateY(0) translateZ(var(--z,60px));}
+  50%{transform:translateY(-14px) translateZ(var(--z,60px));}
+}
+
+/* ═══════════════════════════════════════════
+   TICKER
+═══════════════════════════════════════════ */
+.ticker{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);
+  background:var(--bg-soft);padding:15px 0;overflow:hidden;
+}
+.ticker-track{display:flex;gap:56px;white-space:nowrap;animation:tick 32s linear infinite;width:max-content;}
+.ticker:hover .ticker-track{animation-play-state:paused;}
+.tick-item{
+  font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.03em;
+  color:var(--muted);display:flex;align-items:center;gap:10px;
+}
+.tick-item .lime{color:var(--lime);}
+.tick-item::after{content:'◆';color:var(--muted-dim);font-size:0.5rem;margin-left:46px;}
+@keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ═══════════════════════════════════════════
+   SHARED SECTION
+═══════════════════════════════════════════ */
+section{position:relative;z-index:1;padding:110px 56px;}
+.tag{
+  font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:18px;display:flex;align-items:center;gap:10px;
+}
+.tag::before{content:'';width:22px;height:1px;background:var(--lime);}
+.sec-title{font-size:clamp(2rem,3.6vw,3rem);font-weight:700;line-height:1.1;margin-bottom:16px;}
+.sec-title .accent{color:var(--lime);}
+.sec-sub{color:var(--muted);font-size:0.98rem;line-height:1.7;max-width:520px;}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s var(--ease),transform .8s var(--ease);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}.d4{transition-delay:.4s;}.d5{transition-delay:.5s;}
+
+/* ═══════════════════════════════════════════
+   FEATURES
+═══════════════════════════════════════════ */
+.features-head{margin-bottom:56px;}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft);border:1px solid var(--border-soft);}
+.feat-card{
+  background:var(--bg);padding:38px 32px;
+  transition:background .4s;cursor:default;
+  transform-style:preserve-3d;will-change:transform;
+}
+.feat-card:hover{background:var(--bg-soft);}
+.feat-icon{
+  width:44px;height:44px;border-radius:12px;background:var(--surface);border:1px solid var(--border-soft);
+  display:flex;align-items:center;justify-content:center;margin-bottom:22px;color:var(--lime);
+  transition:background .3s,border-color .3s,transform .3s var(--ease-back);
+}
+.feat-card:hover .feat-icon{background:var(--lime-dim);border-color:rgba(214,255,63,0.3);transform:scale(1.08) rotate(-4deg);}
+.feat-icon svg{width:20px;height:20px;}
+.feat-title{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:600;margin-bottom:10px;}
+.feat-desc{font-size:0.85rem;color:var(--muted);line-height:1.7;}
+
+/* ═══════════════════════════════════════════
+   GALLERY (tabs)
+═══════════════════════════════════════════ */
+.gallery{background:var(--bg-soft);border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);}
+.gallery-layout{display:grid;grid-template-columns:0.9fr 1.1fr;gap:60px;align-items:center;margin-top:50px;}
+.gtab-list{display:flex;flex-direction:column;gap:2px;}
+.gtab{
+  display:flex;align-items:center;gap:16px;padding:22px 20px;
+  border:1px solid transparent;border-radius:14px;cursor:pointer;
+  transition:background .3s,border-color .3s;
+}
+.gtab:hover{background:var(--surface);}
+.gtab.active{background:var(--surface-hi);border-color:var(--border);}
+.gtab-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted-dim);width:22px;}
+.gtab.active .gtab-num{color:var(--lime);}
+.gtab-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.02rem;margin-bottom:4px;}
+.gtab-desc{font-size:0.8rem;color:var(--muted);line-height:1.6;}
+.gallery-phone-wrap{display:flex;justify-content:center;perspective:1200px;}
+.gphone{
+  width:260px;height:530px;background:linear-gradient(160deg,#1a1a20,#0c0c10);
+  border-radius:38px;border:1px solid rgba(255,255,255,0.14);padding:10px;
+  box-shadow:0 40px 90px -20px rgba(0,0,0,0.6);
+  transform:rotateY(0deg);transition:transform .6s var(--ease);
+}
+.gscreen{width:100%;height:100%;border-radius:28px;background:linear-gradient(180deg,#131318,#0c0c10);overflow:hidden;position:relative;padding:20px 16px;}
+.gview{display:none;flex-direction:column;gap:14px;height:100%;animation:fadeIn .5s var(--ease);}
+.gview.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.gview-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin-top:6px;}
+.gv-chat{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+.gv-bubble{max-width:78%;padding:10px 13px;border-radius:14px;font-size:0.72rem;line-height:1.5;}
+.gv-bubble.them{background:var(--surface);border:1px solid var(--border-soft);align-self:flex-start;border-bottom-left-radius:4px;}
+.gv-bubble.me{background:var(--lime);color:#0A0A0E;align-self:flex-end;border-bottom-right-radius:4px;font-weight:500;}
+.gv-typing{display:flex;gap:4px;padding:10px 13px;background:var(--surface);border-radius:14px;width:fit-content;border-bottom-left-radius:4px;}
+.gv-typing span{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:typing 1.2s infinite;}
+.gv-typing span:nth-child(2){animation-delay:.2s;}
+.gv-typing span:nth-child(3){animation-delay:.4s;}
+@keyframes typing{0%,60%,100%{opacity:0.3;transform:translateY(0);}30%{opacity:1;transform:translateY(-3px);}}
+
+/* ═══════════════════════════════════════════
+   STATS STRIP
+═══════════════════════════════════════════ */
+.stats-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--border-soft);border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);
+  padding:0;
+}
+.stat-box{background:var(--bg);padding:44px 30px;text-align:center;}
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:2.2rem;font-weight:700;color:var(--lime);}
+.stat-lbl{font-size:0.75rem;color:var(--muted);margin-top:6px;}
+
+/* ═══════════════════════════════════════════
+   WAITLIST FORM
+═══════════════════════════════════════════ */
+.waitlist-sec{
+  background:var(--bg-soft);border-top:1px solid var(--border-soft);
+  display:grid;grid-template-columns:0.9fr 1.1fr;gap:60px;align-items:flex-start;
+}
+.wl-left{position:sticky;top:120px;}
+.wl-badge{
+  display:inline-flex;align-items:center;gap:8px;background:var(--lime-dim);color:var(--lime);
+  font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:7px 14px;border-radius:20px;margin-bottom:24px;
+}
+.wl-perks{margin-top:32px;display:flex;flex-direction:column;gap:16px;}
+.wl-perk{display:flex;gap:12px;align-items:flex-start;font-size:0.85rem;color:var(--muted);}
+.wl-perk svg{width:16px;height:16px;color:var(--lime);flex-shrink:0;margin-top:2px;}
+
+.wl-card{
+  background:var(--bg);border:1px solid var(--border);border-radius:24px;padding:44px;position:relative;overflow:hidden;
+}
+.wl-card::before{
+  content:'';position:absolute;top:-40%;right:-20%;width:60%;height:80%;
+  background:radial-gradient(circle,rgba(108,92,231,0.14),transparent 70%);pointer-events:none;
+}
+.field-group{display:flex;flex-direction:column;gap:18px;margin-bottom:24px;position:relative;}
+.field{position:relative;}
+.field input{
+  width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);
+  font-family:'Inter',sans-serif;font-size:0.9rem;padding:17px 16px 15px;outline:none;
+  transition:border-color .3s,background .3s,box-shadow .3s;
+}
+.field input::placeholder{color:var(--muted-dim);}
+.field input:focus{border-color:var(--lime);background:rgba(214,255,63,0.03);box-shadow:0 0 0 4px rgba(214,255,63,0.06);}
+.field.error input{border-color:#E0707A;}
+.field-err{font-size:0.68rem;color:#E0707A;margin-top:6px;height:0;overflow:hidden;opacity:0;transition:.3s;}
+.field.error .field-err{height:14px;opacity:1;}
+
+.chip-label{font-size:0.78rem;color:var(--muted);margin-bottom:12px;}
+.chip-row{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:26px;}
+.chip{
+  font-size:0.78rem;padding:10px 16px;border-radius:20px;border:1px solid var(--border);
+  background:var(--surface);color:var(--muted);cursor:pointer;transition:all .25s var(--ease);user-select:none;
+}
+.chip:hover{border-color:rgba(214,255,63,0.35);color:var(--text);}
+.chip.active{background:var(--lime);color:#0A0A0E;border-color:var(--lime);font-weight:600;}
+
+.wl-submit{
+  width:100%;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.92rem;
+  background:var(--lime);color:#0A0A0E;border:none;border-radius:14px;padding:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:transform .3s var(--ease-back),box-shadow .3s,opacity .3s;
+}
+.wl-submit:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(214,255,63,0.25);}
+.wl-submit:disabled{opacity:0.6;pointer-events:none;}
+.wl-spinner{width:15px;height:15px;border:2px solid rgba(10,10,14,0.25);border-top-color:#0A0A0E;border-radius:50%;animation:spin .6s linear infinite;display:none;}
+.wl-loading .wl-spinner{display:block;}
+.wl-loading .wl-submit-text,.wl-loading .wl-submit-icon{display:none;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.wl-fine{font-size:0.68rem;color:var(--muted-dim);text-align:center;margin-top:16px;}
+
+.wl-success{
+  position:absolute;inset:0;background:rgba(10,10,14,0.97);backdrop-filter:blur(16px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:40px;
+  opacity:0;pointer-events:none;transition:opacity .5s var(--ease);
+}
+.wl-success.show{opacity:1;pointer-events:all;}
+.wl-check-ring{
+  width:64px;height:64px;border-radius:50%;border:1px solid rgba(214,255,63,0.3);
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.wl-check-ring::before{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(214,255,63,0.15);animation:ringPulse 2s infinite;}
+@keyframes ringPulse{0%,100%{transform:scale(1);opacity:.6;}50%{transform:scale(1.18);opacity:.15;}}
+.wl-check-ring svg{width:26px;height:26px;}
+.wl-check-path{stroke:var(--lime);stroke-width:2.2;fill:none;stroke-dasharray:40;stroke-dashoffset:40;stroke-linecap:round;transition:stroke-dashoffset .6s .2s var(--ease);}
+.wl-success.show .wl-check-path{stroke-dashoffset:0;}
+.wl-success-title{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;}
+.wl-success-title .lime{color:var(--lime);}
+.wl-success-num{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);}
+.wl-success-num b{color:var(--text);}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid var(--border-soft);}
+.foot-top{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:60px;padding-bottom:44px;border-bottom:1px solid var(--border-soft);}
+.foot-desc{font-size:0.8rem;color:var(--muted);line-height:1.7;max-width:280px;margin-top:14px;}
+.foot-col-title{font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted-dim);margin-bottom:18px;}
+.foot-links{list-style:none;display:flex;flex-direction:column;gap:11px;}
+.foot-links a{font-size:0.82rem;color:var(--muted);text-decoration:none;transition:color .3s;}
+.foot-links a:hover{color:var(--text);}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:28px;}
+.foot-copy{font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted-dim);}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width:980px){
+  nav{padding:18px 24px;}
+  nav.scrolled{padding:12px 24px;}
+  .nav-links{display:none;}
+  .hero{grid-template-columns:1fr;padding:120px 24px 60px;text-align:left;}
+  .phone-scene{height:480px;margin-top:20px;}
+  .phone-3d{width:220px;height:450px;transform:rotateY(0) rotateX(0);}
+  .orbit-card{display:none;}
+  section{padding:70px 24px;}
+  .feat-grid{grid-template-columns:1fr;}
+  .gallery-layout{grid-template-columns:1fr;}
+  .gallery-phone-wrap{order:-1;}
+  .stats-strip{grid-template-columns:1fr 1fr;}
+  .waitlist-sec{grid-template-columns:1fr;}
+  .wl-left{position:static;}
+  .wl-card{padding:28px;}
+  .foot-top{grid-template-columns:1fr;gap:32px;}
+  .foot-bottom{flex-direction:column;gap:14px;text-align:center;}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="ambient"></div>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav id="nav">
+  <a href="#" class="logo">yours<span class="dot">.</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#gallery">How it works</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <button class="nav-cta" id="nav-join">Join waitlist</button>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero" id="home">
+  <div class="hero-grid-bg"></div>
+  <div>
+    <div class="eyebrow"><span class="pulse"></span> LAUNCHING SOON &nbsp;·&nbsp; APPLICATIONS OPEN</div>
+    <h1>
+      <span class="line"><span style="animation-delay:.4s">Every rupee.</span></span>
+      <span class="line"><span style="animation-delay:.5s">One app.</span></span>
+      <span class="line"><span class="accent" style="animation-delay:.6s">Zero chaos.</span></span>
+    </h1>
+    <p class="sub">Mutual funds, SIPs, goals, insurance, stocks — and a real expert one tap away. <strong style="color:var(--text);font-weight:500;">yours</strong> tracks your whole financial life in one place, built for how you actually invest.</p>
+    <div class="hero-actions">
+      <button class="btn-lime" id="hero-join">
+        <span>Join the waitlist</span>
+        <svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="waitlist-count">
+        <div class="avatar-stack"><span>A</span><span>R</span><span>S</span></div>
+        <span><b id="hero-count">2,847</b> people already waiting</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="phone-scene" id="phone-scene">
+    <div class="orbit-card oc1" style="--z:80px"><div class="oc-label">SIP · Monthly</div><div class="oc-val">₹12,500</div></div>
+    <div class="orbit-card oc2" style="--z:60px"><div class="oc-label">Mutual Funds</div><div class="oc-val up">▲ 14.2%</div></div>
+    <div class="orbit-card oc3" style="--z:70px"><div class="oc-label">Goal · Goa Trip</div><div class="oc-val">68% funded</div></div>
+    <div class="orbit-card oc4" style="--z:50px"><div class="oc-label">Insurance</div><div class="oc-val up">Active</div></div>
+
+    <div class="phone-3d" id="phone-3d">
+      <div class="phone-body">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ph-statusbar"><span>9:41</span><span>●●●●</span></div>
+          <div class="ph-content">
+            <div class="ph-greet">Good evening, <b>Aditi</b></div>
+            <div>
+              <div class="ph-balance-label">Total net worth</div>
+              <div class="ph-balance">₹8,42,650</div>
+              <div class="ph-delta">▲ 2.4% this week</div>
+            </div>
+            <div class="ph-chips">
+              <div class="ph-chip on">All</div>
+              <div class="ph-chip">Mutual Funds</div>
+              <div class="ph-chip">SIPs</div>
+              <div class="ph-chip">Goals</div>
+            </div>
+            <div class="ph-chart" id="ph-chart"></div>
+            <div class="ph-goals">
+              <div class="ph-goal-row">
+                <div class="ph-goal-top"><span>Goa Trip</span><b>68%</b></div>
+                <div class="ph-goal-track"><div class="ph-goal-fill" style="width:68%"></div></div>
+              </div>
+              <div class="ph-goal-row">
+                <div class="ph-goal-top"><span>Emergency Fund</span><b>91%</b></div>
+                <div class="ph-goal-track"><div class="ph-goal-fill" style="width:91%"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-tabbar">
+            <div class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/></svg></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8M21 7v6"/></svg></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+            <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ TICKER ═══════════════ -->
+<div class="ticker">
+  <div class="ticker-track" id="ticker-track">
+    <div class="tick-item">SIP AUTO-DEBIT SUCCESSFUL <span class="lime">₹5,000</span></div>
+    <div class="tick-item">GOAL "EUROPE TRIP" <span class="lime">82% FUNDED</span></div>
+    <div class="tick-item">NIFTY 50 <span class="lime">▲ 0.8%</span></div>
+    <div class="tick-item">NEW SIP STARTED</div>
+    <div class="tick-item">PORTFOLIO REBALANCED</div>
+    <div class="tick-item">EXPERT CALL BOOKED</div>
+    <div class="tick-item">POLICY RENEWAL REMINDER SENT</div>
+    <div class="tick-item">SIP AUTO-DEBIT SUCCESSFUL <span class="lime">₹5,000</span></div>
+    <div class="tick-item">GOAL "EUROPE TRIP" <span class="lime">82% FUNDED</span></div>
+    <div class="tick-item">NIFTY 50 <span class="lime">▲ 0.8%</span></div>
+    <div class="tick-item">NEW SIP STARTED</div>
+    <div class="tick-item">PORTFOLIO REBALANCED</div>
+    <div class="tick-item">EXPERT CALL BOOKED</div>
+    <div class="tick-item">POLICY RENEWAL REMINDER SENT</div>
+  </div>
+</div>
+
+<!-- ═══════════════ FEATURES ═══════════════ -->
+<section id="features">
+  <div class="features-head">
+    <div class="tag reveal">What's inside</div>
+    <h2 class="sec-title reveal d1">Everything you invest in.<br>On <span class="accent">one screen.</span></h2>
+    <p class="sec-sub reveal d2">Stop switching between five apps to know what you own. yours pulls it all together, automatically.</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card reveal">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8M21 7v6"/></svg></div>
+      <div class="feat-title">Mutual Funds</div>
+      <div class="feat-desc">Every fund across every platform, tracked in real time — with the fluff stripped out.</div>
+    </div>
+    <div class="feat-card reveal d1">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18M7 15l4-4 3 3 5-6"/></svg></div>
+      <div class="feat-title">SIPs</div>
+      <div class="feat-desc">See every SIP, when it debits, and how it's compounding — without logging into five AMC apps.</div>
+    </div>
+    <div class="feat-card reveal d2">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div>
+      <div class="feat-title">Goals</div>
+      <div class="feat-desc">Turn "someday" into a tracked target — a trip, a laptop, a house deposit — with a plan that adjusts itself.</div>
+    </div>
+    <div class="feat-card reveal d3">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V6z"/></svg></div>
+      <div class="feat-title">Insurance</div>
+      <div class="feat-desc">Life, health, everything — in one policy vault, with renewal reminders that actually arrive on time.</div>
+    </div>
+    <div class="feat-card reveal d4">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20l4-10 4 8 4-14 4 16"/></svg></div>
+      <div class="feat-title">Stocks &amp; ETFs</div>
+      <div class="feat-desc">Your direct equity and ETF holdings, sitting right next to your funds — same portfolio, same view.</div>
+    </div>
+    <div class="feat-card reveal d5">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 01-8.9 8.4A8.5 8.5 0 013 12a8.4 8.4 0 018.4-8.5A8.4 8.4 0 0121 11.5z"/><path d="M8 12h8M12 8v8"/></svg></div>
+      <div class="feat-title">Expert Advice</div>
+      <div class="feat-desc">A real, qualified advisor — not a chatbot script — a message away whenever you need a second opinion.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ GALLERY ═══════════════ -->
+<section class="gallery" id="gallery">
+  <div class="tag reveal">Inside the app</div>
+  <h2 class="sec-title reveal d1">Built for your phone.<br>Not your <span class="accent">browser tabs.</span></h2>
+  <p class="sec-sub reveal d2">A quick look at what you'll open every morning.</p>
+
+  <div class="gallery-layout">
+    <div class="gtab-list reveal d3">
+      <div class="gtab active" data-view="gv-dash">
+        <div class="gtab-num">01</div>
+        <div><div class="gtab-title">Dashboard</div><div class="gtab-desc">Net worth, today's movement, and every product you hold — first thing you see.</div></div>
+      </div>
+      <div class="gtab" data-view="gv-goals">
+        <div class="gtab-num">02</div>
+        <div><div class="gtab-title">Goals</div><div class="gtab-desc">Set a target, and yours works backward to tell you exactly what to invest, monthly.</div></div>
+      </div>
+      <div class="gtab" data-view="gv-chat">
+        <div class="gtab-num">03</div>
+        <div><div class="gtab-title">Ask an Expert</div><div class="gtab-desc">Chat directly with a SEBI-registered advisor. No call centre, no hold music.</div></div>
+      </div>
+    </div>
+
+    <div class="gallery-phone-wrap">
+      <div class="gphone">
+        <div class="gscreen">
+          <div class="gview active" id="gv-dash">
+            <div class="ph-statusbar" style="padding:0"><span>9:41</span><span>●●●●</span></div>
+            <div class="gview-title">Your portfolio</div>
+            <div class="ph-balance" style="font-size:1.6rem">₹8,42,650</div>
+            <div class="ph-delta">▲ 2.4% this week</div>
+            <div class="ph-chart" id="ph-chart-2" style="margin-top:8px"></div>
+            <div class="ph-chips" style="margin-top:auto">
+              <div class="ph-chip on">Funds</div><div class="ph-chip">SIPs</div><div class="ph-chip">Stocks</div>
+            </div>
+          </div>
+          <div class="gview" id="gv-goals">
+            <div class="ph-statusbar" style="padding:0"><span>9:41</span><span>●●●●</span></div>
+            <div class="gview-title">Goals</div>
+            <div class="ph-goals" style="margin-top:6px">
+              <div class="ph-goal-row"><div class="ph-goal-top"><span>Goa Trip</span><b>68%</b></div><div class="ph-goal-track"><div class="ph-goal-fill" style="width:68%"></div></div></div>
+              <div class="ph-goal-row"><div class="ph-goal-top"><span>Emergency Fund</span><b>91%</b></div><div class="ph-goal-track"><div class="ph-goal-fill" style="width:91%"></div></div></div>
+              <div class="ph-goal-row"><div class="ph-goal-top"><span>New Laptop</span><b>34%</b></div><div class="ph-goal-track"><div class="ph-goal-fill" style="width:34%"></div></div></div>
+              <div class="ph-goal-row"><div class="ph-goal-top"><span>Down Payment</span><b>12%</b></div><div class="ph-goal-track"><div class="ph-goal-fill" style="width:12%"></div></div></div>
+            </div>
+          </div>
+          <div class="gview" id="gv-chat">
+            <div class="ph-statusbar" style="padding:0"><span>9:41</span><span>●●●●</span></div>
+            <div class="gview-title">Priya · CFP®</div>
+            <div class="gv-chat">
+              <div class="gv-bubble them">Hey Aditi! Saw your Goa goal is 68% funded — want me to check if you're on track for June?</div>
+              <div class="gv-bubble me">Yes please 🙏</div>
+              <div class="gv-bubble them">You're actually ahead by 3 weeks. Nice work.</div>
+              <div class="gv-typing"><span></span><span></span><span></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ STATS ═══════════════ -->
+<div class="stats-strip">
+  <div class="stat-box reveal"><div class="stat-num">5</div><div class="stat-lbl">products, 1 app</div></div>
+  <div class="stat-box reveal d1"><div class="stat-num">₹0</div><div class="stat-lbl">to join the waitlist</div></div>
+  <div class="stat-box reveal d2"><div class="stat-num">24/7</div><div class="stat-lbl">portfolio tracking</div></div>
+  <div class="stat-box reveal d3"><div class="stat-num">1:1</div><div class="stat-lbl">expert access</div></div>
+</div>
+
+<!-- ═══════════════ WAITLIST ═══════════════ -->
+<section class="waitlist-sec" id="waitlist">
+  <div class="wl-left reveal">
+    <div class="wl-badge">● Early access is limited</div>
+    <h2 class="sec-title">Be first<br>in <span class="accent">line.</span></h2>
+    <p class="sec-sub">Join the waitlist and we'll let you in before public launch — plus zero platform fees for your first year.</p>
+    <div class="wl-perks">
+      <div class="wl-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Skip the line at launch</div>
+      <div class="wl-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Free first year, no platform fee</div>
+      <div class="wl-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> First 3 expert sessions on us</div>
+    </div>
+  </div>
+
+  <div class="wl-card reveal d1">
+    <form id="wl-form" novalidate>
+      <div class="field-group">
+        <div class="field" id="f-name">
+          <input type="text" id="i-name" placeholder="Full name" autocomplete="name">
+          <div class="field-err">Please enter your name</div>
+        </div>
+        <div class="field" id="f-email">
+          <input type="email" id="i-email" placeholder="Email address" autocomplete="email">
+          <div class="field-err">Please enter a valid email</div>
+        </div>
+        <div class="field" id="f-phone">
+          <input type="tel" id="i-phone" placeholder="Mobile number" autocomplete="tel" maxlength="10">
+          <div class="field-err">Please enter a valid 10-digit number</div>
+        </div>
+      </div>
+
+      <div class="chip-label">What do you want to track first? <span style="color:var(--muted-dim)">(pick any)</span></div>
+      <div class="chip-row" id="chip-row">
+        <div class="chip" data-val="mf">Mutual Funds</div>
+        <div class="chip" data-val="sip">SIPs</div>
+        <div class="chip" data-val="goals">Goals</div>
+        <div class="chip" data-val="insurance">Insurance</div>
+        <div class="chip" data-val="stocks">Stocks</div>
+        <div class="chip" data-val="advice">Expert Advice</div>
+        <div class="chip" data-val="all">All of it</div>
+      </div>
+
+      <button type="submit" class="wl-submit" id="wl-submit-btn">
+        <span class="wl-submit-text">Join the waitlist</span>
+        <svg class="wl-submit-icon" width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M1 5h14M10 1l5 4-5 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <div class="wl-spinner"></div>
+      </button>
+      <div class="wl-fine">No spam, ever. We'll only email you when it's your turn.</div>
+    </form>
+
+    <div class="wl-success" id="wl-success">
+      <div class="wl-check-ring"><svg viewBox="0 0 32 32"><path class="wl-check-path" d="M8 17l6 6 10-12"/></svg></div>
+      <div class="wl-success-title">You're on the<br><span class="lime">list.</span></div>
+      <div class="wl-success-num">You're number <b id="wl-position">2,848</b> in line. We'll email you before public launch.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer id="faq">
+  <div class="foot-top">
+    <div>
+      <a href="#" class="logo">yours<span class="dot">.</span></a>
+      <p class="foot-desc">One app for mutual funds, SIPs, goals, insurance, stocks — and a real expert on call. Built by the team behind Yours Wealth.</p>
+    </div>
+    <div>
+      <div class="foot-col-title">Product</div>
+      <ul class="foot-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#gallery">How it works</a></li>
+        <li><a href="#waitlist">Join waitlist</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="foot-col-title">Company</div>
+      <ul class="foot-links">
+        <li><a href="index.html">Yours Wealth</a></li>
+        <li><a href="mailto:viswateja.investments@gmail.com">Contact</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <div class="foot-copy">© 2026 Yours Wealth. A product in development — nothing here is investment advice.</div>
+    <div class="foot-copy">Hyderabad · Bengaluru</div>
+  </div>
+</footer>
+
+<script>
+/* ── NAV SCROLL ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
+
+/* ── SCROLL TO WAITLIST ── */
+function scrollToWaitlist(){ document.getElementById('waitlist').scrollIntoView({behavior:'smooth'}); document.getElementById('i-name').focus({preventScroll:true}); }
+document.getElementById('nav-join').addEventListener('click', scrollToWaitlist);
+document.getElementById('hero-join').addEventListener('click', scrollToWaitlist);
+
+/* ── REVEAL ON SCROLL ── */
+const revealObs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); revealObs.unobserve(e.target);} });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+
+/* ── PHONE CHART BARS (build once) ── */
+function buildChart(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const heights = [30,45,38,60,50,72,65,80,70,90];
+  heights.forEach(h=>{
+    const bar = document.createElement('i');
+    bar.style.height = h+'%';
+    el.appendChild(bar);
+  });
+}
+buildChart('ph-chart');
+buildChart('ph-chart-2');
+
+/* ── HERO PHONE 3D TILT (mouse-driven) ── */
+const scene = document.getElementById('phone-scene');
+const phone3d = document.getElementById('phone-3d');
+let targetRX = 6, targetRY = -16, curRX = 6, curRY = -16;
+if(window.matchMedia('(hover: hover)').matches){
+  scene.addEventListener('mousemove', e=>{
+    const r = scene.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    targetRY = -16 + px * 26;
+    targetRX = 6 - py * 20;
+  });
+  scene.addEventListener('mouseleave', ()=>{ targetRX = 6; targetRY = -16; });
+}
+function animatePhone(){
+  curRX += (targetRX - curRX) * 0.08;
+  curRY += (targetRY - curRY) * 0.08;
+  phone3d.style.transform = `rotateX(${curRX}deg) rotateY(${curRY}deg)`;
+  requestAnimationFrame(animatePhone);
+}
+animatePhone();
+
+/* ── FEATURE CARD TILT ── */
+document.querySelectorAll('.feat-card').forEach(card=>{
+  card.addEventListener('mousemove', e=>{
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left)/r.width - 0.5;
+    const y = (e.clientY - r.top)/r.height - 0.5;
+    card.style.transform = `rotateX(${-y*6}deg) rotateY(${x*6}deg)`;
+  });
+  card.addEventListener('mouseleave', ()=>{ card.style.transform=''; });
+});
+
+/* ── GALLERY TABS ── */
+document.querySelectorAll('.gtab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.gtab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.gview').forEach(v=>v.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.view).classList.add('active');
+  });
+});
+
+/* ── WAITLIST CHIPS ── */
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>chip.classList.toggle('active'));
+});
+
+/* ── FORM VALIDATION + FAKE SUBMIT ── */
+const nameEl = document.getElementById('i-name');
+const emailEl = document.getElementById('i-email');
+const phoneEl = document.getElementById('i-phone');
+phoneEl.addEventListener('input', e=>{ e.target.value = e.target.value.replace(/\D/g,'').slice(0,10); });
+
+function setErr(id,on){ document.getElementById(id).classList.toggle('error',on); }
+
+document.getElementById('wl-form').addEventListener('submit', e=>{
+  e.preventDefault();
+  let ok = true;
+  if(nameEl.value.trim().length < 2){ setErr('f-name',true); ok=false; } else setErr('f-name',false);
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())){ setErr('f-email',true); ok=false; } else setErr('f-email',false);
+  if(!/^\d{10}$/.test(phoneEl.value.trim())){ setErr('f-phone',true); ok=false; } else setErr('f-phone',false);
+  if(!ok) return;
+
+  const btn = document.getElementById('wl-submit-btn');
+  btn.classList.add('wl-loading'); btn.disabled = true;
+
+  /* NOTE: this is a demo/waitlist form. To go live, POST leadData to your
+     backend or a Google Apps Script endpoint here, e.g.:
+     fetch(ENDPOINT_URL, {method:'POST', mode:'no-cors', body: JSON.stringify(leadData)}) */
+  const leadData = {
+    name: nameEl.value.trim(),
+    email: emailEl.value.trim(),
+    phone: '+91' + phoneEl.value.trim(),
+    interests: Array.from(document.querySelectorAll('.chip.active')).map(c=>c.dataset.val),
+    timestamp: new Date().toISOString()
+  };
+
+  setTimeout(()=>{
+    btn.classList.remove('wl-loading'); btn.disabled = false;
+    document.getElementById('wl-success').classList.add('show');
+    const posEl = document.getElementById('wl-position');
+    const heroCountEl = document.getElementById('hero-count');
+    let current = parseInt(heroCountEl.textContent.replace(/,/g,''));
+    const next = current + 1;
+    posEl.textContent = next.toLocaleString('en-IN');
+    heroCountEl.textContent = next.toLocaleString('en-IN');
+  }, 900);
+});
+</script>
+</body>
+</html>
