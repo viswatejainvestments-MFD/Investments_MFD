@@ -3,16 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yours Wealth — the analyst your portfolio never had. Join the waitlist.</title>
+<title>yours. — every rupee, one app. Join the waitlist.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════
-   TOKENS
-   cream/gold brand carried over, plus an
-   "ink" data-panel colour and two analytical
-   read-out accents (sage=positive, rust=alert)
-   so the product itself can look instrumented.
+   TOKENS — cream / gold / charcoal
 ═══════════════════════════════════════════ */
 :root{
   --cream:#F5F0E8;
@@ -23,240 +19,368 @@
   --gold-glow:rgba(212,175,55,0.15);
   --charcoal:#1C1C1C;
   --dark:#0D0D0D;
-  --ink:#121210;
-  --ink-soft:#1A1914;
   --mid:#3A3630;
   --muted:#7A736A;
   --muted-dim:#A69F94;
-  --sage:#5C7A5A;
-  --sage-light:#8AAB84;
-  --rust:#AE5A42;
-  --rust-light:#C97F68;
   --border:rgba(184,150,12,0.18);
   --border-light:rgba(184,150,12,0.08);
   --easing:cubic-bezier(0.16,1,0.3,1);
   --easing-back:cubic-bezier(0.34,1.56,0.64,1);
+
+  /* semantic aliases used throughout */
   --bg:var(--cream);
   --bg-soft:var(--ivory);
+  --surface:rgba(28,28,28,0.035);
+  --surface-hi:rgba(28,28,28,0.065);
   --text:var(--charcoal);
+  --accent:var(--gold-light);
+  --accent-dim:var(--gold-glow);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{
-  background:var(--bg);color:var(--text);
-  font-family:'Inter',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
 }
 ::selection{background:var(--gold-light);color:var(--ivory);}
 h1,h2,h3{font-family:'Fraunces',serif;letter-spacing:-0.01em;}
 .disp{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.02em;}
-.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;}
+.mono{font-family:'JetBrains Mono',monospace;}
 em{font-style:italic;color:var(--gold);}
 a{color:inherit;}
 img,svg{display:block;}
+
+/* film-grain texture for warmth */
 .grain{
   position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.5;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
 }
-.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
-.ambient::before{content:'';position:absolute;top:-18%;right:-8%;width:56vw;height:56vw;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.20),transparent 65%);filter:blur(60px);}
-.ambient::after{content:'';position:absolute;bottom:-22%;left:-14%;width:50vw;height:50vw;border-radius:50%;background:radial-gradient(circle,rgba(28,28,28,0.06),transparent 65%);filter:blur(70px);}
 
-/* ═══════════ NAV ═══════════ */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:26px 56px;transition:padding .4s var(--easing),background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent;}
-nav.scrolled{padding:14px 56px;background:rgba(250,247,242,0.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--border-light);}
-.logo{font-family:'Fraunces',serif;font-weight:600;font-size:1.4rem;text-decoration:none;letter-spacing:-0.01em;}
+/* ambient background glow */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.ambient::before{
+  content:'';position:absolute;top:-18%;right:-8%;width:56vw;height:56vw;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,175,55,0.20),transparent 65%);
+  filter:blur(60px);
+}
+.ambient::after{
+  content:'';position:absolute;bottom:-22%;left:-14%;width:50vw;height:50vw;border-radius:50%;
+  background:radial-gradient(circle,rgba(28,28,28,0.06),transparent 65%);
+  filter:blur(70px);
+}
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:26px 56px;
+  transition:padding .4s var(--easing),background .4s,backdrop-filter .4s,border-color .4s;
+  border-bottom:1px solid transparent;
+}
+nav.scrolled{
+  padding:14px 56px;
+  background:rgba(250,247,242,0.78);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border-light);
+}
+.logo{
+  font-family:'Fraunces',serif;font-weight:600;font-size:1.4rem;
+  text-decoration:none;letter-spacing:-0.01em;
+}
 .logo .dot{color:var(--gold-light);}
 .nav-links{display:flex;gap:34px;list-style:none;}
-.nav-links a{font-size:0.82rem;color:var(--muted);text-decoration:none;transition:color .3s;position:relative;}
+.nav-links a{
+  font-size:0.82rem;color:var(--muted);text-decoration:none;
+  transition:color .3s;position:relative;
+}
 .nav-links a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;background:var(--gold-light);transition:width .35s var(--easing);}
 .nav-links a:hover{color:var(--text);}
 .nav-links a:hover::after{width:100%;}
-.nav-cta{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.8rem;background:var(--charcoal);color:var(--ivory);padding:12px 24px;border-radius:100px;border:none;cursor:pointer;text-decoration:none;letter-spacing:-0.01em;transition:transform .35s var(--easing-back),box-shadow .35s;display:inline-flex;align-items:center;gap:8px;position:relative;overflow:hidden;}
-.nav-cta::before{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(212,175,55,0.55) 50%,transparent 70%);transform:translateX(-120%);transition:transform .7s var(--easing);}
+.nav-cta{
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.8rem;
+  background:var(--charcoal);color:var(--ivory);
+  padding:12px 24px;border-radius:100px;border:none;cursor:pointer;
+  text-decoration:none;letter-spacing:-0.01em;
+  transition:transform .35s var(--easing-back),box-shadow .35s,background .35s;
+  display:inline-flex;align-items:center;gap:8px;
+  position:relative;overflow:hidden;
+}
+.nav-cta::before{
+  content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(212,175,55,0.55) 50%,transparent 70%);
+  transform:translateX(-120%);transition:transform .7s var(--easing);
+}
 .nav-cta:hover::before{transform:translateX(120%);}
 .nav-cta:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 10px 26px rgba(28,28,28,0.22);}
 
-/* ═══════════ SHARED SECTION ═══════════ */
-section{position:relative;z-index:1;padding:112px 56px;}
-.tag{font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:10px;}
-.tag::before{content:'';width:22px;height:1px;background:var(--gold-light);}
-.sec-title{font-size:clamp(2rem,3.6vw,3rem);font-weight:500;line-height:1.12;margin-bottom:16px;}
-.sec-title .accent{font-style:italic;color:var(--gold);}
-.sec-sub{color:var(--muted);font-size:0.98rem;line-height:1.7;max-width:560px;}
-.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s var(--easing),transform .8s var(--easing);}
-.reveal.visible{opacity:1;transform:translateY(0);}
-.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}.d4{transition-delay:.4s;}.d5{transition-delay:.5s;}
-
-/* ═══════════ HERO ═══════════ */
-.hero{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:1.02fr 0.98fr;align-items:center;gap:40px;padding:158px 56px 90px;}
-.hero-grid-bg{position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(184,150,12,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(184,150,12,0.05) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 70% 60% at 30% 40%,black 25%,transparent 100%);}
-.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:28px;opacity:0;animation:fadeUp .7s .3s var(--easing) forwards;}
-.eyebrow .pulse{width:6px;height:6px;border-radius:50%;background:var(--gold-light);box-shadow:0 0 0 0 rgba(212,175,55,0.6);animation:pulseDot 2s infinite;}
-@keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(212,175,55,0.5);}70%{box-shadow:0 0 0 9px rgba(212,175,55,0);}100%{box-shadow:0 0 0 0 rgba(212,175,55,0);}}
-.hero h1{font-size:clamp(2.7rem,4.6vw,4.3rem);font-weight:500;line-height:1.07;margin-bottom:26px;}
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:grid;grid-template-columns:1.05fr 0.95fr;
+  align-items:center;gap:40px;
+  padding:160px 56px 90px;
+}
+.hero-grid-bg{
+  position:absolute;inset:0;z-index:-1;
+  background-image:linear-gradient(rgba(184,150,12,0.05) 1px,transparent 1px),
+                    linear-gradient(90deg,rgba(184,150,12,0.05) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse 70% 60% at 30% 40%,black 25%,transparent 100%);
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:28px;
+  opacity:0;animation:fadeUp .7s .3s var(--easing) forwards;
+}
+.eyebrow .pulse{
+  width:6px;height:6px;border-radius:50%;background:var(--gold-light);
+  box-shadow:0 0 0 0 rgba(212,175,55,0.6);
+  animation:pulseDot 2s infinite;
+}
+@keyframes pulseDot{
+  0%{box-shadow:0 0 0 0 rgba(212,175,55,0.5);}
+  70%{box-shadow:0 0 0 9px rgba(212,175,55,0);}
+  100%{box-shadow:0 0 0 0 rgba(212,175,55,0);}
+}
+.hero h1{
+  font-size:clamp(2.9rem,5vw,4.7rem);
+  font-weight:500;line-height:1.04;margin-bottom:26px;
+}
 .hero h1 .line{display:block;overflow:hidden;}
-.hero h1 .line span{display:inline-block;opacity:0;transform:translateY(105%);animation:lineUp .9s var(--easing) forwards;}
+.hero h1 .line span{
+  display:inline-block;opacity:0;transform:translateY(105%);
+  animation:lineUp .9s var(--easing) forwards;
+}
 .hero h1 .accent{font-style:italic;color:var(--gold);font-weight:500;}
 @keyframes lineUp{to{opacity:1;transform:translateY(0);}}
-.hero p.sub{font-size:1.02rem;color:var(--muted);line-height:1.75;max-width:480px;margin-bottom:16px;opacity:0;animation:fadeUp .8s 1.1s var(--easing) forwards;}
+.hero p.sub{
+  font-size:1.02rem;color:var(--muted);line-height:1.75;max-width:460px;margin-bottom:38px;
+  opacity:0;animation:fadeUp .8s 1.1s var(--easing) forwards;
+}
 .hero p.sub strong{color:var(--text);font-weight:600;}
-.hero-microlist{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:36px;opacity:0;animation:fadeUp .8s 1.2s var(--easing) forwards;}
-.hero-microlist li{display:flex;align-items:center;gap:9px;font-size:0.82rem;color:var(--mid);font-family:'JetBrains Mono',monospace;}
-.hero-microlist li svg{width:12px;height:12px;color:var(--gold);flex-shrink:0;}
-.hero-actions{display:flex;align-items:center;gap:22px;flex-wrap:wrap;opacity:0;animation:fadeUp .8s 1.3s var(--easing) forwards;}
+.hero-actions{
+  display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+  opacity:0;animation:fadeUp .8s 1.3s var(--easing) forwards;
+}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
-.btn-gold{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.92rem;background:linear-gradient(100deg,var(--gold-light),var(--gold) 130%);color:var(--dark);border:none;border-radius:100px;padding:17px 30px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;transition:transform .35s var(--easing-back),box-shadow .35s;position:relative;overflow:hidden;}
-.btn-gold::before{content:'';position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,0.65) 50%,transparent 70%);transform:translateX(-130%);transition:transform .8s var(--easing);}
+.btn-gold{
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.92rem;
+  background:linear-gradient(100deg,var(--gold-light),var(--gold) 130%);
+  color:var(--dark);border:none;border-radius:100px;
+  padding:17px 30px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;
+  transition:transform .35s var(--easing-back),box-shadow .35s;
+  position:relative;overflow:hidden;
+}
+.btn-gold::before{
+  content:'';position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,0.65) 50%,transparent 70%);
+  transform:translateX(-130%);transition:transform .8s var(--easing);
+}
 .btn-gold:hover::before{transform:translateX(130%);}
 .btn-gold:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 16px 36px rgba(184,150,12,0.32);}
 .btn-gold svg{transition:transform .3s var(--easing);}
 .btn-gold:hover svg{transform:translateX(4px);}
-.waitlist-count{display:flex;align-items:center;gap:10px;font-size:0.8rem;color:var(--muted);}
+.waitlist-count{
+  display:flex;align-items:center;gap:10px;
+  font-size:0.8rem;color:var(--muted);
+}
 .avatar-stack{display:flex;}
-.avatar-stack span{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--charcoal),var(--mid));border:2px solid var(--cream);margin-left:-8px;color:var(--gold-pale);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:600;}
+.avatar-stack span{
+  width:26px;height:26px;border-radius:50%;
+  background:linear-gradient(135deg,var(--charcoal),var(--mid));
+  border:2px solid var(--cream);margin-left:-8px;color:var(--gold-pale);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.6rem;font-weight:600;
+}
 .avatar-stack span:first-child{margin-left:0;}
 .waitlist-count b{color:var(--text);font-family:'JetBrains Mono',monospace;font-weight:500;}
 
-/* ── HERO ANALYTICS PHONE (signature element) ── */
-.phone-scene{position:relative;height:660px;perspective:1400px;display:flex;align-items:center;justify-content:center;opacity:0;animation:fadeUp 1s 0.6s var(--easing) forwards;}
-.phone-3d{position:relative;width:300px;height:610px;transform-style:preserve-3d;transform:rotateY(-14deg) rotateX(5deg);transition:transform .3s var(--easing);will-change:transform;}
-.phone-body{position:absolute;inset:0;background:linear-gradient(160deg,#232320,var(--dark));border-radius:42px;border:1px solid rgba(212,175,55,0.28);box-shadow:0 50px 100px -20px rgba(28,20,4,0.45), inset 0 1px 1px rgba(212,175,55,0.18);padding:12px;transform:translateZ(0);}
-.phone-screen{width:100%;height:100%;border-radius:32px;overflow:hidden;position:relative;background:linear-gradient(180deg,#191916,var(--dark));display:flex;flex-direction:column;}
-.phone-notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:90px;height:22px;background:var(--dark);border-radius:14px;z-index:5;}
-.ph-statusbar{display:flex;justify-content:space-between;padding:16px 20px 2px;font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:rgba(240,230,184,0.45);}
-.ph-content{padding:14px 17px 0;flex:1;display:flex;flex-direction:column;gap:12px;overflow:hidden;}
-.ph-greet{font-size:0.64rem;color:rgba(240,230,184,0.5);display:flex;justify-content:space-between;align-items:center;}
+/* ── HERO PHONE SCENE (signature element) ── */
+.phone-scene{
+  position:relative;height:640px;
+  perspective:1400px;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;animation:fadeUp 1s 0.6s var(--easing) forwards;
+}
+.phone-3d{
+  position:relative;width:290px;height:590px;
+  transform-style:preserve-3d;
+  transform:rotateY(-16deg) rotateX(6deg);
+  transition:transform .3s var(--easing);
+  will-change:transform;
+}
+.phone-body{
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,#232320,var(--dark));
+  border-radius:42px;border:1px solid rgba(212,175,55,0.28);
+  box-shadow:0 50px 100px -20px rgba(28,20,4,0.45), inset 0 1px 1px rgba(212,175,55,0.18);
+  padding:12px;
+  transform:translateZ(0);
+}
+.phone-screen{
+  width:100%;height:100%;border-radius:32px;overflow:hidden;position:relative;
+  background:linear-gradient(180deg,#191916,var(--dark));
+  display:flex;flex-direction:column;
+}
+.phone-notch{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:90px;height:22px;background:var(--dark);border-radius:14px;z-index:5;
+}
+.ph-statusbar{
+  display:flex;justify-content:space-between;padding:16px 20px 4px;
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:rgba(240,230,184,0.45);
+}
+.ph-content{padding:18px 18px 0;flex:1;display:flex;flex-direction:column;gap:16px;overflow:hidden;}
+.ph-greet{font-size:0.68rem;color:rgba(240,230,184,0.55);}
 .ph-greet b{color:var(--gold-pale);font-weight:500;}
-.ph-live{display:flex;align-items:center;gap:5px;font-size:0.54rem;color:var(--sage-light);}
-.ph-live i{width:5px;height:5px;border-radius:50%;background:var(--sage-light);animation:pulseDot 2s infinite;}
-.ph-balance-label{font-size:0.58rem;color:rgba(240,230,184,0.4);text-transform:uppercase;letter-spacing:0.08em;}
-.ph-balance{font-family:'JetBrains Mono',monospace;font-size:1.62rem;font-weight:600;margin-top:2px;color:var(--ivory);}
-.ph-delta{display:inline-flex;align-items:center;gap:4px;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--sage-light);background:rgba(140,171,132,0.12);padding:3px 8px;border-radius:20px;width:fit-content;border:1px solid rgba(140,171,132,0.25);}
-
-.ph-analytics-row{display:flex;gap:10px;align-items:center;}
-.ph-donut-wrap{position:relative;width:74px;height:74px;flex-shrink:0;}
-.ph-donut{width:74px;height:74px;border-radius:50%;background:conic-gradient(var(--gold-light) 0 52%, var(--sage-light) 52% 74%, var(--gold-pale) 74% 90%, rgba(255,255,255,0.18) 90% 100%);transform:scale(0);transition:transform .9s var(--easing-back);}
-.phone-scene.animate-in .ph-donut{transform:scale(1);}
-.ph-donut-hole{position:absolute;inset:13px;border-radius:50%;background:#15140F;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.ph-donut-hole b{font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--ivory);}
-.ph-donut-hole span{font-family:'JetBrains Mono',monospace;font-size:0.42rem;color:rgba(240,230,184,0.4);text-transform:uppercase;letter-spacing:.06em;}
-.ph-legend{display:flex;flex-direction:column;gap:4px;font-size:0.52rem;font-family:'JetBrains Mono',monospace;color:rgba(240,230,184,0.55);}
-.ph-legend-row{display:flex;align-items:center;gap:5px;}
-.ph-legend-row i{width:6px;height:6px;border-radius:2px;flex-shrink:0;}
-
-.ph-xirr-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:9px 10px;}
-.ph-xirr-top{display:flex;justify-content:space-between;font-size:0.52rem;color:rgba(240,230,184,0.45);margin-bottom:5px;}
-.ph-xirr-top b{color:var(--gold-light);font-family:'JetBrains Mono',monospace;font-size:0.62rem;}
-.ph-xirr-chart{height:34px;}
-.ph-line{fill:none;stroke:var(--gold-light);stroke-width:1.6;stroke-linecap:round;stroke-dasharray:220;stroke-dashoffset:220;transition:stroke-dashoffset 1.6s .3s var(--easing);}
-.ph-line-bench{fill:none;stroke:rgba(240,230,184,0.28);stroke-width:1.2;stroke-dasharray:2 3;stroke-dashoffset:220;stroke-dasharray:220;transition:stroke-dashoffset 1.6s .5s var(--easing);}
-.phone-scene.animate-in .ph-line{stroke-dashoffset:0;}
-.phone-scene.animate-in .ph-line-bench{stroke-dashoffset:0;}
-
-.ph-insight{display:flex;gap:7px;align-items:flex-start;background:rgba(174,90,66,0.1);border:1px solid rgba(174,90,66,0.28);border-radius:9px;padding:8px 10px;font-size:0.56rem;line-height:1.5;color:rgba(240,230,184,0.75);}
-.ph-insight svg{width:11px;height:11px;color:var(--rust-light);flex-shrink:0;margin-top:1px;}
-
-.ph-goals{display:flex;flex-direction:column;gap:8px;}
-.ph-goal-row{display:flex;flex-direction:column;gap:4px;}
-.ph-goal-top{display:flex;justify-content:space-between;font-size:0.56rem;color:rgba(240,230,184,0.5);}
-.ph-goal-top b{color:var(--ivory);font-weight:500;font-family:'JetBrains Mono',monospace;}
+.ph-balance-label{font-size:0.6rem;color:rgba(240,230,184,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-top:6px;}
+.ph-balance{font-family:'Space Grotesk',sans-serif;font-size:1.9rem;font-weight:700;margin-top:2px;color:var(--ivory);}
+.ph-delta{
+  display:inline-flex;align-items:center;gap:4px;margin-top:6px;
+  font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--gold-light);
+  background:rgba(212,175,55,0.12);padding:4px 9px;border-radius:20px;width:fit-content;
+  border:1px solid rgba(212,175,55,0.2);
+}
+.ph-chips{display:flex;gap:7px;overflow:hidden;margin-top:4px;}
+.ph-chip{
+  font-size:0.6rem;padding:7px 12px;border-radius:20px;white-space:nowrap;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:rgba(240,230,184,0.55);
+}
+.ph-chip.on{background:var(--gold-light);color:var(--dark);font-weight:600;border-color:var(--gold-light);}
+.ph-chart{
+  height:70px;display:flex;align-items:flex-end;gap:5px;padding:0 2px;
+}
+.ph-chart i{
+  flex:1;background:linear-gradient(180deg,var(--gold-light),rgba(212,175,55,0.1));
+  border-radius:3px 3px 0 0;opacity:0.9;
+}
+.ph-goals{display:flex;flex-direction:column;gap:10px;margin-top:2px;}
+.ph-goal-row{display:flex;flex-direction:column;gap:5px;}
+.ph-goal-top{display:flex;justify-content:space-between;font-size:0.62rem;color:rgba(240,230,184,0.5);}
+.ph-goal-top b{color:var(--ivory);font-weight:500;}
 .ph-goal-track{height:4px;background:rgba(255,255,255,0.07);border-radius:4px;overflow:hidden;}
-.ph-goal-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:4px;width:0;transition:width 1.2s .4s var(--easing);}
-.phone-scene.animate-in .ph-goal-fill{width:var(--w);}
-.ph-tabbar{margin-top:auto;display:flex;justify-content:space-around;padding:12px 10px 18px;border-top:1px solid rgba(255,255,255,0.06);}
-.ph-tabbar svg{width:15px;height:15px;color:rgba(240,230,184,0.3);}
+.ph-goal-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:4px;}
+.ph-tabbar{
+  margin-top:auto;display:flex;justify-content:space-around;
+  padding:14px 10px 20px;border-top:1px solid rgba(255,255,255,0.06);
+}
+.ph-tabbar svg{width:16px;height:16px;color:rgba(240,230,184,0.3);}
 .ph-tabbar .active svg{color:var(--gold-light);}
 
-.orbit-card{position:absolute;background:rgba(18,18,16,0.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(212,175,55,0.25);border-radius:14px;padding:12px 15px;transform-style:preserve-3d;box-shadow:0 20px 40px rgba(20,16,4,0.3);animation:float 5s ease-in-out infinite;}
-.orbit-card .oc-label{font-family:'JetBrains Mono',monospace;font-size:0.56rem;color:rgba(240,230,184,0.4);text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:5px;}
-.orbit-card .oc-label svg{width:10px;height:10px;color:var(--rust-light);}
-.orbit-card .oc-val{font-family:'JetBrains Mono',monospace;font-size:0.92rem;font-weight:600;margin-top:3px;color:var(--gold-pale);}
-.orbit-card .oc-val.up{color:var(--sage-light);}
-.oc1{top:4%;left:-16%;animation-delay:0s;transform:translateZ(70px);}
-.oc2{bottom:10%;right:-14%;animation-delay:1.2s;transform:translateZ(60px);}
-@keyframes float{0%,100%{transform:translateY(0) translateZ(var(--z,60px));}50%{transform:translateY(-14px) translateZ(var(--z,60px));}}
+/* orbit cards */
+.orbit-card{
+  position:absolute;background:rgba(250,247,242,0.85);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--border);border-radius:16px;
+  padding:12px 16px;transform-style:preserve-3d;
+  box-shadow:0 20px 40px rgba(58,54,48,0.14);
+  animation:float 5s ease-in-out infinite;
+}
+.orbit-card .oc-label{font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+.orbit-card .oc-val{font-family:'Space Grotesk',sans-serif;font-size:0.98rem;font-weight:600;margin-top:2px;color:var(--charcoal);}
+.orbit-card .oc-val.up{color:var(--gold);}
+.oc1{top:2%;left:-14%;animation-delay:0s;transform:translateZ(80px);}
+.oc2{top:18%;right:-18%;animation-delay:.7s;transform:translateZ(60px);}
+.oc3{bottom:22%;left:-20%;animation-delay:1.4s;transform:translateZ(70px);}
+.oc4{bottom:4%;right:-10%;animation-delay:2.1s;transform:translateZ(50px);}
+@keyframes float{
+  0%,100%{transform:translateY(0) translateZ(var(--z,60px));}
+  50%{transform:translateY(-14px) translateZ(var(--z,60px));}
+}
 
-/* ═══════════ TICKER ═══════════ */
-.ticker{position:relative;z-index:1;border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light);background:var(--ink);padding:15px 0;overflow:hidden;}
-.ticker-track{display:flex;gap:56px;white-space:nowrap;animation:tick 36s linear infinite;width:max-content;}
+/* ═══════════════════════════════════════════
+   TICKER
+═══════════════════════════════════════════ */
+.ticker{
+  position:relative;z-index:1;
+  border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light);
+  background:var(--bg-soft);padding:15px 0;overflow:hidden;
+}
+.ticker-track{display:flex;gap:56px;white-space:nowrap;animation:tick 32s linear infinite;width:max-content;}
 .ticker:hover .ticker-track{animation-play-state:paused;}
-.tick-item{font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.03em;color:rgba(240,230,184,0.55);display:flex;align-items:center;gap:10px;}
-.tick-item .gold{color:var(--gold-light);}
-.tick-item .sage{color:var(--sage-light);}
-.tick-item::after{content:'◆';color:rgba(240,230,184,0.15);font-size:0.5rem;margin-left:46px;}
+.tick-item{
+  font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.03em;
+  color:var(--muted);display:flex;align-items:center;gap:10px;
+}
+.tick-item .gold{color:var(--gold);font-weight:500;}
+.tick-item::after{content:'◆';color:var(--muted-dim);font-size:0.5rem;margin-left:46px;}
 @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
-/* ═══════════ PROBLEM ═══════════ */
-.problem{background:var(--bg-soft);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light);}
-.problem-layout{display:grid;grid-template-columns:0.95fr 1.05fr;gap:70px;align-items:center;margin-top:16px;}
-.problem-compare{display:flex;flex-direction:column;gap:2px;}
-.pc-row{display:grid;grid-template-columns:120px 1fr 1fr;gap:16px;align-items:center;padding:18px 0;border-bottom:1px solid var(--border-light);}
-.pc-row.head{padding-top:0;}
-.pc-label{font-size:0.82rem;color:var(--mid);font-weight:500;}
-.pc-head-label{font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted-dim);}
-.pc-val{font-family:'JetBrains Mono',monospace;font-size:0.8rem;display:flex;align-items:center;gap:8px;}
-.pc-val.bad{color:var(--rust);}
-.pc-val.good{color:var(--sage);}
-.pc-val svg{width:13px;height:13px;flex-shrink:0;}
-.problem-list{display:flex;flex-direction:column;gap:26px;}
-.problem-item{display:flex;gap:18px;align-items:flex-start;}
-.problem-num{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--gold-pale);flex-shrink:0;width:34px;}
-.problem-item-title{font-size:0.96rem;font-weight:600;margin-bottom:6px;}
-.problem-item-desc{font-size:0.85rem;color:var(--muted);line-height:1.7;max-width:440px;}
+/* ═══════════════════════════════════════════
+   SHARED SECTION
+═══════════════════════════════════════════ */
+section{position:relative;z-index:1;padding:110px 56px;}
+.tag{
+  font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:10px;
+}
+.tag::before{content:'';width:22px;height:1px;background:var(--gold-light);}
+.sec-title{font-size:clamp(2rem,3.6vw,3rem);font-weight:500;line-height:1.12;margin-bottom:16px;}
+.sec-title .accent{font-style:italic;color:var(--gold);}
+.sec-sub{color:var(--muted);font-size:0.98rem;line-height:1.7;max-width:520px;}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s var(--easing),transform .8s var(--easing);}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}.d4{transition-delay:.4s;}.d5{transition-delay:.5s;}
 
-/* ═══════════ ENGINE / ANALYTICS GRID ═══════════ */
-.engine-head{margin-bottom:56px;}
-.engine-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-light);border:1px solid var(--border-light);}
-.engine-card{background:var(--ink);padding:34px 30px;transition:background .4s;cursor:default;display:flex;flex-direction:column;gap:18px;min-height:290px;}
-.engine-card:hover{background:var(--ink-soft);}
-.engine-top{display:flex;justify-content:space-between;align-items:flex-start;}
-.engine-num{font-family:'JetBrains Mono',monospace;font-size:0.66rem;color:rgba(240,230,184,0.3);letter-spacing:0.08em;}
-.engine-icon{width:30px;height:30px;color:var(--gold-light);opacity:0.85;}
-.engine-title{font-family:'Space Grotesk',sans-serif;font-size:1.08rem;font-weight:600;color:var(--ivory);}
-.engine-desc{font-size:0.8rem;color:rgba(240,230,184,0.45);line-height:1.68;}
-.engine-viz{margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);}
+/* ═══════════════════════════════════════════
+   FEATURES
+═══════════════════════════════════════════ */
+.features-head{margin-bottom:56px;}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-light);border:1px solid var(--border-light);}
+.feat-card{
+  background:var(--bg);padding:38px 32px;
+  transition:background .4s;cursor:default;
+  transform-style:preserve-3d;will-change:transform;
+}
+.feat-card:hover{background:var(--ivory);}
+.feat-icon{
+  width:44px;height:44px;border-radius:12px;background:var(--surface);border:1px solid var(--border-light);
+  display:flex;align-items:center;justify-content:center;margin-bottom:22px;color:var(--gold);
+  transition:background .3s,border-color .3s,transform .3s var(--easing-back);
+}
+.feat-card:hover .feat-icon{background:var(--gold-glow);border-color:rgba(184,150,12,0.35);transform:scale(1.08) rotate(-4deg);}
+.feat-icon svg{width:20px;height:20px;}
+.feat-title{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;font-weight:600;margin-bottom:10px;}
+.feat-desc{font-size:0.85rem;color:var(--muted);line-height:1.7;}
 
-/* mini readouts inside engine cards */
-.mini-stat{display:flex;align-items:baseline;gap:8px;}
-.mini-stat .num{font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:var(--gold-light);font-weight:600;}
-.mini-stat .lbl{font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:rgba(240,230,184,0.35);text-transform:uppercase;letter-spacing:0.06em;}
-.mini-bars{display:flex;flex-direction:column;gap:8px;}
-.mini-bar-row{display:flex;align-items:center;gap:8px;}
-.mini-bar-label{font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:rgba(240,230,184,0.4);width:64px;flex-shrink:0;}
-.mini-bar-track{flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
-.mini-bar-fill{height:100%;border-radius:3px;background:var(--gold-light);}
-.mini-bar-fill.target{background:rgba(240,230,184,0.22);}
-.mini-donut-row{display:flex;align-items:center;gap:16px;}
-.mini-donut{width:56px;height:56px;border-radius:50%;flex-shrink:0;}
-.mini-overlap{display:flex;align-items:center;height:44px;position:relative;width:100%;}
-.mo-circ{position:absolute;width:44px;height:44px;border-radius:50%;border:1.5px solid;mix-blend-mode:screen;}
-.mo-circ.c1{left:0;border-color:var(--gold-light);}
-.mo-circ.c2{left:22px;border-color:var(--sage-light);}
-.mo-circ.c3{left:44px;border-color:var(--rust-light);}
-.mini-gauge-track{height:6px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;margin-bottom:8px;}
-.mini-gauge-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--sage),var(--sage-light));}
-
-/* ═══════════ GALLERY ═══════════ */
+/* ═══════════════════════════════════════════
+   GALLERY (tabs)
+═══════════════════════════════════════════ */
 .gallery{background:var(--bg-soft);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light);}
 .gallery-layout{display:grid;grid-template-columns:0.9fr 1.1fr;gap:60px;align-items:center;margin-top:50px;}
 .gtab-list{display:flex;flex-direction:column;gap:2px;}
-.gtab{display:flex;align-items:center;gap:16px;padding:22px 20px;border:1px solid transparent;border-radius:14px;cursor:pointer;transition:background .3s,border-color .3s;}
-.gtab:hover{background:rgba(255,255,255,0.4);}
+.gtab{
+  display:flex;align-items:center;gap:16px;padding:22px 20px;
+  border:1px solid transparent;border-radius:14px;cursor:pointer;
+  transition:background .3s,border-color .3s;
+}
+.gtab:hover{background:var(--surface);}
 .gtab.active{background:rgba(255,255,255,0.6);border-color:var(--border);}
 .gtab-num{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted-dim);width:22px;}
 .gtab.active .gtab-num{color:var(--gold);}
 .gtab-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.02rem;margin-bottom:4px;}
 .gtab-desc{font-size:0.8rem;color:var(--muted);line-height:1.6;}
 .gallery-phone-wrap{display:flex;justify-content:center;perspective:1200px;}
-.gphone{width:266px;height:542px;background:linear-gradient(160deg,#232320,var(--dark));border-radius:38px;border:1px solid rgba(212,175,55,0.28);padding:10px;box-shadow:0 40px 90px -20px rgba(28,20,4,0.4);}
+.gphone{
+  width:260px;height:530px;background:linear-gradient(160deg,#232320,var(--dark));
+  border-radius:38px;border:1px solid rgba(212,175,55,0.28);padding:10px;
+  box-shadow:0 40px 90px -20px rgba(28,20,4,0.4);
+  transform:rotateY(0deg);transition:transform .6s var(--easing);
+}
 .gscreen{width:100%;height:100%;border-radius:28px;background:linear-gradient(180deg,#191916,var(--dark));overflow:hidden;position:relative;padding:20px 16px;}
-.gview{display:none;flex-direction:column;gap:12px;height:100%;animation:fadeIn .5s var(--easing);}
+.gview{display:none;flex-direction:column;gap:14px;height:100%;animation:fadeIn .5s var(--easing);}
 .gview.active{display:flex;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .gview-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin-top:6px;color:var(--ivory);}
-.gview-sub{font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:rgba(240,230,184,0.35);margin-top:-6px;}
 .gv-chat{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
-.gv-bubble{max-width:82%;padding:10px 13px;border-radius:14px;font-size:0.72rem;line-height:1.5;}
+.gv-bubble{max-width:78%;padding:10px 13px;border-radius:14px;font-size:0.72rem;line-height:1.5;}
 .gv-bubble.them{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:rgba(240,230,184,0.75);align-self:flex-start;border-bottom-left-radius:4px;}
 .gv-bubble.me{background:var(--gold-light);color:var(--dark);align-self:flex-end;border-bottom-right-radius:4px;font-weight:500;}
 .gv-typing{display:flex;gap:4px;padding:10px 13px;background:rgba(255,255,255,0.05);border-radius:14px;width:fit-content;border-bottom-left-radius:4px;}
@@ -264,53 +388,51 @@ section{position:relative;z-index:1;padding:112px 56px;}
 .gv-typing span:nth-child(2){animation-delay:.2s;}
 .gv-typing span:nth-child(3){animation-delay:.4s;}
 @keyframes typing{0%,60%,100%{opacity:0.3;transform:translateY(0);}30%{opacity:1;transform:translateY(-3px);}}
-.gv-chip-row{display:flex;gap:6px;flex-wrap:wrap;}
-.gv-chip{font-size:0.56rem;font-family:'JetBrains Mono',monospace;padding:5px 9px;border-radius:20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);color:rgba(240,230,184,0.55);}
-.gv-chip.on{background:var(--gold-light);color:var(--dark);border-color:var(--gold-light);font-weight:600;}
-.gv-overlap-card{background:rgba(174,90,66,0.1);border:1px solid rgba(174,90,66,0.25);border-radius:10px;padding:11px 13px;font-size:0.62rem;color:rgba(240,230,184,0.75);line-height:1.6;}
-.gv-overlap-card b{color:var(--rust-light);font-family:'JetBrains Mono',monospace;}
-.gv-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.gv-stat-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 12px;}
-.gv-stat-box .n{font-family:'JetBrains Mono',monospace;font-size:1.02rem;color:var(--gold-light);font-weight:600;}
-.gv-stat-box .l{font-family:'JetBrains Mono',monospace;font-size:0.52rem;color:rgba(240,230,184,0.4);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
 
-/* ═══════════ PIPELINE (how the engine thinks) ═══════════ */
-.pipeline{background:var(--charcoal);position:relative;overflow:hidden;}
-.pipeline::before{content:'';position:absolute;top:-150px;right:-150px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.08),transparent 70%);}
-.pipeline .tag{color:var(--gold-light);}
-.pipeline .tag::before{background:var(--gold-light);}
-.pipeline .sec-title{color:var(--ivory);}
-.pipeline .sec-sub{color:rgba(255,255,255,0.42);}
-.pipe-track{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:64px;position:relative;}
-.pipe-connector{position:absolute;top:26px;left:0;right:0;height:1px;background:repeating-linear-gradient(90deg,rgba(212,175,55,0.25) 0 8px,transparent 8px 16px);z-index:0;}
-.pipe-step{position:relative;z-index:1;padding-right:28px;}
-.pipe-dot{width:52px;height:52px;border-radius:50%;background:var(--ink);border:1px solid rgba(212,175,55,0.35);display:flex;align-items:center;justify-content:center;margin-bottom:24px;transition:border-color .3s,transform .3s var(--easing-back);}
-.pipe-step:hover .pipe-dot{border-color:var(--gold-light);transform:scale(1.08);}
-.pipe-dot svg{width:20px;height:20px;color:var(--gold-light);}
-.pipe-title{font-size:0.98rem;font-weight:600;color:white;margin-bottom:10px;}
-.pipe-desc{font-size:0.8rem;color:rgba(255,255,255,0.42);line-height:1.7;}
-.pipe-tag{display:inline-block;margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(212,175,55,0.55);border:1px solid rgba(212,175,55,0.2);padding:4px 9px;border-radius:20px;}
-
-/* ═══════════ STATS STRIP ═══════════ */
-.stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-light);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light);}
+/* ═══════════════════════════════════════════
+   STATS STRIP
+═══════════════════════════════════════════ */
+.stats-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--border-light);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light);
+  padding:0;
+}
 .stat-box{background:var(--bg);padding:44px 30px;text-align:center;}
 .stat-num{font-family:'Fraunces',serif;font-size:2.3rem;font-weight:600;color:var(--gold);}
 .stat-lbl{font-size:0.75rem;color:var(--muted);margin-top:6px;}
 
-/* ═══════════ WAITLIST FORM ═══════════ */
-.waitlist-sec{background:var(--bg-soft);border-top:1px solid var(--border-light);display:grid;grid-template-columns:0.9fr 1.1fr;gap:60px;align-items:flex-start;}
+/* ═══════════════════════════════════════════
+   WAITLIST FORM
+═══════════════════════════════════════════ */
+.waitlist-sec{
+  background:var(--bg-soft);border-top:1px solid var(--border-light);
+  display:grid;grid-template-columns:0.9fr 1.1fr;gap:60px;align-items:flex-start;
+}
 .wl-left{position:sticky;top:120px;}
-.wl-badge{display:inline-flex;align-items:center;gap:8px;background:var(--gold-glow);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;padding:7px 14px;border-radius:20px;margin-bottom:24px;border:1px solid rgba(184,150,12,0.2);}
+.wl-badge{
+  display:inline-flex;align-items:center;gap:8px;background:var(--gold-glow);color:var(--gold);
+  font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:7px 14px;border-radius:20px;margin-bottom:24px;border:1px solid rgba(184,150,12,0.2);
+}
 .wl-perks{margin-top:32px;display:flex;flex-direction:column;gap:16px;}
 .wl-perk{display:flex;gap:12px;align-items:flex-start;font-size:0.85rem;color:var(--muted);}
 .wl-perk svg{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:2px;}
-.wl-perk b{color:var(--text);}
 
-.wl-card{background:var(--ivory);border:1px solid var(--border);border-radius:24px;padding:44px;position:relative;overflow:hidden;box-shadow:0 30px 70px -30px rgba(58,54,48,0.25);}
-.wl-card::before{content:'';position:absolute;top:-40%;right:-20%;width:60%;height:80%;background:radial-gradient(circle,rgba(212,175,55,0.16),transparent 70%);pointer-events:none;}
+.wl-card{
+  background:var(--ivory);border:1px solid var(--border);border-radius:24px;padding:44px;position:relative;overflow:hidden;
+  box-shadow:0 30px 70px -30px rgba(58,54,48,0.25);
+}
+.wl-card::before{
+  content:'';position:absolute;top:-40%;right:-20%;width:60%;height:80%;
+  background:radial-gradient(circle,rgba(212,175,55,0.16),transparent 70%);pointer-events:none;
+}
 .field-group{display:flex;flex-direction:column;gap:18px;margin-bottom:24px;position:relative;}
 .field{position:relative;}
-.field input{width:100%;background:rgba(255,255,255,0.7);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'Inter',sans-serif;font-size:0.9rem;padding:17px 16px 15px;outline:none;transition:border-color .3s,background .3s,box-shadow .3s;}
+.field input{
+  width:100%;background:rgba(255,255,255,0.7);border:1px solid var(--border);border-radius:12px;color:var(--text);
+  font-family:'Inter',sans-serif;font-size:0.9rem;padding:17px 16px 15px;outline:none;
+  transition:border-color .3s,background .3s,box-shadow .3s;
+}
 .field input::placeholder{color:var(--muted-dim);}
 .field input:focus{border-color:var(--gold-light);background:rgba(255,255,255,0.95);box-shadow:0 0 0 4px rgba(212,175,55,0.1);}
 .field.error input{border-color:#B4453B;}
@@ -319,12 +441,24 @@ section{position:relative;z-index:1;padding:112px 56px;}
 
 .chip-label{font-size:0.78rem;color:var(--muted);margin-bottom:12px;}
 .chip-row{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:26px;}
-.chip{font-size:0.78rem;padding:10px 16px;border-radius:20px;border:1px solid var(--border);background:rgba(255,255,255,0.6);color:var(--muted);cursor:pointer;transition:all .25s var(--easing);user-select:none;}
+.chip{
+  font-size:0.78rem;padding:10px 16px;border-radius:20px;border:1px solid var(--border);
+  background:rgba(255,255,255,0.6);color:var(--muted);cursor:pointer;transition:all .25s var(--easing);user-select:none;
+}
 .chip:hover{border-color:rgba(184,150,12,0.4);color:var(--text);}
 .chip.active{background:var(--gold-light);color:var(--dark);border-color:var(--gold-light);font-weight:600;}
 
-.wl-submit{width:100%;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.92rem;background:linear-gradient(100deg,var(--gold-light),var(--gold) 130%);color:var(--dark);border:none;border-radius:14px;padding:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .3s var(--easing-back),box-shadow .3s,opacity .3s;position:relative;overflow:hidden;}
-.wl-submit::before{content:'';position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,0.6) 50%,transparent 70%);transform:translateX(-130%);transition:transform .8s var(--easing);}
+.wl-submit{
+  width:100%;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.92rem;
+  background:linear-gradient(100deg,var(--gold-light),var(--gold) 130%);color:var(--dark);border:none;border-radius:14px;padding:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:transform .3s var(--easing-back),box-shadow .3s,opacity .3s;
+  position:relative;overflow:hidden;
+}
+.wl-submit::before{
+  content:'';position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,0.6) 50%,transparent 70%);
+  transform:translateX(-130%);transition:transform .8s var(--easing);
+}
 .wl-submit:hover::before{transform:translateX(130%);}
 .wl-submit:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(184,150,12,0.3);}
 .wl-submit:disabled{opacity:0.6;pointer-events:none;}
@@ -334,9 +468,16 @@ section{position:relative;z-index:1;padding:112px 56px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .wl-fine{font-size:0.68rem;color:var(--muted-dim);text-align:center;margin-top:16px;}
 
-.wl-success{position:absolute;inset:0;background:rgba(250,247,242,0.97);backdrop-filter:blur(16px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:40px;opacity:0;pointer-events:none;transition:opacity .5s var(--easing);}
+.wl-success{
+  position:absolute;inset:0;background:rgba(250,247,242,0.97);backdrop-filter:blur(16px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:40px;
+  opacity:0;pointer-events:none;transition:opacity .5s var(--easing);
+}
 .wl-success.show{opacity:1;pointer-events:all;}
-.wl-check-ring{width:64px;height:64px;border-radius:50%;border:1px solid rgba(184,150,12,0.35);display:flex;align-items:center;justify-content:center;position:relative;}
+.wl-check-ring{
+  width:64px;height:64px;border-radius:50%;border:1px solid rgba(184,150,12,0.35);
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
 .wl-check-ring::before{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(184,150,12,0.18);animation:ringPulse 2s infinite;}
 @keyframes ringPulse{0%,100%{transform:scale(1);opacity:.6;}50%{transform:scale(1.18);opacity:.15;}}
 .wl-check-ring svg{width:26px;height:26px;}
@@ -346,9 +487,10 @@ section{position:relative;z-index:1;padding:112px 56px;}
 .wl-success-title .gold{font-style:italic;color:var(--gold);}
 .wl-success-num{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);}
 .wl-success-num b{color:var(--text);}
-.wl-success-note{font-size:0.72rem;color:var(--muted-dim);max-width:260px;line-height:1.6;}
 
-/* ═══════════ FOOTER ═══════════ */
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
 footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid var(--border-light);}
 .foot-top{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:60px;padding-bottom:44px;border-bottom:1px solid var(--border-light);}
 .foot-desc{font-size:0.8rem;color:var(--muted);line-height:1.7;max-width:280px;margin-top:14px;}
@@ -359,23 +501,21 @@ footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid v
 .foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:28px;}
 .foot-copy{font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted-dim);}
 
-/* ═══════════ RESPONSIVE ═══════════ */
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
 @media (max-width:980px){
   nav{padding:18px 24px;}
   nav.scrolled{padding:12px 24px;}
   .nav-links{display:none;}
   .hero{grid-template-columns:1fr;padding:120px 24px 60px;text-align:left;}
-  .phone-scene{height:520px;margin-top:20px;}
-  .phone-3d{width:230px;height:470px;transform:rotateY(0) rotateX(0);}
+  .phone-scene{height:480px;margin-top:20px;}
+  .phone-3d{width:220px;height:450px;transform:rotateY(0) rotateX(0);}
   .orbit-card{display:none;}
   section{padding:70px 24px;}
-  .problem-layout{grid-template-columns:1fr;gap:40px;}
-  .pc-row{grid-template-columns:90px 1fr 1fr;gap:8px;}
-  .engine-grid{grid-template-columns:1fr;}
+  .feat-grid{grid-template-columns:1fr;}
   .gallery-layout{grid-template-columns:1fr;}
   .gallery-phone-wrap{order:-1;}
-  .pipe-track{grid-template-columns:1fr;gap:36px;}
-  .pipe-connector{display:none;}
   .stats-strip{grid-template-columns:1fr 1fr;}
   .waitlist-sec{grid-template-columns:1fr;}
   .wl-left{position:static;}
@@ -397,10 +537,9 @@ footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid v
 <nav id="nav">
   <a href="#" class="logo">yours<span class="dot">.</span></a>
   <ul class="nav-links">
-    <li><a href="#problem">Why it exists</a></li>
-    <li><a href="#engine">The engine</a></li>
-    <li><a href="#gallery">Inside the app</a></li>
-    <li><a href="#pipeline">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#gallery">How it works</a></li>
+    <li><a href="#faq">FAQ</a></li>
   </ul>
   <button class="nav-cta" id="nav-join">Join waitlist</button>
 </nav>
@@ -409,18 +548,13 @@ footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid v
 <section class="hero" id="home">
   <div class="hero-grid-bg"></div>
   <div>
-    <div class="eyebrow"><span class="pulse"></span> LAUNCHING SOON &nbsp;·&nbsp; ANALYTICS ENGINE IN BETA</div>
+    <div class="eyebrow"><span class="pulse"></span> LAUNCHING SOON &nbsp;·&nbsp; APPLICATIONS OPEN</div>
     <h1>
-      <span class="line"><span style="animation-delay:.4s">Stop checking</span></span>
-      <span class="line"><span style="animation-delay:.5s">five apps.</span></span>
-      <span class="line"><span class="accent" style="animation-delay:.6s">Start reading one analysis.</span></span>
+      <span class="line"><span style="animation-delay:.4s">Every rupee.</span></span>
+      <span class="line"><span style="animation-delay:.5s">One app.</span></span>
+      <span class="line"><span class="accent" style="animation-delay:.6s">Zero chaos.</span></span>
     </h1>
-    <p class="sub">yours pulls every mutual fund, SIP, stock, and policy into a single portfolio — then runs the maths your platforms never bother to: true blended XIRR, allocation drift, fund overlap, and tax opportunities, <strong>recalculated every night.</strong></p>
-    <ul class="hero-microlist">
-      <li><svg viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> One XIRR across every AMC, broker, and folio you hold</li>
-      <li><svg viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Nightly checks for drift, overlap, and idle cash</li>
-      <li><svg viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> A SEBI-registered expert to sanity-check every alert</li>
-    </ul>
+    <p class="sub">Mutual funds, SIPs, goals, insurance, stocks — and a real expert one tap away. <strong>yours</strong> tracks your whole financial life in one place, built for how you actually invest.</p>
     <div class="hero-actions">
       <button class="btn-gold" id="hero-join">
         <span>Join the waitlist</span>
@@ -434,14 +568,10 @@ footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid v
   </div>
 
   <div class="phone-scene" id="phone-scene">
-    <div class="orbit-card oc1" style="--z:70px">
-      <div class="oc-label"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2v16M4 8l6-6 6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>OVERLAP DETECTED</div>
-      <div class="oc-val">HDFC Bank · 3 funds</div>
-    </div>
-    <div class="orbit-card oc2" style="--z:60px">
-      <div class="oc-label">XIRR vs NIFTY 50</div>
-      <div class="oc-val up">▲ +2.3 pts</div>
-    </div>
+    <div class="orbit-card oc1" style="--z:80px"><div class="oc-label">SIP · Monthly</div><div class="oc-val">₹12,500</div></div>
+    <div class="orbit-card oc2" style="--z:60px"><div class="oc-label">Mutual Funds</div><div class="oc-val up">▲ 14.2%</div></div>
+    <div class="orbit-card oc3" style="--z:70px"><div class="oc-label">Goal · Goa Trip</div><div class="oc-val">68% funded</div></div>
+    <div class="orbit-card oc4" style="--z:50px"><div class="oc-label">Insurance</div><div class="oc-val up">Active</div></div>
 
     <div class="phone-3d" id="phone-3d">
       <div class="phone-body">
@@ -449,43 +579,27 @@ footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid v
         <div class="phone-screen">
           <div class="ph-statusbar"><span>9:41</span><span>●●●●</span></div>
           <div class="ph-content">
-            <div class="ph-greet"><span>Good evening, <b>Aditi</b></span><span class="ph-live"><i></i>Live</span></div>
+            <div class="ph-greet">Good evening, <b>Aditi</b></div>
             <div>
-              <div class="ph-balance-label">Net worth · all platforms</div>
+              <div class="ph-balance-label">Total net worth</div>
               <div class="ph-balance">₹8,42,650</div>
               <div class="ph-delta">▲ 2.4% this week</div>
             </div>
-
-            <div class="ph-analytics-row">
-              <div class="ph-donut-wrap">
-                <div class="ph-donut"></div>
-                <div class="ph-donut-hole"><b>4</b><span>assets</span></div>
-              </div>
-              <div class="ph-legend">
-                <div class="ph-legend-row"><i style="background:var(--gold-light)"></i>Equity 52%</div>
-                <div class="ph-legend-row"><i style="background:var(--sage-light)"></i>Debt 22%</div>
-                <div class="ph-legend-row"><i style="background:var(--gold-pale)"></i>Gold 16%</div>
-                <div class="ph-legend-row"><i style="background:rgba(255,255,255,0.3)"></i>Cash 10%</div>
-              </div>
+            <div class="ph-chips">
+              <div class="ph-chip on">All</div>
+              <div class="ph-chip">Mutual Funds</div>
+              <div class="ph-chip">SIPs</div>
+              <div class="ph-chip">Goals</div>
             </div>
-
-            <div class="ph-xirr-box">
-              <div class="ph-xirr-top"><span>Portfolio XIRR</span><b>14.2%</b></div>
-              <svg class="ph-xirr-chart" viewBox="0 0 220 34" preserveAspectRatio="none">
-                <path class="ph-line-bench" d="M0,26 L30,24 L60,25 L90,20 L120,21 L150,15 L180,16 L220,10"/>
-                <path class="ph-line" d="M0,28 L30,22 L60,23 L90,14 L120,16 L150,8 L180,10 L220,3"/>
-              </svg>
-            </div>
-
-            <div class="ph-insight">
-              <svg viewBox="0 0 16 16" fill="none"><path d="M8 1L1 14h14L8 1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6v4M8 12h.01" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-              <span>Large-cap allocation is 8% above target — rebalance suggested.</span>
-            </div>
-
+            <div class="ph-chart" id="ph-chart"></div>
             <div class="ph-goals">
               <div class="ph-goal-row">
                 <div class="ph-goal-top"><span>Goa Trip</span><b>68%</b></div>
-                <div class="ph-goal-track"><div class="ph-goal-fill" style="--w:68%"></div></div>
+                <div class="ph-goal-track"><div class="ph-goal-fill" style="width:68%"></div></div>
+              </div>
+              <div class="ph-goal-row">
+                <div class="ph-goal-top"><span>Emergency Fund</span><b>91%</b></div>
+                <div class="ph-goal-track"><div class="ph-goal-fill" style="width:91%"></div></div>
               </div>
             </div>
           </div>
@@ -504,300 +618,130 @@ footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid v
 <!-- ═══════════════ TICKER ═══════════════ -->
 <div class="ticker">
   <div class="ticker-track" id="ticker-track">
-    <div class="tick-item">XIRR RECALCULATED <span class="gold">14.2%</span></div>
-    <div class="tick-item">ALLOCATION DRIFT DETECTED <span class="sage">8.0%</span></div>
-    <div class="tick-item">OVERLAP SCAN COMPLETE</div>
-    <div class="tick-item">NIFTY 50 <span class="gold">▲ 0.8%</span></div>
-    <div class="tick-item">GOAL "GOA TRIP" <span class="sage">68% FUNDED</span></div>
-    <div class="tick-item">TAX HARVEST OPPORTUNITY FOUND</div>
     <div class="tick-item">SIP AUTO-DEBIT SUCCESSFUL <span class="gold">₹5,000</span></div>
-    <div class="tick-item">EXPERT REVIEW SCHEDULED</div>
-    <div class="tick-item">XIRR RECALCULATED <span class="gold">14.2%</span></div>
-    <div class="tick-item">ALLOCATION DRIFT DETECTED <span class="sage">8.0%</span></div>
-    <div class="tick-item">OVERLAP SCAN COMPLETE</div>
+    <div class="tick-item">GOAL "EUROPE TRIP" <span class="gold">82% FUNDED</span></div>
     <div class="tick-item">NIFTY 50 <span class="gold">▲ 0.8%</span></div>
-    <div class="tick-item">GOAL "GOA TRIP" <span class="sage">68% FUNDED</span></div>
-    <div class="tick-item">TAX HARVEST OPPORTUNITY FOUND</div>
+    <div class="tick-item">NEW SIP STARTED</div>
+    <div class="tick-item">PORTFOLIO REBALANCED</div>
+    <div class="tick-item">EXPERT CALL BOOKED</div>
+    <div class="tick-item">POLICY RENEWAL REMINDER SENT</div>
     <div class="tick-item">SIP AUTO-DEBIT SUCCESSFUL <span class="gold">₹5,000</span></div>
-    <div class="tick-item">EXPERT REVIEW SCHEDULED</div>
+    <div class="tick-item">GOAL "EUROPE TRIP" <span class="gold">82% FUNDED</span></div>
+    <div class="tick-item">NIFTY 50 <span class="gold">▲ 0.8%</span></div>
+    <div class="tick-item">NEW SIP STARTED</div>
+    <div class="tick-item">PORTFOLIO REBALANCED</div>
+    <div class="tick-item">EXPERT CALL BOOKED</div>
+    <div class="tick-item">POLICY RENEWAL REMINDER SENT</div>
   </div>
 </div>
 
-<!-- ═══════════════ THE PROBLEM ═══════════════ -->
-<section class="problem" id="problem">
-  <div class="tag reveal">Why yours exists</div>
-  <h2 class="sec-title reveal d1">You invest like it's a system.<br>Your <span class="accent">view</span> of it isn't.</h2>
-  <p class="sec-sub reveal d2">A SIP here, a stock there, an old ULIP nobody's looked at since 2019. Every platform shows you its own slice — none of them show you the whole portfolio, or what it's actually doing.</p>
-
-  <div class="problem-layout">
-    <div class="problem-compare reveal d3">
-      <div class="pc-row head">
-        <span></span>
-        <span class="pc-head-label">Five apps</span>
-        <span class="pc-head-label">Yours Wealth</span>
-      </div>
-      <div class="pc-row">
-        <span class="pc-label">Blended XIRR</span>
-        <span class="pc-val bad"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Not shown anywhere</span>
-        <span class="pc-val good"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>One number, always current</span>
-      </div>
-      <div class="pc-row">
-        <span class="pc-label">Allocation drift</span>
-        <span class="pc-val bad"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>You'd have to do it by hand</span>
-        <span class="pc-val good"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Flagged the moment it drifts</span>
-      </div>
-      <div class="pc-row">
-        <span class="pc-label">Fund overlap</span>
-        <span class="pc-val bad"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Invisible across AMCs</span>
-        <span class="pc-val good"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Cross-checked stock by stock</span>
-      </div>
-      <div class="pc-row">
-        <span class="pc-label">Someone to ask</span>
-        <span class="pc-val bad"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>A call centre script</span>
-        <span class="pc-val good"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>A named, SEBI-registered advisor</span>
-      </div>
-    </div>
-
-    <div class="problem-list">
-      <div class="problem-item reveal">
-        <div class="problem-num">1</div>
-        <div><div class="problem-item-title">The picture is scattered.</div><div class="problem-item-desc">Mutual funds in one app, stocks in a broker, insurance in a folder, SIPs debiting quietly in the background. Nobody ever sees the whole thing at once.</div></div>
-      </div>
-      <div class="problem-item reveal d1">
-        <div class="problem-num">2</div>
-        <div><div class="problem-item-title">Returns are shown, not explained.</div><div class="problem-item-desc">A fund's factsheet tells you its CAGR. It won't tell you what <em>your</em> money actually earned once every top-up, switch, and withdrawal is accounted for.</div></div>
-      </div>
-      <div class="problem-item reveal d2">
-        <div class="problem-num">3</div>
-        <div><div class="problem-item-title">Nothing tells you when something's off.</div><div class="problem-item-desc">Your allocation drifts, two funds start holding the same stocks, a policy lapses — and nothing pings you until it's already cost you something.</div></div>
-      </div>
-    </div>
+<!-- ═══════════════ FEATURES ═══════════════ -->
+<section id="features">
+  <div class="features-head">
+    <div class="tag reveal">What's inside</div>
+    <h2 class="sec-title reveal d1">Everything you invest in.<br>On <span class="accent">one screen.</span></h2>
+    <p class="sec-sub reveal d2">Stop switching between five apps to know what you own. yours pulls it all together, automatically.</p>
   </div>
-</section>
-
-<!-- ═══════════════ ENGINE / ANALYTICS ═══════════════ -->
-<section id="engine">
-  <div class="engine-head">
-    <div class="tag reveal">The analytics engine</div>
-    <h2 class="sec-title reveal d1">This isn't a tracker.<br>It's an <span class="accent">analyst.</span></h2>
-    <p class="sec-sub reveal d2">Every night, yours re-runs six checks against your entire portfolio — the same checks a good advisor would do manually, if they had the time.</p>
-  </div>
-  <div class="engine-grid">
-
-    <div class="engine-card reveal">
-      <div class="engine-top">
-        <div class="engine-num">01 / TRUE XIRR</div>
-        <svg class="engine-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 17l6-6 4 4 8-8M21 7v6"/></svg>
-      </div>
-      <div class="engine-title">One number, every platform.</div>
-      <div class="engine-desc">Every top-up, switch, dividend, and withdrawal across every AMC and broker, folded into a single money-weighted return — benchmarked against the Nifty 50 automatically.</div>
-      <div class="engine-viz">
-        <div class="mini-stat"><span class="num">14.2%</span><span class="lbl">vs Nifty 11.9%</span></div>
-      </div>
+  <div class="feat-grid">
+    <div class="feat-card reveal">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8M21 7v6"/></svg></div>
+      <div class="feat-title">Mutual Funds</div>
+      <div class="feat-desc">Every fund across every platform, tracked in real time — with the fluff stripped out.</div>
     </div>
-
-    <div class="engine-card reveal d1">
-      <div class="engine-top">
-        <div class="engine-num">02 / DRIFT</div>
-        <svg class="engine-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
-      </div>
-      <div class="engine-title">Allocation drift, caught early.</div>
-      <div class="engine-desc">You set a target mix once. Markets move it every day. yours compares actual vs. target continuously and tells you exactly when to rebalance — and by how much.</div>
-      <div class="engine-viz">
-        <div class="mini-bars">
-          <div class="mini-bar-row"><span class="mini-bar-label">Large cap</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:78%"></div></div></div>
-          <div class="mini-bar-row"><span class="mini-bar-label">Target</span><div class="mini-bar-track"><div class="mini-bar-fill target" style="width:60%"></div></div></div>
-        </div>
-      </div>
+    <div class="feat-card reveal d1">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18M7 15l4-4 3 3 5-6"/></svg></div>
+      <div class="feat-title">SIPs</div>
+      <div class="feat-desc">See every SIP, when it debits, and how it's compounding — without logging into five AMC apps.</div>
     </div>
-
-    <div class="engine-card reveal d2">
-      <div class="engine-top">
-        <div class="engine-num">03 / OVERLAP</div>
-        <svg class="engine-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
-      </div>
-      <div class="engine-title">The same stock, hiding in three funds.</div>
-      <div class="engine-desc">Diversification only works if your funds actually hold different things. yours looks inside every portfolio's underlying stocks and flags the overlap your factsheets never will.</div>
-      <div class="engine-viz">
-        <div class="mini-overlap"><div class="mo-circ c1"></div><div class="mo-circ c2"></div><div class="mo-circ c3"></div></div>
-      </div>
+    <div class="feat-card reveal d2">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div>
+      <div class="feat-title">Goals</div>
+      <div class="feat-desc">Turn "someday" into a tracked target — a trip, a laptop, a house deposit — with a plan that adjusts itself.</div>
     </div>
-
-    <div class="engine-card reveal d3">
-      <div class="engine-top">
-        <div class="engine-num">04 / GOALS</div>
-        <svg class="engine-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V6z"/></svg>
-      </div>
-      <div class="engine-title">Forecasts, not just progress bars.</div>
-      <div class="engine-desc">Every goal is run against your actual contribution history and market assumptions to show a real likelihood of hitting it on time — and what changing your SIP would do.</div>
-      <div class="engine-viz">
-        <div class="mini-gauge-track"><div class="mini-gauge-fill" style="width:82%"></div></div>
-        <div class="mini-stat"><span class="num">82%</span><span class="lbl">on track for Goa · Jun '27</span></div>
-      </div>
+    <div class="feat-card reveal d3">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V6z"/></svg></div>
+      <div class="feat-title">Insurance</div>
+      <div class="feat-desc">Life, health, everything — in one policy vault, with renewal reminders that actually arrive on time.</div>
     </div>
-
-    <div class="engine-card reveal d4">
-      <div class="engine-top">
-        <div class="engine-num">05 / TAX</div>
-        <svg class="engine-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20l4-10 4 8 4-14 4 16"/></svg>
-      </div>
-      <div class="engine-title">Money left on the table, found.</div>
-      <div class="engine-desc">yours scans for unrealised losses you can harvest against gains, and flags LTCG/STCG timing before a redemption costs you more tax than it needed to.</div>
-      <div class="engine-viz">
-        <div class="mini-stat"><span class="num">₹18,240</span><span class="lbl">harvestable this year</span></div>
-      </div>
+    <div class="feat-card reveal d4">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20l4-10 4 8 4-14 4 16"/></svg></div>
+      <div class="feat-title">Stocks &amp; ETFs</div>
+      <div class="feat-desc">Your direct equity and ETF holdings, sitting right next to your funds — same portfolio, same view.</div>
     </div>
-
-    <div class="engine-card reveal d5">
-      <div class="engine-top">
-        <div class="engine-num">06 / COVER</div>
-        <svg class="engine-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
-      </div>
-      <div class="engine-title">Cover that matches your life.</div>
-      <div class="engine-desc">Life and health insurance, checked against your income, dependents, and liabilities — not a sales target — so you know if you're under-covered before it matters.</div>
-      <div class="engine-viz">
-        <div class="mini-bars">
-          <div class="mini-bar-row"><span class="mini-bar-label">Current</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:40%"></div></div></div>
-          <div class="mini-bar-row"><span class="mini-bar-label">Recommended</span><div class="mini-bar-track"><div class="mini-bar-fill target" style="width:85%"></div></div></div>
-        </div>
-      </div>
+    <div class="feat-card reveal d5">
+      <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 01-8.9 8.4A8.5 8.5 0 013 12a8.4 8.4 0 018.4-8.5A8.4 8.4 0 0121 11.5z"/><path d="M8 12h8M12 8v8"/></svg></div>
+      <div class="feat-title">Expert Advice</div>
+      <div class="feat-desc">A real, qualified advisor — not a chatbot script — a message away whenever you need a second opinion.</div>
     </div>
-
   </div>
 </section>
 
 <!-- ═══════════════ GALLERY ═══════════════ -->
 <section class="gallery" id="gallery">
   <div class="tag reveal">Inside the app</div>
-  <h2 class="sec-title reveal d1">Built for your phone.<br>Thinks like a <span class="accent">terminal.</span></h2>
-  <p class="sec-sub reveal d2">A quick look at what you'll actually open every morning.</p>
+  <h2 class="sec-title reveal d1">Built for your phone.<br>Not your <span class="accent">browser tabs.</span></h2>
+  <p class="sec-sub reveal d2">A quick look at what you'll open every morning.</p>
 
   <div class="gallery-layout">
     <div class="gtab-list reveal d3">
       <div class="gtab active" data-view="gv-dash">
         <div class="gtab-num">01</div>
-        <div><div class="gtab-title">Dashboard</div><div class="gtab-desc">Net worth, allocation, and today's movement — first thing you see, across every product you hold.</div></div>
-      </div>
-      <div class="gtab" data-view="gv-analytics">
-        <div class="gtab-num">02</div>
-        <div><div class="gtab-title">Analytics</div><div class="gtab-desc">Overlap, drift, and tax opportunities laid out plainly — the checks a good advisor runs by hand.</div></div>
+        <div><div class="gtab-title">Dashboard</div><div class="gtab-desc">Net worth, today's movement, and every product you hold — first thing you see.</div></div>
       </div>
       <div class="gtab" data-view="gv-goals">
-        <div class="gtab-num">03</div>
+        <div class="gtab-num">02</div>
         <div><div class="gtab-title">Goals</div><div class="gtab-desc">Set a target, and yours works backward to tell you exactly what to invest, monthly.</div></div>
       </div>
       <div class="gtab" data-view="gv-chat">
-        <div class="gtab-num">04</div>
-        <div><div class="gtab-title">Ask an Expert</div><div class="gtab-desc">Chat directly with a SEBI-registered advisor about anything the engine flags. No call centre.</div></div>
+        <div class="gtab-num">03</div>
+        <div><div class="gtab-title">Ask an Expert</div><div class="gtab-desc">Chat directly with a SEBI-registered advisor. No call centre, no hold music.</div></div>
       </div>
     </div>
 
     <div class="gallery-phone-wrap">
       <div class="gphone">
         <div class="gscreen">
-
           <div class="gview active" id="gv-dash">
             <div class="ph-statusbar" style="padding:0"><span>9:41</span><span>●●●●</span></div>
             <div class="gview-title">Your portfolio</div>
-            <div class="ph-balance" style="font-size:1.5rem">₹8,42,650</div>
+            <div class="ph-balance" style="font-size:1.6rem">₹8,42,650</div>
             <div class="ph-delta">▲ 2.4% this week</div>
-            <div class="ph-analytics-row" style="margin-top:6px">
-              <div class="ph-donut-wrap"><div class="ph-donut" style="transform:scale(1)"></div><div class="ph-donut-hole"><b>4</b><span>assets</span></div></div>
-              <div class="ph-legend">
-                <div class="ph-legend-row"><i style="background:var(--gold-light)"></i>Equity 52%</div>
-                <div class="ph-legend-row"><i style="background:var(--sage-light)"></i>Debt 22%</div>
-                <div class="ph-legend-row"><i style="background:var(--gold-pale)"></i>Gold 16%</div>
-              </div>
-            </div>
-            <div class="ph-chips" style="margin-top:auto;display:flex;gap:7px;">
-              <div class="gv-chip on">Funds</div><div class="gv-chip">SIPs</div><div class="gv-chip">Stocks</div>
+            <div class="ph-chart" id="ph-chart-2" style="margin-top:8px"></div>
+            <div class="ph-chips" style="margin-top:auto">
+              <div class="ph-chip on">Funds</div><div class="ph-chip">SIPs</div><div class="ph-chip">Stocks</div>
             </div>
           </div>
-
-          <div class="gview" id="gv-analytics">
-            <div class="ph-statusbar" style="padding:0"><span>9:41</span><span>●●●●</span></div>
-            <div class="gview-title">Analytics</div>
-            <div class="gview-sub">Last run 6:00 AM today</div>
-            <div class="gv-stat-grid" style="margin-top:4px">
-              <div class="gv-stat-box"><div class="n">14.2%</div><div class="l">Blended XIRR</div></div>
-              <div class="gv-stat-box"><div class="n">8.0%</div><div class="l">Allocation drift</div></div>
-            </div>
-            <div class="gv-overlap-card"><b>Overlap found —</b> HDFC Bank Ltd. sits inside 3 of your funds, worth ₹41,200 combined.</div>
-            <div class="gv-overlap-card" style="background:rgba(140,171,132,0.1);border-color:rgba(140,171,132,0.25)"><b style="color:var(--sage-light)">Tax opportunity —</b> ₹18,240 in harvestable losses available before March.</div>
-          </div>
-
           <div class="gview" id="gv-goals">
             <div class="ph-statusbar" style="padding:0"><span>9:41</span><span>●●●●</span></div>
             <div class="gview-title">Goals</div>
             <div class="ph-goals" style="margin-top:6px">
-              <div class="ph-goal-row"><div class="ph-goal-top"><span>Goa Trip</span><b>82% likely · on time</b></div><div class="ph-goal-track"><div class="ph-goal-fill" style="width:68%"></div></div></div>
+              <div class="ph-goal-row"><div class="ph-goal-top"><span>Goa Trip</span><b>68%</b></div><div class="ph-goal-track"><div class="ph-goal-fill" style="width:68%"></div></div></div>
               <div class="ph-goal-row"><div class="ph-goal-top"><span>Emergency Fund</span><b>91%</b></div><div class="ph-goal-track"><div class="ph-goal-fill" style="width:91%"></div></div></div>
               <div class="ph-goal-row"><div class="ph-goal-top"><span>New Laptop</span><b>34%</b></div><div class="ph-goal-track"><div class="ph-goal-fill" style="width:34%"></div></div></div>
               <div class="ph-goal-row"><div class="ph-goal-top"><span>Down Payment</span><b>12%</b></div><div class="ph-goal-track"><div class="ph-goal-fill" style="width:12%"></div></div></div>
             </div>
           </div>
-
           <div class="gview" id="gv-chat">
             <div class="ph-statusbar" style="padding:0"><span>9:41</span><span>●●●●</span></div>
             <div class="gview-title">Priya · CFP®</div>
             <div class="gv-chat">
-              <div class="gv-bubble them">Hey Aditi — the engine flagged 8% large-cap drift this week. Want me to walk you through rebalancing?</div>
+              <div class="gv-bubble them">Hey Aditi! Saw your Goa goal is 68% funded — want me to check if you're on track for June?</div>
               <div class="gv-bubble me">Yes please 🙏</div>
-              <div class="gv-bubble them">Also spotted ₹18k in harvestable losses. We can offset that against your gains before March.</div>
+              <div class="gv-bubble them">You're actually ahead by 3 weeks. Nice work.</div>
               <div class="gv-typing"><span></span><span></span><span></span></div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ PIPELINE ═══════════════ -->
-<section class="pipeline" id="pipeline">
-  <div class="tag reveal">How it works</div>
-  <h2 class="sec-title reveal d1">Four steps, every <span class="accent">single night.</span></h2>
-  <p class="sec-sub reveal d2">You don't have to ask yours to check anything. It already has, before you woke up.</p>
-
-  <div class="pipe-track">
-    <div class="pipe-connector"></div>
-
-    <div class="pipe-step reveal">
-      <div class="pipe-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
-      <div class="pipe-title">Aggregate</div>
-      <div class="pipe-desc">Every mutual fund, SIP, stock, ETF, and policy is pulled in from its source — CAS statements, brokers, and AMCs — no manual entry.</div>
-      <div class="pipe-tag">Nightly · 2:00 AM</div>
-    </div>
-
-    <div class="pipe-step reveal d1">
-      <div class="pipe-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8M21 7v6"/></svg></div>
-      <div class="pipe-title">Reconcile</div>
-      <div class="pipe-desc">Duplicate folios, split transactions, and mismatched NAVs are cleaned up so every number downstream is one you can trust.</div>
-      <div class="pipe-tag">Nightly · 3:15 AM</div>
-    </div>
-
-    <div class="pipe-step reveal d2">
-      <div class="pipe-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div>
-      <div class="pipe-title">Analyze</div>
-      <div class="pipe-desc">The six checks run — XIRR, drift, overlap, goal forecasts, tax harvesting, and cover — against your latest holdings.</div>
-      <div class="pipe-tag">Nightly · 4:30 AM</div>
-    </div>
-
-    <div class="pipe-step reveal d3">
-      <div class="pipe-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1L1 14h14L8 1z"/><path d="M8 6v4M8 12h.01"/></svg></div>
-      <div class="pipe-title">Alert</div>
-      <div class="pipe-desc">Anything worth knowing lands in your dashboard by morning — and if it's significant, your advisor sees it too, before you have to ask.</div>
-      <div class="pipe-tag">By 6:00 AM</div>
-    </div>
-  </div>
-</section>
-
 <!-- ═══════════════ STATS ═══════════════ -->
 <div class="stats-strip">
-  <div class="stat-box reveal"><div class="stat-num">6</div><div class="stat-lbl">checks run, every night</div></div>
+  <div class="stat-box reveal"><div class="stat-num">5</div><div class="stat-lbl">products, 1 app</div></div>
   <div class="stat-box reveal d1"><div class="stat-num">₹0</div><div class="stat-lbl">to join the waitlist</div></div>
-  <div class="stat-box reveal d2"><div class="stat-num">1</div><div class="stat-lbl">XIRR, across every platform</div></div>
+  <div class="stat-box reveal d2"><div class="stat-num">24/7</div><div class="stat-lbl">portfolio tracking</div></div>
   <div class="stat-box reveal d3"><div class="stat-num">1:1</div><div class="stat-lbl">expert access</div></div>
 </div>
 
@@ -806,10 +750,10 @@ footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid v
   <div class="wl-left reveal">
     <div class="wl-badge">● Early access is limited</div>
     <h2 class="sec-title">Be first<br>in <span class="accent">line.</span></h2>
-    <p class="sec-sub">Join the waitlist and we'll let you in before public launch — plus the full analytics suite, free, for your first year.</p>
+    <p class="sec-sub">Join the waitlist and we'll let you in before public launch — plus zero platform fees for your first year.</p>
     <div class="wl-perks">
       <div class="wl-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Skip the line at launch</div>
-      <div class="wl-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> <span><b>Full analytics suite</b> free for your first year, zero platform fee</span></div>
+      <div class="wl-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Free first year, no platform fee</div>
       <div class="wl-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> First 3 expert sessions on us</div>
     </div>
   </div>
@@ -831,14 +775,14 @@ footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid v
         </div>
       </div>
 
-      <div class="chip-label">What do you want the engine to analyze first? <span style="color:var(--muted-dim)">(pick any)</span></div>
+      <div class="chip-label">What do you want to track first? <span style="color:var(--muted-dim)">(pick any)</span></div>
       <div class="chip-row" id="chip-row">
         <div class="chip" data-val="mf">Mutual Funds</div>
         <div class="chip" data-val="sip">SIPs</div>
         <div class="chip" data-val="goals">Goals</div>
         <div class="chip" data-val="insurance">Insurance</div>
         <div class="chip" data-val="stocks">Stocks</div>
-        <div class="chip" data-val="tax">Tax Harvesting</div>
+        <div class="chip" data-val="advice">Expert Advice</div>
         <div class="chip" data-val="all">All of it</div>
       </div>
 
@@ -853,8 +797,7 @@ footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid v
     <div class="wl-success" id="wl-success">
       <div class="wl-check-ring"><svg viewBox="0 0 32 32"><path class="wl-check-path" d="M8 17l6 6 10-12"/></svg></div>
       <div class="wl-success-title">You're on the<br><span class="gold">list.</span></div>
-      <div class="wl-success-num">You're number <b id="wl-position">2,848</b> in line.</div>
-      <div class="wl-success-note">We'll email you before public launch — and the moment your dashboard is ready to connect.</div>
+      <div class="wl-success-num">You're number <b id="wl-position">2,848</b> in line. We'll email you before public launch.</div>
     </div>
   </div>
 </section>
@@ -864,14 +807,13 @@ footer{position:relative;z-index:1;padding:70px 56px 36px;border-top:1px solid v
   <div class="foot-top">
     <div>
       <a href="#" class="logo">yours<span class="dot">.</span></a>
-      <p class="foot-desc">One app for mutual funds, SIPs, goals, insurance, and stocks — with an analytics engine that checks your whole portfolio every night, and a real expert one message away. Built by the team behind Yours Wealth.</p>
+      <p class="foot-desc">One app for mutual funds, SIPs, goals, insurance, stocks — and a real expert on call. Built by the team behind Yours Wealth.</p>
     </div>
     <div>
       <div class="foot-col-title">Product</div>
       <ul class="foot-links">
-        <li><a href="#problem">Why it exists</a></li>
-        <li><a href="#engine">The engine</a></li>
-        <li><a href="#gallery">Inside the app</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#gallery">How it works</a></li>
         <li><a href="#waitlist">Join waitlist</a></li>
       </ul>
     </div>
@@ -906,25 +848,33 @@ const revealObs = new IntersectionObserver(entries=>{
 },{threshold:0.12});
 document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
 
-/* ── HERO PHONE ANALYTICS: trigger draw-in animation once visible ── */
-const phoneScene = document.getElementById('phone-scene');
-const phoneObs = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{ if(e.isIntersecting){ phoneScene.classList.add('animate-in'); phoneObs.unobserve(e.target);} });
-},{threshold:0.3});
-phoneObs.observe(phoneScene);
+/* ── PHONE CHART BARS (build once) ── */
+function buildChart(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const heights = [30,45,38,60,50,72,65,80,70,90];
+  heights.forEach(h=>{
+    const bar = document.createElement('i');
+    bar.style.height = h+'%';
+    el.appendChild(bar);
+  });
+}
+buildChart('ph-chart');
+buildChart('ph-chart-2');
 
 /* ── HERO PHONE 3D TILT (mouse-driven) ── */
+const scene = document.getElementById('phone-scene');
 const phone3d = document.getElementById('phone-3d');
-let targetRX = 5, targetRY = -14, curRX = 5, curRY = -14;
+let targetRX = 6, targetRY = -16, curRX = 6, curRY = -16;
 if(window.matchMedia('(hover: hover)').matches){
-  phoneScene.addEventListener('mousemove', e=>{
-    const r = phoneScene.getBoundingClientRect();
+  scene.addEventListener('mousemove', e=>{
+    const r = scene.getBoundingClientRect();
     const px = (e.clientX - r.left) / r.width - 0.5;
     const py = (e.clientY - r.top) / r.height - 0.5;
-    targetRY = -14 + px * 24;
-    targetRX = 5 - py * 18;
+    targetRY = -16 + px * 26;
+    targetRX = 6 - py * 20;
   });
-  phoneScene.addEventListener('mouseleave', ()=>{ targetRX = 5; targetRY = -14; });
+  scene.addEventListener('mouseleave', ()=>{ targetRX = 6; targetRY = -16; });
 }
 function animatePhone(){
   curRX += (targetRX - curRX) * 0.08;
@@ -941,13 +891,13 @@ window.addEventListener('scroll', ()=>{
   orbitCards.forEach((c,i)=>{ c.style.marginTop = (y * (0.02 + i*0.01)) + 'px'; });
 });
 
-/* ── ENGINE CARD TILT ── */
-document.querySelectorAll('.engine-card').forEach(card=>{
+/* ── FEATURE CARD TILT ── */
+document.querySelectorAll('.feat-card').forEach(card=>{
   card.addEventListener('mousemove', e=>{
     const r = card.getBoundingClientRect();
     const x = (e.clientX - r.left)/r.width - 0.5;
     const y = (e.clientY - r.top)/r.height - 0.5;
-    card.style.transform = `rotateX(${-y*4}deg) rotateY(${x*4}deg)`;
+    card.style.transform = `rotateX(${-y*6}deg) rotateY(${x*6}deg)`;
   });
   card.addEventListener('mouseleave', ()=>{ card.style.transform=''; });
 });
@@ -967,7 +917,7 @@ document.querySelectorAll('.chip').forEach(chip=>{
   chip.addEventListener('click', ()=>chip.classList.toggle('active'));
 });
 
-/* ── ANIMATED STAT COUNTERS ── */
+/* ── ANIMATED STAT COUNTERS (Fraunces numerals count up on reveal) ── */
 document.querySelectorAll('.stat-num').forEach(el=>{
   const raw = el.textContent.trim();
   const match = raw.match(/[\d,]+/);
@@ -993,24 +943,6 @@ document.querySelectorAll('.stat-num').forEach(el=>{
   },{threshold:0.4});
   obs.observe(el);
 });
-
-/* ── ENGINE MINI-BAR FILL ON REVEAL ── */
-const barObs = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.querySelectorAll('.mini-bar-fill').forEach(bar=>{
-        const w = bar.style.width; bar.style.width = '0'; 
-        requestAnimationFrame(()=>{ bar.style.transition='width 1s cubic-bezier(0.16,1,0.3,1)'; bar.style.width = w; });
-      });
-      e.target.querySelectorAll('.mini-gauge-fill').forEach(bar=>{
-        const w = bar.style.width; bar.style.width = '0';
-        requestAnimationFrame(()=>{ bar.style.transition='width 1s cubic-bezier(0.16,1,0.3,1)'; bar.style.width = w; });
-      });
-      barObs.unobserve(e.target);
-    }
-  });
-},{threshold:0.3});
-document.querySelectorAll('.engine-card').forEach(c=>barObs.observe(c));
 
 /* ── FORM VALIDATION + FAKE SUBMIT ── */
 const nameEl = document.getElementById('i-name');
