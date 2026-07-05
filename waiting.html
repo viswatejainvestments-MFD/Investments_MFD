@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yours Wealth — Everything you own, finally in one place.</title>
-<meta name="description" content="Every stock, fund, policy and account you own — brought quietly into one place. Private access, by invitation.">
+<title>Yours Wealth — Your Financial Life, Finally Understood.</title>
+<meta name="description" content="A private wealth management practice for financial planning, investments, insurance, retirement, tax and legacy — guided by a human advisor. Join the waitlist for a free personalized financial planning session.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,440;0,9..144,500;1,9..144,440;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,14 +16,14 @@
    lived-in. Champagne — a single accent, spoken once per view.
 ══════════════════════════════════════════════════════════ */
 :root{
-  --ink:        #0B0B0B;
-  --ink-soft:   #1C1A17;
+  --ink:        #1B1A18;
+  --ink-soft:   #262420;
   --ivory:      #FAF8F5;
-  --ivory-2:    #F3EEE5;
-  --ivory-3:    #ECE5D8;
-  --gold:       #C5A46D;
-  --gold-soft:  rgba(197,164,109,0.5);
-  --gray-warm:  #8A8175;
+  --ivory-2:    #F2EDE3;
+  --ivory-3:    #EAE2D2;
+  --gold:       #C8A246;
+  --gold-soft:  rgba(200,162,70,0.5);
+  --gray-warm:  #7D756B;
 
   --ease:       cubic-bezier(.22,.61,.36,1);
   --breathe:    cubic-bezier(.45,.05,.15,1);
@@ -48,9 +48,9 @@ a{ color:inherit; text-decoration:none; }
 .serif{ font-family:'Fraunces',serif; }
 em{ font-style:italic; color:var(--gold); }
 
-.theme-ink{  --fg:var(--ivory); --bg:var(--ink);   --dim:rgba(250,248,245,0.6); --faint:rgba(250,248,245,0.36); --hair:rgba(250,248,245,0.12); }
-.theme-ivory{ --fg:var(--ink);  --bg:var(--ivory); --dim:rgba(11,11,11,0.58);  --faint:rgba(11,11,11,0.38);   --hair:rgba(11,11,11,0.1); }
-.theme-ivory-2{ --fg:var(--ink); --bg:var(--ivory-2); --dim:rgba(11,11,11,0.58); --faint:rgba(11,11,11,0.38); --hair:rgba(11,11,11,0.1); }
+.theme-ink{  --fg:var(--ivory); --bg:var(--ink);   --dim:rgba(250,248,245,0.62); --faint:rgba(250,248,245,0.38); --hair:rgba(250,248,245,0.12); }
+.theme-ivory{ --fg:var(--ink);  --bg:var(--ivory); --dim:rgba(27,26,24,0.6);  --faint:rgba(27,26,24,0.4);   --hair:rgba(27,26,24,0.1); }
+.theme-ivory-2{ --fg:var(--ink); --bg:var(--ivory-2); --dim:rgba(27,26,24,0.6); --faint:rgba(27,26,24,0.4); --hair:rgba(27,26,24,0.1); }
 section, footer{ background:var(--bg); color:var(--fg); }
 
 /* ══════════════════════════════════════════════════════════
@@ -69,8 +69,8 @@ h2{
 .lede{ color:var(--dim); font-size:1.05rem; line-height:1.7; max-width:440px; margin-top:26px; font-weight:400; }
 .center{ text-align:center; margin-left:auto; margin-right:auto; }
 
-.rv{ opacity:0; transform:translateY(18px); transition:opacity 1.4s var(--breathe), transform 1.4s var(--breathe); }
-.rv.in{ opacity:1; transform:translateY(0); }
+.rv{ --fs:1; opacity:0; transform:translateY(18px) scale(var(--fs)); transition:opacity 1.4s var(--breathe), transform 1.4s var(--breathe); }
+.rv.in{ opacity:1; transform:translateY(0) scale(var(--fs)); }
 .rv-1{ transition-delay:.12s; } .rv-2{ transition-delay:.26s; } .rv-3{ transition-delay:.4s; }
 
 .hr{ height:1px; background:var(--hair); border:none; }
@@ -99,11 +99,16 @@ nav{
   border-bottom:1px solid transparent;
 }
 nav.scrolled{
-  padding:18px 56px; background:rgba(11,11,11,0.68);
+  padding:18px 56px; background:rgba(27,26,24,0.68);
   backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid rgba(250,248,245,0.08);
 }
-.wordmark{ font-family:'Fraunces',serif; font-size:1.05rem; font-weight:500; letter-spacing:-0.01em; }
+.wordmark{ font-family:'Fraunces',serif; font-size:1.05rem; font-weight:500; letter-spacing:-0.01em; color:var(--fg); white-space:nowrap; }
+.wordmark .w-wealth{ color:var(--gold); }
+nav .wordmark{ color:var(--ivory); }
+footer .wordmark{ color:var(--ink); }
+nav{ gap:16px; }
+.nav-cta{ white-space:nowrap; flex-shrink:0; }
 .nav-cta{ font-size:0.82rem; padding:11px 22px; }
 
 /* ══════════════════════════════════════════════════════════
@@ -131,15 +136,15 @@ nav.scrolled{
   transform:rotateX(3deg); transition:transform .3s var(--breathe); will-change:transform;
 }
 .device-frame{
-  position:absolute; inset:0; border-radius:44px; background:linear-gradient(160deg,#2b2925,#0c0b0a 62%);
+  position:absolute; inset:0; border-radius:44px; background:linear-gradient(160deg,#332F29,#1B1A18 62%);
   padding:8px; box-shadow:0 50px 100px -28px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.05);
 }
 .device-screen{
   width:100%; height:100%; border-radius:37px; overflow:hidden; position:relative;
   background:linear-gradient(175deg,#F7F4EE,#EFE9DC); display:flex; flex-direction:column;
 }
-.island{ position:absolute; top:13px; left:50%; transform:translateX(-50%); width:80px; height:22px; background:#0B0B0B; border-radius:13px; z-index:6; }
-.d-status{ display:flex; justify-content:space-between; padding:19px 22px 0; font-family:'Inter',sans-serif; font-size:10px; font-weight:500; color:rgba(11,11,11,0.32); }
+.island{ position:absolute; top:13px; left:50%; transform:translateX(-50%); width:80px; height:22px; background:#1B1A18; border-radius:13px; z-index:6; }
+.d-status{ display:flex; justify-content:space-between; padding:19px 22px 0; font-family:'Inter',sans-serif; font-size:10px; font-weight:500; color:rgba(27,26,24,0.32); }
 .stage-hint{
   margin-top:22px; font-size:11px; letter-spacing:.04em; color:var(--faint);
   opacity:0; animation:rise 1.6s 1.9s var(--breathe) forwards;
@@ -157,19 +162,19 @@ nav.scrolled{
 .wallet{ position:relative; height:270px; cursor:pointer; }
 .wcard{
   position:absolute; left:0; right:0; border-radius:20px; padding:22px 22px;
-  box-shadow:0 14px 30px -14px rgba(11,11,11,0.28);
+  box-shadow:0 14px 30px -14px rgba(27,26,24,0.28);
   transition:height .7s var(--breathe), top .7s var(--breathe), opacity .5s var(--breathe), transform .6s var(--breathe);
 }
-.wcard .wc-label{ font-size:10.5px; letter-spacing:.04em; color:rgba(11,11,11,0.42); }
+.wcard .wc-label{ font-size:10.5px; letter-spacing:.04em; color:rgba(27,26,24,0.42); }
 .wcard .wc-val{ font-family:'Fraunces',serif; font-size:1.3rem; font-weight:500; color:var(--ink); margin-top:5px; }
-.wc-1{ top:0; background:#0B0B0B; z-index:3; height:150px; }
+.wc-1{ top:0; background:#1B1A18; z-index:3; height:150px; }
 .wc-1 .wc-label{ color:rgba(250,248,245,0.5); }
 .wc-1 .wc-val{ color:var(--ivory); font-size:2rem; }
 .wc-row-top{ display:flex; align-items:flex-start; justify-content:space-between; }
 .wc-chevron{ width:9px; height:9px; border-right:1.4px solid var(--gold); border-bottom:1.4px solid var(--gold); transform:rotate(45deg); margin-top:6px; transition:transform .6s var(--breathe); }
 .wallet.expanded .wc-chevron{ transform:rotate(-135deg); }
 .wc-tag{ margin-top:10px; font-size:10.5px; color:var(--gold); }
-.wc-2{ top:128px; background:#EFE9DC; z-index:2; height:150px; border:1px solid rgba(11,11,11,0.06); }
+.wc-2{ top:128px; background:#EFE9DC; z-index:2; height:150px; border:1px solid rgba(27,26,24,0.06); }
 .wc-3{ top:150px; background:#E6DECC; z-index:1; height:150px; opacity:.7; }
 .wallet.expanded .wc-1{ height:270px; }
 .wallet.expanded .wc-2, .wallet.expanded .wc-3{ opacity:0; transform:translateY(14px); }
@@ -192,34 +197,35 @@ nav.scrolled{
 /* ── goals view ── */
 .d-goal{ margin-bottom:22px; }
 .d-goal:last-child{ margin-bottom:0; }
-.d-goal-top{ display:flex; justify-content:space-between; font-size:11.5px; color:rgba(11,11,11,0.5); margin-bottom:9px; }
+.d-goal-top{ display:flex; justify-content:space-between; font-size:11.5px; color:rgba(27,26,24,0.5); margin-bottom:9px; }
 .d-goal-top b{ color:var(--ink); font-weight:500; }
-.d-track{ height:2px; background:rgba(11,11,11,0.1); border-radius:2px; overflow:hidden; }
+.d-track{ height:2px; background:rgba(27,26,24,0.1); border-radius:2px; overflow:hidden; }
 .d-fill{ height:100%; background:var(--gold); border-radius:2px; width:0; transition:width 1.4s var(--breathe); }
 
-/* ── advisor view ── */
-.d-chat{ display:flex; flex-direction:column; gap:10px; }
-.d-bubble{ max-width:82%; padding:10px 13px; border-radius:14px; font-size:11.5px; line-height:1.5; }
-.d-bubble.them{ background:rgba(11,11,11,0.06); color:rgba(11,11,11,0.75); align-self:flex-start; border-bottom-left-radius:4px; }
-.d-bubble.me{ background:#0B0B0B; color:var(--ivory); align-self:flex-end; border-bottom-right-radius:4px; }
-.d-bubble.typing{ display:flex; gap:4px; align-items:center; padding:12px 14px; }
-.d-bubble.typing i{ width:4px; height:4px; border-radius:50%; background:rgba(11,11,11,0.35); animation:typeDot 1.3s infinite; }
-.d-bubble.typing i:nth-child(2){ animation-delay:.18s; }
-.d-bubble.typing i:nth-child(3){ animation-delay:.36s; }
-@keyframes typeDot{ 0%,60%,100%{ opacity:.3; transform:translateY(0); } 30%{ opacity:1; transform:translateY(-2px); } }
-.d-chip{
-  align-self:flex-start; margin-top:6px; font-size:10.5px; padding:8px 13px; border-radius:100px;
-  border:1px solid rgba(11,11,11,0.14); color:rgba(11,11,11,0.6); cursor:pointer;
+/* ── advisor view — private banking, not a chat thread ── */
+.a-panel{ display:flex; flex-direction:column; gap:10px; }
+.a-card{
+  background:rgba(27,26,24,0.045); border-radius:14px; padding:13px 15px;
+  transition:opacity .6s var(--breathe), transform .6s var(--breathe), max-height .6s var(--breathe), padding .6s var(--breathe);
+}
+.a-label{ font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:var(--gold); }
+.a-val{ font-family:'Fraunces',serif; font-size:1rem; color:var(--ink); margin-top:5px; }
+.a-text{ font-size:11.5px; line-height:1.55; color:rgba(27,26,24,0.72); margin-top:5px; }
+.a-chip{
+  align-self:flex-start; margin-top:2px; font-size:10.5px; padding:8px 13px; border-radius:100px;
+  border:1px solid rgba(27,26,24,0.14); color:rgba(27,26,24,0.6); cursor:pointer;
   transition:border-color .5s var(--breathe), color .5s var(--breathe), opacity .5s var(--breathe);
 }
-.d-chip:hover{ border-color:var(--gold); color:var(--ink); }
-.d-chip.spent{ opacity:0; pointer-events:none; height:0; margin:0; overflow:hidden; }
+.a-chip:hover{ border-color:var(--gold); color:var(--ink); }
+.a-chip.spent{ opacity:0; pointer-events:none; height:0; margin:0; overflow:hidden; }
+.a-reveal{ opacity:0; transform:translateY(6px); max-height:0; padding-top:0; padding-bottom:0; overflow:hidden; }
+.a-reveal.shown{ opacity:1; transform:translateY(0); max-height:120px; padding:13px 15px; }
 
 /* ── tab bar ── */
-.d-tabs{ display:flex; justify-content:space-around; padding:16px 10px 24px; border-top:1px solid rgba(11,11,11,0.06); }
+.d-tabs{ display:flex; justify-content:space-around; padding:16px 10px 24px; border-top:1px solid rgba(27,26,24,0.06); }
 .d-tab{
   background:none; border:none; font-family:'Inter',sans-serif; font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
-  color:rgba(11,11,11,0.32); cursor:pointer; padding:4px 2px; position:relative; transition:color .5s var(--breathe);
+  color:rgba(27,26,24,0.32); cursor:pointer; padding:4px 2px; position:relative; transition:color .5s var(--breathe);
 }
 .d-tab.active{ color:var(--ink); }
 .d-tab.active::after{ content:''; position:absolute; left:50%; bottom:-8px; width:3px; height:3px; border-radius:50%; background:var(--gold); transform:translateX(-50%); }
@@ -268,17 +274,30 @@ nav.scrolled{
 .clarity-cap{ margin-top:16px; font-size:0.95rem; color:var(--faint); }
 
 /* ══════════════════════════════════════════════════════════
-   ADVISOR — one quiet exchange
+   ADVISOR — a private banking review, not a chat thread
 ══════════════════════════════════════════════════════════ */
-.exchange{ max-width:440px; margin:64px auto 0; display:flex; flex-direction:column; gap:18px; text-align:left; }
-.msg{ font-size:1rem; line-height:1.65; padding-bottom:18px; border-bottom:1px solid var(--hair); }
-.msg .who{ display:block; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin-bottom:8px; }
-.msg.mine{ color:var(--gold); }
+.advisor-grid{
+  max-width:920px; margin:70px auto 0; text-align:left;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1px 44px;
+}
+.ag-item{ padding:28px 0; border-top:1px solid var(--hair); }
+.ag-label{ display:block; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+.ag-item p{ font-size:0.98rem; line-height:1.6; color:var(--dim); max-width:280px; }
+@media (max-width:860px){
+  .advisor-grid{ grid-template-columns:1fr; gap:0; }
+}
 
 /* ══════════════════════════════════════════════════════════
    PRIVATE ACCESS / INVITATION
 ══════════════════════════════════════════════════════════ */
-.invite-card{ max-width:420px; margin:70px auto 0; position:relative; min-height:300px; }
+.benefit-list{
+  max-width:520px; margin:44px auto 0; display:flex; flex-wrap:wrap;
+  justify-content:center; gap:14px 34px;
+}
+.benefit-row{ display:flex; align-items:center; gap:9px; font-size:0.9rem; color:var(--dim); }
+.benefit-row::before{ content:''; width:4px; height:4px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+
+.invite-card{ max-width:420px; margin:56px auto 0; position:relative; min-height:300px; }
 .form-progress{ display:flex; gap:7px; justify-content:center; margin-bottom:48px; }
 .form-progress i{ width:22px; height:1px; background:var(--hair); transition:background .8s var(--ease); }
 .form-progress i.done{ background:var(--gold); }
@@ -331,10 +350,72 @@ footer{ padding:56px 0 36px; }
   .wrap{ padding-left:26px; padding-right:26px; }
   nav{ padding:22px 26px; }
   nav.scrolled{ padding:14px 26px; }
-  .hero{ padding:150px 26px 70px; }
-  section{ padding:100px 0; }
-  .scatter, .converge-stage{ height:240px; }
+  .hero{ padding:140px 26px 60px; }
+  section{ padding:88px 0; }
+  .scatter, .converge-stage{ height:230px; }
+  .stage{ margin-top:64px; }
 }
+
+@media (max-width:640px){
+  .wrap{ padding-left:22px; padding-right:22px; }
+  nav{ padding:18px 20px; }
+  nav.scrolled{ padding:13px 20px; }
+  .wordmark{ font-size:0.94rem; }
+  .nav-cta{ font-size:0.72rem; padding:9px 15px; }
+
+  .hero{ padding:118px 20px 50px; }
+  .hero-sub{ font-size:1rem; max-width:340px; }
+  .hero-actions .btn{ width:100%; max-width:280px; justify-content:center; }
+
+  section{ padding:68px 0; }
+  h2{ font-size:clamp(1.9rem,7vw,2.6rem); }
+  .lede{ font-size:0.98rem; max-width:340px; }
+  .mark{ margin-bottom:22px; }
+
+  .device{ width:224px; height:458px; }
+  .stage{ margin-top:52px; }
+  .d-status{ font-size:9px; }
+  .wallet{ height:230px; }
+  .wc-1, .wc-2, .wc-3{ height:126px; }
+  .wallet.expanded .wc-1{ height:230px; }
+  .wc-2{ top:108px; } .wc-3{ top:126px; }
+  .wc-1 .wc-val{ font-size:1.65rem; }
+  .wcard{ padding:18px; }
+
+  .scatter, .converge-stage{ height:190px; --fs:0.72; }
+
+  .clarity-num{ font-size:clamp(2.1rem,11vw,3.2rem); }
+
+  .advisor-grid{ margin-top:48px; gap:0; }
+  .ag-item{ padding:22px 0; }
+  .ag-item p{ max-width:100%; }
+
+  .benefit-list{ gap:12px 20px; margin-top:34px; }
+  .benefit-row{ font-size:0.85rem; }
+
+  .invite-card{ margin-top:44px; }
+  .form-step input{ font-size:1.4rem; }
+  .step-actions{ flex-wrap:wrap; gap:14px; }
+  .step-actions .btn{ order:1; width:100%; justify-content:center; }
+  .back-link{ order:2; width:100%; text-align:center; }
+
+  .foot-inner{ align-items:flex-start; flex-direction:column; }
+  .foot-links{ gap:20px; flex-wrap:wrap; }
+  .foot-meta{ flex-direction:column; gap:6px; }
+}
+
+@media (max-width:360px){
+  .device{ width:198px; height:404px; }
+  .wallet{ height:206px; }
+  .wc-1, .wc-2, .wc-3{ height:112px; }
+  .wallet.expanded .wc-1{ height:206px; }
+  .wc-2{ top:96px; } .wc-3{ top:112px; }
+}
+
+@media (hover:none){
+  .device{ transform:none !important; }
+}
+
 @media (prefers-reduced-motion:reduce){
   *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
 }
@@ -344,16 +425,16 @@ footer{ padding:56px 0 36px; }
 
 <!-- ═══════════════ NAV ═══════════════ -->
 <nav id="nav">
-  <a href="#" class="wordmark">Yours Wealth</a>
-  <button class="btn btn-ghost nav-cta" id="navJoin">Request an Invitation</button>
+  <a href="#" class="wordmark">Yours <span class="w-wealth">Wealth</span></a>
+  <button class="btn btn-ghost nav-cta" id="navJoin">Request Access</button>
 </nav>
 
 <!-- ═══════════════ HERO ═══════════════ -->
 <section class="hero theme-ink" id="home">
-  <h1 class="serif">Everything you own.<br>Finally, <em>in one place.</em></h1>
-  <p class="hero-sub">Stocks, mutual funds, insurance, and everything between — brought together quietly, into a single, true understanding of what you have.</p>
+  <h1 class="serif">Your financial life.<br>Finally, <em>understood.</em></h1>
+  <p class="hero-sub">Investments, insurance, retirement, tax and legacy — brought into one clear plan, guided by a human advisor who works for you.</p>
   <div class="hero-actions">
-    <button class="btn btn-primary" id="heroJoin">Request an Invitation</button>
+    <button class="btn btn-primary" id="heroJoin">Request Private Access</button>
   </div>
 
   <div class="stage">
@@ -369,23 +450,22 @@ footer{ padding:56px 0 36px; }
               <div class="wallet" id="walletCard">
                 <div class="wcard wc-3"></div>
                 <div class="wcard wc-2">
-                  <div class="wc-label">Insurance &amp; EPF</div>
-                  <div class="wc-val">₹9,10,240</div>
+                  <div class="wc-label">Financial Health Score</div>
+                  <div class="wc-val">82 <span style="font-size:0.9rem;color:rgba(27,26,24,0.4);">/ 100</span></div>
                 </div>
                 <div class="wcard wc-1">
                   <div class="wc-row-top">
                     <div>
-                      <div class="wc-label">Everything you own</div>
+                      <div class="wc-label">Net Worth</div>
                       <div class="wc-val">₹42,18,650</div>
                     </div>
                     <div class="wc-chevron"></div>
                   </div>
                   <div class="wc-tag">Tap to see what it's made of</div>
                   <div class="wc-breakdown">
-                    <div class="wc-b-row"><span>Stocks</span><b>₹11,20,400</b></div>
-                    <div class="wc-b-row"><span>Mutual Funds</span><b>₹9,84,250</b></div>
+                    <div class="wc-b-row"><span>Investments</span><b>₹21,04,650</b></div>
                     <div class="wc-b-row"><span>Insurance</span><b>₹5,10,000</b></div>
-                    <div class="wc-b-row"><span>EPF &amp; PPF</span><b>₹8,52,300</b></div>
+                    <div class="wc-b-row"><span>Retirement Savings</span><b>₹8,52,300</b></div>
                     <div class="wc-b-row"><span>Fixed Deposits</span><b>₹4,36,700</b></div>
                     <div class="wc-b-row"><span>Gold &amp; Bonds</span><b>₹3,15,000</b></div>
                   </div>
@@ -396,30 +476,40 @@ footer{ padding:56px 0 36px; }
             <!-- Goals -->
             <div class="d-view" id="dv-goals">
               <div class="d-goal"><div class="d-goal-top"><span>Emergency fund</span><b>91%</b></div><div class="d-track"><div class="d-fill" data-w="91"></div></div></div>
-              <div class="d-goal"><div class="d-goal-top"><span>Goa trip</span><b>68%</b></div><div class="d-track"><div class="d-fill" data-w="68"></div></div></div>
-              <div class="d-goal"><div class="d-goal-top"><span>New car</span><b>34%</b></div><div class="d-track"><div class="d-fill" data-w="34"></div></div></div>
+              <div class="d-goal"><div class="d-goal-top"><span>Retirement readiness</span><b>64%</b></div><div class="d-track"><div class="d-fill" data-w="64"></div></div></div>
+              <div class="d-goal"><div class="d-goal-top"><span>Insurance coverage</span><b>100%</b></div><div class="d-track"><div class="d-fill" data-w="100"></div></div></div>
+              <div class="d-goal"><div class="d-goal-top"><span>Tax saved this year</span><b>78%</b></div><div class="d-track"><div class="d-fill" data-w="78"></div></div></div>
             </div>
 
             <!-- Advisor -->
             <div class="d-view" id="dv-advisor">
-              <div class="d-chat" id="dChat">
-                <div class="d-bubble them">Your emergency fund crossed 91% this week.</div>
-                <div class="d-bubble me">Good. Move the surplus into the Goa fund.</div>
-                <div class="d-bubble them">Done. You're three weeks ahead of plan.</div>
-                <div class="d-chip" id="dChip">Ask about my SIPs</div>
+              <div class="a-panel" id="aPanel">
+                <div class="a-card">
+                  <div class="a-label">Upcoming Review</div>
+                  <div class="a-val">Tue, 14 Jan · 4:00 PM</div>
+                </div>
+                <div class="a-card">
+                  <div class="a-label">Advisor Note</div>
+                  <div class="a-text">Your emergency fund crossed 91%. Consider directing the surplus toward retirement.</div>
+                </div>
+                <div class="a-chip" id="aChip">See portfolio suggestion</div>
+                <div class="a-card a-reveal" id="aReveal">
+                  <div class="a-label">Portfolio Suggestion</div>
+                  <div class="a-text">Shift 4% from fixed deposits into equity funds to match your retirement timeline.</div>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="d-tabs">
-            <button class="d-tab active" data-view="dv-portfolio">Portfolio</button>
-            <button class="d-tab" data-view="dv-goals">Goals</button>
+            <button class="d-tab active" data-view="dv-portfolio">Net Worth</button>
+            <button class="d-tab" data-view="dv-goals">Planning</button>
             <button class="d-tab" data-view="dv-advisor">Advisor</button>
           </div>
         </div>
       </div>
     </div>
-    <div class="stage-hint">Tap the tabs, or the balance, to explore</div>
+    <div class="stage-hint">Tap the tabs, or the balance, to explore your financial life</div>
   </div>
 </section>
 
@@ -427,19 +517,19 @@ footer{ padding:56px 0 36px; }
 <section class="theme-ivory" id="fragmented">
   <div class="wrap stack center">
     <span class="mark serif rv">I.</span>
-    <h2 class="serif rv rv-1 center">Your life is already in one place.<br>Your money isn't.</h2>
-    <p class="lede rv rv-2 center">A dozen apps. A dozen passwords. No single answer to the only question that matters — what do I actually have?</p>
+    <h2 class="serif rv rv-1 center">Your money lives in a dozen places.<br>Your plan should live in one.</h2>
+    <p class="lede rv rv-2 center">Investments here. Insurance there. Retirement, tax and legacy scattered across advisors who have never once spoken to each other.</p>
 
     <div class="scatter rv rv-3" id="scatterField">
-      <span class="sword" style="--x:-250px;--y:-70px">Mutual Funds</span>
-      <span class="sword" style="--x:200px;--y:-110px">SIPs</span>
-      <span class="sword" style="--x:-150px;--y:90px">Stocks</span>
-      <span class="sword" style="--x:270px;--y:50px">Insurance</span>
-      <span class="sword" style="--x:10px;--y:-130px">Gold Bonds</span>
-      <span class="sword" style="--x:-310px;--y:20px">Fixed Deposits</span>
-      <span class="sword" style="--x:90px;--y:120px">PPF</span>
-      <span class="sword" style="--x:-60px;--y:-20px">EPF</span>
-      <span class="sword" style="--x:330px;--y:-20px">Real Estate</span>
+      <span class="sword" style="--x:-250px;--y:-70px">Investments</span>
+      <span class="sword" style="--x:200px;--y:-110px">Retirement</span>
+      <span class="sword" style="--x:-150px;--y:90px">Insurance</span>
+      <span class="sword" style="--x:270px;--y:50px">Tax Planning</span>
+      <span class="sword" style="--x:10px;--y:-130px">Mutual Funds</span>
+      <span class="sword" style="--x:-310px;--y:20px">Estate Planning</span>
+      <span class="sword" style="--x:90px;--y:120px">Stocks</span>
+      <span class="sword" style="--x:-60px;--y:-20px">Life Goals</span>
+      <span class="sword" style="--x:330px;--y:-20px">Family Wealth</span>
     </div>
   </div>
 </section>
@@ -448,19 +538,19 @@ footer{ padding:56px 0 36px; }
 <section class="theme-ivory-2" id="converge">
   <div class="wrap stack center">
     <span class="mark serif rv">II.</span>
-    <h2 class="serif rv rv-1 center">Yours quietly brings<br>everything together.</h2>
-    <p class="lede rv rv-2 center">Nothing to switch between. Nothing to remember. Just the truth about your money, kept current on its own.</p>
+    <h2 class="serif rv rv-1 center">Yours brings your whole<br>financial life together.</h2>
+    <p class="lede rv rv-2 center">One roadmap for everything you own, everything you owe, and everything you're planning toward — guided by a person, not an algorithm.</p>
 
     <div class="converge-stage" id="convergeStage">
-      <span class="cword" style="--x:-250px;--y:-70px">Mutual Funds</span>
-      <span class="cword" style="--x:200px;--y:-110px">SIPs</span>
-      <span class="cword" style="--x:-150px;--y:90px">Stocks</span>
-      <span class="cword" style="--x:270px;--y:50px">Insurance</span>
-      <span class="cword" style="--x:10px;--y:-130px">Gold Bonds</span>
-      <span class="cword" style="--x:-310px;--y:20px">Fixed Deposits</span>
-      <span class="cword" style="--x:90px;--y:120px">PPF</span>
-      <span class="cword" style="--x:-60px;--y:-20px">EPF</span>
-      <span class="cword" style="--x:330px;--y:-20px">Real Estate</span>
+      <span class="cword" style="--x:-250px;--y:-70px">Investments</span>
+      <span class="cword" style="--x:200px;--y:-110px">Retirement</span>
+      <span class="cword" style="--x:-150px;--y:90px">Insurance</span>
+      <span class="cword" style="--x:270px;--y:50px">Tax Planning</span>
+      <span class="cword" style="--x:10px;--y:-130px">Mutual Funds</span>
+      <span class="cword" style="--x:-310px;--y:20px">Estate Planning</span>
+      <span class="cword" style="--x:90px;--y:120px">Stocks</span>
+      <span class="cword" style="--x:-60px;--y:-20px">Life Goals</span>
+      <span class="cword" style="--x:330px;--y:-20px">Family Wealth</span>
       <div class="cring"></div>
       <div class="cdot"></div>
     </div>
@@ -471,9 +561,9 @@ footer{ padding:56px 0 36px; }
 <section class="theme-ink" id="clarity">
   <div class="wrap stack center">
     <span class="mark serif rv">III.</span>
-    <h2 class="serif rv rv-1 center">You finally understand<br>your financial life.</h2>
+    <h2 class="serif rv rv-1 center">You finally see the<br>whole picture.</h2>
     <div class="clarity-num serif rv rv-2" id="clarityNum">₹0</div>
-    <p class="clarity-cap rv rv-3">Every asset. Every liability. One number, always current.</p>
+    <p class="clarity-cap rv rv-3">Every investment. Every policy. Every goal — one plan, always current.</p>
   </div>
 </section>
 
@@ -481,13 +571,34 @@ footer{ padding:56px 0 36px; }
 <section class="theme-ivory" id="advisor">
   <div class="wrap stack center">
     <span class="mark serif rv">IV.</span>
-    <h2 class="serif rv rv-1 center">A human advisor<br>remains available.</h2>
-    <p class="lede rv rv-2 center">SEBI-registered. Reachable directly. No call centre, no script — just someone who already knows your portfolio.</p>
+    <h2 class="serif rv rv-1 center">A private advisor,<br>always in view.</h2>
+    <p class="lede rv rv-2 center">Not a chatbot. Not a call centre. A named, SEBI-registered advisor who already knows your plan — and reviews it with you, in person.</p>
 
-    <div class="exchange rv rv-3">
-      <div class="msg"><span class="who">Priya · Advisor</span>Your emergency fund crossed ninety percent this week.</div>
-      <div class="msg mine"><span class="who">You</span>Good. Move the surplus into the Goa fund.</div>
-      <div class="msg"><span class="who">Priya · Advisor</span>Done. You're now three weeks ahead of plan.</div>
+    <div class="advisor-grid rv rv-3">
+      <div class="ag-item">
+        <span class="ag-label">Upcoming Review</span>
+        <p>Tuesday, 14 January at 4:00 PM, with Priya.</p>
+      </div>
+      <div class="ag-item">
+        <span class="ag-label">Advisor Notes</span>
+        <p>"Emergency fund crossed 90%. Time to redirect the surplus toward retirement."</p>
+      </div>
+      <div class="ag-item">
+        <span class="ag-label">Financial Health</span>
+        <p>82 out of 100 — up 6 points since your last review.</p>
+      </div>
+      <div class="ag-item">
+        <span class="ag-label">Goal Progress</span>
+        <p>Three of four goals are ahead of schedule this quarter.</p>
+      </div>
+      <div class="ag-item">
+        <span class="ag-label">Portfolio Suggestions</span>
+        <p>Shift 4% from fixed deposits into equity funds.</p>
+      </div>
+      <div class="ag-item">
+        <span class="ag-label">Life Milestones</span>
+        <p>Home purchase, child's education and retirement — all mapped.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -496,8 +607,15 @@ footer{ padding:56px 0 36px; }
 <section class="theme-ink" id="invitation">
   <div class="wrap stack center">
     <span class="mark serif rv">V.</span>
-    <h2 class="serif rv rv-1 center">Private access is<br>intentionally limited.</h2>
-    <p class="lede rv rv-2 center">Membership is granted in small groups, by invitation. You're requesting a place — not creating an account.</p>
+    <h2 class="serif rv rv-1 center">Early birds get a free<br>Financial Planning Report, at ₹0.</h2>
+    <p class="lede rv rv-2 center">Before the platform opens, our wealth team reviews your finances personally and hands you a complete report — at no cost, and with no obligation.</p>
+
+    <div class="benefit-list rv rv-2">
+      <div class="benefit-row"><span>Free Personalized Financial Planning</span></div>
+      <div class="benefit-row"><span>Free Portfolio &amp; Insurance Review</span></div>
+      <div class="benefit-row"><span>Free Financial Health Assessment</span></div>
+      <div class="benefit-row"><span>Priority Early Access</span></div>
+    </div>
 
     <div class="invite-card rv rv-3">
       <div class="form-progress" id="formProgress"><i class="done"></i><i></i><i></i></div>
@@ -526,7 +644,7 @@ footer{ padding:56px 0 36px; }
           <div class="form-err" id="errPhone">Please enter a valid 10-digit number</div>
           <div class="step-actions">
             <span class="back-link" data-back>Back</span>
-            <button type="submit" class="btn btn-primary">Request Invitation</button>
+            <button type="submit" class="btn btn-primary">Request Your Free Report</button>
           </div>
         </div>
       </form>
@@ -534,11 +652,11 @@ footer{ padding:56px 0 36px; }
       <div class="success" id="wlSuccess">
         <div class="ring-mark"><svg viewBox="0 0 32 32"><path class="check" d="M8 17l6 6 10-12"/></svg></div>
         <h3 class="serif">You're on the list.</h3>
-        <p>We review requests by hand. If it's a fit, you'll hear from us directly.</p>
+        <p>A member of our wealth team will reach out personally to prepare your free Financial Planning Report.</p>
       </div>
     </div>
 
-    <div class="fine">No spam, ever · We'll only write when it's your turn</div>
+    <div class="fine">No spam, ever · No cost, ever · We'll only write when it's your turn</div>
   </div>
 </section>
 
@@ -547,7 +665,7 @@ footer{ padding:56px 0 36px; }
   <div class="wrap">
     <hr class="hr" style="margin-bottom:44px;">
     <div class="foot-inner">
-      <a href="#" class="wordmark">Yours Wealth</a>
+      <a href="#" class="wordmark">Yours <span class="w-wealth">Wealth</span></a>
       <ul class="foot-links">
         <li><a href="#fragmented">Why</a></li>
         <li><a href="#advisor">Advisor</a></li>
@@ -555,7 +673,7 @@ footer{ padding:56px 0 36px; }
       </ul>
     </div>
     <div class="foot-meta">
-      <span>© 2026 Yours Wealth — a product in development. Nothing here is investment advice.</span>
+      <span>© 2026 Yours Wealth — a private wealth management practice, in development. Nothing here is investment advice.</span>
       <span>Hyderabad · Bengaluru</span>
     </div>
   </div>
@@ -632,23 +750,13 @@ walletCard.addEventListener('click', ()=>{
   tag.textContent = walletCard.classList.contains('expanded') ? 'Tap to close' : "Tap to see what it's made of";
 });
 
-/* ── PHONE: advisor quick-reply chip ── */
-const dChip = document.getElementById('dChip');
-const dChat = document.getElementById('dChat');
-if(dChip){
-  dChip.addEventListener('click', ()=>{
-    dChip.classList.add('spent');
-    const typing = document.createElement('div');
-    typing.className = 'd-bubble them typing';
-    typing.innerHTML = '<i></i><i></i><i></i>';
-    dChat.insertBefore(typing, dChip);
-    setTimeout(()=>{
-      typing.remove();
-      const reply = document.createElement('div');
-      reply.className = 'd-bubble them';
-      reply.textContent = "They're all on track — up 6.2% this quarter.";
-      dChat.insertBefore(reply, dChip);
-    }, 1100);
+/* ── PHONE: advisor panel — reveal the portfolio suggestion ── */
+const aChip = document.getElementById('aChip');
+const aReveal = document.getElementById('aReveal');
+if(aChip){
+  aChip.addEventListener('click', ()=>{
+    aChip.classList.add('spent');
+    aReveal.classList.add('shown');
   });
 }
 
