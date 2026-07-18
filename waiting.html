@@ -53,6 +53,13 @@ em{ font-style:italic; color:var(--gold); }
 .theme-ivory-2{ --fg:var(--ink); --bg:var(--ivory-2); --dim:rgba(27,26,24,0.6); --faint:rgba(27,26,24,0.4); --hair:rgba(27,26,24,0.1); }
 section, footer{ background:var(--bg); color:var(--fg); }
 
+/* subtle radial glow on dark sections — one gradient, spoken quietly */
+.theme-ink{ position:relative; }
+.theme-ink::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(60% 46% at 50% 0%, rgba(200,162,70,0.08), transparent 72%);
+}
+
 /* ══════════════════════════════════════════════════════════
    LAYOUT
 ══════════════════════════════════════════════════════════ */
@@ -132,7 +139,7 @@ nav{ gap:16px; }
 
 .stage{ margin-top:96px; display:flex; flex-direction:column; align-items:center; perspective:1800px; opacity:0; animation:rise 1.8s 1s var(--breathe) forwards; }
 .device{
-  width:266px; height:544px; position:relative; transform-style:preserve-3d;
+  width:min(266px, 62vw); aspect-ratio:133/272; height:auto; position:relative; transform-style:preserve-3d;
   transform:rotateX(3deg); transition:transform .3s var(--breathe); will-change:transform;
 }
 .device-frame{
@@ -224,6 +231,54 @@ nav{ gap:16px; }
 .progress-track{ margin-top:14px; height:5px; border-radius:100px; background:rgba(27,26,24,0.08); overflow:hidden; }
 .progress-fill{ height:100%; width:0; border-radius:100px; background:var(--gold); transition:width 1.3s var(--breathe); }
 
+/* ── radial gauges — one component, reused as health score / ratios ── */
+.gauge{ display:block; }
+.gauge circle{ fill:none; stroke-width:7; }
+.gauge .g-track{ stroke:rgba(27,26,24,0.08); }
+.stat-card.dark .g-track{ stroke:rgba(250,248,245,0.12); }
+.gauge .g-fill{ stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset 1.3s var(--breathe); }
+
+/* ── quick stat chips (Overview) ── */
+.quick-chips{ display:flex; gap:8px; margin-top:14px; }
+.qchip{ flex:1; background:#EFE9DC; border:1px solid rgba(27,26,24,0.06); border-radius:12px; padding:11px 6px; text-align:center; }
+.qchip span{ display:block; font-size:8.3px; letter-spacing:.03em; text-transform:uppercase; color:rgba(27,26,24,0.42); }
+.qchip b{ display:block; font-family:'Fraunces',serif; font-size:0.92rem; margin-top:5px; color:var(--ink); }
+
+/* ── donut (asset allocation) ── */
+.donut{ width:132px; height:132px; border-radius:50%; margin:6px auto 18px; position:relative; }
+.donut-hole{ position:absolute; inset:16px; border-radius:50%; background:#1B1A18; }
+.donut-center{ position:absolute; inset:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+
+/* ── generic mini row (holdings, legend) — adapts to card theme ── */
+.mini-row{ display:flex; justify-content:space-between; align-items:center; padding:8px 0; font-size:11.5px; border-top:1px solid transparent; }
+.mini-row:first-child{ border-top:none; }
+.mini-row b{ font-family:'Fraunces',serif; font-weight:500; }
+.stat-card.dark .mini-row{ border-top-color:rgba(250,248,245,0.1); color:rgba(250,248,245,0.75); }
+.stat-card.dark .mini-row b{ color:var(--ivory); }
+.stat-card.light .mini-row{ border-top-color:rgba(27,26,24,0.08); color:rgba(27,26,24,0.68); }
+.stat-card.light .mini-row b{ color:var(--ink); }
+.dl-dot{ display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:8px; flex-shrink:0; }
+
+/* ── ratio grid (Analytics) ── */
+.ratio-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.ratio-card{ background:#EFE9DC; border:1px solid rgba(27,26,24,0.06); border-radius:16px; padding:14px 10px 16px; text-align:center; }
+.ratio-card .gauge{ width:56px; height:56px; margin:0 auto; }
+.ratio-val{ font-family:'Fraunces',serif; font-size:1.1rem; margin-top:6px; color:var(--ink); }
+.ratio-label{ font-size:9.3px; letter-spacing:.02em; color:rgba(27,26,24,0.5); margin-top:2px; }
+
+/* ── AI insight carousel — swipe, don't scroll forever ── */
+.insight-scroll{ display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; margin:0 -20px; padding:2px 20px 6px; scrollbar-width:none; -ms-overflow-style:none; }
+.insight-scroll::-webkit-scrollbar{ display:none; }
+.insight-card{ scroll-snap-align:start; flex:0 0 calc(100% - 40px); background:#EFE9DC; border:1px solid rgba(27,26,24,0.06); border-radius:16px; padding:16px; }
+.insight-tag{ font-size:9.3px; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); font-weight:600; }
+.insight-text{ font-size:11.5px; line-height:1.6; color:rgba(27,26,24,0.7); margin-top:8px; }
+
+/* ── goal mini rows (Goals) ── */
+.goal-mini{ padding:11px 0; }
+.goal-mini:not(:first-child){ margin-top:2px; }
+.goal-mini-top{ display:flex; justify-content:space-between; font-size:11.5px; color:rgba(27,26,24,0.68); margin-bottom:8px; }
+.goal-mini-top b{ font-family:'Fraunces',serif; color:var(--ink); font-weight:500; }
+
 /* ── advisor view — private banking, not a chat thread ── */
 .a-panel{ display:flex; flex-direction:column; gap:14px; }
 .a-card{
@@ -244,9 +299,9 @@ nav{ gap:16px; }
 .a-reveal.shown{ opacity:1; transform:translateY(0); max-height:120px; padding:13px 15px; }
 
 /* ── tab bar ── */
-.d-tabs{ display:flex; justify-content:space-around; padding:16px 6px 24px; border-top:1px solid rgba(27,26,24,0.06); }
+.d-tabs{ display:flex; justify-content:space-around; padding:16px 4px 24px; border-top:1px solid rgba(27,26,24,0.06); }
 .d-tab{
-  background:none; border:none; font-family:'Inter',sans-serif; font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
+  background:none; border:none; font-family:'Inter',sans-serif; font-size:9px; letter-spacing:.04em; text-transform:uppercase;
   color:rgba(27,26,24,0.32); cursor:pointer; padding:4px 2px; position:relative; transition:color .5s var(--breathe);
 }
 .d-tab.active{ color:var(--ink); }
@@ -300,13 +355,20 @@ nav{ gap:16px; }
 ══════════════════════════════════════════════════════════ */
 .advisor-grid{
   max-width:920px; margin:70px auto 0; text-align:left;
-  display:grid; grid-template-columns:repeat(3,1fr); gap:1px 44px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:16px 20px;
 }
-.ag-item{ padding:28px 0; border-top:1px solid var(--hair); }
+.ag-item{
+  padding:26px 24px; background:var(--ivory-2); border-radius:18px;
+  box-shadow:0 10px 26px -18px rgba(27,26,24,0.18);
+  transition:transform .5s var(--breathe), box-shadow .5s var(--breathe);
+  display:flex; gap:16px; align-items:flex-start;
+}
+.ag-item:hover{ transform:translateY(-3px); box-shadow:0 16px 34px -18px rgba(27,26,24,0.24); }
+.ag-item .ag-gauge{ width:44px; height:44px; flex-shrink:0; margin-top:2px; }
 .ag-label{ display:block; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
 .ag-item p{ font-size:0.98rem; line-height:1.6; color:var(--dim); max-width:280px; }
 @media (max-width:860px){
-  .advisor-grid{ grid-template-columns:1fr; gap:0; }
+  .advisor-grid{ grid-template-columns:1fr; gap:14px; }
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -379,6 +441,9 @@ footer{ padding:56px 0 36px; }
 }
 
 @media (max-width:640px){
+  .ratio-card .gauge{ width:60px; height:60px; }
+  .ratio-val{ font-size:1.18rem; }
+  .mini-row, .insight-text, .goal-mini-top{ font-size:12px; }
   .wrap{ padding-left:22px; padding-right:22px; }
   nav{ padding:18px 20px; }
   nav.scrolled{ padding:13px 20px; }
@@ -394,22 +459,21 @@ footer{ padding:56px 0 36px; }
   .lede{ font-size:0.98rem; max-width:340px; }
   .mark{ margin-bottom:22px; }
 
-  .device{ width:224px; height:458px; }
-  .stage{ margin-top:52px; }
-  .d-status{ font-size:9px; }
-  .wallet{ height:230px; }
-  .wc-1, .wc-2, .wc-3{ height:126px; }
-  .wallet.expanded .wc-1{ height:230px; }
-  .wc-2{ top:108px; } .wc-3{ top:126px; }
-  .wc-1 .wc-val{ font-size:1.65rem; }
-  .wcard{ padding:18px; }
+  .device{ width:min(320px, 80vw); }
+  .device-frame{ border-radius:38px; }
+  .device-screen{ border-radius:31px; }
+  .stage{ margin-top:48px; }
+  .d-body{ padding:22px 17px 0; }
+  .d-view{ inset:22px 17px auto 17px; }
+  .d-tabs{ padding:14px 2px 20px; }
+  .d-tab{ font-size:9.5px; }
 
   .scatter, .converge-stage{ height:190px; --fs:0.72; }
 
   .clarity-num{ font-size:clamp(2.1rem,11vw,3.2rem); }
 
-  .advisor-grid{ margin-top:48px; gap:0; }
-  .ag-item{ padding:22px 0; }
+  .advisor-grid{ margin-top:48px; gap:12px; }
+  .ag-item{ padding:20px 18px; }
   .ag-item p{ max-width:100%; }
 
   .benefit-list{ gap:12px 20px; margin-top:34px; }
@@ -427,11 +491,11 @@ footer{ padding:56px 0 36px; }
 }
 
 @media (max-width:360px){
-  .device{ width:198px; height:404px; }
-  .wallet{ height:206px; }
-  .wc-1, .wc-2, .wc-3{ height:112px; }
-  .wallet.expanded .wc-1{ height:206px; }
-  .wc-2{ top:96px; } .wc-3{ top:112px; }
+  .device{ width:86vw; }
+  .d-body{ padding:20px 15px 0; }
+  .d-view{ inset:20px 15px auto 15px; }
+  .ratio-grid{ gap:9px; }
+  .quick-chips{ gap:6px; }
 }
 
 @media (hover:none){
@@ -467,13 +531,13 @@ footer{ padding:56px 0 36px; }
           <div class="d-status"><span>9:41</span><span>Yours</span></div>
 
           <div class="d-body">
-            <!-- Portfolio -->
-            <div class="d-view active" id="dv-portfolio">
+            <!-- Overview -->
+            <div class="d-view active" id="dv-overview">
               <div class="wallet" id="walletCard">
                 <div class="wcard wc-3"></div>
                 <div class="wcard wc-2">
-                  <div class="wc-label">Financial Health Score</div>
-                  <div class="wc-val">82 <span style="font-size:0.9rem;color:rgba(27,26,24,0.4);">/ 100</span></div>
+                  <div class="wc-label">Net Worth Growth (QoQ)</div>
+                  <div class="wc-val" style="color:var(--gold);">+₹1,84,200 <span style="font-size:0.72rem;color:rgba(27,26,24,0.4);">▲ 4.6%</span></div>
                 </div>
                 <div class="wcard wc-1">
                   <div class="wc-row-top">
@@ -493,11 +557,90 @@ footer{ padding:56px 0 36px; }
                   </div>
                 </div>
               </div>
+
+              <div class="stat-card dark" style="margin-top:14px; display:flex; gap:16px; align-items:center; cursor:default;">
+                <svg class="gauge" viewBox="0 0 80 80" style="width:64px;height:64px;flex-shrink:0;">
+                  <circle class="g-track" cx="40" cy="40" r="32"/>
+                  <circle class="g-fill" cx="40" cy="40" r="32" data-pct="82" style="stroke:var(--gold)"/>
+                </svg>
+                <div>
+                  <div class="stat-label">Financial Health Score</div>
+                  <div class="stat-value" style="font-size:1.35rem;">82 <span style="font-size:0.72rem;color:rgba(250,248,245,0.4);">/ 100</span></div>
+                  <div style="font-size:10.5px;color:var(--gold);margin-top:5px;">▲ 6 pts since last review</div>
+                </div>
+              </div>
+
+              <div class="quick-chips">
+                <div class="qchip"><span>Assets</span><b>₹46.8L</b></div>
+                <div class="qchip"><span>Liabilities</span><b>₹4.6L</b></div>
+                <div class="qchip"><span>Emergency Fund</span><b>91%</b></div>
+              </div>
             </div>
 
-            <!-- Insights -->
-            <div class="d-view" id="dv-insights">
+            <!-- Portfolio -->
+            <div class="d-view" id="dv-portfolio">
               <div class="stat-stack">
+                <div class="stat-card dark" style="cursor:default;">
+                  <div class="stat-label">Asset Allocation</div>
+                  <div class="donut" style="background:conic-gradient(#C8A246 0% 42%, #E4C468 42% 62%, #8A6D34 62% 76%, #59503A 76% 92%, #4A4238 92% 100%);">
+                    <div class="donut-hole"></div>
+                    <div class="donut-center">
+                      <div style="font-family:'Fraunces',serif;font-size:1.02rem;color:var(--ivory);">₹46.8L</div>
+                      <div style="font-size:8.5px;color:rgba(250,248,245,0.5);letter-spacing:.04em;">TOTAL ASSETS</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="mini-row"><span><span class="dl-dot" style="background:#C8A246"></span>Equity</span><b>42%</b></div>
+                    <div class="mini-row"><span><span class="dl-dot" style="background:#E4C468"></span>Retirement</span><b>20%</b></div>
+                    <div class="mini-row"><span><span class="dl-dot" style="background:#8A6D34"></span>Insurance &amp; Gold</span><b>14%</b></div>
+                    <div class="mini-row"><span><span class="dl-dot" style="background:#59503A"></span>Fixed Deposits</span><b>16%</b></div>
+                    <div class="mini-row"><span><span class="dl-dot" style="background:#4A4238"></span>Cash</span><b>8%</b></div>
+                  </div>
+                </div>
+
+                <div class="stat-card light">
+                  <div class="stat-label">Top Holdings</div>
+                  <div style="margin-top:4px;">
+                    <div class="mini-row"><span>Axis Bluechip Fund</span><b>18%</b></div>
+                    <div class="mini-row"><span>HDFC Retirement Fund</span><b>14%</b></div>
+                    <div class="mini-row"><span>Mirae Asset Large Cap</span><b>11%</b></div>
+                  </div>
+                </div>
+
+                <div class="stat-card light">
+                  <div class="stat-label">Fund Overlap</div>
+                  <div class="stat-value">38%</div>
+                  <div class="stat-sub">Axis Bluechip and Mirae Large Cap share over a third of their holdings — worth consolidating.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Analytics -->
+            <div class="d-view" id="dv-analytics">
+              <div class="stat-stack">
+                <div class="ratio-grid">
+                  <div class="ratio-card">
+                    <svg class="gauge" viewBox="0 0 80 80"><circle class="g-track" cx="40" cy="40" r="32"/><circle class="g-fill" cx="40" cy="40" r="32" data-pct="34" style="stroke:var(--gold)"/></svg>
+                    <div class="ratio-val">34%</div>
+                    <div class="ratio-label">Savings Ratio</div>
+                  </div>
+                  <div class="ratio-card">
+                    <svg class="gauge" viewBox="0 0 80 80"><circle class="g-track" cx="40" cy="40" r="32"/><circle class="g-fill" cx="40" cy="40" r="32" data-pct="51" style="stroke:var(--gold)"/></svg>
+                    <div class="ratio-val">51%</div>
+                    <div class="ratio-label">Investment Ratio</div>
+                  </div>
+                  <div class="ratio-card">
+                    <svg class="gauge" viewBox="0 0 80 80"><circle class="g-track" cx="40" cy="40" r="32"/><circle class="g-fill" cx="40" cy="40" r="32" data-pct="18" style="stroke:#8A6D34"/></svg>
+                    <div class="ratio-val">18%</div>
+                    <div class="ratio-label">Debt-to-Income</div>
+                  </div>
+                  <div class="ratio-card">
+                    <svg class="gauge" viewBox="0 0 80 80"><circle class="g-track" cx="40" cy="40" r="32"/><circle class="g-fill" cx="40" cy="40" r="32" data-pct="80" style="stroke:var(--gold)"/></svg>
+                    <div class="ratio-val">1.6x</div>
+                    <div class="ratio-label">Liquidity Ratio</div>
+                  </div>
+                </div>
+
                 <div class="stat-card dark" id="divCard">
                   <div class="stat-row">
                     <div>
@@ -513,15 +656,20 @@ footer{ padding:56px 0 36px; }
                     <div class="stat-detail-row"><span>Insurance, FDs &amp; gold</span><b>30%</b></div>
                   </div>
                 </div>
-                <div class="stat-card light">
-                  <div class="stat-label">Fund Overlap</div>
-                  <div class="stat-value">38%</div>
-                  <div class="stat-sub">Axis Bluechip and Mirae Large Cap share over a third of their holdings — worth consolidating.</div>
+
+                <div>
+                  <div class="stat-label" style="color:rgba(27,26,24,0.42); margin-bottom:10px;">AI Insights</div>
+                  <div class="insight-scroll">
+                    <div class="insight-card"><div class="insight-tag">Portfolio</div><div class="insight-text">Two of your large-cap funds share 38% of holdings — consolidating could sharpen returns.</div></div>
+                    <div class="insight-card"><div class="insight-tag">Retirement</div><div class="insight-text">Raising your SIP by ₹5,000/month could move retirement up by roughly 4 years.</div></div>
+                    <div class="insight-card"><div class="insight-tag">Protection</div><div class="insight-text">Your life cover sits about 30% below what your income and dependents suggest.</div></div>
+                    <div class="insight-card"><div class="insight-tag">Tax</div><div class="insight-text">A more tax-efficient allocation could save you close to ₹18,000 this year.</div></div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Planning -->
+            <!-- Goals -->
             <div class="d-view" id="dv-goals">
               <div class="stat-stack">
                 <div class="stat-card dark" id="sipCard">
@@ -541,8 +689,21 @@ footer{ padding:56px 0 36px; }
                 <div class="stat-card light">
                   <div class="stat-label">Retirement Trajectory</div>
                   <div class="stat-value">64%</div>
-                  <div class="progress-track"><div class="progress-fill" id="retireFill"></div></div>
+                  <div class="progress-track"><div class="progress-fill" data-pct="64"></div></div>
                   <div class="stat-sub">of your ₹3.2 Cr goal — on track to retire at 60.</div>
+                </div>
+                <div class="stat-card light">
+                  <div class="stat-label">Life Goals</div>
+                  <div style="margin-top:14px;">
+                    <div class="goal-mini">
+                      <div class="goal-mini-top"><span>Home Purchase · 2028</span><b>45%</b></div>
+                      <div class="progress-track" style="margin-top:0;"><div class="progress-fill" data-pct="45"></div></div>
+                    </div>
+                    <div class="goal-mini">
+                      <div class="goal-mini-top"><span>Child's Education · 2032</span><b>30%</b></div>
+                      <div class="progress-track" style="margin-top:0;"><div class="progress-fill" data-pct="30"></div></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -568,9 +729,10 @@ footer{ padding:56px 0 36px; }
           </div>
 
           <div class="d-tabs">
-            <button class="d-tab active" data-view="dv-portfolio">Net Worth</button>
-            <button class="d-tab" data-view="dv-insights">Insights</button>
-            <button class="d-tab" data-view="dv-goals">Planning</button>
+            <button class="d-tab active" data-view="dv-overview">Overview</button>
+            <button class="d-tab" data-view="dv-portfolio">Portfolio</button>
+            <button class="d-tab" data-view="dv-analytics">Analytics</button>
+            <button class="d-tab" data-view="dv-goals">Goals</button>
             <button class="d-tab" data-view="dv-advisor">Advisor</button>
           </div>
         </div>
@@ -643,28 +805,48 @@ footer{ padding:56px 0 36px; }
 
     <div class="advisor-grid rv rv-3">
       <div class="ag-item">
-        <span class="ag-label">Upcoming Review</span>
-        <p>Tuesday, 14 January at 4:00 PM, with Priya.</p>
+        <div>
+          <span class="ag-label">Upcoming Review</span>
+          <p>Tuesday, 14 January at 4:00 PM, with Priya.</p>
+        </div>
       </div>
       <div class="ag-item">
-        <span class="ag-label">Advisor Notes</span>
-        <p>"Emergency fund crossed 90%. Time to redirect the surplus toward retirement."</p>
+        <div>
+          <span class="ag-label">Advisor Notes</span>
+          <p>"Emergency fund crossed 90%. Time to redirect the surplus toward retirement."</p>
+        </div>
       </div>
       <div class="ag-item">
-        <span class="ag-label">Financial Health</span>
-        <p>82 out of 100 — up 6 points since your last review.</p>
+        <svg class="gauge ag-gauge" viewBox="0 0 80 80">
+          <circle class="g-track" cx="40" cy="40" r="32"/>
+          <circle class="g-fill" cx="40" cy="40" r="32" data-pct="82" style="stroke:var(--gold)"/>
+        </svg>
+        <div>
+          <span class="ag-label">Financial Health</span>
+          <p>82 out of 100 — up 6 points since your last review.</p>
+        </div>
       </div>
       <div class="ag-item">
-        <span class="ag-label">Goal Progress</span>
-        <p>Three of four goals are ahead of schedule this quarter.</p>
+        <svg class="gauge ag-gauge" viewBox="0 0 80 80">
+          <circle class="g-track" cx="40" cy="40" r="32"/>
+          <circle class="g-fill" cx="40" cy="40" r="32" data-pct="75" style="stroke:var(--gold)"/>
+        </svg>
+        <div>
+          <span class="ag-label">Goal Progress</span>
+          <p>Three of four goals are ahead of schedule this quarter.</p>
+        </div>
       </div>
       <div class="ag-item">
-        <span class="ag-label">Portfolio Suggestions</span>
-        <p>Shift 4% from fixed deposits into equity funds.</p>
+        <div>
+          <span class="ag-label">Portfolio Suggestions</span>
+          <p>Shift 4% from fixed deposits into equity funds.</p>
+        </div>
       </div>
       <div class="ag-item">
-        <span class="ag-label">Life Milestones</span>
-        <p>Home purchase, child's education and retirement — all mapped.</p>
+        <div>
+          <span class="ag-label">Life Milestones</span>
+          <p>Home purchase, child's education and retirement — all mapped.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -785,7 +967,36 @@ function animDevice(){
 }
 animDevice();
 
-/* ── PHONE: tab switching between Net Worth / Insights / Planning / Advisor ── */
+/* ── RADIAL GAUGES — fill on first reveal, reused everywhere ── */
+function initGauges(scope){
+  const root = scope || document;
+  root.querySelectorAll('.gauge .g-fill').forEach(el=>{
+    if(el.dataset.armed) return;
+    const r = el.r.baseVal.value;
+    const c = 2*Math.PI*r;
+    el.style.strokeDasharray = c;
+    el.style.strokeDashoffset = c;
+    el.dataset.armed = '1';
+  });
+  requestAnimationFrame(()=> requestAnimationFrame(()=>{
+    root.querySelectorAll('.gauge .g-fill').forEach(el=>{
+      if(el.dataset.done) return;
+      const r = el.r.baseVal.value;
+      const c = 2*Math.PI*r;
+      const pct = parseFloat(el.dataset.pct)||0;
+      el.style.strokeDashoffset = c*(1-pct/100);
+      el.dataset.done = '1';
+    });
+  }));
+}
+initGauges();
+/* gauges that live outside the phone (Advisor section) fill when scrolled into view */
+const gaugeSectionObs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ initGauges(e.target); gaugeSectionObs.unobserve(e.target); } });
+},{threshold:.3});
+gaugeSectionObs.observe(document.getElementById('advisor'));
+
+/* ── PHONE: tab switching between Overview / Portfolio / Analytics / Goals / Advisor ── */
 const dTabs = document.querySelectorAll('.d-tab');
 const dViews = document.querySelectorAll('.d-view');
 let planningPlayed = false;
@@ -793,8 +1004,9 @@ let planningPlayed = false;
 function playPlanning(){
   if(planningPlayed) return;
   planningPlayed = true;
-  const fill = document.getElementById('retireFill');
-  requestAnimationFrame(()=>{ fill.style.width = '64%'; });
+  document.querySelectorAll('#dv-goals .progress-fill[data-pct]').forEach(el=>{
+    requestAnimationFrame(()=> el.style.width = el.dataset.pct + '%');
+  });
 }
 
 dTabs.forEach(tab=>{
@@ -804,12 +1016,14 @@ dTabs.forEach(tab=>{
     tab.classList.add('active');
     const target = tab.dataset.view;
     dViews.forEach(v=> v.classList.toggle('active', v.id === target));
+    const targetEl = document.getElementById(target);
+    initGauges(targetEl);
     if(target === 'dv-goals') setTimeout(playPlanning, 120);
   });
 });
 
 /* ── PHONE: tap a dark stat card to expand its detail ── */
-document.querySelectorAll('.stat-card.dark').forEach(card=>{
+document.querySelectorAll('.stat-card.dark[id]').forEach(card=>{
   const tag = card.querySelector('.stat-tag');
   const openText = tag ? tag.textContent : '';
   card.addEventListener('click', ()=>{
