@@ -1172,6 +1172,8 @@ steps.forEach((step, idx)=>{
   });
 });
 
+/* ── SUBMIT: save to Firestore, show confirmation, then quietly
+   reset back to a normal, browsable landing page ── */
 document.getElementById('wlForm').addEventListener('submit', async e=>{
   e.preventDefault();
   if(!validateStep(2)) return;
@@ -1198,7 +1200,21 @@ document.getElementById('wlForm').addEventListener('submit', async e=>{
       ...leadData,
       createdAt: serverTimestamp()
     });
+
     document.getElementById('wlSuccess').classList.add('show');
+
+    // After showing the confirmation for a few seconds, reset the
+    // form and hide the success screen so the page behaves like a
+    // normal landing page again — not stuck permanently on "You're
+    // on the list."
+    setTimeout(()=>{
+      document.getElementById('wlSuccess').classList.remove('show');
+      document.getElementById('wlForm').reset();
+      showStep(0);
+      btn.textContent = originalLabel;
+      btn.disabled = false;
+    }, 4000);
+
   } catch(err){
     console.error('Waitlist submission failed:', err);
     errBox.style.display = 'block';
