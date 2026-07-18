@@ -8,6 +8,35 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,440;0,9..144,500;1,9..144,440;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Firebase SDKs — same project as the auth / dashboard pages -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+  import { getAnalytics }  from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyA5GXozMPvV8yuD1uLPUixFF6pxva_-Vz4",
+    authDomain:        "yours-wealth.firebaseapp.com",
+    projectId:         "yours-wealth",
+    storageBucket:     "yours-wealth.firebasestorage.app",
+    messagingSenderId: "688815714330",
+    appId:             "1:688815714330:web:ba8c91a1547d9a5afde1a3",
+    measurementId:     "G-HD6PZNB3JD"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  try { getAnalytics(app); } catch(e){ /* analytics can fail silently, e.g. blocked by an ad-blocker */ }
+  const db  = getFirestore(app);
+
+  window._ywDB = db;
+  window._ywFS = { collection, addDoc, serverTimestamp };
+</script>
 <style>
 
 /* ══════════════════════════════════════════════════════════
@@ -893,10 +922,12 @@ footer{ padding:56px 0 36px; }
           <div class="form-err" id="errPhone">Please enter a valid 10-digit number</div>
           <div class="step-actions">
             <span class="back-link" data-back>Back</span>
-            <button type="submit" class="btn btn-primary">Request Your Free Report</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmit">Request Your Free Report</button>
           </div>
         </div>
       </form>
+
+      <div class="fine" id="submitErr" style="display:none; color:#A85C4C; margin-top:16px; text-align:center;">Something went wrong — please try again.</div>
 
       <div class="success" id="wlSuccess">
         <div class="ring-mark"><svg viewBox="0 0 32 32"><path class="check" d="M8 17l6 6 10-12"/></svg></div>
@@ -1141,7 +1172,7 @@ steps.forEach((step, idx)=>{
   });
 });
 
-document.getElementById('wlForm').addEventListener('submit', e=>{
+document.getElementById('wlForm').addEventListener('submit', async e=>{
   e.preventDefault();
   if(!validateStep(2)) return;
 
@@ -1149,12 +1180,50 @@ document.getElementById('wlForm').addEventListener('submit', e=>{
     name: document.getElementById('iName').value.trim(),
     email: document.getElementById('iEmail').value.trim(),
     phone: '+91' + document.getElementById('iPhone').value.trim(),
-    timestamp: new Date().toISOString()
+    source: 'waitlist-landing',
+    createdAtClient: new Date().toISOString()
   };
-  /* NOTE: demo form — POST leadData to a backend/Apps Script endpoint here to go live */
 
-  document.getElementById('wlSuccess').classList.add('show');
+  const btn = document.getElementById('btnSubmit');
+  const errBox = document.getElementById('submitErr');
+  errBox.style.display = 'none';
+  const originalLabel = btn.textContent;
+  btn.textContent = 'Submitting…';
+  btn.disabled = true;
+
+  try {
+    const db = await waitForDb();
+    const { collection, addDoc, serverTimestamp } = window._ywFS;
+    await addDoc(collection(db, 'waitlist'), {
+      ...leadData,
+      createdAt: serverTimestamp()
+    });
+    document.getElementById('wlSuccess').classList.add('show');
+  } catch(err){
+    console.error('Waitlist submission failed:', err);
+    errBox.style.display = 'block';
+    btn.textContent = originalLabel;
+    btn.disabled = false;
+  }
 });
+
+/* Wait for the Firebase module script (loaded async in <head>) to finish initializing */
+function waitForDb(timeoutMs = 8000){
+  return new Promise((resolve, reject) => {
+    if(window._ywDB && window._ywFS){ resolve(window._ywDB); return; }
+    const start = Date.now();
+    const iv = setInterval(() => {
+      if(window._ywDB && window._ywFS){
+        clearInterval(iv);
+        resolve(window._ywDB);
+      } else if(Date.now() - start > timeoutMs){
+        clearInterval(iv);
+        reject(new Error('Could not connect — please check your connection and try again.'));
+      }
+    }, 100);
+  });
+}
+
 </script>
 </body>
 </html>
