@@ -3,1243 +3,1107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yours Wealth — Your Financial Life, Finally Understood.</title>
-<meta name="description" content="A private wealth management practice for financial planning, investments, insurance, retirement, tax and legacy — guided by a human advisor. Join the waitlist for a free personalized financial planning session.">
+<title>Northstar — Goal-Based Investment Planning</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,440;0,9..144,500;1,9..144,440;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-<!-- Firebase SDKs — same project as the auth / dashboard pages -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-  import { getAnalytics }  from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey:            "AIzaSyA5GXozMPvV8yuD1uLPUixFF6pxva_-Vz4",
-    authDomain:        "yours-wealth.firebaseapp.com",
-    projectId:         "yours-wealth",
-    storageBucket:     "yours-wealth.firebasestorage.app",
-    messagingSenderId: "688815714330",
-    appId:             "1:688815714330:web:ba8c91a1547d9a5afde1a3",
-    measurementId:     "G-HD6PZNB3JD"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  try { getAnalytics(app); } catch(e){ /* analytics can fail silently, e.g. blocked by an ad-blocker */ }
-  const db  = getFirestore(app);
-
-  window._ywDB = db;
-  window._ywFS = { collection, addDoc, serverTimestamp };
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-
-/* ══════════════════════════════════════════════════════════
-   TOKENS
-   Ink — near-black, warm rather than cold. Ivory — paper,
-   lived-in. Champagne — a single accent, spoken once per view.
-══════════════════════════════════════════════════════════ */
+/* ============ TOKENS ============ */
 :root{
-  --ink:        #1B1A18;
-  --ink-soft:   #262420;
-  --ivory:      #FAF8F5;
-  --ivory-2:    #F2EDE3;
-  --ivory-3:    #EAE2D2;
-  --gold:       #C8A246;
-  --gold-soft:  rgba(200,162,70,0.5);
-  --gray-warm:  #7D756B;
-
-  --ease:       cubic-bezier(.22,.61,.36,1);
-  --breathe:    cubic-bezier(.45,.05,.15,1);
+  --navy:#0A1F44;
+  --navy-2:#123163;
+  --navy-soft:#2E4A78;
+  --emerald:#0E7C5A;
+  --emerald-2:#0A5C43;
+  --emerald-light:#34C795;
+  --gold:#C9A24B;
+  --bg:#FAFBF9;
+  --panel:#FFFFFF;
+  --ink:#0B1A24;
+  --ink-soft:#51606B;
+  --ink-faint:#8895A0;
+  --line: rgba(10,31,68,0.09);
+  --shadow-sm: 0 2px 10px rgba(10,31,68,0.06);
+  --shadow-md: 0 12px 32px rgba(10,31,68,0.10);
+  --shadow-lg: 0 24px 60px rgba(10,31,68,0.16);
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+  --ease: cubic-bezier(.22,.61,.36,1);
 }
-*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
-html{ scroll-behavior:smooth; }
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+}
 body{
-  background:var(--ivory);
+  font-family:'Inter', sans-serif;
   color:var(--ink);
-  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-  font-size:16px;
-  line-height:1.55;
+  background:var(--bg);
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
-::selection{ background:var(--gold); color:var(--ivory); }
-img,svg{ display:block; max-width:100%; }
-button{ font-family:inherit; }
-a{ color:inherit; text-decoration:none; }
-:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
-
-.serif{ font-family:'Fraunces',serif; }
-em{ font-style:italic; color:var(--gold); }
-
-.theme-ink{  --fg:var(--ivory); --bg:var(--ink);   --dim:rgba(250,248,245,0.62); --faint:rgba(250,248,245,0.38); --hair:rgba(250,248,245,0.12); }
-.theme-ivory{ --fg:var(--ink);  --bg:var(--ivory); --dim:rgba(27,26,24,0.6);  --faint:rgba(27,26,24,0.4);   --hair:rgba(27,26,24,0.1); }
-.theme-ivory-2{ --fg:var(--ink); --bg:var(--ivory-2); --dim:rgba(27,26,24,0.6); --faint:rgba(27,26,24,0.4); --hair:rgba(27,26,24,0.1); }
-section, footer{ background:var(--bg); color:var(--fg); }
-
-/* subtle radial glow on dark sections — one gradient, spoken quietly */
-.theme-ink{ position:relative; }
-.theme-ink::before{
-  content:''; position:absolute; inset:0; pointer-events:none;
-  background:radial-gradient(60% 46% at 50% 0%, rgba(200,162,70,0.08), transparent 72%);
+h1,h2,h3,h4,.display{
+  font-family:'Manrope', sans-serif;
+  letter-spacing:-0.02em;
+  color:var(--navy);
+  font-weight:800;
 }
+img{max-width:100%; display:block;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer;}
+:focus-visible{outline:2px solid var(--emerald); outline-offset:3px; border-radius:6px;}
 
-/* ══════════════════════════════════════════════════════════
-   LAYOUT
-══════════════════════════════════════════════════════════ */
-.wrap{ max-width:1120px; margin:0 auto; padding-left:56px; padding-right:56px; }
-section{ position:relative; padding:14vw 0; }
-.mark{
-  font-family:'Fraunces',serif; font-style:italic; font-weight:440; font-size:1rem;
-  color:var(--gold); margin-bottom:30px; display:block;
+.wrap{max-width:1240px; margin:0 auto; padding:0 32px;}
+@media (max-width:640px){.wrap{padding:0 20px;}}
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:12.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--emerald-2);
+  background:rgba(14,124,90,0.08);
+  padding:7px 14px; border-radius:100px;
+  margin-bottom:18px;
 }
-h2{
-  font-family:'Fraunces',serif; font-weight:440; font-size:clamp(2.2rem,4.4vw,3.7rem); line-height:1.14;
-  letter-spacing:-0.01em; max-width:760px;
-}
-.lede{ color:var(--dim); font-size:1.05rem; line-height:1.7; max-width:440px; margin-top:26px; font-weight:400; }
-.center{ text-align:center; margin-left:auto; margin-right:auto; }
+.eyebrow::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--emerald);}
 
-.rv{ --fs:1; opacity:0; transform:translateY(18px) scale(var(--fs)); transition:opacity 1.4s var(--breathe), transform 1.4s var(--breathe); }
-.rv.in{ opacity:1; transform:translateY(0) scale(var(--fs)); }
-.rv-1{ transition-delay:.12s; } .rv-2{ transition-delay:.26s; } .rv-3{ transition-delay:.4s; }
+.section{padding:120px 0;}
+@media (max-width:900px){.section{padding:80px 0;}}
+.section-head{max-width:680px; margin-bottom:64px;}
+.section-head.center{margin-left:auto; margin-right:auto; text-align:center;}
+.section-head h2{font-size:clamp(30px,4vw,46px); line-height:1.12; margin-bottom:18px;}
+.section-head p{font-size:18px; line-height:1.6; color:var(--ink-soft);}
 
-.hr{ height:1px; background:var(--hair); border:none; }
-
-/* buttons — one shape, spoken quietly */
 .btn{
-  display:inline-flex; align-items:center; gap:9px;
-  font-family:'Inter',sans-serif; font-weight:500; font-size:0.92rem;
-  padding:15px 28px; border-radius:100px; cursor:pointer; border:1px solid transparent;
-  transition:background .6s var(--ease), border-color .6s var(--ease), color .6s var(--ease), opacity .6s var(--ease);
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:16px 30px; border-radius:100px; font-weight:700; font-size:15.5px;
+  border:1px solid transparent; transition:transform .35s var(--ease), box-shadow .35s var(--ease), background .3s;
+  white-space:nowrap;
 }
-.btn-primary{ background:var(--ink); color:var(--ivory); }
-.theme-ink .btn-primary{ background:var(--gold); color:var(--ink); }
-.btn-primary:hover{ opacity:.82; }
-.btn-ghost{ background:transparent; color:var(--fg); border-color:var(--hair); }
-.btn-ghost:hover{ border-color:var(--gold-soft); }
+.btn-primary{
+  background:linear-gradient(135deg, var(--emerald) 0%, var(--emerald-2) 100%);
+  color:#fff; box-shadow:0 10px 26px rgba(14,124,90,0.32);
+}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 16px 34px rgba(14,124,90,0.4);}
+.btn-ghost{
+  background:rgba(10,31,68,0.04); color:var(--navy); border-color:var(--line);
+}
+.btn-ghost:hover{background:rgba(10,31,68,0.07); transform:translateY(-2px);}
+.btn-light{background:#fff; color:var(--navy); box-shadow:0 10px 26px rgba(0,0,0,0.14);}
+.btn-light:hover{transform:translateY(-2px);}
+.btn-outline-light{border-color:rgba(255,255,255,0.35); color:#fff;}
+.btn-outline-light:hover{background:rgba(255,255,255,0.1); transform:translateY(-2px);}
 
-/* ══════════════════════════════════════════════════════════
-   NAV
-══════════════════════════════════════════════════════════ */
-nav{
+.reveal{opacity:0; transform:translateY(28px); transition:opacity .8s var(--ease), transform .8s var(--ease);}
+.reveal.in{opacity:1; transform:translateY(0);}
+.reveal-stagger > *{transition-delay:calc(var(--i,0) * 90ms);}
+
+/* ============ NAV ============ */
+header{
   position:fixed; top:0; left:0; right:0; z-index:100;
-  display:flex; align-items:center; justify-content:space-between;
-  padding:28px 56px; color:var(--ivory);
-  transition:padding .7s var(--ease), background .7s var(--ease), backdrop-filter .7s var(--ease), border-color .7s var(--ease);
-  border-bottom:1px solid transparent;
+  padding:18px 0;
+  transition:background .4s var(--ease), box-shadow .4s var(--ease), padding .4s var(--ease);
 }
-nav.scrolled{
-  padding:18px 56px; background:rgba(27,26,24,0.68);
-  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(250,248,245,0.08);
+header.scrolled{
+  background:rgba(250,251,249,0.78);
+  backdrop-filter:blur(16px) saturate(160%);
+  -webkit-backdrop-filter:blur(16px) saturate(160%);
+  box-shadow:0 1px 0 var(--line);
+  padding:12px 0;
 }
-.wordmark{ font-family:'Fraunces',serif; font-size:1.05rem; font-weight:500; letter-spacing:-0.01em; color:var(--fg); white-space:nowrap; }
-.wordmark .w-wealth{ color:var(--gold); }
-nav .wordmark{ color:var(--ivory); }
-footer .wordmark{ color:var(--ink); }
-nav{ gap:16px; }
-.nav-cta{ white-space:nowrap; flex-shrink:0; }
-.nav-cta{ font-size:0.82rem; padding:11px 22px; }
+.navbar{display:flex; align-items:center; justify-content:space-between; gap:24px;}
+.logo{display:flex; align-items:center; gap:10px; font-family:'Manrope'; font-weight:800; font-size:20px; color:var(--navy);}
+.logo-mark{
+  width:32px; height:32px; border-radius:9px;
+  background:linear-gradient(135deg, var(--navy) 0%, var(--emerald) 100%);
+  position:relative; flex-shrink:0;
+}
+.logo-mark::after{
+  content:''; position:absolute; inset:8px; border-radius:50%;
+  background:conic-gradient(from -90deg, var(--gold) 72%, rgba(255,255,255,0.35) 0);
+}
+.nav-links{display:flex; align-items:center; gap:34px; font-size:14.5px; font-weight:600; color:var(--navy-soft);}
+.nav-links a{transition:color .25s; position:relative;}
+.nav-links a:hover{color:var(--navy);}
+.nav-cta{display:flex; align-items:center; gap:14px;}
+.nav-cta .btn{padding:12px 22px; font-size:14.5px;}
+.nav-toggle{display:none; background:none; border:none; padding:6px;}
+.nav-toggle span{display:block; width:22px; height:2px; background:var(--navy); margin:5px 0; border-radius:2px; transition:.3s;}
+@media (max-width:920px){
+  .nav-links{display:none;}
+  .nav-cta .btn-ghost{display:none;}
+  .nav-toggle{display:block;}
+}
 
-/* ══════════════════════════════════════════════════════════
-   HERO — one sentence, one paragraph, one phone, one CTA
-══════════════════════════════════════════════════════════ */
+/* ============ HERO ============ */
 .hero{
-  min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; padding:170px 56px 100px;
+  position:relative;
+  padding:168px 0 90px;
+  overflow:hidden;
+  background:
+    radial-gradient(1200px 600px at 82% -10%, rgba(52,199,149,0.14), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(10,31,68,0.06), transparent 60%),
+    var(--bg);
 }
-.hero h1{
-  font-family:'Fraunces',serif; font-weight:440; letter-spacing:-0.015em;
-  font-size:clamp(2.6rem,6vw,5rem); line-height:1.08; max-width:920px;
-  opacity:0; animation:rise 1.6s .25s var(--breathe) forwards;
+.hero-grid{display:grid; grid-template-columns:1.05fr 1fr; gap:60px; align-items:center;}
+@media (max-width:980px){.hero-grid{grid-template-columns:1fr; gap:64px;}}
+.hero h1{font-size:clamp(38px,5.4vw,64px); line-height:1.06; margin-bottom:24px;}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(100deg, var(--emerald) 0%, var(--emerald-light) 45%, var(--gold) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
 }
-@keyframes rise{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:translateY(0); } }
-.hero-sub{
-  color:var(--dim); font-size:1.08rem; line-height:1.75; max-width:460px; margin:30px auto 0;
-  opacity:0; animation:rise 1.6s .55s var(--breathe) forwards;
+.hero p.lead{font-size:18.5px; line-height:1.65; color:var(--ink-soft); max-width:560px; margin-bottom:36px;}
+.hero-actions{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:44px;}
+.hero-trust{display:flex; align-items:center; gap:18px; flex-wrap:wrap; font-size:13.5px; color:var(--ink-faint); font-weight:600;}
+.hero-trust .dot{width:4px; height:4px; border-radius:50%; background:var(--ink-faint);}
+
+/* --- Hero dashboard / signature element --- */
+.orbit-stage{
+  position:relative; width:100%; max-width:520px; margin:0 auto;
+  aspect-ratio:1/1.02;
 }
-.hero-actions{ margin-top:42px; opacity:0; animation:rise 1.6s .8s var(--breathe) forwards; }
-
-.stage{ margin-top:96px; display:flex; flex-direction:column; align-items:center; perspective:1800px; opacity:0; animation:rise 1.8s 1s var(--breathe) forwards; }
-.device{
-  width:min(266px, 62vw); aspect-ratio:133/272; height:auto; position:relative; transform-style:preserve-3d;
-  transform:rotateX(3deg); transition:transform .3s var(--breathe); will-change:transform;
+.orbit-center{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:150px; height:150px; border-radius:50%;
+  background:linear-gradient(150deg, var(--navy) 0%, var(--navy-2) 60%, var(--emerald-2) 130%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:#fff; box-shadow:0 24px 50px rgba(10,31,68,0.35), inset 0 0 0 1px rgba(255,255,255,0.12);
+  z-index:5; text-align:center;
 }
-.device-frame{
-  position:absolute; inset:0; border-radius:44px; background:linear-gradient(160deg,#332F29,#1B1A18 62%);
-  padding:8px; box-shadow:0 50px 100px -28px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.05);
+.orbit-center .val{font-family:'Manrope'; font-weight:800; font-size:22px; letter-spacing:-0.01em;}
+.orbit-center .lbl{font-size:10.5px; text-transform:uppercase; letter-spacing:.12em; opacity:.72; margin-top:4px;}
+.orbit-svg{position:absolute; inset:0; width:100%; height:100%; z-index:1;}
+.orbit-svg circle.path{fill:none; stroke:rgba(10,31,68,0.09); stroke-width:1.2;}
+.orbit-svg path.link{fill:none; stroke:rgba(14,124,90,0.35); stroke-width:1.4; stroke-dasharray:4 6;
+  animation:dash 30s linear infinite;}
+@keyframes dash{to{stroke-dashoffset:-400;}}
+
+.goal-card{
+  position:absolute; width:172px;
+  background:rgba(255,255,255,0.72);
+  backdrop-filter:blur(14px) saturate(160%);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.6);
+  border-radius:18px; padding:14px 14px 15px;
+  box-shadow:0 16px 34px rgba(10,31,68,0.14);
+  z-index:4;
+  animation:float 6.5s ease-in-out infinite;
 }
-.device-screen{
-  width:100%; height:100%; border-radius:37px; overflow:hidden; position:relative;
-  background:linear-gradient(175deg,#F7F4EE,#EFE9DC); display:flex; flex-direction:column;
+.goal-card .gc-top{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+.ring{
+  width:38px; height:38px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:conic-gradient(var(--emerald) calc(var(--p) * 1%), rgba(10,31,68,0.09) 0);
 }
-.island{ position:absolute; top:13px; left:50%; transform:translateX(-50%); width:80px; height:22px; background:#1B1A18; border-radius:13px; z-index:6; }
-.d-status{ display:flex; justify-content:space-between; padding:19px 22px 0; font-family:'Inter',sans-serif; font-size:10px; font-weight:500; color:rgba(27,26,24,0.32); }
-.stage-hint{
-  margin-top:22px; font-size:11px; letter-spacing:.04em; color:var(--faint);
-  opacity:0; animation:rise 1.6s 1.9s var(--breathe) forwards;
+.ring::after{content:''; width:28px; height:28px; border-radius:50%; background:#fff;}
+.gc-name{font-size:13px; font-weight:700; color:var(--navy); line-height:1.2;}
+.gc-goal{font-size:11px; color:var(--ink-faint); font-weight:600; margin-top:1px;}
+.gc-pct{font-family:'Manrope'; font-weight:800; font-size:15px; color:var(--emerald-2); margin-left:auto;}
+.gc-bar{height:5px; border-radius:4px; background:rgba(10,31,68,0.08); overflow:hidden;}
+.gc-bar i{display:block; height:100%; border-radius:4px; background:linear-gradient(90deg, var(--emerald), var(--emerald-light)); width:var(--w);}
+.gc-status{
+  font-size:11px; font-weight:700; padding:4px 9px; border-radius:100px; display:inline-block;
 }
+.gc-status.done{background:rgba(14,124,90,0.12); color:var(--emerald-2);}
+.gc-status.upcoming{background:rgba(201,162,75,0.16); color:#8a6b1f;}
 
-/* ── views: swapped by the tab bar, never both showing ── */
-.d-body{ padding:26px 20px 0; flex:1; min-height:0; overflow-y:auto; position:relative; scrollbar-width:none; -ms-overflow-style:none; }
-.d-body::-webkit-scrollbar{ display:none; }
-.d-view{
-  position:absolute; inset:26px 20px auto 20px; opacity:0; transform:translateY(8px);
-  transition:opacity .7s var(--breathe), transform .7s var(--breathe); pointer-events:none;
+.gc-1{top:0%; left:-6%; animation-delay:0s;}
+.gc-2{top:6%; right:-8%; animation-delay:1.4s;}
+.gc-3{bottom:16%; left:-10%; animation-delay:2.7s;}
+.gc-4{bottom:0%; right:2%; width:150px; animation-delay:.8s;}
+.gc-5{top:44%; left:38%; width:130px; z-index:6; animation-delay:2s;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+@media (max-width:980px){
+  .orbit-stage{max-width:420px; aspect-ratio:1/1.15;}
+  .goal-card{width:145px; padding:11px;}
+  .gc-4{width:128px;}
+  .gc-5{width:110px;}
+  .orbit-center{width:120px; height:120px;}
+  .orbit-center .val{font-size:18px;}
 }
-.d-view.active{ opacity:1; transform:translateY(0); pointer-events:auto; position:relative; inset:auto; }
-
-/* wallet-style stacked cards, tap to open */
-.wallet{ position:relative; height:270px; cursor:pointer; }
-.wcard{
-  position:absolute; left:0; right:0; border-radius:20px; padding:22px 22px;
-  box-shadow:0 14px 30px -14px rgba(27,26,24,0.28);
-  transition:height .7s var(--breathe), top .7s var(--breathe), opacity .5s var(--breathe), transform .6s var(--breathe);
-}
-.wcard .wc-label{ font-size:10.5px; letter-spacing:.04em; color:rgba(27,26,24,0.42); }
-.wcard .wc-val{ font-family:'Fraunces',serif; font-size:1.3rem; font-weight:500; color:var(--ink); margin-top:5px; }
-.wc-1{ top:0; background:#1B1A18; z-index:3; height:150px; }
-.wc-1 .wc-label{ color:rgba(250,248,245,0.5); }
-.wc-1 .wc-val{ color:var(--ivory); font-size:2rem; }
-.wc-row-top{ display:flex; align-items:flex-start; justify-content:space-between; }
-.wc-chevron{ width:9px; height:9px; border-right:1.4px solid var(--gold); border-bottom:1.4px solid var(--gold); transform:rotate(45deg); margin-top:6px; transition:transform .6s var(--breathe); }
-.wallet.expanded .wc-chevron{ transform:rotate(-135deg); }
-.wc-tag{ margin-top:10px; font-size:10.5px; color:var(--gold); }
-.wc-2{ top:128px; background:#EFE9DC; z-index:2; height:150px; border:1px solid rgba(27,26,24,0.06); }
-.wc-3{ top:150px; background:#E6DECC; z-index:1; height:150px; opacity:.7; }
-.wallet.expanded .wc-1{ height:270px; }
-.wallet.expanded .wc-2, .wallet.expanded .wc-3{ opacity:0; transform:translateY(14px); }
-
-.wc-breakdown{ margin-top:20px; display:flex; flex-direction:column; gap:0; opacity:0; transition:opacity .5s .15s var(--breathe); }
-.wallet.expanded .wc-breakdown{ opacity:1; }
-.wc-b-row{
-  display:flex; justify-content:space-between; align-items:center; padding:10px 0; font-size:11.5px;
-  border-top:1px solid rgba(250,248,245,0.1); color:rgba(250,248,245,0.68);
-  opacity:0; transform:translateY(4px); transition:opacity .5s var(--breathe), transform .5s var(--breathe);
-}
-.wallet.expanded .wc-b-row{ opacity:1; transform:translateY(0); }
-.wallet.expanded .wc-b-row:nth-child(1){ transition-delay:.18s; }
-.wallet.expanded .wc-b-row:nth-child(2){ transition-delay:.24s; }
-.wallet.expanded .wc-b-row:nth-child(3){ transition-delay:.30s; }
-.wallet.expanded .wc-b-row:nth-child(4){ transition-delay:.36s; }
-.wallet.expanded .wc-b-row:nth-child(5){ transition-delay:.42s; }
-.wc-b-row b{ color:var(--ivory); font-weight:500; }
-
-/* ── insights & planning views — same card language as Net Worth ── */
-.stat-stack{ display:flex; flex-direction:column; gap:14px; }
-.stat-card{ border-radius:20px; padding:22px; box-shadow:0 14px 30px -14px rgba(27,26,24,0.16); }
-.stat-card.dark{ background:#1B1A18; cursor:pointer; transition:padding .6s var(--breathe); }
-.stat-card.light{ background:#EFE9DC; border:1px solid rgba(27,26,24,0.06); }
-.stat-row{ display:flex; align-items:flex-start; justify-content:space-between; }
-.stat-label{ font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; }
-.stat-card.dark .stat-label{ color:rgba(250,248,245,0.5); }
-.stat-card.light .stat-label{ color:rgba(27,26,24,0.42); }
-.stat-value{ font-family:'Fraunces',serif; font-weight:500; font-size:1.7rem; margin-top:6px; line-height:1; }
-.stat-card.dark .stat-value{ color:var(--ivory); }
-.stat-card.light .stat-value{ color:var(--ink); }
-.stat-chevron{ width:9px; height:9px; border-right:1.4px solid var(--gold); border-bottom:1.4px solid var(--gold); transform:rotate(45deg); margin-top:8px; transition:transform .6s var(--breathe); }
-.stat-card.expanded .stat-chevron{ transform:rotate(-135deg); }
-.stat-tag{ margin-top:12px; font-size:10.5px; color:var(--gold); }
-.stat-sub{ margin-top:12px; font-size:11.5px; line-height:1.6; color:rgba(27,26,24,0.6); }
-
-.stat-detail{ max-height:0; opacity:0; overflow:hidden; transition:max-height .6s var(--breathe), opacity .5s var(--breathe), margin-top .6s var(--breathe); }
-.stat-card.expanded .stat-detail{ max-height:160px; opacity:1; margin-top:16px; }
-.stat-detail-row{
-  display:flex; justify-content:space-between; padding:9px 0; font-size:11.5px;
-  border-top:1px solid rgba(250,248,245,0.1); color:rgba(250,248,245,0.7);
-}
-.stat-detail-row:first-child{ border-top:none; }
-.stat-detail-row b{ color:var(--ivory); font-weight:600; }
-
-.progress-track{ margin-top:14px; height:5px; border-radius:100px; background:rgba(27,26,24,0.08); overflow:hidden; }
-.progress-fill{ height:100%; width:0; border-radius:100px; background:var(--gold); transition:width 1.3s var(--breathe); }
-
-/* ── radial gauges — one component, reused as health score / ratios ── */
-.gauge{ display:block; }
-.gauge circle{ fill:none; stroke-width:7; }
-.gauge .g-track{ stroke:rgba(27,26,24,0.08); }
-.stat-card.dark .g-track{ stroke:rgba(250,248,245,0.12); }
-.gauge .g-fill{ stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset 1.3s var(--breathe); }
-
-/* ── quick stat chips (Overview) ── */
-.quick-chips{ display:flex; gap:8px; margin-top:14px; }
-.qchip{ flex:1; background:#EFE9DC; border:1px solid rgba(27,26,24,0.06); border-radius:12px; padding:11px 6px; text-align:center; }
-.qchip span{ display:block; font-size:8.3px; letter-spacing:.03em; text-transform:uppercase; color:rgba(27,26,24,0.42); }
-.qchip b{ display:block; font-family:'Fraunces',serif; font-size:0.92rem; margin-top:5px; color:var(--ink); }
-
-/* ── donut (asset allocation) ── */
-.donut{ width:132px; height:132px; border-radius:50%; margin:6px auto 18px; position:relative; }
-.donut-hole{ position:absolute; inset:16px; border-radius:50%; background:#1B1A18; }
-.donut-center{ position:absolute; inset:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
-
-/* ── generic mini row (holdings, legend) — adapts to card theme ── */
-.mini-row{ display:flex; justify-content:space-between; align-items:center; padding:8px 0; font-size:11.5px; border-top:1px solid transparent; }
-.mini-row:first-child{ border-top:none; }
-.mini-row b{ font-family:'Fraunces',serif; font-weight:500; }
-.stat-card.dark .mini-row{ border-top-color:rgba(250,248,245,0.1); color:rgba(250,248,245,0.75); }
-.stat-card.dark .mini-row b{ color:var(--ivory); }
-.stat-card.light .mini-row{ border-top-color:rgba(27,26,24,0.08); color:rgba(27,26,24,0.68); }
-.stat-card.light .mini-row b{ color:var(--ink); }
-.dl-dot{ display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:8px; flex-shrink:0; }
-
-/* ── ratio grid (Analytics) ── */
-.ratio-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.ratio-card{ background:#EFE9DC; border:1px solid rgba(27,26,24,0.06); border-radius:16px; padding:14px 10px 16px; text-align:center; }
-.ratio-card .gauge{ width:56px; height:56px; margin:0 auto; }
-.ratio-val{ font-family:'Fraunces',serif; font-size:1.1rem; margin-top:6px; color:var(--ink); }
-.ratio-label{ font-size:9.3px; letter-spacing:.02em; color:rgba(27,26,24,0.5); margin-top:2px; }
-
-/* ── AI insight carousel — swipe, don't scroll forever ── */
-.insight-scroll{ display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; margin:0 -20px; padding:2px 20px 6px; scrollbar-width:none; -ms-overflow-style:none; }
-.insight-scroll::-webkit-scrollbar{ display:none; }
-.insight-card{ scroll-snap-align:start; flex:0 0 calc(100% - 40px); background:#EFE9DC; border:1px solid rgba(27,26,24,0.06); border-radius:16px; padding:16px; }
-.insight-tag{ font-size:9.3px; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); font-weight:600; }
-.insight-text{ font-size:11.5px; line-height:1.6; color:rgba(27,26,24,0.7); margin-top:8px; }
-
-/* ── goal mini rows (Goals) ── */
-.goal-mini{ padding:11px 0; }
-.goal-mini:not(:first-child){ margin-top:2px; }
-.goal-mini-top{ display:flex; justify-content:space-between; font-size:11.5px; color:rgba(27,26,24,0.68); margin-bottom:8px; }
-.goal-mini-top b{ font-family:'Fraunces',serif; color:var(--ink); font-weight:500; }
-
-/* ── advisor view — private banking, not a chat thread ── */
-.a-panel{ display:flex; flex-direction:column; gap:14px; }
-.a-card{
-  background:rgba(27,26,24,0.04); border-radius:16px; padding:16px 18px;
-  transition:opacity .6s var(--breathe), transform .6s var(--breathe), max-height .6s var(--breathe), padding .6s var(--breathe);
-}
-.a-label{ font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); font-weight:600; }
-.a-val{ font-family:'Fraunces',serif; font-size:1.1rem; color:var(--ink); margin-top:7px; }
-.a-text{ font-size:12px; line-height:1.6; color:rgba(27,26,24,0.7); margin-top:7px; }
-.a-chip{
-  align-self:flex-start; margin-top:2px; font-size:10.5px; padding:8px 13px; border-radius:100px;
-  border:1px solid rgba(27,26,24,0.14); color:rgba(27,26,24,0.6); cursor:pointer;
-  transition:border-color .5s var(--breathe), color .5s var(--breathe), opacity .5s var(--breathe);
-}
-.a-chip:hover{ border-color:var(--gold); color:var(--ink); }
-.a-chip.spent{ opacity:0; pointer-events:none; height:0; margin:0; overflow:hidden; }
-.a-reveal{ opacity:0; transform:translateY(6px); max-height:0; padding-top:0; padding-bottom:0; overflow:hidden; }
-.a-reveal.shown{ opacity:1; transform:translateY(0); max-height:120px; padding:13px 15px; }
-
-/* ── tab bar ── */
-.d-tabs{ display:flex; justify-content:space-around; padding:16px 4px 24px; border-top:1px solid rgba(27,26,24,0.06); }
-.d-tab{
-  background:none; border:none; font-family:'Inter',sans-serif; font-size:9px; letter-spacing:.04em; text-transform:uppercase;
-  color:rgba(27,26,24,0.32); cursor:pointer; padding:4px 2px; position:relative; transition:color .5s var(--breathe);
-}
-.d-tab.active{ color:var(--ink); }
-.d-tab.active::after{ content:''; position:absolute; left:50%; bottom:-8px; width:3px; height:3px; border-radius:50%; background:var(--gold); transform:translateX(-50%); }
-
-/* ══════════════════════════════════════════════════════════
-   FRAGMENTATION — scattered names, no icons, no glow-dots
-══════════════════════════════════════════════════════════ */
-.scatter{ position:relative; width:100%; height:300px; margin-top:70px; }
-.sword{
-  position:absolute; top:50%; left:50%; font-family:'Inter',sans-serif; font-size:0.92rem; font-weight:500;
-  color:var(--faint); white-space:nowrap;
-  transform:translate(-50%,-50%) translate(var(--x), var(--y));
-  transition:opacity 1.4s var(--breathe), transform 1.4s var(--breathe), color .8s;
+@media (max-width:560px){
+  .orbit-stage{transform:scale(0.86); margin:-10px auto -20px;}
 }
 
-/* ══════════════════════════════════════════════════════════
-   CONVERGENCE — the signature moment
-══════════════════════════════════════════════════════════ */
-.converge-stage{ position:relative; width:100%; height:300px; margin-top:70px; }
-.cword{
-  position:absolute; top:50%; left:50%; font-family:'Inter',sans-serif; font-size:0.92rem; font-weight:500;
-  color:var(--faint); white-space:nowrap;
-  transform:translate(-50%,-50%) translate(var(--x), var(--y)); opacity:.85;
-  transition:transform 2.1s var(--breathe), opacity 1.6s var(--breathe);
-}
-.converge-stage.done .cword{ transform:translate(-50%,-50%) translate(0,0); opacity:0; }
-.cring{
-  position:absolute; top:50%; left:50%; width:1px; height:1px; border-radius:50%;
-  border:1px solid var(--gold-soft); transform:translate(-50%,-50%); opacity:0;
-  transition:width 1.5s .7s var(--breathe), height 1.5s .7s var(--breathe), opacity 1.2s .7s var(--breathe);
-}
-.converge-stage.done .cring{ width:64px; height:64px; opacity:1; }
-.cdot{
-  position:absolute; top:50%; left:50%; width:6px; height:6px; border-radius:50%; background:var(--gold);
-  transform:translate(-50%,-50%) scale(0); transition:transform .9s 1.3s var(--breathe);
-}
-.converge-stage.done .cdot{ transform:translate(-50%,-50%) scale(1); }
+/* ============ MARQUEE STRIP ============ */
+.strip{background:var(--navy); padding:16px 0; overflow:hidden;}
+.strip-track{display:flex; gap:56px; white-space:nowrap; animation:scroll-x 26s linear infinite; width:max-content;}
+.strip-track span{color:rgba(255,255,255,0.55); font-size:13px; font-weight:600; letter-spacing:.05em;}
+@keyframes scroll-x{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
-/* ══════════════════════════════════════════════════════════
-   CLARITY — the number reveals itself
-══════════════════════════════════════════════════════════ */
-.clarity-num{
-  font-family:'Fraunces',serif; font-weight:440; font-size:clamp(2.8rem,7vw,5.4rem);
-  margin-top:56px; letter-spacing:-0.01em; color:var(--fg);
+/* ============ LIFE GOALS ============ */
+.goals-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+@media (max-width:900px){.goals-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:560px){.goals-grid{grid-template-columns:1fr;}}
+.lg-card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md);
+  padding:30px 26px; transition:transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s;
+  position:relative; overflow:hidden;
 }
-.clarity-cap{ margin-top:16px; font-size:0.95rem; color:var(--faint); }
-
-/* ══════════════════════════════════════════════════════════
-   ADVISOR — a private banking review, not a chat thread
-══════════════════════════════════════════════════════════ */
-.advisor-grid{
-  max-width:920px; margin:70px auto 0; text-align:left;
-  display:grid; grid-template-columns:repeat(3,1fr); gap:16px 20px;
+.lg-card::before{
+  content:''; position:absolute; inset:0; opacity:0; transition:opacity .4s;
+  background:radial-gradient(220px 140px at 85% -10%, rgba(52,199,149,0.16), transparent 70%);
 }
-.ag-item{
-  padding:26px 24px; background:var(--ivory-2); border-radius:18px;
-  box-shadow:0 10px 26px -18px rgba(27,26,24,0.18);
-  transition:transform .5s var(--breathe), box-shadow .5s var(--breathe);
-  display:flex; gap:16px; align-items:flex-start;
+.lg-card:hover{transform:translateY(-6px); box-shadow:var(--shadow-md); border-color:rgba(14,124,90,0.25);}
+.lg-card:hover::before{opacity:1;}
+.lg-icon{
+  width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+  font-size:24px; background:linear-gradient(150deg, rgba(10,31,68,0.06), rgba(14,124,90,0.09));
+  margin-bottom:20px; transition:transform .4s var(--ease);
 }
-.ag-item:hover{ transform:translateY(-3px); box-shadow:0 16px 34px -18px rgba(27,26,24,0.24); }
-.ag-item .ag-gauge{ width:44px; height:44px; flex-shrink:0; margin-top:2px; }
-.ag-label{ display:block; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
-.ag-item p{ font-size:0.98rem; line-height:1.6; color:var(--dim); max-width:280px; }
-@media (max-width:860px){
-  .advisor-grid{ grid-template-columns:1fr; gap:14px; }
+.lg-card:hover .lg-icon{transform:scale(1.08) rotate(-4deg);}
+.lg-card h3{font-size:19px; margin-bottom:8px;}
+.lg-card p{font-size:14.5px; color:var(--ink-soft); line-height:1.55;}
+
+/* ============ TIMELINE (How it works) ============ */
+.timeline{position:relative;}
+.tl-item{
+  display:grid; grid-template-columns:120px 1fr; gap:36px;
+  padding:44px 0; border-top:1px solid var(--line); position:relative;
 }
-
-/* ══════════════════════════════════════════════════════════
-   PRIVATE ACCESS / INVITATION
-══════════════════════════════════════════════════════════ */
-.benefit-list{
-  max-width:520px; margin:44px auto 0; display:flex; flex-wrap:wrap;
-  justify-content:center; gap:14px 34px;
+.tl-item:first-child{border-top:1px solid var(--line);}
+.tl-num{
+  font-family:'Manrope'; font-weight:800; font-size:15px; color:var(--emerald-2);
+  display:flex; align-items:flex-start; gap:10px; padding-top:4px;
 }
-.benefit-row{ display:flex; align-items:center; gap:9px; font-size:0.9rem; color:var(--dim); }
-.benefit-row::before{ content:''; width:4px; height:4px; border-radius:50%; background:var(--gold); flex-shrink:0; }
-
-.invite-card{ max-width:420px; margin:56px auto 0; position:relative; min-height:300px; }
-.form-progress{ display:flex; gap:7px; justify-content:center; margin-bottom:48px; }
-.form-progress i{ width:22px; height:1px; background:var(--hair); transition:background .8s var(--ease); }
-.form-progress i.done{ background:var(--gold); }
-
-.form-step{ display:none; }
-.form-step.active{ display:block; animation:rise 1s var(--breathe); }
-.form-step .step-label{ font-size:12px; letter-spacing:.05em; color:var(--faint); margin-bottom:20px; }
-.form-step input{
-  width:100%; background:transparent; border:none; border-bottom:1px solid var(--hair);
-  color:var(--fg); font-family:'Fraunces',serif; font-size:1.7rem; text-align:center; padding:12px 0 16px;
-  outline:none; transition:border-color .5s var(--ease);
+.tl-num .n{
+  font-size:13px; width:30px; height:30px; border-radius:9px; background:rgba(14,124,90,0.1);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
-.form-step input::placeholder{ color:var(--faint); font-style:italic; }
-.form-step input:focus{ border-color:var(--gold); }
-.form-err{ font-size:12px; color:#A85C4C; height:0; overflow:hidden; opacity:0; margin-top:12px; transition:.4s; }
-.form-err.show{ height:14px; opacity:1; }
-.step-actions{ display:flex; justify-content:center; align-items:center; gap:20px; margin-top:36px; }
-.step-actions .btn{ padding:14px 26px; font-size:0.86rem; }
-.back-link{ font-size:12px; color:var(--faint); cursor:pointer; transition:color .4s; }
-.back-link:hover{ color:var(--fg); }
-
-.success{
-  position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
-  opacity:0; pointer-events:none; transition:opacity 1s var(--breathe);
+.tl-body h3{font-size:23px; margin-bottom:10px;}
+.tl-body > p{color:var(--ink-soft); font-size:15.5px; line-height:1.6; margin-bottom:22px; max-width:640px;}
+.chip-row{display:flex; flex-wrap:wrap; gap:9px;}
+.chip{
+  font-size:13px; font-weight:600; color:var(--navy-soft); background:rgba(10,31,68,0.045);
+  border:1px solid var(--line); padding:8px 14px; border-radius:100px;
 }
-.success.show{ opacity:1; pointer-events:all; }
-.ring-mark{ width:52px; height:52px; border-radius:50%; border:1px solid var(--gold-soft); display:flex; align-items:center; justify-content:center; }
-.ring-mark svg{ width:20px; height:20px; }
-.check{ stroke:var(--gold); stroke-width:1.6; fill:none; stroke-dasharray:38; stroke-dashoffset:38; stroke-linecap:round; transition:stroke-dashoffset .9s .3s var(--ease); }
-.success.show .check{ stroke-dashoffset:0; }
-.success h3{ font-family:'Fraunces',serif; font-weight:440; font-size:1.5rem; }
-.success p{ font-size:0.9rem; color:var(--faint); max-width:280px; text-align:center; }
-
-.fine{ margin-top:34px; font-size:12px; color:var(--faint); }
-
-/* ══════════════════════════════════════════════════════════
-   FOOTER
-══════════════════════════════════════════════════════════ */
-footer{ padding:56px 0 36px; }
-.foot-inner{ display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:24px; }
-.foot-links{ display:flex; gap:28px; list-style:none; }
-.foot-links a{ font-size:0.85rem; color:var(--dim); transition:color .5s; }
-.foot-links a:hover{ color:var(--gold); }
-.foot-meta{ font-size:11px; color:var(--faint); margin-top:34px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
-
-/* ══════════════════════════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════════════════════════ */
-@media (max-width:860px){
-  .wrap{ padding-left:26px; padding-right:26px; }
-  nav{ padding:22px 26px; }
-  nav.scrolled{ padding:14px 26px; }
-  .hero{ padding:140px 26px 60px; }
-  section{ padding:88px 0; }
-  .scatter, .converge-stage{ height:230px; }
-  .stage{ margin-top:64px; }
+@media (max-width:760px){
+  .tl-item{grid-template-columns:1fr; gap:14px;}
 }
 
-@media (max-width:640px){
-  .ratio-card .gauge{ width:60px; height:60px; }
-  .ratio-val{ font-size:1.18rem; }
-  .mini-row, .insight-text, .goal-mini-top{ font-size:12px; }
-  .wrap{ padding-left:22px; padding-right:22px; }
-  nav{ padding:18px 20px; }
-  nav.scrolled{ padding:13px 20px; }
-  .wordmark{ font-size:0.94rem; }
-  .nav-cta{ font-size:0.72rem; padding:9px 15px; }
+/* portfolio strips inside step 4 */
+.portfolio-set{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:6px;}
+@media (max-width:760px){.portfolio-set{grid-template-columns:1fr;}}
+.pf-card{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px;}
+.pf-head{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+.pf-head .ic{width:34px; height:34px; border-radius:9px; background:rgba(10,31,68,0.06); display:flex; align-items:center; justify-content:center; font-size:16px;}
+.pf-head b{font-size:14.5px; color:var(--navy);}
+.pf-bar{display:flex; height:9px; border-radius:6px; overflow:hidden; margin-bottom:10px;}
+.pf-bar span{height:100%;}
+.pf-legend{display:flex; flex-wrap:wrap; gap:8px 12px; font-size:11.5px; color:var(--ink-soft); margin-bottom:10px;}
+.pf-legend i{width:8px; height:8px; border-radius:2px; display:inline-block; margin-right:5px;}
+.pf-why{font-size:12.5px; color:var(--ink-faint); line-height:1.5; padding-top:10px; border-top:1px dashed var(--line);}
 
-  .hero{ padding:118px 20px 50px; }
-  .hero-sub{ font-size:1rem; max-width:340px; }
-  .hero-actions .btn{ width:100%; max-width:280px; justify-content:center; }
-
-  section{ padding:68px 0; }
-  h2{ font-size:clamp(1.9rem,7vw,2.6rem); }
-  .lede{ font-size:0.98rem; max-width:340px; }
-  .mark{ margin-bottom:22px; }
-
-  .device{ width:min(320px, 80vw); }
-  .device-frame{ border-radius:38px; }
-  .device-screen{ border-radius:31px; }
-  .stage{ margin-top:48px; }
-  .d-body{ padding:22px 17px 0; }
-  .d-view{ inset:22px 17px auto 17px; }
-  .d-tabs{ padding:14px 2px 20px; }
-  .d-tab{ font-size:9.5px; }
-
-  .scatter, .converge-stage{ height:190px; --fs:0.72; }
-
-  .clarity-num{ font-size:clamp(2.1rem,11vw,3.2rem); }
-
-  .advisor-grid{ margin-top:48px; gap:12px; }
-  .ag-item{ padding:20px 18px; }
-  .ag-item p{ max-width:100%; }
-
-  .benefit-list{ gap:12px 20px; margin-top:34px; }
-  .benefit-row{ font-size:0.85rem; }
-
-  .invite-card{ margin-top:44px; }
-  .form-step input{ font-size:1.4rem; }
-  .step-actions{ flex-wrap:wrap; gap:14px; }
-  .step-actions .btn{ order:1; width:100%; justify-content:center; }
-  .back-link{ order:2; width:100%; text-align:center; }
-
-  .foot-inner{ align-items:flex-start; flex-direction:column; }
-  .foot-links{ gap:20px; flex-wrap:wrap; }
-  .foot-meta{ flex-direction:column; gap:6px; }
+/* ============ DASHBOARD PREVIEW ============ */
+.dash-panel{
+  background:linear-gradient(155deg, var(--navy) 0%, #0d2550 55%, var(--emerald-2) 145%);
+  border-radius:32px; padding:48px 40px; position:relative; overflow:hidden;
+  box-shadow:var(--shadow-lg);
 }
-
-@media (max-width:360px){
-  .device{ width:86vw; }
-  .d-body{ padding:20px 15px 0; }
-  .d-view{ inset:20px 15px auto 15px; }
-  .ratio-grid{ gap:9px; }
-  .quick-chips{ gap:6px; }
+.dash-panel::before{
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(500px 300px at 90% 0%, rgba(52,199,149,0.25), transparent 60%);
+  pointer-events:none;
 }
-
-@media (hover:none){
-  .device{ transform:none !important; }
+.dash-stats{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; position:relative;}
+@media (max-width:900px){.dash-stats{grid-template-columns:repeat(2,1fr);}}
+.dstat{
+  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:18px; padding:20px;
+  backdrop-filter:blur(6px);
 }
+.dstat .lbl{font-size:12px; color:rgba(255,255,255,0.55); font-weight:600; margin-bottom:8px;}
+.dstat .val{font-family:'Manrope'; font-weight:800; font-size:24px; color:#fff;}
+.dstat .sub{font-size:12px; color:var(--emerald-light); font-weight:700; margin-top:6px;}
 
-@media (prefers-reduced-motion:reduce){
-  *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+.dash-lower{display:grid; grid-template-columns:1.3fr 1fr; gap:18px; position:relative;}
+@media (max-width:900px){.dash-lower{grid-template-columns:1fr;}}
+.dpanel{background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:22px; backdrop-filter:blur(6px);}
+.dpanel h4{color:#fff; font-size:14.5px; font-weight:700; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;}
+.dpanel h4 span{font-size:11.5px; color:rgba(255,255,255,0.5); font-weight:600;}
+.chart-wrap{height:140px;}
+.alloc-list{display:flex; flex-direction:column; gap:12px;}
+.alloc-row{display:flex; align-items:center; gap:10px; font-size:13px; color:rgba(255,255,255,0.85);}
+.alloc-row .dotc{width:9px; height:9px; border-radius:3px; flex-shrink:0;}
+.alloc-row .amt{margin-left:auto; font-weight:700; color:#fff;}
+.dash-goalrow{display:flex; flex-direction:column; gap:14px;}
+.dg-item{display:flex; align-items:center; gap:14px;}
+.dg-item .ring{width:40px; height:40px;}
+.dg-item .ring::after{width:30px; height:30px;}
+.dg-info{flex:1; min-width:0;}
+.dg-info b{font-size:13.5px; color:#fff; display:block;}
+.dg-info span{font-size:11.5px; color:rgba(255,255,255,0.55);}
+.dg-pct{font-family:'Manrope'; font-weight:800; color:var(--emerald-light); font-size:14px;}
+
+/* ============ FAMILY SECTION ============ */
+.family-wrap{display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;}
+@media (max-width:920px){.family-wrap{grid-template-columns:1fr; gap:44px;}}
+.member-tree{position:relative; padding:20px 0;}
+.member-node{
+  display:flex; align-items:center; gap:14px; background:var(--panel); border:1px solid var(--line);
+  border-radius:16px; padding:16px 18px; box-shadow:var(--shadow-sm); margin-bottom:14px;
+  transition:transform .35s var(--ease);
 }
+.member-node:hover{transform:translateX(6px);}
+.member-avatar{
+  width:44px; height:44px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-family:'Manrope'; font-weight:800; color:#fff; font-size:15px;
+}
+.member-info b{font-size:14.5px; color:var(--navy); display:block;}
+.member-info span{font-size:12.5px; color:var(--ink-faint);}
+.member-goals{margin-left:auto; display:flex; gap:6px;}
+.member-goals i{width:8px; height:8px; border-radius:50%; background:rgba(14,124,90,0.35);}
+.member-goals i.done{background:var(--emerald);}
+.member-node.indent{margin-left:32px;}
+
+/* ============ GOAL CARDS SHOWCASE ============ */
+.goalcards-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+@media (max-width:980px){.goalcards-grid{grid-template-columns:1fr; max-width:420px; margin:0 auto;}}
+.gcard{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md);
+  padding:26px; box-shadow:var(--shadow-sm); transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.gcard:hover{transform:translateY(-6px); box-shadow:var(--shadow-md);}
+.gcard-top{display:flex; align-items:center; gap:14px; margin-bottom:20px;}
+.gcard-top .icon{width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:22px; background:rgba(14,124,90,0.09);}
+.gcard-top b{font-size:16.5px; color:var(--navy); display:block;}
+.gcard-top span{font-size:12.5px; color:var(--ink-faint);}
+.gcard-ring{
+  width:104px; height:104px; border-radius:50%; margin:6px auto 18px;
+  display:flex; align-items:center; justify-content:center;
+  background:conic-gradient(var(--emerald) calc(var(--p)*1%), rgba(10,31,68,0.08) 0);
+}
+.gcard-ring::after{content:attr(data-p); width:82px; height:82px; border-radius:50%; background:#fff;
+  display:flex; align-items:center; justify-content:center; font-family:'Manrope'; font-weight:800; font-size:20px; color:var(--navy);}
+.gcard-rows{display:flex; flex-direction:column; gap:10px; margin-bottom:18px;}
+.gcard-row{display:flex; justify-content:space-between; font-size:13.5px; padding-bottom:10px; border-bottom:1px dashed var(--line);}
+.gcard-row span:first-child{color:var(--ink-faint);}
+.gcard-row span:last-child{font-weight:700; color:var(--navy);}
+.gcard-portfolio{font-size:12.5px; color:var(--emerald-2); background:rgba(14,124,90,0.08); padding:9px 12px; border-radius:10px; margin-bottom:16px; font-weight:600;}
+.gcard .btn{width:100%; padding:12px; font-size:14px;}
+
+/* ============ COMPARISON ============ */
+.compare-wrap{display:grid; grid-template-columns:1fr 1fr; gap:0; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-md);}
+@media (max-width:760px){.compare-wrap{grid-template-columns:1fr;}}
+.compare-col{padding:44px 38px;}
+.compare-col.old{background:#F1F2EE; color:var(--ink-soft);}
+.compare-col.new{background:linear-gradient(160deg, var(--navy) 0%, var(--emerald-2) 150%); color:#fff;}
+.compare-col h3{font-size:20px; margin-bottom:26px; display:flex; align-items:center; gap:10px;}
+.compare-col.old h3{color:var(--navy);}
+.compare-col.new h3{color:#fff;}
+.compare-list{list-style:none; display:flex; flex-direction:column; gap:16px;}
+.compare-list li{display:flex; align-items:flex-start; gap:12px; font-size:15px; line-height:1.5;}
+.compare-list .ico{flex-shrink:0; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; margin-top:1px;}
+.compare-col.old .ico{background:rgba(10,31,68,0.08); color:var(--ink-soft);}
+.compare-col.new .ico{background:rgba(255,255,255,0.16); color:#fff;}
+
+/* ============ FEATURES ============ */
+.feat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+@media (max-width:980px){.feat-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:560px){.feat-grid{grid-template-columns:1fr;}}
+.feat-card{
+  border:1px solid var(--line); border-radius:16px; padding:22px; background:var(--panel);
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s;
+}
+.feat-card:hover{transform:translateY(-4px); box-shadow:var(--shadow-sm); border-color:rgba(14,124,90,0.3);}
+.feat-card .fi{font-size:20px; margin-bottom:14px; width:40px; height:40px; border-radius:11px; background:rgba(10,31,68,0.05); display:flex; align-items:center; justify-content:center;}
+.feat-card b{font-size:14.5px; color:var(--navy); display:block; line-height:1.4;}
+
+/* ============ INSIGHTS ============ */
+.insights-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px;}
+@media (max-width:760px){.insights-grid{grid-template-columns:1fr;}}
+.insight-card{
+  display:flex; gap:16px; align-items:flex-start; background:var(--panel); border:1px solid var(--line);
+  border-radius:16px; padding:20px 22px; box-shadow:var(--shadow-sm);
+}
+.insight-card .ii{width:38px; height:38px; border-radius:11px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:17px;}
+.insight-card p{font-size:14.5px; color:var(--navy-soft); line-height:1.55; font-weight:600;}
+.insight-card .tag{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); font-weight:700; margin-bottom:5px;}
+
+/* ============ TRUST BADGES ============ */
+.badge-row{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+@media (max-width:760px){.badge-row{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:480px){.badge-row{grid-template-columns:1fr;}}
+.badge{
+  display:flex; align-items:center; gap:14px; padding:20px; border:1px solid var(--line); border-radius:16px; background:var(--panel);
+}
+.badge .bi{width:42px; height:42px; border-radius:11px; background:rgba(14,124,90,0.09); display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0;}
+.badge span{font-size:13.5px; font-weight:700; color:var(--navy); line-height:1.35;}
+
+/* ============ TESTIMONIALS ============ */
+.testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+@media (max-width:900px){.testi-grid{grid-template-columns:1fr; max-width:520px; margin:0 auto;}}
+.testi-card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md); padding:28px; box-shadow:var(--shadow-sm);}
+.stars{color:var(--gold); font-size:14px; margin-bottom:16px; letter-spacing:2px;}
+.testi-card p{font-size:15px; line-height:1.65; color:var(--ink); margin-bottom:22px;}
+.testi-person{display:flex; align-items:center; gap:12px;}
+.testi-avatar{width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Manrope'; font-weight:800; font-size:14px;}
+.testi-person b{font-size:14px; color:var(--navy); display:block;}
+.testi-person span{font-size:12px; color:var(--ink-faint);}
+
+/* ============ FINAL CTA ============ */
+.final-cta{
+  background:linear-gradient(150deg, var(--navy) 0%, #0d2550 55%, var(--emerald-2) 150%);
+  border-radius:36px; padding:88px 60px; text-align:center; position:relative; overflow:hidden;
+}
+.final-cta::before{content:''; position:absolute; inset:0; background:radial-gradient(600px 300px at 50% 0%, rgba(52,199,149,0.22), transparent 60%);}
+.final-cta h2{color:#fff; font-size:clamp(30px,4.4vw,48px); margin-bottom:18px; position:relative;}
+.final-cta p{color:rgba(255,255,255,0.72); max-width:600px; margin:0 auto 38px; font-size:17px; line-height:1.6; position:relative;}
+.final-cta .hero-actions{justify-content:center; position:relative;}
+@media (max-width:640px){.final-cta{padding:60px 26px;}}
+
+/* ============ FOOTER ============ */
+footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;}
+.foot-grid{display:grid; grid-template-columns:1.6fr repeat(4,1fr); gap:32px; margin-bottom:56px;}
+@media (max-width:900px){.foot-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:560px){.foot-grid{grid-template-columns:1fr;}}
+.foot-brand .logo{color:#fff;}
+.foot-brand p{font-size:14px; line-height:1.6; margin-top:16px; max-width:280px; color:rgba(255,255,255,0.5);}
+.foot-col h5{color:#fff; font-size:13px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:18px; font-weight:700;}
+.foot-col ul{list-style:none; display:flex; flex-direction:column; gap:12px;}
+.foot-col a{font-size:14px; transition:color .25s;}
+.foot-col a:hover{color:#fff;}
+.foot-bottom{display:flex; justify-content:space-between; align-items:center; padding-top:28px; border-top:1px solid rgba(255,255,255,0.1); font-size:13px; flex-wrap:wrap; gap:14px;}
+.foot-social{display:flex; gap:12px;}
+.foot-social a{width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; font-size:14px; transition:background .25s;}
+.foot-social a:hover{background:rgba(255,255,255,0.16);}
+
+/* mobile menu */
+.mobile-menu{
+  position:fixed; inset:0; background:var(--bg); z-index:200; padding:26px 24px;
+  display:flex; flex-direction:column; gap:6px; transform:translateY(-100%); transition:transform .45s var(--ease);
+}
+.mobile-menu.open{transform:translateY(0);}
+.mobile-menu .mtop{display:flex; justify-content:space-between; align-items:center; margin-bottom:36px;}
+.mobile-menu a{font-size:22px; font-weight:700; color:var(--navy); padding:14px 0; border-bottom:1px solid var(--line); font-family:'Manrope';}
+.mobile-menu .btn{margin-top:28px;}
+.close-btn{background:none; border:none; font-size:26px; color:var(--navy); line-height:1;}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════ NAV ═══════════════ -->
-<nav id="nav">
-  <a href="#" class="wordmark">Yours <span class="w-wealth">Wealth</span></a>
-  <button class="btn btn-ghost nav-cta" id="navJoin">Request Access</button>
-</nav>
-
-<!-- ═══════════════ HERO ═══════════════ -->
-<section class="hero theme-ink" id="home">
-  <h1 class="serif">Your financial life.<br>Finally, <em>understood.</em></h1>
-  <p class="hero-sub">Investments, insurance, retirement, tax and legacy — brought into one clear plan, guided by a human advisor who works for you.</p>
-  <div class="hero-actions">
-    <button class="btn btn-primary" id="heroJoin">Request Private Access</button>
-  </div>
-
-  <div class="stage">
-    <div class="device" id="heroDevice">
-      <div class="device-frame">
-        <div class="device-screen">
-          <div class="island"></div>
-          <div class="d-status"><span>9:41</span><span>Yours</span></div>
-
-          <div class="d-body">
-            <!-- Overview -->
-            <div class="d-view active" id="dv-overview">
-              <div class="wallet" id="walletCard">
-                <div class="wcard wc-3"></div>
-                <div class="wcard wc-2">
-                  <div class="wc-label">Net Worth Growth (QoQ)</div>
-                  <div class="wc-val" style="color:var(--gold);">+₹1,84,200 <span style="font-size:0.72rem;color:rgba(27,26,24,0.4);">▲ 4.6%</span></div>
-                </div>
-                <div class="wcard wc-1">
-                  <div class="wc-row-top">
-                    <div>
-                      <div class="wc-label">Net Worth</div>
-                      <div class="wc-val">₹42,18,650</div>
-                    </div>
-                    <div class="wc-chevron"></div>
-                  </div>
-                  <div class="wc-tag">Tap to see what it's made of</div>
-                  <div class="wc-breakdown">
-                    <div class="wc-b-row"><span>Investments</span><b>₹21,04,650</b></div>
-                    <div class="wc-b-row"><span>Insurance</span><b>₹5,10,000</b></div>
-                    <div class="wc-b-row"><span>Retirement Savings</span><b>₹8,52,300</b></div>
-                    <div class="wc-b-row"><span>Fixed Deposits</span><b>₹4,36,700</b></div>
-                    <div class="wc-b-row"><span>Gold &amp; Bonds</span><b>₹3,15,000</b></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="stat-card dark" style="margin-top:14px; display:flex; gap:16px; align-items:center; cursor:default;">
-                <svg class="gauge" viewBox="0 0 80 80" style="width:64px;height:64px;flex-shrink:0;">
-                  <circle class="g-track" cx="40" cy="40" r="32"/>
-                  <circle class="g-fill" cx="40" cy="40" r="32" data-pct="82" style="stroke:var(--gold)"/>
-                </svg>
-                <div>
-                  <div class="stat-label">Financial Health Score</div>
-                  <div class="stat-value" style="font-size:1.35rem;">82 <span style="font-size:0.72rem;color:rgba(250,248,245,0.4);">/ 100</span></div>
-                  <div style="font-size:10.5px;color:var(--gold);margin-top:5px;">▲ 6 pts since last review</div>
-                </div>
-              </div>
-
-              <div class="quick-chips">
-                <div class="qchip"><span>Assets</span><b>₹46.8L</b></div>
-                <div class="qchip"><span>Liabilities</span><b>₹4.6L</b></div>
-                <div class="qchip"><span>Emergency Fund</span><b>91%</b></div>
-              </div>
-            </div>
-
-            <!-- Portfolio -->
-            <div class="d-view" id="dv-portfolio">
-              <div class="stat-stack">
-                <div class="stat-card dark" style="cursor:default;">
-                  <div class="stat-label">Asset Allocation</div>
-                  <div class="donut" style="background:conic-gradient(#C8A246 0% 42%, #E4C468 42% 62%, #8A6D34 62% 76%, #59503A 76% 92%, #4A4238 92% 100%);">
-                    <div class="donut-hole"></div>
-                    <div class="donut-center">
-                      <div style="font-family:'Fraunces',serif;font-size:1.02rem;color:var(--ivory);">₹46.8L</div>
-                      <div style="font-size:8.5px;color:rgba(250,248,245,0.5);letter-spacing:.04em;">TOTAL ASSETS</div>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="mini-row"><span><span class="dl-dot" style="background:#C8A246"></span>Equity</span><b>42%</b></div>
-                    <div class="mini-row"><span><span class="dl-dot" style="background:#E4C468"></span>Retirement</span><b>20%</b></div>
-                    <div class="mini-row"><span><span class="dl-dot" style="background:#8A6D34"></span>Insurance &amp; Gold</span><b>14%</b></div>
-                    <div class="mini-row"><span><span class="dl-dot" style="background:#59503A"></span>Fixed Deposits</span><b>16%</b></div>
-                    <div class="mini-row"><span><span class="dl-dot" style="background:#4A4238"></span>Cash</span><b>8%</b></div>
-                  </div>
-                </div>
-
-                <div class="stat-card light">
-                  <div class="stat-label">Top Holdings</div>
-                  <div style="margin-top:4px;">
-                    <div class="mini-row"><span>Axis Bluechip Fund</span><b>18%</b></div>
-                    <div class="mini-row"><span>HDFC Retirement Fund</span><b>14%</b></div>
-                    <div class="mini-row"><span>Mirae Asset Large Cap</span><b>11%</b></div>
-                  </div>
-                </div>
-
-                <div class="stat-card light">
-                  <div class="stat-label">Fund Overlap</div>
-                  <div class="stat-value">38%</div>
-                  <div class="stat-sub">Axis Bluechip and Mirae Large Cap share over a third of their holdings — worth consolidating.</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Analytics -->
-            <div class="d-view" id="dv-analytics">
-              <div class="stat-stack">
-                <div class="ratio-grid">
-                  <div class="ratio-card">
-                    <svg class="gauge" viewBox="0 0 80 80"><circle class="g-track" cx="40" cy="40" r="32"/><circle class="g-fill" cx="40" cy="40" r="32" data-pct="34" style="stroke:var(--gold)"/></svg>
-                    <div class="ratio-val">34%</div>
-                    <div class="ratio-label">Savings Ratio</div>
-                  </div>
-                  <div class="ratio-card">
-                    <svg class="gauge" viewBox="0 0 80 80"><circle class="g-track" cx="40" cy="40" r="32"/><circle class="g-fill" cx="40" cy="40" r="32" data-pct="51" style="stroke:var(--gold)"/></svg>
-                    <div class="ratio-val">51%</div>
-                    <div class="ratio-label">Investment Ratio</div>
-                  </div>
-                  <div class="ratio-card">
-                    <svg class="gauge" viewBox="0 0 80 80"><circle class="g-track" cx="40" cy="40" r="32"/><circle class="g-fill" cx="40" cy="40" r="32" data-pct="18" style="stroke:#8A6D34"/></svg>
-                    <div class="ratio-val">18%</div>
-                    <div class="ratio-label">Debt-to-Income</div>
-                  </div>
-                  <div class="ratio-card">
-                    <svg class="gauge" viewBox="0 0 80 80"><circle class="g-track" cx="40" cy="40" r="32"/><circle class="g-fill" cx="40" cy="40" r="32" data-pct="80" style="stroke:var(--gold)"/></svg>
-                    <div class="ratio-val">1.6x</div>
-                    <div class="ratio-label">Liquidity Ratio</div>
-                  </div>
-                </div>
-
-                <div class="stat-card dark" id="divCard">
-                  <div class="stat-row">
-                    <div>
-                      <div class="stat-label">Diversification</div>
-                      <div class="stat-value">Balanced</div>
-                    </div>
-                    <div class="stat-chevron"></div>
-                  </div>
-                  <div class="stat-tag">Tap to see the split</div>
-                  <div class="stat-detail">
-                    <div class="stat-detail-row"><span>Investments</span><b>50%</b></div>
-                    <div class="stat-detail-row"><span>Retirement</span><b>20%</b></div>
-                    <div class="stat-detail-row"><span>Insurance, FDs &amp; gold</span><b>30%</b></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="stat-label" style="color:rgba(27,26,24,0.42); margin-bottom:10px;">AI Insights</div>
-                  <div class="insight-scroll">
-                    <div class="insight-card"><div class="insight-tag">Portfolio</div><div class="insight-text">Two of your large-cap funds share 38% of holdings — consolidating could sharpen returns.</div></div>
-                    <div class="insight-card"><div class="insight-tag">Retirement</div><div class="insight-text">Raising your SIP by ₹5,000/month could move retirement up by roughly 4 years.</div></div>
-                    <div class="insight-card"><div class="insight-tag">Protection</div><div class="insight-text">Your life cover sits about 30% below what your income and dependents suggest.</div></div>
-                    <div class="insight-card"><div class="insight-tag">Tax</div><div class="insight-text">A more tax-efficient allocation could save you close to ₹18,000 this year.</div></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Goals -->
-            <div class="d-view" id="dv-goals">
-              <div class="stat-stack">
-                <div class="stat-card dark" id="sipCard">
-                  <div class="stat-row">
-                    <div>
-                      <div class="stat-label">SIP Streak</div>
-                      <div class="stat-value">6 months</div>
-                    </div>
-                    <div class="stat-chevron"></div>
-                  </div>
-                  <div class="stat-tag">Tap for the detail</div>
-                  <div class="stat-detail">
-                    <div class="stat-detail-row"><span>Monthly amount</span><b>₹15,000</b></div>
-                    <div class="stat-detail-row"><span>Missed payments</span><b>0</b></div>
-                  </div>
-                </div>
-                <div class="stat-card light">
-                  <div class="stat-label">Retirement Trajectory</div>
-                  <div class="stat-value">64%</div>
-                  <div class="progress-track"><div class="progress-fill" data-pct="64"></div></div>
-                  <div class="stat-sub">of your ₹3.2 Cr goal — on track to retire at 60.</div>
-                </div>
-                <div class="stat-card light">
-                  <div class="stat-label">Life Goals</div>
-                  <div style="margin-top:14px;">
-                    <div class="goal-mini">
-                      <div class="goal-mini-top"><span>Home Purchase · 2028</span><b>45%</b></div>
-                      <div class="progress-track" style="margin-top:0;"><div class="progress-fill" data-pct="45"></div></div>
-                    </div>
-                    <div class="goal-mini">
-                      <div class="goal-mini-top"><span>Child's Education · 2032</span><b>30%</b></div>
-                      <div class="progress-track" style="margin-top:0;"><div class="progress-fill" data-pct="30"></div></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Advisor -->
-            <div class="d-view" id="dv-advisor">
-              <div class="a-panel" id="aPanel">
-                <div class="a-card">
-                  <div class="a-label">Upcoming Review</div>
-                  <div class="a-val">Tue, 14 Jan · 4:00 PM</div>
-                </div>
-                <div class="a-card">
-                  <div class="a-label">Advisor Note</div>
-                  <div class="a-text">Your emergency fund crossed 91%. Consider directing the surplus toward retirement.</div>
-                </div>
-                <div class="a-chip" id="aChip">See portfolio suggestion</div>
-                <div class="a-card a-reveal" id="aReveal">
-                  <div class="a-label">Portfolio Suggestion</div>
-                  <div class="a-text">Shift 4% from fixed deposits into equity funds to match your retirement timeline.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="d-tabs">
-            <button class="d-tab active" data-view="dv-overview">Overview</button>
-            <button class="d-tab" data-view="dv-portfolio">Portfolio</button>
-            <button class="d-tab" data-view="dv-analytics">Analytics</button>
-            <button class="d-tab" data-view="dv-goals">Goals</button>
-            <button class="d-tab" data-view="dv-advisor">Advisor</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="stage-hint">Tap the tabs, or the balance, to explore your financial life</div>
-  </div>
-</section>
-
-<!-- ═══════════════ I. FRAGMENTATION ═══════════════ -->
-<section class="theme-ivory" id="fragmented">
-  <div class="wrap stack center">
-    <span class="mark serif rv">I.</span>
-    <h2 class="serif rv rv-1 center">Your money lives in a dozen places.<br>Your plan should live in one.</h2>
-    <p class="lede rv rv-2 center">Investments here. Insurance there. Retirement, tax and legacy scattered across advisors who have never once spoken to each other.</p>
-
-    <div class="scatter rv rv-3" id="scatterField">
-      <span class="sword" style="--x:-250px;--y:-70px">Investments</span>
-      <span class="sword" style="--x:200px;--y:-110px">Retirement</span>
-      <span class="sword" style="--x:-150px;--y:90px">Insurance</span>
-      <span class="sword" style="--x:270px;--y:50px">Tax Planning</span>
-      <span class="sword" style="--x:10px;--y:-130px">Mutual Funds</span>
-      <span class="sword" style="--x:-310px;--y:20px">Estate Planning</span>
-      <span class="sword" style="--x:90px;--y:120px">Stocks</span>
-      <span class="sword" style="--x:-60px;--y:-20px">Life Goals</span>
-      <span class="sword" style="--x:330px;--y:-20px">Family Wealth</span>
+<!-- ============ NAV ============ -->
+<header id="siteHeader">
+  <div class="wrap navbar">
+    <a href="#top" class="logo"><span class="logo-mark"></span>Northstar</a>
+    <nav class="nav-links">
+      <a href="#goals">Life Goals</a>
+      <a href="#how">How It Works</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#family">Family</a>
+      <a href="#trust">Security</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost">Log In</a>
+      <a href="#start" class="btn btn-primary">Start Your Journey</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </div>
-</section>
+</header>
 
-<!-- ═══════════════ II. CONVERGENCE ═══════════════ -->
-<section class="theme-ivory-2" id="converge">
-  <div class="wrap stack center">
-    <span class="mark serif rv">II.</span>
-    <h2 class="serif rv rv-1 center">Yours brings your whole<br>financial life together.</h2>
-    <p class="lede rv rv-2 center">One roadmap for everything you own, everything you owe, and everything you're planning toward — guided by a person, not an algorithm.</p>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mtop">
+    <a href="#top" class="logo"><span class="logo-mark"></span>Northstar</a>
+    <button class="close-btn" id="navClose" aria-label="Close menu">×</button>
+  </div>
+  <a href="#goals">Life Goals</a>
+  <a href="#how">How It Works</a>
+  <a href="#dashboard">Dashboard</a>
+  <a href="#family">Family</a>
+  <a href="#trust">Security</a>
+  <a href="#start" class="btn btn-primary">Start Your Journey</a>
+</div>
 
-    <div class="converge-stage" id="convergeStage">
-      <span class="cword" style="--x:-250px;--y:-70px">Investments</span>
-      <span class="cword" style="--x:200px;--y:-110px">Retirement</span>
-      <span class="cword" style="--x:-150px;--y:90px">Insurance</span>
-      <span class="cword" style="--x:270px;--y:50px">Tax Planning</span>
-      <span class="cword" style="--x:10px;--y:-130px">Mutual Funds</span>
-      <span class="cword" style="--x:-310px;--y:20px">Estate Planning</span>
-      <span class="cword" style="--x:90px;--y:120px">Stocks</span>
-      <span class="cword" style="--x:-60px;--y:-20px">Life Goals</span>
-      <span class="cword" style="--x:330px;--y:-20px">Family Wealth</span>
-      <div class="cring"></div>
-      <div class="cdot"></div>
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow reveal in">Goal-based investment planning</div>
+      <h1 class="reveal in">The future you're <em>dreaming of</em> starts here.</h1>
+      <p class="lead reveal in">Every milestone in life deserves a plan. Whether you're building wealth, securing your family's future, funding your child's education, buying your dream home, or preparing for retirement — create personal financial goals and follow a clear investment journey built around what matters most to you.</p>
+      <div class="hero-actions reveal in">
+        <a href="#start" class="btn btn-primary">Start Your Journey</a>
+        <a href="#how" class="btn btn-ghost">Explore How It Works</a>
+      </div>
+      <div class="hero-trust reveal in">
+        <span>AMFI Registered Distributor</span>
+        <span class="dot"></span>
+        <span>12,000+ goals funded</span>
+        <span class="dot"></span>
+        <span>₹840 Cr+ tracked</span>
+      </div>
     </div>
-  </div>
-</section>
 
-<!-- ═══════════════ III. CLARITY ═══════════════ -->
-<section class="theme-ink" id="clarity">
-  <div class="wrap stack center">
-    <span class="mark serif rv">III.</span>
-    <h2 class="serif rv rv-1 center">You finally see the<br>whole picture.</h2>
-    <div class="clarity-num serif rv rv-2" id="clarityNum">₹0</div>
-    <p class="clarity-cap rv rv-3">Every investment. Every policy. Every goal — one plan, always current.</p>
-  </div>
-</section>
-
-<!-- ═══════════════ IV. ADVISOR ═══════════════ -->
-<section class="theme-ivory" id="advisor">
-  <div class="wrap stack center">
-    <span class="mark serif rv">IV.</span>
-    <h2 class="serif rv rv-1 center">A private advisor,<br>always in view.</h2>
-    <p class="lede rv rv-2 center">Not a chatbot. Not a call centre. A named, SEBI-registered advisor who already knows your plan — and reviews it with you, in person.</p>
-
-    <div class="advisor-grid rv rv-3">
-      <div class="ag-item">
-        <div>
-          <span class="ag-label">Upcoming Review</span>
-          <p>Tuesday, 14 January at 4:00 PM, with Priya.</p>
-        </div>
+    <div class="orbit-stage reveal in">
+      <svg class="orbit-svg" viewBox="0 0 500 500">
+        <circle class="path" cx="250" cy="250" r="210"/>
+        <path class="link" d="M250,250 C180,150 90,110 40,40"/>
+        <path class="link" d="M250,250 C330,150 420,120 470,60"/>
+        <path class="link" d="M250,250 C160,320 60,340 10,420"/>
+        <path class="link" d="M250,250 C340,330 420,360 460,460"/>
+        <path class="link" d="M250,250 C260,300 280,330 300,360"/>
+      </svg>
+      <div class="orbit-center">
+        <div class="val">₹2.45 Cr</div>
+        <div class="lbl">Total Goal Value</div>
       </div>
-      <div class="ag-item">
-        <div>
-          <span class="ag-label">Advisor Notes</span>
-          <p>"Emergency fund crossed 90%. Time to redirect the surplus toward retirement."</p>
-        </div>
+      <div class="goal-card gc-1">
+        <div class="gc-top"><div class="ring" style="--p:72"></div><div><div class="gc-name">Retirement</div><div class="gc-goal">₹1.2 Cr Goal</div></div><div class="gc-pct">72%</div></div>
+        <div class="gc-bar"><i style="--w:72%"></i></div>
       </div>
-      <div class="ag-item">
-        <svg class="gauge ag-gauge" viewBox="0 0 80 80">
-          <circle class="g-track" cx="40" cy="40" r="32"/>
-          <circle class="g-fill" cx="40" cy="40" r="32" data-pct="82" style="stroke:var(--gold)"/>
-        </svg>
-        <div>
-          <span class="ag-label">Financial Health</span>
-          <p>82 out of 100 — up 6 points since your last review.</p>
-        </div>
+      <div class="goal-card gc-2">
+        <div class="gc-top"><div class="ring" style="--p:42"></div><div><div class="gc-name">Child Education</div><div class="gc-goal">₹45 L Goal</div></div><div class="gc-pct">42%</div></div>
+        <div class="gc-bar"><i style="--w:42%"></i></div>
       </div>
-      <div class="ag-item">
-        <svg class="gauge ag-gauge" viewBox="0 0 80 80">
-          <circle class="g-track" cx="40" cy="40" r="32"/>
-          <circle class="g-fill" cx="40" cy="40" r="32" data-pct="75" style="stroke:var(--gold)"/>
-        </svg>
-        <div>
-          <span class="ag-label">Goal Progress</span>
-          <p>Three of four goals are ahead of schedule this quarter.</p>
-        </div>
+      <div class="goal-card gc-3">
+        <div class="gc-top"><div class="ring" style="--p:18"></div><div><div class="gc-name">Dream Home</div><div class="gc-goal">₹80 L Goal</div></div><div class="gc-pct">18%</div></div>
+        <div class="gc-bar"><i style="--w:18%"></i></div>
       </div>
-      <div class="ag-item">
-        <div>
-          <span class="ag-label">Portfolio Suggestions</span>
-          <p>Shift 4% from fixed deposits into equity funds.</p>
-        </div>
+      <div class="goal-card gc-4">
+        <div class="gc-top"><div style="font-size:20px">🛟</div><div><div class="gc-name">Emergency Fund</div><div class="gc-goal">6 months</div></div></div>
+        <span class="gc-status done">Completed ✓</span>
       </div>
-      <div class="ag-item">
-        <div>
-          <span class="ag-label">Life Milestones</span>
-          <p>Home purchase, child's education and retirement — all mapped.</p>
-        </div>
+      <div class="goal-card gc-5">
+        <div class="gc-top"><div style="font-size:18px">🌍</div><div><div class="gc-name">Vacation</div><div class="gc-goal">₹4 L Goal</div></div></div>
+        <span class="gc-status upcoming">Upcoming</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ V. PRIVATE ACCESS ═══════════════ -->
-<section class="theme-ink" id="invitation">
-  <div class="wrap stack center">
-    <span class="mark serif rv">V.</span>
-    <h2 class="serif rv rv-1 center">Early birds get a free<br>Financial Planning Report, at ₹0.</h2>
-    <p class="lede rv rv-2 center">Before the platform opens, our wealth team reviews your finances personally and hands you a complete report — at no cost, and with no obligation.</p>
-
-    <div class="benefit-list rv rv-2">
-      <div class="benefit-row"><span>Free Personalized Financial Planning</span></div>
-      <div class="benefit-row"><span>Free Portfolio &amp; Insurance Review</span></div>
-      <div class="benefit-row"><span>Free Financial Health Assessment</span></div>
-      <div class="benefit-row"><span>Priority Early Access</span></div>
-    </div>
-
-    <div class="invite-card rv rv-3">
-      <div class="form-progress" id="formProgress"><i class="done"></i><i></i><i></i></div>
-
-      <form id="wlForm">
-        <div class="form-step active" data-step="1">
-          <div class="step-label">Your name</div>
-          <input type="text" id="iName" placeholder="Full name" autocomplete="name">
-          <div class="form-err" id="errName">Please enter your name</div>
-          <div class="step-actions"><button type="button" class="btn btn-primary" data-next>Continue</button></div>
-        </div>
-
-        <div class="form-step" data-step="2">
-          <div class="step-label">Your email</div>
-          <input type="email" id="iEmail" placeholder="Email address" autocomplete="email">
-          <div class="form-err" id="errEmail">Please enter a valid email</div>
-          <div class="step-actions">
-            <span class="back-link" data-back>Back</span>
-            <button type="button" class="btn btn-primary" data-next>Continue</button>
-          </div>
-        </div>
-
-        <div class="form-step" data-step="3">
-          <div class="step-label">Your mobile</div>
-          <input type="tel" id="iPhone" placeholder="10-digit number" autocomplete="tel" maxlength="10">
-          <div class="form-err" id="errPhone">Please enter a valid 10-digit number</div>
-          <div class="step-actions">
-            <span class="back-link" data-back>Back</span>
-            <button type="submit" class="btn btn-primary" id="btnSubmit">Request Your Free Report</button>
-          </div>
-        </div>
-      </form>
-
-      <div class="fine" id="submitErr" style="display:none; color:#A85C4C; margin-top:16px; text-align:center;">Something went wrong — please try again.</div>
-
-      <div class="success" id="wlSuccess">
-        <div class="ring-mark"><svg viewBox="0 0 32 32"><path class="check" d="M8 17l6 6 10-12"/></svg></div>
-        <h3 class="serif">You're on the list.</h3>
-        <p>A member of our wealth team will reach out personally to prepare your free Financial Planning Report.</p>
-      </div>
-    </div>
-
-    <div class="fine">No spam, ever · No cost, ever · We'll only write when it's your turn</div>
+<div class="strip">
+  <div class="strip-track">
+    <span>MONTHLY SIP TRACKING</span><span>·</span><span>GOAL-BASED PORTFOLIOS</span><span>·</span><span>FAMILY WEALTH PLANNING</span><span>·</span><span>AMFI REGISTERED</span><span>·</span><span>PAPERLESS INVESTING</span><span>·</span>
+    <span>MONTHLY SIP TRACKING</span><span>·</span><span>GOAL-BASED PORTFOLIOS</span><span>·</span><span>FAMILY WEALTH PLANNING</span><span>·</span><span>AMFI REGISTERED</span><span>·</span><span>PAPERLESS INVESTING</span><span>·</span>
   </div>
-</section>
+</div>
 
-<!-- ═══════════════ FOOTER ═══════════════ -->
-<footer class="theme-ivory">
+<!-- ============ LIFE GOALS ============ -->
+<section class="section" id="goals">
   <div class="wrap">
-    <hr class="hr" style="margin-bottom:44px;">
-    <div class="foot-inner">
-      <a href="#" class="wordmark">Yours <span class="w-wealth">Wealth</span></a>
-      <ul class="foot-links">
-        <li><a href="#fragmented">Why</a></li>
-        <li><a href="#advisor">Advisor</a></li>
-        <li><a href="mailto:viswateja.investments@gmail.com">Contact</a></li>
-      </ul>
+    <div class="section-head reveal">
+      <div class="eyebrow">Why people come to us</div>
+      <h2>Every dream deserves a plan.</h2>
+      <p>We don't sell investments. We help you plan the moments that matter — then build the portfolio that gets you there.</p>
     </div>
-    <div class="foot-meta">
-      <span>© 2026 Yours Wealth — a private wealth management practice, in development. Nothing here is investment advice.</span>
-      <span>Hyderabad · Bengaluru</span>
+    <div class="goals-grid reveal-stagger">
+      <div class="lg-card reveal" style="--i:0"><div class="lg-icon">🏠</div><h3>Dream Home</h3><p>Plan the down payment and moving-in date, not just a lump sum.</p></div>
+      <div class="lg-card reveal" style="--i:1"><div class="lg-icon">🎓</div><h3>Child Education</h3><p>Stay ahead of tuition inflation, years before the admission letter arrives.</p></div>
+      <div class="lg-card reveal" style="--i:2"><div class="lg-icon">👶</div><h3>New Baby</h3><p>Build a cushion for the early years — from hospital bills to preschool.</p></div>
+      <div class="lg-card reveal" style="--i:3"><div class="lg-icon">💍</div><h3>Wedding</h3><p>Fund the celebration you want without derailing your other goals.</p></div>
+      <div class="lg-card reveal" style="--i:4"><div class="lg-icon">🚗</div><h3>New Car</h3><p>Know exactly when you'll be ready to drive it home, debt-free.</p></div>
+      <div class="lg-card reveal" style="--i:5"><div class="lg-icon">🌍</div><h3>Vacation</h3><p>Short-horizon goals with low-risk funds so the trip is never at risk.</p></div>
+      <div class="lg-card reveal" style="--i:6"><div class="lg-icon">💼</div><h3>Wealth Creation</h3><p>Grow long-term wealth with a strategy built for decades, not days.</p></div>
+      <div class="lg-card reveal" style="--i:7"><div class="lg-icon">🏖</div><h3>Retirement</h3><p>See the exact monthly SIP that gets you to the retirement you picture.</p></div>
+      <div class="lg-card reveal" style="--i:8"><div class="lg-icon">❤️</div><h3>Parents' Security</h3><p>Plan for their healthcare and comfort with a goal of its own.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="section" id="how" style="background:#F5F7F5;">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">The journey</div>
+      <h2>From "I have a dream" to "I have a date."</h2>
+      <p>Five steps take you from a life goal to a fully invested, continuously tracked plan.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <div class="tl-num"><span class="n">01</span> Know Yourself</div>
+        <div class="tl-body">
+          <h3>Tell us where you stand today.</h3>
+          <p>A short profile gives your plan its foundation — no jargon, just the facts that shape your journey.</p>
+          <div class="chip-row">
+            <span class="chip">Age</span><span class="chip">Income</span><span class="chip">Expenses</span>
+            <span class="chip">Existing Investments</span><span class="chip">Risk Profile</span>
+            <span class="chip">Family Members</span><span class="chip">Financial Responsibilities</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-num"><span class="n">02</span> Create Your Goals</div>
+        <div class="tl-body">
+          <h3>Add a goal for anyone who matters.</h3>
+          <p>Set up goals for yourself, your spouse, your children, or your parents — each with its own timeline and priority.</p>
+          <div class="chip-row">
+            <span class="chip">Target Amount</span><span class="chip">Target Year</span><span class="chip">Priority</span>
+            <span class="chip">Current Savings</span><span class="chip">Expected Inflation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-num"><span class="n">03</span> Personalized Planning</div>
+        <div class="tl-body">
+          <h3>We do the maths. You see the picture.</h3>
+          <p>Inflation, time horizon, and required returns — calculated instantly and shown simply, so you always know exactly what it takes.</p>
+          <div class="chip-row">
+            <span class="chip">Goal Value</span><span class="chip">Inflation Adjustment</span><span class="chip">Investment Horizon</span>
+            <span class="chip">Required Monthly SIP</span><span class="chip">Expected Corpus</span><span class="chip">Asset Allocation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-num"><span class="n">04</span> Goal-Based Portfolios</div>
+        <div class="tl-body">
+          <h3>A different strategy for every goal.</h3>
+          <p>Your emergency fund shouldn't take the same risk as your retirement corpus. Every goal gets a portfolio built for its own horizon.</p>
+
+          <div class="portfolio-set">
+            <div class="pf-card">
+              <div class="pf-head"><div class="ic">🏖</div><b>Retirement · 25 yrs</b></div>
+              <div class="pf-bar"><span style="width:40%;background:#0E7C5A"></span><span style="width:35%;background:#34C795"></span><span style="width:25%;background:#C9A24B"></span></div>
+              <div class="pf-legend"><span><i style="background:#0E7C5A"></i>Flexi Cap</span><span><i style="background:#34C795"></i>Index Funds</span><span><i style="background:#C9A24B"></i>Mid Cap</span></div>
+              <div class="pf-why">Long horizon allows higher equity exposure to outpace inflation over 25 years.</div>
+            </div>
+            <div class="pf-card">
+              <div class="pf-head"><div class="ic">🎓</div><b>Child Education · 12 yrs</b></div>
+              <div class="pf-bar"><span style="width:55%;background:#123163"></span><span style="width:45%;background:#0E7C5A"></span></div>
+              <div class="pf-legend"><span><i style="background:#123163"></i>Large & Mid Cap</span><span><i style="background:#0E7C5A"></i>Flexi Cap</span></div>
+              <div class="pf-why">A medium horizon balances growth with stability as the admission date nears.</div>
+            </div>
+            <div class="pf-card">
+              <div class="pf-head"><div class="ic">🛟</div><b>Emergency Fund · Instant</b></div>
+              <div class="pf-bar"><span style="width:100%;background:#8895A0"></span></div>
+              <div class="pf-legend"><span><i style="background:#8895A0"></i>Liquid Funds</span></div>
+              <div class="pf-why">Capital protection and same-day access matter more than returns here.</div>
+            </div>
+            <div class="pf-card">
+              <div class="pf-head"><div class="ic">🏠</div><b>Dream Home · 6 yrs</b></div>
+              <div class="pf-bar"><span style="width:100%;background:#C9A24B"></span></div>
+              <div class="pf-legend"><span><i style="background:#C9A24B"></i>Hybrid Funds</span></div>
+              <div class="pf-why">A blend of equity and debt smooths volatility as the down payment date approaches.</div>
+            </div>
+            <div class="pf-card">
+              <div class="pf-head"><div class="ic">🌍</div><b>Vacation · 2 yrs</b></div>
+              <div class="pf-bar"><span style="width:100%;background:#2E4A78"></span></div>
+              <div class="pf-legend"><span><i style="background:#2E4A78"></i>Short Duration Funds</span></div>
+              <div class="pf-why">Short horizons call for low volatility so the trip is never at the mercy of the market.</div>
+            </div>
+            <div class="pf-card">
+              <div class="pf-head"><div class="ic">💼</div><b>Wealth Creation · 15 yrs</b></div>
+              <div class="pf-bar"><span style="width:50%;background:#0E7C5A"></span><span style="width:30%;background:#123163"></span><span style="width:20%;background:#34C795"></span></div>
+              <div class="pf-legend"><span><i style="background:#0E7C5A"></i>Flexi Cap</span><span><i style="background:#123163"></i>Large Cap</span><span><i style="background:#34C795"></i>Mid Cap</span></div>
+              <div class="pf-why">Diversified equity exposure designed to compound steadily over the long run.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-num"><span class="n">05</span> Track Your Journey</div>
+        <div class="tl-body">
+          <h3>Watch every goal move closer, month by month.</h3>
+          <p>Once you're invested, your dashboard keeps working — tracking growth, flagging what needs attention, and telling you exactly when you'll get there.</p>
+          <div class="chip-row">
+            <span class="chip">Portfolio Growth</span><span class="chip">Goal Progress</span><span class="chip">SIP Status</span>
+            <span class="chip">Remaining Amount</span><span class="chip">Expected Achievement Date</span><span class="chip">Goal Health</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DASHBOARD ============ -->
+<section class="section" id="dashboard">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Your command centre</div>
+      <h2>One dashboard. Every goal, in view.</h2>
+      <p>Total wealth, monthly SIPs, portfolio performance, and how close you are to each dream — all in one place.</p>
+    </div>
+
+    <div class="dash-panel reveal">
+      <div class="dash-stats">
+        <div class="dstat"><div class="lbl">Total Wealth</div><div class="val" data-count="24800000" data-prefix="₹" data-format="cr">₹0</div><div class="sub">↑ 14.2% this year</div></div>
+        <div class="dstat"><div class="lbl">Monthly SIP</div><div class="val" data-count="68500" data-prefix="₹">₹0</div><div class="sub">Across 6 goals</div></div>
+        <div class="dstat"><div class="lbl">Financial Health Score</div><div class="val" data-count="82" data-suffix="/100">0</div><div class="sub">Excellent</div></div>
+        <div class="dstat"><div class="lbl">Goals Achieved</div><div class="val" data-count="3" data-suffix="/6">0</div><div class="sub">2 on schedule</div></div>
+      </div>
+
+      <div class="dash-lower">
+        <div class="dpanel">
+          <h4>Portfolio Performance <span>Last 12 months</span></h4>
+          <div class="chart-wrap">
+            <svg viewBox="0 0 480 140" width="100%" height="100%" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="pf-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#34C795" stop-opacity="0.45"/>
+                  <stop offset="100%" stop-color="#34C795" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <polyline fill="none" stroke="#34C795" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                points="0,110 40,100 80,104 120,84 160,90 200,68 240,72 280,50 320,58 360,34 400,40 440,20 480,26" class="perf-line"/>
+              <polygon fill="url(#pf-grad)" points="0,110 40,100 80,104 120,84 160,90 200,68 240,72 280,50 320,58 360,34 400,40 440,20 480,26 480,140 0,140"/>
+            </svg>
+          </div>
+          <div class="alloc-list" style="margin-top:18px; flex-direction:row; justify-content:space-between;">
+            <div class="alloc-row"><span class="dotc" style="background:#34C795"></span>Portfolio Value <b class="amt">₹1.92 Cr</b></div>
+          </div>
+        </div>
+
+        <div class="dpanel">
+          <h4>Asset Allocation</h4>
+          <div class="alloc-list">
+            <div class="alloc-row"><span class="dotc" style="background:#34C795"></span>Equity <span class="amt">58%</span></div>
+            <div class="alloc-row"><span class="dotc" style="background:#C9A24B"></span>Hybrid <span class="amt">22%</span></div>
+            <div class="alloc-row"><span class="dotc" style="background:#8895A0"></span>Debt / Liquid <span class="amt">14%</span></div>
+            <div class="alloc-row"><span class="dotc" style="background:#2E4A78"></span>Short Duration <span class="amt">6%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dpanel" style="margin-top:18px;">
+        <h4>Goal Progress <span>6 active goals</span></h4>
+        <div class="dash-goalrow" style="flex-direction:row; flex-wrap:wrap; gap:22px;">
+          <div class="dg-item" style="min-width:180px;"><div class="ring" style="--p:72"></div><div class="dg-info"><b>Retirement</b><span>Est. Mar 2044</span></div><div class="dg-pct">72%</div></div>
+          <div class="dg-item" style="min-width:180px;"><div class="ring" style="--p:42"></div><div class="dg-info"><b>Child Education</b><span>Est. Jun 2033</span></div><div class="dg-pct">42%</div></div>
+          <div class="dg-item" style="min-width:180px;"><div class="ring" style="--p:18"></div><div class="dg-info"><b>Dream Home</b><span>Est. Nov 2030</span></div><div class="dg-pct">18%</div></div>
+          <div class="dg-item" style="min-width:180px;"><div class="ring" style="--p:100"></div><div class="dg-info"><b>Emergency Fund</b><span>Completed</span></div><div class="dg-pct">✓</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAMILY WEALTH ============ -->
+<section class="section" id="family" style="background:#F5F7F5;">
+  <div class="wrap family-wrap">
+    <div class="reveal">
+      <div class="eyebrow">Plan together</div>
+      <h2 style="font-size:clamp(28px,3.6vw,40px); margin-bottom:18px;">One dashboard for your entire family.</h2>
+      <p style="font-size:17px; color:var(--ink-soft); line-height:1.65; margin-bottom:28px;">Add goals for your spouse, children, and parents — each with its own timeline, priority, and portfolio. You still see everything, for everyone, in a single view.</p>
+      <a href="#start" class="btn btn-primary">Add Your Family</a>
+    </div>
+    <div class="member-tree reveal">
+      <div class="member-node">
+        <div class="member-avatar" style="background:var(--navy);">RS</div>
+        <div class="member-info"><b>Rohan Sharma (You)</b><span>3 active goals</span></div>
+        <div class="member-goals"><i class="done"></i><i></i><i></i></div>
+      </div>
+      <div class="member-node indent">
+        <div class="member-avatar" style="background:var(--emerald-2);">AS</div>
+        <div class="member-info"><b>Anika Sharma · Spouse</b><span>2 active goals</span></div>
+        <div class="member-goals"><i></i><i></i></div>
+      </div>
+      <div class="member-node indent">
+        <div class="member-avatar" style="background:var(--gold);">RS</div>
+        <div class="member-info"><b>Riya Sharma · Daughter</b><span>1 active goal</span></div>
+        <div class="member-goals"><i></i></div>
+      </div>
+      <div class="member-node indent">
+        <div class="member-avatar" style="background:#2E4A78;">MS</div>
+        <div class="member-info"><b>Meena Sharma · Mother</b><span>1 active goal</span></div>
+        <div class="member-goals"><i class="done"></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GOAL CARDS SHOWCASE ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Inside every goal</div>
+      <h2>Everything you need to know, at a glance.</h2>
+      <p>Each goal carries its own progress, portfolio, and projected finish line.</p>
+    </div>
+    <div class="goalcards-grid reveal-stagger">
+      <div class="gcard reveal" style="--i:0">
+        <div class="gcard-top"><div class="icon">🏖</div><div><b>Retirement</b><span>Target: 2044</span></div></div>
+        <div class="gcard-ring" style="--p:72" data-p="72%"></div>
+        <div class="gcard-rows">
+          <div class="gcard-row"><span>Target Amount</span><span>₹1.2 Cr</span></div>
+          <div class="gcard-row"><span>Current Investment</span><span>₹86.4 L</span></div>
+          <div class="gcard-row"><span>Remaining</span><span>₹33.6 L</span></div>
+          <div class="gcard-row"><span>Monthly SIP</span><span>₹24,000</span></div>
+        </div>
+        <div class="gcard-portfolio">Flexi Cap · Index Funds · Mid Cap</div>
+        <a href="#" class="btn btn-ghost">View Details</a>
+      </div>
+      <div class="gcard reveal" style="--i:1">
+        <div class="gcard-top"><div class="icon">🎓</div><div><b>Child Education</b><span>Target: 2033</span></div></div>
+        <div class="gcard-ring" style="--p:42" data-p="42%"></div>
+        <div class="gcard-rows">
+          <div class="gcard-row"><span>Target Amount</span><span>₹45 L</span></div>
+          <div class="gcard-row"><span>Current Investment</span><span>₹18.9 L</span></div>
+          <div class="gcard-row"><span>Remaining</span><span>₹26.1 L</span></div>
+          <div class="gcard-row"><span>Monthly SIP</span><span>₹16,500</span></div>
+        </div>
+        <div class="gcard-portfolio">Large & Mid Cap · Flexi Cap</div>
+        <a href="#" class="btn btn-ghost">View Details</a>
+      </div>
+      <div class="gcard reveal" style="--i:2">
+        <div class="gcard-top"><div class="icon">🏠</div><div><b>Dream Home</b><span>Target: 2030</span></div></div>
+        <div class="gcard-ring" style="--p:18" data-p="18%"></div>
+        <div class="gcard-rows">
+          <div class="gcard-row"><span>Target Amount</span><span>₹80 L</span></div>
+          <div class="gcard-row"><span>Current Investment</span><span>₹14.4 L</span></div>
+          <div class="gcard-row"><span>Remaining</span><span>₹65.6 L</span></div>
+          <div class="gcard-row"><span>Monthly SIP</span><span>₹42,000</span></div>
+        </div>
+        <div class="gcard-portfolio">Hybrid Funds</div>
+        <a href="#" class="btn btn-ghost">View Details</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY GOAL-BASED ============ -->
+<section class="section" style="background:#F5F7F5;">
+  <div class="wrap">
+    <div class="section-head center reveal" style="margin-left:auto; margin-right:auto;">
+      <div class="eyebrow">The difference</div>
+      <h2>Why goal-based investing?</h2>
+      <p>Direction changes everything — the same rupee, invested with purpose, goes further.</p>
+    </div>
+    <div class="compare-wrap reveal">
+      <div class="compare-col old">
+        <h3>Traditional Investing</h3>
+        <ul class="compare-list">
+          <li><span class="ico">−</span>Money invested without direction</li>
+          <li><span class="ico">−</span>Random, ad-hoc investment decisions</li>
+          <li><span class="ico">−</span>No measurable outcomes</li>
+          <li><span class="ico">−</span>No progress tracking</li>
+          <li><span class="ico">−</span>One portfolio used for everything</li>
+        </ul>
+      </div>
+      <div class="compare-col new">
+        <h3>Goal-Based Investing</h3>
+        <ul class="compare-list">
+          <li><span class="ico">✓</span>Every investment has a purpose</li>
+          <li><span class="ico">✓</span>A separate strategy for every goal</li>
+          <li><span class="ico">✓</span>Real-time progress you can see</li>
+          <li><span class="ico">✓</span>You know exactly how much to invest</li>
+          <li><span class="ico">✓</span>You know exactly when you'll get there</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Platform</div>
+      <h2>Everything your plan needs, built in.</h2>
+    </div>
+    <div class="feat-grid reveal-stagger">
+      <div class="feat-card reveal" style="--i:0"><div class="fi">🎯</div><b>Goal Planning</b></div>
+      <div class="feat-card reveal" style="--i:1"><div class="fi">👨‍👩‍👧</div><b>Family Wealth Planning</b></div>
+      <div class="feat-card reveal" style="--i:2"><div class="fi">📈</div><b>Mutual Fund Investments</b></div>
+      <div class="feat-card reveal" style="--i:3"><div class="fi">🧩</div><b>Personalized Portfolios</b></div>
+      <div class="feat-card reveal" style="--i:4"><div class="fi">🔁</div><b>SIP Planning</b></div>
+      <div class="feat-card reveal" style="--i:5"><div class="fi">📊</div><b>Goal Progress Tracking</b></div>
+      <div class="feat-card reveal" style="--i:6"><div class="fi">🖥️</div><b>Investment Dashboard</b></div>
+      <div class="feat-card reveal" style="--i:7"><div class="fi">📉</div><b>Portfolio Analytics</b></div>
+      <div class="feat-card reveal" style="--i:8"><div class="fi">💡</div><b>Investment Insights</b></div>
+      <div class="feat-card reveal" style="--i:9"><div class="fi">🗓️</div><b>Goal Review</b></div>
+      <div class="feat-card reveal" style="--i:10"><div class="fi">⚖️</div><b>Portfolio Rebalancing</b></div>
+      <div class="feat-card reveal" style="--i:11"><div class="fi">🔒</div><b>Secure Online Access</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INSIGHTS ============ -->
+<section class="section" style="background:#F5F7F5;">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Always one step ahead</div>
+      <h2>Helpful nudges, right when you need them.</h2>
+    </div>
+    <div class="insights-grid reveal-stagger">
+      <div class="insight-card reveal" style="--i:0">
+        <div class="ii" style="background:rgba(14,124,90,0.1);">📈</div>
+        <p><span class="tag">SIP Suggestion</span>Increase your SIP by ₹2,500 to reach retirement one year earlier.</p>
+      </div>
+      <div class="insight-card reveal" style="--i:1">
+        <div class="ii" style="background:rgba(201,162,75,0.15);">🎉</div>
+        <p><span class="tag">Milestone</span>Congratulations! Your emergency fund is now fully funded.</p>
+      </div>
+      <div class="insight-card reveal" style="--i:2">
+        <div class="ii" style="background:rgba(14,124,90,0.1);">🎓</div>
+        <p><span class="tag">On Track</span>Your child's education goal is progressing ahead of schedule.</p>
+      </div>
+      <div class="insight-card reveal" style="--i:3">
+        <div class="ii" style="background:rgba(46,74,120,0.12);">🏠</div>
+        <p><span class="tag">Review</span>Review your portfolio to stay aligned with your home purchase goal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRUST ============ -->
+<section class="section" id="trust">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Built on trust</div>
+      <h2>Security and compliance, by design.</h2>
+    </div>
+    <div class="badge-row reveal-stagger">
+      <div class="badge reveal" style="--i:0"><div class="bi">🛡️</div><span>AMFI Registered Mutual Fund Distributor</span></div>
+      <div class="badge reveal" style="--i:1"><div class="bi">🔐</div><span>Secure, Encrypted Login</span></div>
+      <div class="badge reveal" style="--i:2"><div class="bi">🗄️</div><span>Bank-Grade Data Encryption</span></div>
+      <div class="badge reveal" style="--i:3"><div class="bi">📄</div><span>Fully Paperless Investing</span></div>
+      <div class="badge reveal" style="--i:4"><div class="bi">⚖️</div><span>Regulatory Compliance</span></div>
+      <div class="badge reveal" style="--i:5"><div class="bi">🤝</div><span>Dedicated Financial Planning Support</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="section" style="background:#F5F7F5;">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <div class="eyebrow">Real families, real plans</div>
+      <h2>Stories from people who now know where they stand.</h2>
+    </div>
+    <div class="testi-grid reveal-stagger">
+      <div class="testi-card reveal" style="--i:0">
+        <div class="stars">★★★★★</div>
+        <p>"We'd been investing for years without any real target. Seeing our daughter's education goal at 61% complete, with a date attached, changed how we think about every rupee we save."</p>
+        <div class="testi-person"><div class="testi-avatar" style="background:var(--navy);">PN</div><div><b>Priya Nair</b><span>Bengaluru · Parent of two</span></div></div>
+      </div>
+      <div class="testi-card reveal" style="--i:1">
+        <div class="stars">★★★★★</div>
+        <p>"I finally stopped juggling five different fund apps. My retirement, my parents' healthcare fund, and our home down payment all live in one dashboard now."</p>
+        <div class="testi-person"><div class="testi-avatar" style="background:var(--emerald-2);">AK</div><div><b>Arjun Khanna</b><span>Pune · IT Professional</span></div></div>
+      </div>
+      <div class="testi-card reveal" style="--i:2">
+        <div class="stars">★★★★★</div>
+        <p>"The emergency fund alert genuinely saved us during a job transition. Knowing exactly how many months we had covered gave us the confidence to make the switch."</p>
+        <div class="testi-person"><div class="testi-avatar" style="background:var(--gold);">SM</div><div><b>Sunita Mehta</b><span>Ahmedabad · Small Business Owner</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="section" id="start">
+  <div class="wrap">
+    <div class="final-cta reveal">
+      <h2>Every great future starts with one decision.</h2>
+      <p>Your dreams deserve more than hope — they deserve a plan. Start creating your financial goals today and take the first step toward a future that's thoughtfully planned, confidently invested, and carefully tracked every step of the way.</p>
+      <div class="hero-actions">
+        <a href="#" class="btn btn-light">Start Your Journey</a>
+        <a href="#" class="btn btn-outline-light" style="border:1px solid rgba(255,255,255,0.35); color:#fff;">Talk to an Advisor</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="logo"><span class="logo-mark"></span>Northstar</a>
+        <p>A digital goal-based financial planning platform helping families invest with purpose, not guesswork.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Products</h5>
+        <ul>
+          <li><a href="#">Goal Planning</a></li>
+          <li><a href="#">Family Wealth</a></li>
+          <li><a href="#">Mutual Funds</a></li>
+          <li><a href="#">Portfolio Tracking</a></li>
+          <li><a href="#">SIP Calculator</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="#">Blogs</a></li>
+          <li><a href="#">Learning Centre</a></li>
+          <li><a href="#">FAQs</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Support</h5>
+        <ul>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">AMFI Registration</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Northstar Financial Planning Pvt. Ltd. AMFI Registered Mutual Fund Distributor. Mutual fund investments are subject to market risks.</span>
+      <div class="foot-social">
+        <a href="#" aria-label="LinkedIn">in</a>
+        <a href="#" aria-label="Twitter">𝕏</a>
+        <a href="#" aria-label="Instagram">◎</a>
+      </div>
     </div>
   </div>
 </footer>
 
 <script>
-/* ── NAV SCROLL ── */
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', ()=> nav.classList.toggle('scrolled', window.scrollY > 40));
+// Nav scroll state
+const header = document.getElementById('siteHeader');
+window.addEventListener('scroll', () => {
+  header.classList.toggle('scrolled', window.scrollY > 20);
+}, {passive:true});
 
-/* ── SCROLL TO INVITATION ── */
-function goInvite(){
-  document.getElementById('invitation').scrollIntoView({behavior:'smooth'});
-  setTimeout(()=>document.getElementById('iName').focus(), 900);
+// Mobile menu
+const navToggle = document.getElementById('navToggle');
+const navClose = document.getElementById('navClose');
+const mobileMenu = document.getElementById('mobileMenu');
+navToggle.addEventListener('click', () => mobileMenu.classList.add('open'));
+navClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('open')));
+
+// Scroll reveal
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+}, {threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Animated counters
+function formatVal(el, v){
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  if(el.dataset.format === 'cr'){
+    return prefix + (v/10000000).toFixed(2) + ' Cr';
+  }
+  return prefix + Math.round(v).toLocaleString('en-IN') + suffix;
 }
-document.getElementById('navJoin').addEventListener('click', goInvite);
-document.getElementById('heroJoin').addEventListener('click', goInvite);
-
-/* ── SCROLL REVEAL (slow, deliberate) ── */
-const revealObs = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); revealObs.unobserve(e.target); } });
-},{threshold:.2});
-document.querySelectorAll('.rv').forEach(el=>revealObs.observe(el));
-
-/* ── HERO DEVICE — gentle tilt, never aggressive ── */
-const stage = document.querySelector('.stage');
-const heroDevice = document.getElementById('heroDevice');
-let tRX=3, tRY=0, cRX=3, cRY=0;
-if(window.matchMedia('(hover:hover)').matches){
-  stage.addEventListener('mousemove', e=>{
-    const r = stage.getBoundingClientRect();
-    const px = (e.clientX - r.left)/r.width - 0.5;
-    const py = (e.clientY - r.top)/r.height - 0.5;
-    tRY = px * 10; tRX = 3 - py * 6;
-  });
-  stage.addEventListener('mouseleave', ()=>{ tRX=3; tRY=0; });
-}
-function animDevice(){
-  cRX += (tRX-cRX)*.05; cRY += (tRY-cRY)*.05;
-  heroDevice.style.transform = `rotateX(${cRX}deg) rotateY(${cRY}deg)`;
-  requestAnimationFrame(animDevice);
-}
-animDevice();
-
-/* ── RADIAL GAUGES — fill on first reveal, reused everywhere ── */
-function initGauges(scope){
-  const root = scope || document;
-  root.querySelectorAll('.gauge .g-fill').forEach(el=>{
-    if(el.dataset.armed) return;
-    const r = el.r.baseVal.value;
-    const c = 2*Math.PI*r;
-    el.style.strokeDasharray = c;
-    el.style.strokeDashoffset = c;
-    el.dataset.armed = '1';
-  });
-  requestAnimationFrame(()=> requestAnimationFrame(()=>{
-    root.querySelectorAll('.gauge .g-fill').forEach(el=>{
-      if(el.dataset.done) return;
-      const r = el.r.baseVal.value;
-      const c = 2*Math.PI*r;
-      const pct = parseFloat(el.dataset.pct)||0;
-      el.style.strokeDashoffset = c*(1-pct/100);
-      el.dataset.done = '1';
-    });
-  }));
-}
-initGauges();
-/* gauges that live outside the phone (Advisor section) fill when scrolled into view */
-const gaugeSectionObs = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{ if(e.isIntersecting){ initGauges(e.target); gaugeSectionObs.unobserve(e.target); } });
-},{threshold:.3});
-gaugeSectionObs.observe(document.getElementById('advisor'));
-
-/* ── PHONE: tab switching between Overview / Portfolio / Analytics / Goals / Advisor ── */
-const dTabs = document.querySelectorAll('.d-tab');
-const dViews = document.querySelectorAll('.d-view');
-let planningPlayed = false;
-
-function playPlanning(){
-  if(planningPlayed) return;
-  planningPlayed = true;
-  document.querySelectorAll('#dv-goals .progress-fill[data-pct]').forEach(el=>{
-    requestAnimationFrame(()=> el.style.width = el.dataset.pct + '%');
-  });
-}
-
-dTabs.forEach(tab=>{
-  tab.addEventListener('click', ()=>{
-    if(tab.classList.contains('active')) return;
-    dTabs.forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    const target = tab.dataset.view;
-    dViews.forEach(v=> v.classList.toggle('active', v.id === target));
-    const targetEl = document.getElementById(target);
-    initGauges(targetEl);
-    if(target === 'dv-goals') setTimeout(playPlanning, 120);
-  });
-});
-
-/* ── PHONE: tap a dark stat card to expand its detail ── */
-document.querySelectorAll('.stat-card.dark[id]').forEach(card=>{
-  const tag = card.querySelector('.stat-tag');
-  const openText = tag ? tag.textContent : '';
-  card.addEventListener('click', ()=>{
-    card.classList.toggle('expanded');
-    if(tag) tag.textContent = card.classList.contains('expanded') ? 'Tap to close' : openText;
-  });
-});
-
-/* ── PHONE: tap the balance to reveal what it's made of ── */
-const walletCard = document.getElementById('walletCard');
-walletCard.addEventListener('click', ()=>{
-  walletCard.classList.toggle('expanded');
-  const tag = walletCard.querySelector('.wc-tag');
-  tag.textContent = walletCard.classList.contains('expanded') ? 'Tap to close' : "Tap to see what it's made of";
-});
-
-/* ── PHONE: advisor panel — reveal the portfolio suggestion ── */
-const aChip = document.getElementById('aChip');
-const aReveal = document.getElementById('aReveal');
-if(aChip){
-  aChip.addEventListener('click', ()=>{
-    aChip.classList.add('spent');
-    aReveal.classList.add('shown');
-  });
-}
-
-/* ── CONVERGENCE — the signature moment ── */
-const convergeObs = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
+const counters = document.querySelectorAll('[data-count]');
+const cIo = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
     if(e.isIntersecting){
-      setTimeout(()=> document.getElementById('convergeStage').classList.add('done'), 400);
-      convergeObs.unobserve(e.target);
-    }
-  });
-},{threshold:.55});
-convergeObs.observe(document.getElementById('converge'));
-
-/* ── CLARITY — the number reveals itself, once ── */
-const clarityEl = document.getElementById('clarityNum');
-const clarityObs = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      const target = 4218650;
+      const el = e.target;
+      const target = parseFloat(el.dataset.count);
+      const dur = 1400;
       const start = performance.now();
-      const dur = 2200;
-      function step(now){
-        const t = Math.min(1, (now-start)/dur);
-        const eased = 1 - Math.pow(1-t, 3);
-        const val = Math.floor(target*eased);
-        clarityEl.textContent = '₹' + val.toLocaleString('en-IN');
-        if(t<1) requestAnimationFrame(step);
+      function tick(now){
+        const p = Math.min((now-start)/dur, 1);
+        const eased = 1 - Math.pow(1-p, 3);
+        el.textContent = formatVal(el, target*eased);
+        if(p<1) requestAnimationFrame(tick);
       }
-      requestAnimationFrame(step);
-      clarityObs.unobserve(e.target);
+      requestAnimationFrame(tick);
+      cIo.unobserve(el);
     }
   });
-},{threshold:.5});
-clarityObs.observe(document.getElementById('clarity'));
-
-/* ── MULTI-STEP INVITATION FORM ── */
-const steps = Array.from(document.querySelectorAll('.form-step'));
-const progressDots = Array.from(document.querySelectorAll('#formProgress i'));
-let current = 0;
-
-function showStep(i){
-  steps.forEach((s,idx)=> s.classList.toggle('active', idx===i));
-  progressDots.forEach((d,idx)=> d.classList.toggle('done', idx<=i));
-  current = i;
-  const input = steps[i].querySelector('input');
-  if(input) setTimeout(()=>input.focus(), 400);
-}
-
-function setErr(id, on){ document.getElementById(id).classList.toggle('show', on); }
-
-function validateStep(i){
-  if(i===0){
-    const v = document.getElementById('iName').value.trim();
-    const ok = v.length >= 2;
-    setErr('errName', !ok);
-    return ok;
-  }
-  if(i===1){
-    const v = document.getElementById('iEmail').value.trim();
-    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-    setErr('errEmail', !ok);
-    return ok;
-  }
-  if(i===2){
-    const v = document.getElementById('iPhone').value.trim();
-    const ok = /^\d{10}$/.test(v);
-    setErr('errPhone', !ok);
-    return ok;
-  }
-  return true;
-}
-
-document.querySelectorAll('[data-next]').forEach(btn=>{
-  btn.addEventListener('click', ()=>{ if(validateStep(current)) showStep(current+1); });
-});
-document.querySelectorAll('[data-back]').forEach(btn=>{
-  btn.addEventListener('click', ()=> showStep(current-1));
-});
-document.getElementById('iPhone').addEventListener('input', e=>{
-  e.target.value = e.target.value.replace(/\D/g,'').slice(0,10);
-});
-steps.forEach((step, idx)=>{
-  const input = step.querySelector('input');
-  if(!input) return;
-  input.addEventListener('keydown', e=>{
-    if(e.key === 'Enter'){
-      e.preventDefault();
-      if(idx < 2){ if(validateStep(idx)) showStep(idx+1); }
-      else{ document.getElementById('wlForm').requestSubmit(); }
-    }
-  });
-});
-
-/* ── SUBMIT: save to Firestore, show confirmation, then quietly
-   reset back to a normal, browsable landing page ── */
-document.getElementById('wlForm').addEventListener('submit', async e=>{
-  e.preventDefault();
-  if(!validateStep(2)) return;
-
-  const leadData = {
-    name: document.getElementById('iName').value.trim(),
-    email: document.getElementById('iEmail').value.trim(),
-    phone: '+91' + document.getElementById('iPhone').value.trim(),
-    source: 'waitlist-landing',
-    createdAtClient: new Date().toISOString()
-  };
-
-  const btn = document.getElementById('btnSubmit');
-  const errBox = document.getElementById('submitErr');
-  errBox.style.display = 'none';
-  const originalLabel = btn.textContent;
-  btn.textContent = 'Submitting…';
-  btn.disabled = true;
-
-  try {
-    const db = await waitForDb();
-    const { collection, addDoc, serverTimestamp } = window._ywFS;
-    await addDoc(collection(db, 'waitlist'), {
-      ...leadData,
-      createdAt: serverTimestamp()
-    });
-
-    document.getElementById('wlSuccess').classList.add('show');
-
-    // After showing the confirmation for a few seconds, reset the
-    // form and hide the success screen so the page behaves like a
-    // normal landing page again — not stuck permanently on "You're
-    // on the list."
-    setTimeout(()=>{
-      document.getElementById('wlSuccess').classList.remove('show');
-      document.getElementById('wlForm').reset();
-      showStep(0);
-      btn.textContent = originalLabel;
-      btn.disabled = false;
-    }, 4000);
-
-  } catch(err){
-    console.error('Waitlist submission failed:', err);
-    errBox.style.display = 'block';
-    btn.textContent = originalLabel;
-    btn.disabled = false;
-  }
-});
-
-/* Wait for the Firebase module script (loaded async in <head>) to finish initializing */
-function waitForDb(timeoutMs = 8000){
-  return new Promise((resolve, reject) => {
-    if(window._ywDB && window._ywFS){ resolve(window._ywDB); return; }
-    const start = Date.now();
-    const iv = setInterval(() => {
-      if(window._ywDB && window._ywFS){
-        clearInterval(iv);
-        resolve(window._ywDB);
-      } else if(Date.now() - start > timeoutMs){
-        clearInterval(iv);
-        reject(new Error('Could not connect — please check your connection and try again.'));
-      }
-    }, 100);
-  });
-}
-
+}, {threshold:0.4});
+counters.forEach(el => cIo.observe(el));
 </script>
 </body>
 </html>
