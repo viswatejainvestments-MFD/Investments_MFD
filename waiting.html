@@ -3,32 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Northstar — Goal-Based Investment Planning</title>
+<title>Yours Wealth — Every Goal, A Date.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============ TOKENS ============ */
 :root{
-  --navy:#0A1F44;
-  --navy-2:#123163;
-  --navy-soft:#2E4A78;
-  --emerald:#0E7C5A;
-  --emerald-2:#0A5C43;
-  --emerald-light:#34C795;
-  --gold:#C9A24B;
-  --bg:#FAFBF9;
+  --ink:#12160F;
+  --ink-soft:#565E52;
+  --ink-faint:#8E9488;
+  --paper:#FAF8F2;
   --panel:#FFFFFF;
-  --ink:#0B1A24;
-  --ink-soft:#51606B;
-  --ink-faint:#8895A0;
-  --line: rgba(10,31,68,0.09);
-  --shadow-sm: 0 2px 10px rgba(10,31,68,0.06);
-  --shadow-md: 0 12px 32px rgba(10,31,68,0.10);
-  --shadow-lg: 0 24px 60px rgba(10,31,68,0.16);
-  --radius-lg: 28px;
-  --radius-md: 18px;
-  --radius-sm: 12px;
+  --pine:#173C33;
+  --pine-2:#0D251F;
+  --sage:#4C7C63;
+  --sage-light:#7EAE93;
+  --gold:#AD8A4E;
+  --gold-soft:#C9AD79;
+  --line: rgba(18,22,15,0.11);
+  --line-soft: rgba(18,22,15,0.06);
+  --shadow-sm: 0 2px 14px rgba(18,22,15,0.06);
+  --shadow-md: 0 16px 40px rgba(18,22,15,0.09);
+  --shadow-lg: 0 30px 70px rgba(13,37,31,0.22);
+  --radius-lg: 26px;
+  --radius-md: 16px;
+  --radius-sm: 10px;
   --ease: cubic-bezier(.22,.61,.36,1);
 }
 
@@ -41,96 +41,94 @@ html{scroll-behavior:smooth;}
 body{
   font-family:'Inter', sans-serif;
   color:var(--ink);
-  background:var(--bg);
+  background:var(--paper);
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
 h1,h2,h3,h4,.display{
-  font-family:'Manrope', sans-serif;
-  letter-spacing:-0.02em;
-  color:var(--navy);
-  font-weight:800;
+  font-family:'Fraunces', serif;
+  font-optical-sizing:auto;
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  font-weight:600;
 }
 img{max-width:100%; display:block;}
 a{color:inherit; text-decoration:none;}
 button{font-family:inherit; cursor:pointer;}
-:focus-visible{outline:2px solid var(--emerald); outline-offset:3px; border-radius:6px;}
+:focus-visible{outline:2px solid var(--sage); outline-offset:3px; border-radius:6px;}
 
-.wrap{max-width:1240px; margin:0 auto; padding:0 32px;}
-@media (max-width:640px){.wrap{padding:0 20px;}}
+.wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+@media (max-width:640px){.wrap{padding:0 22px;}}
 
 .eyebrow{
-  display:inline-flex; align-items:center; gap:8px;
-  font-size:12.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
-  color:var(--emerald-2);
-  background:rgba(14,124,90,0.08);
-  padding:7px 14px; border-radius:100px;
-  margin-bottom:18px;
+  display:inline-flex; align-items:center; gap:9px;
+  font-size:12px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--sage);
+  margin-bottom:20px;
 }
-.eyebrow::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--emerald);}
+.eyebrow::before{content:''; width:22px; height:1px; background:var(--sage);}
 
-.section{padding:120px 0;}
-@media (max-width:900px){.section{padding:80px 0;}}
-.section-head{max-width:680px; margin-bottom:64px;}
+.section{padding:140px 0;}
+@media (max-width:900px){.section{padding:88px 0;}}
+.section-head{max-width:640px; margin-bottom:64px;}
 .section-head.center{margin-left:auto; margin-right:auto; text-align:center;}
-.section-head h2{font-size:clamp(30px,4vw,46px); line-height:1.12; margin-bottom:18px;}
+.section-head h2{font-size:clamp(30px,4vw,44px); line-height:1.14; margin-bottom:20px; font-weight:600;}
 .section-head p{font-size:18px; line-height:1.6; color:var(--ink-soft);}
 
 .btn{
   display:inline-flex; align-items:center; justify-content:center; gap:8px;
-  padding:16px 30px; border-radius:100px; font-weight:700; font-size:15.5px;
+  padding:16px 32px; border-radius:100px; font-weight:600; font-size:15px;
   border:1px solid transparent; transition:transform .35s var(--ease), box-shadow .35s var(--ease), background .3s;
-  white-space:nowrap;
+  white-space:nowrap; font-family:'Inter', sans-serif;
 }
 .btn-primary{
-  background:linear-gradient(135deg, var(--emerald) 0%, var(--emerald-2) 100%);
-  color:#fff; box-shadow:0 10px 26px rgba(14,124,90,0.32);
+  background:var(--pine); color:#fff; box-shadow:0 10px 26px rgba(23,60,51,0.28);
 }
-.btn-primary:hover{transform:translateY(-2px); box-shadow:0 16px 34px rgba(14,124,90,0.4);}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 16px 34px rgba(23,60,51,0.36); background:var(--pine-2);}
 .btn-ghost{
-  background:rgba(10,31,68,0.04); color:var(--navy); border-color:var(--line);
+  background:transparent; color:var(--ink); border-color:var(--line);
 }
-.btn-ghost:hover{background:rgba(10,31,68,0.07); transform:translateY(-2px);}
-.btn-light{background:#fff; color:var(--navy); box-shadow:0 10px 26px rgba(0,0,0,0.14);}
+.btn-ghost:hover{background:rgba(18,22,15,0.04); transform:translateY(-2px);}
+.btn-light{background:#fff; color:var(--pine-2); box-shadow:0 10px 26px rgba(0,0,0,0.14);}
 .btn-light:hover{transform:translateY(-2px);}
 .btn-outline-light{border-color:rgba(255,255,255,0.35); color:#fff;}
 .btn-outline-light:hover{background:rgba(255,255,255,0.1); transform:translateY(-2px);}
 
-.reveal{opacity:0; transform:translateY(28px); transition:opacity .8s var(--ease), transform .8s var(--ease);}
+.reveal{opacity:0; transform:translateY(24px); transition:opacity .8s var(--ease), transform .8s var(--ease);}
 .reveal.in{opacity:1; transform:translateY(0);}
-.reveal-stagger > *{transition-delay:calc(var(--i,0) * 90ms);}
+.reveal-stagger > *{transition-delay:calc(var(--i,0) * 80ms);}
 
 /* ============ NAV ============ */
 header{
   position:fixed; top:0; left:0; right:0; z-index:100;
-  padding:18px 0;
+  padding:22px 0;
   transition:background .4s var(--ease), box-shadow .4s var(--ease), padding .4s var(--ease);
 }
 header.scrolled{
-  background:rgba(250,251,249,0.78);
+  background:rgba(250,248,242,0.82);
   backdrop-filter:blur(16px) saturate(160%);
   -webkit-backdrop-filter:blur(16px) saturate(160%);
   box-shadow:0 1px 0 var(--line);
-  padding:12px 0;
+  padding:14px 0;
 }
 .navbar{display:flex; align-items:center; justify-content:space-between; gap:24px;}
-.logo{display:flex; align-items:center; gap:10px; font-family:'Manrope'; font-weight:800; font-size:20px; color:var(--navy);}
+.logo{display:flex; align-items:center; gap:10px; font-family:'Fraunces'; font-weight:600; font-size:20px; color:var(--ink); letter-spacing:-0.01em;}
 .logo-mark{
-  width:32px; height:32px; border-radius:9px;
-  background:linear-gradient(135deg, var(--navy) 0%, var(--emerald) 100%);
+  width:15px; height:15px; border-radius:50%;
+  background:var(--pine);
   position:relative; flex-shrink:0;
 }
 .logo-mark::after{
-  content:''; position:absolute; inset:8px; border-radius:50%;
-  background:conic-gradient(from -90deg, var(--gold) 72%, rgba(255,255,255,0.35) 0);
+  content:''; position:absolute; inset:3px; border-radius:50%;
+  background:var(--gold-soft);
 }
-.nav-links{display:flex; align-items:center; gap:34px; font-size:14.5px; font-weight:600; color:var(--navy-soft);}
+.nav-links{display:flex; align-items:center; gap:36px; font-size:14.5px; font-weight:500; color:var(--ink-soft);}
 .nav-links a{transition:color .25s; position:relative;}
-.nav-links a:hover{color:var(--navy);}
-.nav-cta{display:flex; align-items:center; gap:14px;}
-.nav-cta .btn{padding:12px 22px; font-size:14.5px;}
+.nav-links a:hover{color:var(--ink);}
+.nav-cta{display:flex; align-items:center; gap:16px;}
+.nav-cta .btn{padding:12px 24px; font-size:14.5px;}
 .nav-toggle{display:none; background:none; border:none; padding:6px;}
-.nav-toggle span{display:block; width:22px; height:2px; background:var(--navy); margin:5px 0; border-radius:2px; transition:.3s;}
+.nav-toggle span{display:block; width:22px; height:1.5px; background:var(--ink); margin:5px 0; border-radius:2px; transition:.3s;}
 @media (max-width:920px){
   .nav-links{display:none;}
   .nav-cta .btn-ghost{display:none;}
@@ -140,346 +138,289 @@ header.scrolled{
 /* ============ HERO ============ */
 .hero{
   position:relative;
-  padding:168px 0 90px;
+  padding:190px 0 60px;
   overflow:hidden;
-  background:
-    radial-gradient(1200px 600px at 82% -10%, rgba(52,199,149,0.14), transparent 60%),
-    radial-gradient(900px 500px at -10% 10%, rgba(10,31,68,0.06), transparent 60%),
-    var(--bg);
 }
-.hero-grid{display:grid; grid-template-columns:1.05fr 1fr; gap:60px; align-items:center;}
-@media (max-width:980px){.hero-grid{grid-template-columns:1fr; gap:64px;}}
-.hero h1{font-size:clamp(38px,5.4vw,64px); line-height:1.06; margin-bottom:24px;}
+.hero-inner{max-width:900px;}
+.hero h1{font-size:clamp(42px,6.4vw,80px); line-height:1.03; margin-bottom:30px; font-weight:600;}
 .hero h1 em{
-  font-style:normal;
-  background:linear-gradient(100deg, var(--emerald) 0%, var(--emerald-light) 45%, var(--gold) 100%);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
+  font-style:italic;
+  color:var(--sage);
+  font-weight:500;
 }
-.hero p.lead{font-size:18.5px; line-height:1.65; color:var(--ink-soft); max-width:560px; margin-bottom:36px;}
-.hero-actions{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:44px;}
-.hero-trust{display:flex; align-items:center; gap:18px; flex-wrap:wrap; font-size:13.5px; color:var(--ink-faint); font-weight:600;}
-.hero-trust .dot{width:4px; height:4px; border-radius:50%; background:var(--ink-faint);}
+.hero p.lead{font-size:20px; line-height:1.6; color:var(--ink-soft); max-width:540px; margin-bottom:40px;}
+.hero-actions{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:22px;}
+.hero-note{font-size:13.5px; color:var(--ink-faint); font-weight:500;}
 
-/* --- Hero dashboard / signature element --- */
-.orbit-stage{
-  position:relative; width:100%; max-width:520px; margin:0 auto;
-  aspect-ratio:1/1.02;
+/* --- Signature hero visual: single goal, becoming real --- */
+.goal-reveal{
+  position:relative; margin-top:90px; border-radius:var(--radius-lg);
+  background:var(--panel); border:1px solid var(--line);
+  padding:0; overflow:hidden; box-shadow:var(--shadow-md);
+  display:grid; grid-template-columns:1.1fr 1fr;
 }
-.orbit-center{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:150px; height:150px; border-radius:50%;
-  background:linear-gradient(150deg, var(--navy) 0%, var(--navy-2) 60%, var(--emerald-2) 130%);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  color:#fff; box-shadow:0 24px 50px rgba(10,31,68,0.35), inset 0 0 0 1px rgba(255,255,255,0.12);
-  z-index:5; text-align:center;
+@media (max-width:860px){.goal-reveal{grid-template-columns:1fr;}}
+.gr-left{padding:52px 48px; display:flex; flex-direction:column; justify-content:center;}
+.gr-tag{font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--sage); margin-bottom:16px;}
+.gr-headline{font-family:'Fraunces'; font-size:clamp(26px,3vw,34px); line-height:1.2; font-weight:600; margin-bottom:18px;}
+.gr-sub{font-size:15.5px; color:var(--ink-soft); line-height:1.6; max-width:380px;}
+.gr-right{
+  background:linear-gradient(160deg, var(--pine) 0%, var(--pine-2) 100%);
+  padding:48px; display:flex; flex-direction:column; justify-content:center; gap:26px; position:relative;
 }
-.orbit-center .val{font-family:'Manrope'; font-weight:800; font-size:22px; letter-spacing:-0.01em;}
-.orbit-center .lbl{font-size:10.5px; text-transform:uppercase; letter-spacing:.12em; opacity:.72; margin-top:4px;}
-.orbit-svg{position:absolute; inset:0; width:100%; height:100%; z-index:1;}
-.orbit-svg circle.path{fill:none; stroke:rgba(10,31,68,0.09); stroke-width:1.2;}
-.orbit-svg path.link{fill:none; stroke:rgba(14,124,90,0.35); stroke-width:1.4; stroke-dasharray:4 6;
-  animation:dash 30s linear infinite;}
-@keyframes dash{to{stroke-dashoffset:-400;}}
-
-.goal-card{
-  position:absolute; width:172px;
-  background:rgba(255,255,255,0.72);
-  backdrop-filter:blur(14px) saturate(160%);
-  -webkit-backdrop-filter:blur(14px) saturate(160%);
-  border:1px solid rgba(255,255,255,0.6);
-  border-radius:18px; padding:14px 14px 15px;
-  box-shadow:0 16px 34px rgba(10,31,68,0.14);
-  z-index:4;
-  animation:float 6.5s ease-in-out infinite;
-}
-.goal-card .gc-top{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
-.ring{
-  width:38px; height:38px; border-radius:50%; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-  background:conic-gradient(var(--emerald) calc(var(--p) * 1%), rgba(10,31,68,0.09) 0);
-}
-.ring::after{content:''; width:28px; height:28px; border-radius:50%; background:#fff;}
-.gc-name{font-size:13px; font-weight:700; color:var(--navy); line-height:1.2;}
-.gc-goal{font-size:11px; color:var(--ink-faint); font-weight:600; margin-top:1px;}
-.gc-pct{font-family:'Manrope'; font-weight:800; font-size:15px; color:var(--emerald-2); margin-left:auto;}
-.gc-bar{height:5px; border-radius:4px; background:rgba(10,31,68,0.08); overflow:hidden;}
-.gc-bar i{display:block; height:100%; border-radius:4px; background:linear-gradient(90deg, var(--emerald), var(--emerald-light)); width:var(--w);}
-.gc-status{
-  font-size:11px; font-weight:700; padding:4px 9px; border-radius:100px; display:inline-block;
-}
-.gc-status.done{background:rgba(14,124,90,0.12); color:var(--emerald-2);}
-.gc-status.upcoming{background:rgba(201,162,75,0.16); color:#8a6b1f;}
-
-.gc-1{top:0%; left:-6%; animation-delay:0s;}
-.gc-2{top:6%; right:-8%; animation-delay:1.4s;}
-.gc-3{bottom:16%; left:-10%; animation-delay:2.7s;}
-.gc-4{bottom:0%; right:2%; width:150px; animation-delay:.8s;}
-.gc-5{top:44%; left:38%; width:130px; z-index:6; animation-delay:2s;}
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
-@media (max-width:980px){
-  .orbit-stage{max-width:420px; aspect-ratio:1/1.15;}
-  .goal-card{width:145px; padding:11px;}
-  .gc-4{width:128px;}
-  .gc-5{width:110px;}
-  .orbit-center{width:120px; height:120px;}
-  .orbit-center .val{font-size:18px;}
-}
-@media (max-width:560px){
-  .orbit-stage{transform:scale(0.86); margin:-10px auto -20px;}
-}
+.gr-right::before{content:''; position:absolute; inset:0; background:radial-gradient(420px 260px at 100% 0%, rgba(126,174,147,0.22), transparent 65%); pointer-events:none;}
+.gr-metric{position:relative;}
+.gr-metric .lbl{font-size:11.5px; text-transform:uppercase; letter-spacing:.1em; color:rgba(255,255,255,0.55); font-weight:700; margin-bottom:8px;}
+.gr-metric .val{font-family:'Fraunces'; font-size:clamp(30px,3.4vw,40px); color:#fff; font-weight:600; line-height:1;}
+.gr-metric .sub{font-size:13px; color:var(--sage-light); font-weight:600; margin-top:6px;}
+.gr-bar-track{height:6px; border-radius:6px; background:rgba(255,255,255,0.14); overflow:hidden; margin-top:14px;}
+.gr-bar-fill{height:100%; border-radius:6px; background:linear-gradient(90deg, var(--sage-light), #fff); width:64%;}
 
 /* ============ MARQUEE STRIP ============ */
-.strip{background:var(--navy); padding:16px 0; overflow:hidden;}
-.strip-track{display:flex; gap:56px; white-space:nowrap; animation:scroll-x 26s linear infinite; width:max-content;}
-.strip-track span{color:rgba(255,255,255,0.55); font-size:13px; font-weight:600; letter-spacing:.05em;}
+.strip{background:var(--pine-2); padding:18px 0; overflow:hidden;}
+.strip-track{display:flex; gap:60px; white-space:nowrap; animation:scroll-x 30s linear infinite; width:max-content;}
+.strip-track span{color:rgba(255,255,255,0.5); font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;}
 @keyframes scroll-x{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
+/* ============ MANIFESTO / PHILOSOPHY STATEMENT ============ */
+.manifesto{padding:170px 0; text-align:center;}
+@media (max-width:900px){.manifesto{padding:100px 0;}}
+.manifesto .wrap{max-width:880px;}
+.manifesto p.big{
+  font-family:'Fraunces'; font-weight:500; font-style:italic;
+  font-size:clamp(26px,4.2vw,46px); line-height:1.32; color:var(--ink);
+}
+.manifesto p.big .accent{color:var(--sage); font-style:normal; font-weight:600;}
+.manifesto .attribution{margin-top:32px; font-size:14px; color:var(--ink-faint); font-weight:600; letter-spacing:.03em; text-transform:uppercase;}
+
 /* ============ LIFE GOALS ============ */
-.goals-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+.goals-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden;}
 @media (max-width:900px){.goals-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:560px){.goals-grid{grid-template-columns:1fr;}}
 .lg-card{
-  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md);
-  padding:30px 26px; transition:transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s;
-  position:relative; overflow:hidden;
+  background:var(--panel);
+  padding:36px 30px; transition:background .3s var(--ease);
+  position:relative;
 }
-.lg-card::before{
-  content:''; position:absolute; inset:0; opacity:0; transition:opacity .4s;
-  background:radial-gradient(220px 140px at 85% -10%, rgba(52,199,149,0.16), transparent 70%);
-}
-.lg-card:hover{transform:translateY(-6px); box-shadow:var(--shadow-md); border-color:rgba(14,124,90,0.25);}
-.lg-card:hover::before{opacity:1;}
+.lg-card:hover{background:#fff;}
 .lg-icon{
-  width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center;
-  font-size:24px; background:linear-gradient(150deg, rgba(10,31,68,0.06), rgba(14,124,90,0.09));
-  margin-bottom:20px; transition:transform .4s var(--ease);
+  width:44px; height:44px; display:flex; align-items:center; justify-content:center;
+  font-size:22px; margin-bottom:22px;
 }
-.lg-card:hover .lg-icon{transform:scale(1.08) rotate(-4deg);}
-.lg-card h3{font-size:19px; margin-bottom:8px;}
+.lg-card h3{font-size:19px; margin-bottom:9px; font-weight:600;}
 .lg-card p{font-size:14.5px; color:var(--ink-soft); line-height:1.55;}
 
 /* ============ TIMELINE (How it works) ============ */
 .timeline{position:relative;}
 .tl-item{
-  display:grid; grid-template-columns:120px 1fr; gap:36px;
-  padding:44px 0; border-top:1px solid var(--line); position:relative;
+  display:grid; grid-template-columns:110px 1fr; gap:36px;
+  padding:48px 0; border-top:1px solid var(--line); position:relative;
 }
 .tl-item:first-child{border-top:1px solid var(--line);}
 .tl-num{
-  font-family:'Manrope'; font-weight:800; font-size:15px; color:var(--emerald-2);
-  display:flex; align-items:flex-start; gap:10px; padding-top:4px;
+  font-family:'Fraunces'; font-weight:600; font-size:15px; color:var(--sage);
+  padding-top:4px; font-style:italic;
 }
-.tl-num .n{
-  font-size:13px; width:30px; height:30px; border-radius:9px; background:rgba(14,124,90,0.1);
-  display:flex; align-items:center; justify-content:center; flex-shrink:0;
-}
-.tl-body h3{font-size:23px; margin-bottom:10px;}
-.tl-body > p{color:var(--ink-soft); font-size:15.5px; line-height:1.6; margin-bottom:22px; max-width:640px;}
+.tl-body h3{font-size:24px; margin-bottom:12px; font-weight:600;}
+.tl-body > p{color:var(--ink-soft); font-size:15.5px; line-height:1.6; margin-bottom:22px; max-width:600px;}
 .chip-row{display:flex; flex-wrap:wrap; gap:9px;}
 .chip{
-  font-size:13px; font-weight:600; color:var(--navy-soft); background:rgba(10,31,68,0.045);
+  font-size:13px; font-weight:500; color:var(--ink-soft); background:transparent;
   border:1px solid var(--line); padding:8px 14px; border-radius:100px;
 }
 @media (max-width:760px){
-  .tl-item{grid-template-columns:1fr; gap:14px;}
+  .tl-item{grid-template-columns:1fr; gap:12px;}
 }
 
 /* portfolio strips inside step 4 */
 .portfolio-set{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:6px;}
 @media (max-width:760px){.portfolio-set{grid-template-columns:1fr;}}
-.pf-card{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px;}
+.pf-card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px;}
 .pf-head{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
-.pf-head .ic{width:34px; height:34px; border-radius:9px; background:rgba(10,31,68,0.06); display:flex; align-items:center; justify-content:center; font-size:16px;}
-.pf-head b{font-size:14.5px; color:var(--navy);}
-.pf-bar{display:flex; height:9px; border-radius:6px; overflow:hidden; margin-bottom:10px;}
+.pf-head .ic{font-size:18px;}
+.pf-head b{font-size:14px; color:var(--ink); font-weight:600;}
+.pf-bar{display:flex; height:7px; border-radius:6px; overflow:hidden; margin-bottom:10px;}
 .pf-bar span{height:100%;}
 .pf-legend{display:flex; flex-wrap:wrap; gap:8px 12px; font-size:11.5px; color:var(--ink-soft); margin-bottom:10px;}
-.pf-legend i{width:8px; height:8px; border-radius:2px; display:inline-block; margin-right:5px;}
+.pf-legend i{width:7px; height:7px; border-radius:2px; display:inline-block; margin-right:5px;}
 .pf-why{font-size:12.5px; color:var(--ink-faint); line-height:1.5; padding-top:10px; border-top:1px dashed var(--line);}
 
 /* ============ DASHBOARD PREVIEW ============ */
+.dash-label{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;}
+.dash-label span{font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint);}
 .dash-panel{
-  background:linear-gradient(155deg, var(--navy) 0%, #0d2550 55%, var(--emerald-2) 145%);
-  border-radius:32px; padding:48px 40px; position:relative; overflow:hidden;
+  background:linear-gradient(155deg, var(--pine) 0%, var(--pine-2) 130%);
+  border-radius:28px; padding:48px 40px; position:relative; overflow:hidden;
   box-shadow:var(--shadow-lg);
 }
 .dash-panel::before{
   content:''; position:absolute; inset:0;
-  background:radial-gradient(500px 300px at 90% 0%, rgba(52,199,149,0.25), transparent 60%);
+  background:radial-gradient(500px 300px at 90% 0%, rgba(126,174,147,0.2), transparent 60%);
   pointer-events:none;
 }
 .dash-stats{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; position:relative;}
 @media (max-width:900px){.dash-stats{grid-template-columns:repeat(2,1fr);}}
 .dstat{
-  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:18px; padding:20px;
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:20px;
   backdrop-filter:blur(6px);
 }
 .dstat .lbl{font-size:12px; color:rgba(255,255,255,0.55); font-weight:600; margin-bottom:8px;}
-.dstat .val{font-family:'Manrope'; font-weight:800; font-size:24px; color:#fff;}
-.dstat .sub{font-size:12px; color:var(--emerald-light); font-weight:700; margin-top:6px;}
+.dstat .val{font-family:'Fraunces'; font-weight:600; font-size:24px; color:#fff;}
+.dstat .sub{font-size:12px; color:var(--sage-light); font-weight:600; margin-top:6px;}
 
 .dash-lower{display:grid; grid-template-columns:1.3fr 1fr; gap:18px; position:relative;}
 @media (max-width:900px){.dash-lower{grid-template-columns:1fr;}}
-.dpanel{background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:22px; backdrop-filter:blur(6px);}
-.dpanel h4{color:#fff; font-size:14.5px; font-weight:700; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;}
-.dpanel h4 span{font-size:11.5px; color:rgba(255,255,255,0.5); font-weight:600;}
+.dpanel{background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:18px; padding:22px; backdrop-filter:blur(6px);}
+.dpanel h4{color:#fff; font-size:14px; font-weight:600; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; font-family:'Inter';}
+.dpanel h4 span{font-size:11.5px; color:rgba(255,255,255,0.5); font-weight:500;}
 .chart-wrap{height:140px;}
 .alloc-list{display:flex; flex-direction:column; gap:12px;}
 .alloc-row{display:flex; align-items:center; gap:10px; font-size:13px; color:rgba(255,255,255,0.85);}
-.alloc-row .dotc{width:9px; height:9px; border-radius:3px; flex-shrink:0;}
-.alloc-row .amt{margin-left:auto; font-weight:700; color:#fff;}
+.alloc-row .dotc{width:8px; height:8px; border-radius:3px; flex-shrink:0;}
+.alloc-row .amt{margin-left:auto; font-weight:600; color:#fff;}
 .dash-goalrow{display:flex; flex-direction:column; gap:14px;}
 .dg-item{display:flex; align-items:center; gap:14px;}
-.dg-item .ring{width:40px; height:40px;}
-.dg-item .ring::after{width:30px; height:30px;}
+.dg-item .ring{width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:conic-gradient(var(--sage-light) calc(var(--p)*1%), rgba(255,255,255,0.14) 0);}
+.dg-item .ring::after{content:''; width:28px; height:28px; border-radius:50%; background:var(--pine-2);}
 .dg-info{flex:1; min-width:0;}
-.dg-info b{font-size:13.5px; color:#fff; display:block;}
+.dg-info b{font-size:13.5px; color:#fff; display:block; font-weight:600;}
 .dg-info span{font-size:11.5px; color:rgba(255,255,255,0.55);}
-.dg-pct{font-family:'Manrope'; font-weight:800; color:var(--emerald-light); font-size:14px;}
+.dg-pct{font-family:'Fraunces'; font-weight:600; color:var(--sage-light); font-size:14px;}
 
 /* ============ FAMILY SECTION ============ */
-.family-wrap{display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;}
-@media (max-width:920px){.family-wrap{grid-template-columns:1fr; gap:44px;}}
+.family-wrap{display:grid; grid-template-columns:1fr 1fr; gap:70px; align-items:center;}
+@media (max-width:920px){.family-wrap{grid-template-columns:1fr; gap:48px;}}
 .member-tree{position:relative; padding:20px 0;}
 .member-node{
   display:flex; align-items:center; gap:14px; background:var(--panel); border:1px solid var(--line);
-  border-radius:16px; padding:16px 18px; box-shadow:var(--shadow-sm); margin-bottom:14px;
+  border-radius:14px; padding:16px 18px; box-shadow:var(--shadow-sm); margin-bottom:12px;
   transition:transform .35s var(--ease);
 }
 .member-node:hover{transform:translateX(6px);}
 .member-avatar{
-  width:44px; height:44px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
-  font-family:'Manrope'; font-weight:800; color:#fff; font-size:15px;
+  width:40px; height:40px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-family:'Fraunces'; font-weight:600; color:#fff; font-size:14px;
 }
-.member-info b{font-size:14.5px; color:var(--navy); display:block;}
+.member-info b{font-size:14.5px; color:var(--ink); display:block; font-weight:600;}
 .member-info span{font-size:12.5px; color:var(--ink-faint);}
 .member-goals{margin-left:auto; display:flex; gap:6px;}
-.member-goals i{width:8px; height:8px; border-radius:50%; background:rgba(14,124,90,0.35);}
-.member-goals i.done{background:var(--emerald);}
+.member-goals i{width:7px; height:7px; border-radius:50%; background:rgba(76,124,99,0.3);}
+.member-goals i.done{background:var(--sage);}
 .member-node.indent{margin-left:32px;}
+.member-note{font-size:12px; color:var(--ink-faint); margin-top:16px; font-style:italic;}
 
 /* ============ GOAL CARDS SHOWCASE ============ */
 .goalcards-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
 @media (max-width:980px){.goalcards-grid{grid-template-columns:1fr; max-width:420px; margin:0 auto;}}
 .gcard{
   background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md);
-  padding:26px; box-shadow:var(--shadow-sm); transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+  padding:28px; transition:transform .4s var(--ease), box-shadow .4s var(--ease);
 }
 .gcard:hover{transform:translateY(-6px); box-shadow:var(--shadow-md);}
-.gcard-top{display:flex; align-items:center; gap:14px; margin-bottom:20px;}
-.gcard-top .icon{width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:22px; background:rgba(14,124,90,0.09);}
-.gcard-top b{font-size:16.5px; color:var(--navy); display:block;}
+.gcard-top{display:flex; align-items:center; gap:14px; margin-bottom:22px;}
+.gcard-top .icon{width:42px; height:42px; display:flex; align-items:center; justify-content:center; font-size:21px;}
+.gcard-top b{font-size:16px; color:var(--ink); display:block; font-weight:600;}
 .gcard-top span{font-size:12.5px; color:var(--ink-faint);}
 .gcard-ring{
-  width:104px; height:104px; border-radius:50%; margin:6px auto 18px;
+  width:100px; height:100px; border-radius:50%; margin:6px auto 20px;
   display:flex; align-items:center; justify-content:center;
-  background:conic-gradient(var(--emerald) calc(var(--p)*1%), rgba(10,31,68,0.08) 0);
+  background:conic-gradient(var(--sage) calc(var(--p)*1%), rgba(18,22,15,0.08) 0);
 }
-.gcard-ring::after{content:attr(data-p); width:82px; height:82px; border-radius:50%; background:#fff;
-  display:flex; align-items:center; justify-content:center; font-family:'Manrope'; font-weight:800; font-size:20px; color:var(--navy);}
+.gcard-ring::after{content:attr(data-p); width:80px; height:80px; border-radius:50%; background:#fff;
+  display:flex; align-items:center; justify-content:center; font-family:'Fraunces'; font-weight:600; font-size:19px; color:var(--ink);}
 .gcard-rows{display:flex; flex-direction:column; gap:10px; margin-bottom:18px;}
 .gcard-row{display:flex; justify-content:space-between; font-size:13.5px; padding-bottom:10px; border-bottom:1px dashed var(--line);}
 .gcard-row span:first-child{color:var(--ink-faint);}
-.gcard-row span:last-child{font-weight:700; color:var(--navy);}
-.gcard-portfolio{font-size:12.5px; color:var(--emerald-2); background:rgba(14,124,90,0.08); padding:9px 12px; border-radius:10px; margin-bottom:16px; font-weight:600;}
+.gcard-row span:last-child{font-weight:600; color:var(--ink);}
+.gcard-portfolio{font-size:12.5px; color:var(--sage); padding:0 0 16px; font-weight:600;}
 .gcard .btn{width:100%; padding:12px; font-size:14px;}
+.sample-tag{font-size:11px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.08em; font-weight:700; margin-bottom:18px;}
 
 /* ============ COMPARISON ============ */
 .compare-wrap{display:grid; grid-template-columns:1fr 1fr; gap:0; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-md);}
 @media (max-width:760px){.compare-wrap{grid-template-columns:1fr;}}
-.compare-col{padding:44px 38px;}
-.compare-col.old{background:#F1F2EE; color:var(--ink-soft);}
-.compare-col.new{background:linear-gradient(160deg, var(--navy) 0%, var(--emerald-2) 150%); color:#fff;}
-.compare-col h3{font-size:20px; margin-bottom:26px; display:flex; align-items:center; gap:10px;}
-.compare-col.old h3{color:var(--navy);}
+.compare-col{padding:48px 42px;}
+.compare-col.old{background:#F0EEE6; color:var(--ink-soft);}
+.compare-col.new{background:linear-gradient(160deg, var(--pine) 0%, var(--pine-2) 150%); color:#fff;}
+.compare-col h3{font-size:20px; margin-bottom:28px; font-weight:600;}
+.compare-col.old h3{color:var(--ink);}
 .compare-col.new h3{color:#fff;}
-.compare-list{list-style:none; display:flex; flex-direction:column; gap:16px;}
+.compare-list{list-style:none; display:flex; flex-direction:column; gap:17px;}
 .compare-list li{display:flex; align-items:flex-start; gap:12px; font-size:15px; line-height:1.5;}
-.compare-list .ico{flex-shrink:0; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; margin-top:1px;}
-.compare-col.old .ico{background:rgba(10,31,68,0.08); color:var(--ink-soft);}
+.compare-list .ico{flex-shrink:0; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:1px;}
+.compare-col.old .ico{background:rgba(18,22,15,0.08); color:var(--ink-soft);}
 .compare-col.new .ico{background:rgba(255,255,255,0.16); color:#fff;}
 
 /* ============ FEATURES ============ */
-.feat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+.feat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden;}
 @media (max-width:980px){.feat-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:560px){.feat-grid{grid-template-columns:1fr;}}
 .feat-card{
-  border:1px solid var(--line); border-radius:16px; padding:22px; background:var(--panel);
-  transition:transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s;
+  padding:26px 22px; background:var(--panel);
+  transition:background .3s var(--ease);
 }
-.feat-card:hover{transform:translateY(-4px); box-shadow:var(--shadow-sm); border-color:rgba(14,124,90,0.3);}
-.feat-card .fi{font-size:20px; margin-bottom:14px; width:40px; height:40px; border-radius:11px; background:rgba(10,31,68,0.05); display:flex; align-items:center; justify-content:center;}
-.feat-card b{font-size:14.5px; color:var(--navy); display:block; line-height:1.4;}
+.feat-card:hover{background:#fff;}
+.feat-card .fi{font-size:19px; margin-bottom:14px;}
+.feat-card b{font-size:14.5px; color:var(--ink); display:block; line-height:1.4; font-weight:600;}
 
 /* ============ INSIGHTS ============ */
-.insights-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px;}
+.insights-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden;}
 @media (max-width:760px){.insights-grid{grid-template-columns:1fr;}}
 .insight-card{
-  display:flex; gap:16px; align-items:flex-start; background:var(--panel); border:1px solid var(--line);
-  border-radius:16px; padding:20px 22px; box-shadow:var(--shadow-sm);
+  display:flex; gap:16px; align-items:flex-start; background:var(--panel);
+  padding:24px 26px;
 }
-.insight-card .ii{width:38px; height:38px; border-radius:11px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:17px;}
-.insight-card p{font-size:14.5px; color:var(--navy-soft); line-height:1.55; font-weight:600;}
-.insight-card .tag{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); font-weight:700; margin-bottom:5px;}
+.insight-card .ii{font-size:19px; flex-shrink:0; margin-top:2px;}
+.insight-card p{font-size:14.5px; color:var(--ink); line-height:1.55; font-weight:500;}
+.insight-card .tag{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); font-weight:700; margin-bottom:6px;}
 
-/* ============ TRUST BADGES ============ */
-.badge-row{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+/* ============ TRUST ============ */
+.badge-row{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden;}
 @media (max-width:760px){.badge-row{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:480px){.badge-row{grid-template-columns:1fr;}}
 .badge{
-  display:flex; align-items:center; gap:14px; padding:20px; border:1px solid var(--line); border-radius:16px; background:var(--panel);
+  display:flex; align-items:center; gap:14px; padding:22px; background:var(--panel);
 }
-.badge .bi{width:42px; height:42px; border-radius:11px; background:rgba(14,124,90,0.09); display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0;}
-.badge span{font-size:13.5px; font-weight:700; color:var(--navy); line-height:1.35;}
-
-/* ============ TESTIMONIALS ============ */
-.testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
-@media (max-width:900px){.testi-grid{grid-template-columns:1fr; max-width:520px; margin:0 auto;}}
-.testi-card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md); padding:28px; box-shadow:var(--shadow-sm);}
-.stars{color:var(--gold); font-size:14px; margin-bottom:16px; letter-spacing:2px;}
-.testi-card p{font-size:15px; line-height:1.65; color:var(--ink); margin-bottom:22px;}
-.testi-person{display:flex; align-items:center; gap:12px;}
-.testi-avatar{width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-family:'Manrope'; font-weight:800; font-size:14px;}
-.testi-person b{font-size:14px; color:var(--navy); display:block;}
-.testi-person span{font-size:12px; color:var(--ink-faint);}
+.badge .bi{font-size:19px; flex-shrink:0;}
+.badge span{font-size:13.5px; font-weight:600; color:var(--ink); line-height:1.35;}
 
 /* ============ FINAL CTA ============ */
 .final-cta{
-  background:linear-gradient(150deg, var(--navy) 0%, #0d2550 55%, var(--emerald-2) 150%);
-  border-radius:36px; padding:88px 60px; text-align:center; position:relative; overflow:hidden;
+  background:linear-gradient(150deg, var(--pine) 0%, var(--pine-2) 150%);
+  border-radius:32px; padding:100px 60px; text-align:center; position:relative; overflow:hidden;
 }
-.final-cta::before{content:''; position:absolute; inset:0; background:radial-gradient(600px 300px at 50% 0%, rgba(52,199,149,0.22), transparent 60%);}
-.final-cta h2{color:#fff; font-size:clamp(30px,4.4vw,48px); margin-bottom:18px; position:relative;}
-.final-cta p{color:rgba(255,255,255,0.72); max-width:600px; margin:0 auto 38px; font-size:17px; line-height:1.6; position:relative;}
+.final-cta::before{content:''; position:absolute; inset:0; background:radial-gradient(600px 300px at 50% 0%, rgba(126,174,147,0.2), transparent 60%);}
+.final-cta h2{color:#fff; font-size:clamp(32px,4.6vw,52px); margin-bottom:22px; position:relative; font-weight:600;}
+.final-cta p{color:rgba(255,255,255,0.68); max-width:560px; margin:0 auto 40px; font-size:17px; line-height:1.6; position:relative;}
 .final-cta .hero-actions{justify-content:center; position:relative;}
-@media (max-width:640px){.final-cta{padding:60px 26px;}}
+@media (max-width:640px){.final-cta{padding:64px 28px;}}
 
 /* ============ FOOTER ============ */
-footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;}
+footer{background:var(--pine-2); color:rgba(255,255,255,0.55); padding:80px 0 32px;}
 .foot-grid{display:grid; grid-template-columns:1.6fr repeat(4,1fr); gap:32px; margin-bottom:56px;}
 @media (max-width:900px){.foot-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:560px){.foot-grid{grid-template-columns:1fr;}}
 .foot-brand .logo{color:#fff;}
-.foot-brand p{font-size:14px; line-height:1.6; margin-top:16px; max-width:280px; color:rgba(255,255,255,0.5);}
-.foot-col h5{color:#fff; font-size:13px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:18px; font-weight:700;}
+.foot-brand p{font-size:14px; line-height:1.6; margin-top:16px; max-width:280px; color:rgba(255,255,255,0.45);}
+.foot-col h5{color:#fff; font-size:12.5px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:18px; font-weight:700;}
 .foot-col ul{list-style:none; display:flex; flex-direction:column; gap:12px;}
 .foot-col a{font-size:14px; transition:color .25s;}
 .foot-col a:hover{color:#fff;}
-.foot-bottom{display:flex; justify-content:space-between; align-items:center; padding-top:28px; border-top:1px solid rgba(255,255,255,0.1); font-size:13px; flex-wrap:wrap; gap:14px;}
+.foot-bottom{display:flex; justify-content:space-between; align-items:center; padding-top:28px; border-top:1px solid rgba(255,255,255,0.1); font-size:12.5px; flex-wrap:wrap; gap:14px;}
 .foot-social{display:flex; gap:12px;}
-.foot-social a{width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; font-size:14px; transition:background .25s;}
-.foot-social a:hover{background:rgba(255,255,255,0.16);}
+.foot-social a{width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:center; font-size:13px; transition:background .25s;}
+.foot-social a:hover{background:rgba(255,255,255,0.14);}
 
 /* mobile menu */
 .mobile-menu{
-  position:fixed; inset:0; background:var(--bg); z-index:200; padding:26px 24px;
+  position:fixed; inset:0; background:var(--paper); z-index:200; padding:26px 24px;
   display:flex; flex-direction:column; gap:6px; transform:translateY(-100%); transition:transform .45s var(--ease);
 }
 .mobile-menu.open{transform:translateY(0);}
 .mobile-menu .mtop{display:flex; justify-content:space-between; align-items:center; margin-bottom:36px;}
-.mobile-menu a{font-size:22px; font-weight:700; color:var(--navy); padding:14px 0; border-bottom:1px solid var(--line); font-family:'Manrope';}
+.mobile-menu a{font-size:22px; font-weight:600; color:var(--ink); padding:14px 0; border-bottom:1px solid var(--line); font-family:'Fraunces';}
 .mobile-menu .btn{margin-top:28px;}
-.close-btn{background:none; border:none; font-size:26px; color:var(--navy); line-height:1;}
+.close-btn{background:none; border:none; font-size:26px; color:var(--ink); line-height:1;}
 </style>
 </head>
 <body>
@@ -487,17 +428,17 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
 <!-- ============ NAV ============ -->
 <header id="siteHeader">
   <div class="wrap navbar">
-    <a href="#top" class="logo"><span class="logo-mark"></span>Northstar</a>
+    <a href="#top" class="logo"><span class="logo-mark"></span>Yours Wealth</a>
     <nav class="nav-links">
       <a href="#goals">Life Goals</a>
       <a href="#how">How It Works</a>
       <a href="#dashboard">Dashboard</a>
       <a href="#family">Family</a>
-      <a href="#trust">Security</a>
+      <a href="#trust">Trust</a>
     </nav>
     <div class="nav-cta">
       <a href="#" class="btn btn-ghost">Log In</a>
-      <a href="#start" class="btn btn-primary">Start Your Journey</a>
+      <a href="#start" class="btn btn-primary">Start Your Plan</a>
       <button class="nav-toggle" id="navToggle" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -505,69 +446,48 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
 
 <div class="mobile-menu" id="mobileMenu">
   <div class="mtop">
-    <a href="#top" class="logo"><span class="logo-mark"></span>Northstar</a>
+    <a href="#top" class="logo"><span class="logo-mark"></span>Yours Wealth</a>
     <button class="close-btn" id="navClose" aria-label="Close menu">×</button>
   </div>
   <a href="#goals">Life Goals</a>
   <a href="#how">How It Works</a>
   <a href="#dashboard">Dashboard</a>
   <a href="#family">Family</a>
-  <a href="#trust">Security</a>
-  <a href="#start" class="btn btn-primary">Start Your Journey</a>
+  <a href="#trust">Trust</a>
+  <a href="#start" class="btn btn-primary">Start Your Plan</a>
 </div>
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="eyebrow reveal in">Goal-based investment planning</div>
-      <h1 class="reveal in">The future you're <em>dreaming of</em> starts here.</h1>
-      <p class="lead reveal in">Every milestone in life deserves a plan. Whether you're building wealth, securing your family's future, funding your child's education, buying your dream home, or preparing for retirement — create personal financial goals and follow a clear investment journey built around what matters most to you.</p>
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="eyebrow reveal in">Goal‑based investing</div>
+      <h1 class="reveal in">Most people invest. <em>Very few plan.</em></h1>
+      <p class="lead reveal in">A number in a mutual fund statement doesn't tell you anything. A house in 2030, a daughter's tuition in 2033, a retirement in 2044 — that's a plan. Yours Wealth turns each of your life's goals into its own date, its own number, and its own portfolio, so you always know exactly where you stand.</p>
       <div class="hero-actions reveal in">
-        <a href="#start" class="btn btn-primary">Start Your Journey</a>
-        <a href="#how" class="btn btn-ghost">Explore How It Works</a>
+        <a href="#start" class="btn btn-primary">Start Your Plan</a>
+        <a href="#how" class="btn btn-ghost">See How It Works</a>
       </div>
-      <div class="hero-trust reveal in">
-        <span>AMFI Registered Distributor</span>
-        <span class="dot"></span>
-        <span>12,000+ goals funded</span>
-        <span class="dot"></span>
-        <span>₹840 Cr+ tracked</span>
-      </div>
+      <div class="hero-note reveal in">Takes seven minutes. No paperwork.</div>
     </div>
 
-    <div class="orbit-stage reveal in">
-      <svg class="orbit-svg" viewBox="0 0 500 500">
-        <circle class="path" cx="250" cy="250" r="210"/>
-        <path class="link" d="M250,250 C180,150 90,110 40,40"/>
-        <path class="link" d="M250,250 C330,150 420,120 470,60"/>
-        <path class="link" d="M250,250 C160,320 60,340 10,420"/>
-        <path class="link" d="M250,250 C340,330 420,360 460,460"/>
-        <path class="link" d="M250,250 C260,300 280,330 300,360"/>
-      </svg>
-      <div class="orbit-center">
-        <div class="val">₹2.45 Cr</div>
-        <div class="lbl">Total Goal Value</div>
+    <div class="goal-reveal reveal in">
+      <div class="gr-left">
+        <div class="gr-tag">One goal, made real</div>
+        <div class="gr-headline">"By June 2033, my daughter's education is fully funded."</div>
+        <div class="gr-sub">Not a hope. A tracked, invested, continuously adjusted plan — with a portfolio built for exactly this timeline, nothing borrowed from any other goal.</div>
       </div>
-      <div class="goal-card gc-1">
-        <div class="gc-top"><div class="ring" style="--p:72"></div><div><div class="gc-name">Retirement</div><div class="gc-goal">₹1.2 Cr Goal</div></div><div class="gc-pct">72%</div></div>
-        <div class="gc-bar"><i style="--w:72%"></i></div>
-      </div>
-      <div class="goal-card gc-2">
-        <div class="gc-top"><div class="ring" style="--p:42"></div><div><div class="gc-name">Child Education</div><div class="gc-goal">₹45 L Goal</div></div><div class="gc-pct">42%</div></div>
-        <div class="gc-bar"><i style="--w:42%"></i></div>
-      </div>
-      <div class="goal-card gc-3">
-        <div class="gc-top"><div class="ring" style="--p:18"></div><div><div class="gc-name">Dream Home</div><div class="gc-goal">₹80 L Goal</div></div><div class="gc-pct">18%</div></div>
-        <div class="gc-bar"><i style="--w:18%"></i></div>
-      </div>
-      <div class="goal-card gc-4">
-        <div class="gc-top"><div style="font-size:20px">🛟</div><div><div class="gc-name">Emergency Fund</div><div class="gc-goal">6 months</div></div></div>
-        <span class="gc-status done">Completed ✓</span>
-      </div>
-      <div class="goal-card gc-5">
-        <div class="gc-top"><div style="font-size:18px">🌍</div><div><div class="gc-name">Vacation</div><div class="gc-goal">₹4 L Goal</div></div></div>
-        <span class="gc-status upcoming">Upcoming</span>
+      <div class="gr-right">
+        <div class="gr-metric">
+          <div class="lbl">Target · June 2033</div>
+          <div class="val">₹45,00,000</div>
+          <div class="sub">On track</div>
+          <div class="gr-bar-track"><div class="gr-bar-fill"></div></div>
+        </div>
+        <div class="gr-metric">
+          <div class="lbl">Monthly SIP required</div>
+          <div class="val" style="font-size:24px;">₹16,500</div>
+        </div>
       </div>
     </div>
   </div>
@@ -575,35 +495,43 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
 
 <div class="strip">
   <div class="strip-track">
-    <span>MONTHLY SIP TRACKING</span><span>·</span><span>GOAL-BASED PORTFOLIOS</span><span>·</span><span>FAMILY WEALTH PLANNING</span><span>·</span><span>AMFI REGISTERED</span><span>·</span><span>PAPERLESS INVESTING</span><span>·</span>
-    <span>MONTHLY SIP TRACKING</span><span>·</span><span>GOAL-BASED PORTFOLIOS</span><span>·</span><span>FAMILY WEALTH PLANNING</span><span>·</span><span>AMFI REGISTERED</span><span>·</span><span>PAPERLESS INVESTING</span><span>·</span>
+    <span>GOAL‑BASED PORTFOLIOS</span><span>·</span><span>ONE PLAN PER GOAL</span><span>·</span><span>FAMILY WEALTH PLANNING</span><span>·</span><span>AMFI REGISTERED</span><span>·</span><span>FULLY PAPERLESS</span><span>·</span>
+    <span>GOAL‑BASED PORTFOLIOS</span><span>·</span><span>ONE PLAN PER GOAL</span><span>·</span><span>FAMILY WEALTH PLANNING</span><span>·</span><span>AMFI REGISTERED</span><span>·</span><span>FULLY PAPERLESS</span><span>·</span>
   </div>
 </div>
+
+<!-- ============ MANIFESTO ============ -->
+<section class="manifesto">
+  <div class="wrap reveal">
+    <p class="big">A goal is not a number.<br>It's <span class="accent">a date you can see coming.</span></p>
+    <div class="attribution">The Yours Wealth philosophy</div>
+  </div>
+</section>
 
 <!-- ============ LIFE GOALS ============ -->
 <section class="section" id="goals">
   <div class="wrap">
     <div class="section-head reveal">
-      <div class="eyebrow">Why people come to us</div>
-      <h2>Every dream deserves a plan.</h2>
-      <p>We don't sell investments. We help you plan the moments that matter — then build the portfolio that gets you there.</p>
+      <div class="eyebrow">Where to begin</div>
+      <h2>Nine kinds of dreams. One plan for each.</h2>
+      <p>We don't sell you a mutual fund. We ask what you're actually saving for — then we build backward from the date it needs to happen.</p>
     </div>
     <div class="goals-grid reveal-stagger">
-      <div class="lg-card reveal" style="--i:0"><div class="lg-icon">🏠</div><h3>Dream Home</h3><p>Plan the down payment and moving-in date, not just a lump sum.</p></div>
+      <div class="lg-card reveal" style="--i:0"><div class="lg-icon">🏠</div><h3>Dream Home</h3><p>Plan the down payment and the move‑in date, not just a lump sum.</p></div>
       <div class="lg-card reveal" style="--i:1"><div class="lg-icon">🎓</div><h3>Child Education</h3><p>Stay ahead of tuition inflation, years before the admission letter arrives.</p></div>
       <div class="lg-card reveal" style="--i:2"><div class="lg-icon">👶</div><h3>New Baby</h3><p>Build a cushion for the early years — from hospital bills to preschool.</p></div>
-      <div class="lg-card reveal" style="--i:3"><div class="lg-icon">💍</div><h3>Wedding</h3><p>Fund the celebration you want without derailing your other goals.</p></div>
-      <div class="lg-card reveal" style="--i:4"><div class="lg-icon">🚗</div><h3>New Car</h3><p>Know exactly when you'll be ready to drive it home, debt-free.</p></div>
-      <div class="lg-card reveal" style="--i:5"><div class="lg-icon">🌍</div><h3>Vacation</h3><p>Short-horizon goals with low-risk funds so the trip is never at risk.</p></div>
-      <div class="lg-card reveal" style="--i:6"><div class="lg-icon">💼</div><h3>Wealth Creation</h3><p>Grow long-term wealth with a strategy built for decades, not days.</p></div>
+      <div class="lg-card reveal" style="--i:3"><div class="lg-icon">💍</div><h3>Wedding</h3><p>Fund the celebration you want without derailing every other goal.</p></div>
+      <div class="lg-card reveal" style="--i:4"><div class="lg-icon">🚗</div><h3>New Car</h3><p>Know exactly when you'll be ready to drive it home, debt‑free.</p></div>
+      <div class="lg-card reveal" style="--i:5"><div class="lg-icon">🌍</div><h3>Vacation</h3><p>A short‑horizon goal in low‑risk funds, so the trip is never at risk.</p></div>
+      <div class="lg-card reveal" style="--i:6"><div class="lg-icon">💼</div><h3>Wealth Creation</h3><p>Grow long‑term wealth with a strategy built for decades, not days.</p></div>
       <div class="lg-card reveal" style="--i:7"><div class="lg-icon">🏖</div><h3>Retirement</h3><p>See the exact monthly SIP that gets you to the retirement you picture.</p></div>
-      <div class="lg-card reveal" style="--i:8"><div class="lg-icon">❤️</div><h3>Parents' Security</h3><p>Plan for their healthcare and comfort with a goal of its own.</p></div>
+      <div class="lg-card reveal" style="--i:8"><div class="lg-icon">❤️</div><h3>Parents' Security</h3><p>Plan for their healthcare and comfort with a goal built just for it.</p></div>
     </div>
   </div>
 </section>
 
 <!-- ============ HOW IT WORKS ============ -->
-<section class="section" id="how" style="background:#F5F7F5;">
+<section class="section" id="how" style="background:#F3F1E9;">
   <div class="wrap">
     <div class="section-head reveal">
       <div class="eyebrow">The journey</div>
@@ -613,7 +541,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
 
     <div class="timeline">
       <div class="tl-item reveal">
-        <div class="tl-num"><span class="n">01</span> Know Yourself</div>
+        <div class="tl-num">One</div>
         <div class="tl-body">
           <h3>Tell us where you stand today.</h3>
           <p>A short profile gives your plan its foundation — no jargon, just the facts that shape your journey.</p>
@@ -626,7 +554,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
       </div>
 
       <div class="tl-item reveal">
-        <div class="tl-num"><span class="n">02</span> Create Your Goals</div>
+        <div class="tl-num">Two</div>
         <div class="tl-body">
           <h3>Add a goal for anyone who matters.</h3>
           <p>Set up goals for yourself, your spouse, your children, or your parents — each with its own timeline and priority.</p>
@@ -638,7 +566,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
       </div>
 
       <div class="tl-item reveal">
-        <div class="tl-num"><span class="n">03</span> Personalized Planning</div>
+        <div class="tl-num">Three</div>
         <div class="tl-body">
           <h3>We do the maths. You see the picture.</h3>
           <p>Inflation, time horizon, and required returns — calculated instantly and shown simply, so you always know exactly what it takes.</p>
@@ -650,7 +578,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
       </div>
 
       <div class="tl-item reveal">
-        <div class="tl-num"><span class="n">04</span> Goal-Based Portfolios</div>
+        <div class="tl-num">Four</div>
         <div class="tl-body">
           <h3>A different strategy for every goal.</h3>
           <p>Your emergency fund shouldn't take the same risk as your retirement corpus. Every goal gets a portfolio built for its own horizon.</p>
@@ -658,38 +586,38 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
           <div class="portfolio-set">
             <div class="pf-card">
               <div class="pf-head"><div class="ic">🏖</div><b>Retirement · 25 yrs</b></div>
-              <div class="pf-bar"><span style="width:40%;background:#0E7C5A"></span><span style="width:35%;background:#34C795"></span><span style="width:25%;background:#C9A24B"></span></div>
-              <div class="pf-legend"><span><i style="background:#0E7C5A"></i>Flexi Cap</span><span><i style="background:#34C795"></i>Index Funds</span><span><i style="background:#C9A24B"></i>Mid Cap</span></div>
+              <div class="pf-bar"><span style="width:40%;background:#173C33"></span><span style="width:35%;background:#4C7C63"></span><span style="width:25%;background:#AD8A4E"></span></div>
+              <div class="pf-legend"><span><i style="background:#173C33"></i>Flexi Cap</span><span><i style="background:#4C7C63"></i>Index Funds</span><span><i style="background:#AD8A4E"></i>Mid Cap</span></div>
               <div class="pf-why">Long horizon allows higher equity exposure to outpace inflation over 25 years.</div>
             </div>
             <div class="pf-card">
               <div class="pf-head"><div class="ic">🎓</div><b>Child Education · 12 yrs</b></div>
-              <div class="pf-bar"><span style="width:55%;background:#123163"></span><span style="width:45%;background:#0E7C5A"></span></div>
-              <div class="pf-legend"><span><i style="background:#123163"></i>Large & Mid Cap</span><span><i style="background:#0E7C5A"></i>Flexi Cap</span></div>
+              <div class="pf-bar"><span style="width:55%;background:#0D251F"></span><span style="width:45%;background:#4C7C63"></span></div>
+              <div class="pf-legend"><span><i style="background:#0D251F"></i>Large & Mid Cap</span><span><i style="background:#4C7C63"></i>Flexi Cap</span></div>
               <div class="pf-why">A medium horizon balances growth with stability as the admission date nears.</div>
             </div>
             <div class="pf-card">
               <div class="pf-head"><div class="ic">🛟</div><b>Emergency Fund · Instant</b></div>
-              <div class="pf-bar"><span style="width:100%;background:#8895A0"></span></div>
-              <div class="pf-legend"><span><i style="background:#8895A0"></i>Liquid Funds</span></div>
-              <div class="pf-why">Capital protection and same-day access matter more than returns here.</div>
+              <div class="pf-bar"><span style="width:100%;background:#8E9488"></span></div>
+              <div class="pf-legend"><span><i style="background:#8E9488"></i>Liquid Funds</span></div>
+              <div class="pf-why">Capital protection and same‑day access matter more than returns here.</div>
             </div>
             <div class="pf-card">
               <div class="pf-head"><div class="ic">🏠</div><b>Dream Home · 6 yrs</b></div>
-              <div class="pf-bar"><span style="width:100%;background:#C9A24B"></span></div>
-              <div class="pf-legend"><span><i style="background:#C9A24B"></i>Hybrid Funds</span></div>
+              <div class="pf-bar"><span style="width:100%;background:#AD8A4E"></span></div>
+              <div class="pf-legend"><span><i style="background:#AD8A4E"></i>Hybrid Funds</span></div>
               <div class="pf-why">A blend of equity and debt smooths volatility as the down payment date approaches.</div>
             </div>
             <div class="pf-card">
               <div class="pf-head"><div class="ic">🌍</div><b>Vacation · 2 yrs</b></div>
-              <div class="pf-bar"><span style="width:100%;background:#2E4A78"></span></div>
-              <div class="pf-legend"><span><i style="background:#2E4A78"></i>Short Duration Funds</span></div>
+              <div class="pf-bar"><span style="width:100%;background:#565E52"></span></div>
+              <div class="pf-legend"><span><i style="background:#565E52"></i>Short Duration Funds</span></div>
               <div class="pf-why">Short horizons call for low volatility so the trip is never at the mercy of the market.</div>
             </div>
             <div class="pf-card">
               <div class="pf-head"><div class="ic">💼</div><b>Wealth Creation · 15 yrs</b></div>
-              <div class="pf-bar"><span style="width:50%;background:#0E7C5A"></span><span style="width:30%;background:#123163"></span><span style="width:20%;background:#34C795"></span></div>
-              <div class="pf-legend"><span><i style="background:#0E7C5A"></i>Flexi Cap</span><span><i style="background:#123163"></i>Large Cap</span><span><i style="background:#34C795"></i>Mid Cap</span></div>
+              <div class="pf-bar"><span style="width:50%;background:#173C33"></span><span style="width:30%;background:#0D251F"></span><span style="width:20%;background:#4C7C63"></span></div>
+              <div class="pf-legend"><span><i style="background:#173C33"></i>Flexi Cap</span><span><i style="background:#0D251F"></i>Large Cap</span><span><i style="background:#4C7C63"></i>Mid Cap</span></div>
               <div class="pf-why">Diversified equity exposure designed to compound steadily over the long run.</div>
             </div>
           </div>
@@ -697,7 +625,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
       </div>
 
       <div class="tl-item reveal">
-        <div class="tl-num"><span class="n">05</span> Track Your Journey</div>
+        <div class="tl-num">Five</div>
         <div class="tl-body">
           <h3>Watch every goal move closer, month by month.</h3>
           <p>Once you're invested, your dashboard keeps working — tracking growth, flagging what needs attention, and telling you exactly when you'll get there.</p>
@@ -720,6 +648,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
       <p>Total wealth, monthly SIPs, portfolio performance, and how close you are to each dream — all in one place.</p>
     </div>
 
+    <div class="dash-label reveal"><span>Illustrative preview — sample plan</span></div>
     <div class="dash-panel reveal">
       <div class="dash-stats">
         <div class="dstat"><div class="lbl">Total Wealth</div><div class="val" data-count="24800000" data-prefix="₹" data-format="cr">₹0</div><div class="sub">↑ 14.2% this year</div></div>
@@ -735,27 +664,27 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
             <svg viewBox="0 0 480 140" width="100%" height="100%" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="pf-grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#34C795" stop-opacity="0.45"/>
-                  <stop offset="100%" stop-color="#34C795" stop-opacity="0"/>
+                  <stop offset="0%" stop-color="#7EAE93" stop-opacity="0.45"/>
+                  <stop offset="100%" stop-color="#7EAE93" stop-opacity="0"/>
                 </linearGradient>
               </defs>
-              <polyline fill="none" stroke="#34C795" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+              <polyline fill="none" stroke="#7EAE93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
                 points="0,110 40,100 80,104 120,84 160,90 200,68 240,72 280,50 320,58 360,34 400,40 440,20 480,26" class="perf-line"/>
               <polygon fill="url(#pf-grad)" points="0,110 40,100 80,104 120,84 160,90 200,68 240,72 280,50 320,58 360,34 400,40 440,20 480,26 480,140 0,140"/>
             </svg>
           </div>
           <div class="alloc-list" style="margin-top:18px; flex-direction:row; justify-content:space-between;">
-            <div class="alloc-row"><span class="dotc" style="background:#34C795"></span>Portfolio Value <b class="amt">₹1.92 Cr</b></div>
+            <div class="alloc-row"><span class="dotc" style="background:#7EAE93"></span>Portfolio Value <b class="amt">₹1.92 Cr</b></div>
           </div>
         </div>
 
         <div class="dpanel">
           <h4>Asset Allocation</h4>
           <div class="alloc-list">
-            <div class="alloc-row"><span class="dotc" style="background:#34C795"></span>Equity <span class="amt">58%</span></div>
-            <div class="alloc-row"><span class="dotc" style="background:#C9A24B"></span>Hybrid <span class="amt">22%</span></div>
-            <div class="alloc-row"><span class="dotc" style="background:#8895A0"></span>Debt / Liquid <span class="amt">14%</span></div>
-            <div class="alloc-row"><span class="dotc" style="background:#2E4A78"></span>Short Duration <span class="amt">6%</span></div>
+            <div class="alloc-row"><span class="dotc" style="background:#7EAE93"></span>Equity <span class="amt">58%</span></div>
+            <div class="alloc-row"><span class="dotc" style="background:#AD8A4E"></span>Hybrid <span class="amt">22%</span></div>
+            <div class="alloc-row"><span class="dotc" style="background:#8E9488"></span>Debt / Liquid <span class="amt">14%</span></div>
+            <div class="alloc-row"><span class="dotc" style="background:#565E52"></span>Short Duration <span class="amt">6%</span></div>
           </div>
         </div>
       </div>
@@ -774,7 +703,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
 </section>
 
 <!-- ============ FAMILY WEALTH ============ -->
-<section class="section" id="family" style="background:#F5F7F5;">
+<section class="section" id="family" style="background:#F3F1E9;">
   <div class="wrap family-wrap">
     <div class="reveal">
       <div class="eyebrow">Plan together</div>
@@ -784,25 +713,26 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
     </div>
     <div class="member-tree reveal">
       <div class="member-node">
-        <div class="member-avatar" style="background:var(--navy);">RS</div>
-        <div class="member-info"><b>Rohan Sharma (You)</b><span>3 active goals</span></div>
+        <div class="member-avatar" style="background:var(--pine);">RS</div>
+        <div class="member-info"><b>You</b><span>3 active goals</span></div>
         <div class="member-goals"><i class="done"></i><i></i><i></i></div>
       </div>
       <div class="member-node indent">
-        <div class="member-avatar" style="background:var(--emerald-2);">AS</div>
-        <div class="member-info"><b>Anika Sharma · Spouse</b><span>2 active goals</span></div>
+        <div class="member-avatar" style="background:var(--sage);">SP</div>
+        <div class="member-info"><b>Spouse</b><span>2 active goals</span></div>
         <div class="member-goals"><i></i><i></i></div>
       </div>
       <div class="member-node indent">
-        <div class="member-avatar" style="background:var(--gold);">RS</div>
-        <div class="member-info"><b>Riya Sharma · Daughter</b><span>1 active goal</span></div>
+        <div class="member-avatar" style="background:var(--gold);">CH</div>
+        <div class="member-info"><b>Child</b><span>1 active goal</span></div>
         <div class="member-goals"><i></i></div>
       </div>
       <div class="member-node indent">
-        <div class="member-avatar" style="background:#2E4A78;">MS</div>
-        <div class="member-info"><b>Meena Sharma · Mother</b><span>1 active goal</span></div>
+        <div class="member-avatar" style="background:#565E52;">PA</div>
+        <div class="member-info"><b>Parent</b><span>1 active goal</span></div>
         <div class="member-goals"><i class="done"></i></div>
       </div>
+      <p class="member-note">Illustrative family structure — yours can look however your life does.</p>
     </div>
   </div>
 </section>
@@ -817,6 +747,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
     </div>
     <div class="goalcards-grid reveal-stagger">
       <div class="gcard reveal" style="--i:0">
+        <div class="sample-tag">Sample goal</div>
         <div class="gcard-top"><div class="icon">🏖</div><div><b>Retirement</b><span>Target: 2044</span></div></div>
         <div class="gcard-ring" style="--p:72" data-p="72%"></div>
         <div class="gcard-rows">
@@ -829,6 +760,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
         <a href="#" class="btn btn-ghost">View Details</a>
       </div>
       <div class="gcard reveal" style="--i:1">
+        <div class="sample-tag">Sample goal</div>
         <div class="gcard-top"><div class="icon">🎓</div><div><b>Child Education</b><span>Target: 2033</span></div></div>
         <div class="gcard-ring" style="--p:42" data-p="42%"></div>
         <div class="gcard-rows">
@@ -841,6 +773,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
         <a href="#" class="btn btn-ghost">View Details</a>
       </div>
       <div class="gcard reveal" style="--i:2">
+        <div class="sample-tag">Sample goal</div>
         <div class="gcard-top"><div class="icon">🏠</div><div><b>Dream Home</b><span>Target: 2030</span></div></div>
         <div class="gcard-ring" style="--p:18" data-p="18%"></div>
         <div class="gcard-rows">
@@ -857,30 +790,30 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
 </section>
 
 <!-- ============ WHY GOAL-BASED ============ -->
-<section class="section" style="background:#F5F7F5;">
+<section class="section" style="background:#F3F1E9;">
   <div class="wrap">
     <div class="section-head center reveal" style="margin-left:auto; margin-right:auto;">
       <div class="eyebrow">The difference</div>
-      <h2>Why goal-based investing?</h2>
+      <h2>Why goal‑based investing?</h2>
       <p>Direction changes everything — the same rupee, invested with purpose, goes further.</p>
     </div>
     <div class="compare-wrap reveal">
       <div class="compare-col old">
-        <h3>Traditional Investing</h3>
+        <h3>Investing Without a Plan</h3>
         <ul class="compare-list">
           <li><span class="ico">−</span>Money invested without direction</li>
-          <li><span class="ico">−</span>Random, ad-hoc investment decisions</li>
+          <li><span class="ico">−</span>Random, ad‑hoc investment decisions</li>
           <li><span class="ico">−</span>No measurable outcomes</li>
           <li><span class="ico">−</span>No progress tracking</li>
           <li><span class="ico">−</span>One portfolio used for everything</li>
         </ul>
       </div>
       <div class="compare-col new">
-        <h3>Goal-Based Investing</h3>
+        <h3>Goal‑Based Investing</h3>
         <ul class="compare-list">
           <li><span class="ico">✓</span>Every investment has a purpose</li>
           <li><span class="ico">✓</span>A separate strategy for every goal</li>
-          <li><span class="ico">✓</span>Real-time progress you can see</li>
+          <li><span class="ico">✓</span>Real‑time progress you can see</li>
           <li><span class="ico">✓</span>You know exactly how much to invest</li>
           <li><span class="ico">✓</span>You know exactly when you'll get there</li>
         </ul>
@@ -914,7 +847,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
 </section>
 
 <!-- ============ INSIGHTS ============ -->
-<section class="section" style="background:#F5F7F5;">
+<section class="section" style="background:#F3F1E9;">
   <div class="wrap">
     <div class="section-head reveal">
       <div class="eyebrow">Always one step ahead</div>
@@ -922,19 +855,19 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
     </div>
     <div class="insights-grid reveal-stagger">
       <div class="insight-card reveal" style="--i:0">
-        <div class="ii" style="background:rgba(14,124,90,0.1);">📈</div>
+        <div class="ii">📈</div>
         <p><span class="tag">SIP Suggestion</span>Increase your SIP by ₹2,500 to reach retirement one year earlier.</p>
       </div>
       <div class="insight-card reveal" style="--i:1">
-        <div class="ii" style="background:rgba(201,162,75,0.15);">🎉</div>
-        <p><span class="tag">Milestone</span>Congratulations! Your emergency fund is now fully funded.</p>
+        <div class="ii">🎉</div>
+        <p><span class="tag">Milestone</span>Your emergency fund just crossed fully funded.</p>
       </div>
       <div class="insight-card reveal" style="--i:2">
-        <div class="ii" style="background:rgba(14,124,90,0.1);">🎓</div>
+        <div class="ii">🎓</div>
         <p><span class="tag">On Track</span>Your child's education goal is progressing ahead of schedule.</p>
       </div>
       <div class="insight-card reveal" style="--i:3">
-        <div class="ii" style="background:rgba(46,74,120,0.12);">🏠</div>
+        <div class="ii">🏠</div>
         <p><span class="tag">Review</span>Review your portfolio to stay aligned with your home purchase goal.</p>
       </div>
     </div>
@@ -951,37 +884,10 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
     <div class="badge-row reveal-stagger">
       <div class="badge reveal" style="--i:0"><div class="bi">🛡️</div><span>AMFI Registered Mutual Fund Distributor</span></div>
       <div class="badge reveal" style="--i:1"><div class="bi">🔐</div><span>Secure, Encrypted Login</span></div>
-      <div class="badge reveal" style="--i:2"><div class="bi">🗄️</div><span>Bank-Grade Data Encryption</span></div>
+      <div class="badge reveal" style="--i:2"><div class="bi">🗄️</div><span>Bank‑Grade Data Encryption</span></div>
       <div class="badge reveal" style="--i:3"><div class="bi">📄</div><span>Fully Paperless Investing</span></div>
       <div class="badge reveal" style="--i:4"><div class="bi">⚖️</div><span>Regulatory Compliance</span></div>
-      <div class="badge reveal" style="--i:5"><div class="bi">🤝</div><span>Dedicated Financial Planning Support</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ TESTIMONIALS ============ -->
-<section class="section" style="background:#F5F7F5;">
-  <div class="wrap">
-    <div class="section-head center reveal">
-      <div class="eyebrow">Real families, real plans</div>
-      <h2>Stories from people who now know where they stand.</h2>
-    </div>
-    <div class="testi-grid reveal-stagger">
-      <div class="testi-card reveal" style="--i:0">
-        <div class="stars">★★★★★</div>
-        <p>"We'd been investing for years without any real target. Seeing our daughter's education goal at 61% complete, with a date attached, changed how we think about every rupee we save."</p>
-        <div class="testi-person"><div class="testi-avatar" style="background:var(--navy);">PN</div><div><b>Priya Nair</b><span>Bengaluru · Parent of two</span></div></div>
-      </div>
-      <div class="testi-card reveal" style="--i:1">
-        <div class="stars">★★★★★</div>
-        <p>"I finally stopped juggling five different fund apps. My retirement, my parents' healthcare fund, and our home down payment all live in one dashboard now."</p>
-        <div class="testi-person"><div class="testi-avatar" style="background:var(--emerald-2);">AK</div><div><b>Arjun Khanna</b><span>Pune · IT Professional</span></div></div>
-      </div>
-      <div class="testi-card reveal" style="--i:2">
-        <div class="stars">★★★★★</div>
-        <p>"The emergency fund alert genuinely saved us during a job transition. Knowing exactly how many months we had covered gave us the confidence to make the switch."</p>
-        <div class="testi-person"><div class="testi-avatar" style="background:var(--gold);">SM</div><div><b>Sunita Mehta</b><span>Ahmedabad · Small Business Owner</span></div></div>
-      </div>
+      <div class="badge reveal" style="--i:5"><div class="bi">🤝</div><span>Human Support, Whenever You Need It</span></div>
     </div>
   </div>
 </section>
@@ -993,7 +899,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
       <h2>Every great future starts with one decision.</h2>
       <p>Your dreams deserve more than hope — they deserve a plan. Start creating your financial goals today and take the first step toward a future that's thoughtfully planned, confidently invested, and carefully tracked every step of the way.</p>
       <div class="hero-actions">
-        <a href="#" class="btn btn-light">Start Your Journey</a>
+        <a href="#" class="btn btn-light">Start Your Plan</a>
         <a href="#" class="btn btn-outline-light" style="border:1px solid rgba(255,255,255,0.35); color:#fff;">Talk to an Advisor</a>
       </div>
     </div>
@@ -1005,8 +911,8 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
-        <a href="#top" class="logo"><span class="logo-mark"></span>Northstar</a>
-        <p>A digital goal-based financial planning platform helping families invest with purpose, not guesswork.</p>
+        <a href="#top" class="logo"><span class="logo-mark"></span>Yours Wealth</a>
+        <p>A goal‑based financial planning platform helping families invest with purpose, not guesswork.</p>
       </div>
       <div class="foot-col">
         <h5>Products</h5>
@@ -1044,7 +950,7 @@ footer{background:var(--navy); color:rgba(255,255,255,0.6); padding:76px 0 32px;
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Northstar Financial Planning Pvt. Ltd. AMFI Registered Mutual Fund Distributor. Mutual fund investments are subject to market risks.</span>
+      <span>© 2026 Yours Wealth Financial Planning Pvt. Ltd. AMFI Registered Mutual Fund Distributor. Mutual fund investments are subject to market risks.</span>
       <div class="foot-social">
         <a href="#" aria-label="LinkedIn">in</a>
         <a href="#" aria-label="Twitter">𝕏</a>
